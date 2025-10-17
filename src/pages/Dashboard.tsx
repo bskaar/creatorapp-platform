@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import { DollarSign, Users, Mail, TrendingUp, FolderOpen, GitBranch, Video, ShoppingCart } from 'lucide-react';
+import { DollarSign, Users, Mail, TrendingUp, FolderOpen, GitBranch, Video, ShoppingCart, Home } from 'lucide-react';
 
 interface Stats {
   revenue: number;
@@ -175,6 +175,13 @@ export default function Dashboard() {
           <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
           <div className="space-y-3">
             <a
+              href="/funnels"
+              className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
+            >
+              <Home className="h-5 w-5 text-gray-600" />
+              <span className="font-medium text-gray-900">Edit Site Homepage</span>
+            </a>
+            <a
               href="/content/new"
               className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
             >
@@ -182,21 +189,21 @@ export default function Dashboard() {
               <span className="font-medium text-gray-900">Create New Product</span>
             </a>
             <a
-              href="/funnels/new"
+              href="/funnels"
               className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
             >
               <GitBranch className="h-5 w-5 text-gray-600" />
               <span className="font-medium text-gray-900">Build a Funnel</span>
             </a>
             <a
-              href="/email/new"
+              href="/email"
               className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
             >
               <Mail className="h-5 w-5 text-gray-600" />
               <span className="font-medium text-gray-900">Send Email Campaign</span>
             </a>
             <a
-              href="/webinars/new"
+              href="/webinars"
               className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
             >
               <Video className="h-5 w-5 text-gray-600" />

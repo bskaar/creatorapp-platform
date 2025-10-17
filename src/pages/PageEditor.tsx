@@ -325,7 +325,7 @@ export default function PageEditor() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => navigate(`/funnels/${funnelId}`)}
+                onClick={() => navigate(funnelId ? `/funnels/${funnelId}` : '/funnels')}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
                 <ArrowLeft className="h-5 w-5 text-gray-600" />

@@ -168,6 +168,14 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/pages/:pageId"
+        element={
+          <ProtectedRoute>
+            <PageEditor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/email"
         element={
           <ProtectedRoute>
