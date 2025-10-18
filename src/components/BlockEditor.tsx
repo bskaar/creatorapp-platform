@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Type, Image, Palette, Move } from 'lucide-react';
+import { Type, Image, Palette } from 'lucide-react';
 import AITextGenerator from './AITextGenerator';
 import ImageSearchModal from './ImageSearchModal';
 
@@ -132,12 +132,13 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
             </div>
           ) : (
             Object.entries(content).map(([key, value]) => {
-              if (Array.isArray(value)) return null;
+              if (Array.isArray(value) || typeof value !== 'string') return null;
 
-              const isTextField = key.includes('text') || key.includes('description') || key === 'quote';
-              const isHeadline = key.includes('headline');
-              const isSubheadline = key.includes('subheadline');
-              const isCTA = key.includes('cta') || key.includes('button');
+              const keyLower = key.toLowerCase();
+              const isTextField = keyLower.includes('text') && !keyLower.includes('cta') || keyLower.includes('description') || key === 'quote';
+              const isHeadline = keyLower.includes('headline');
+              const isSubheadline = keyLower.includes('subheadline');
+              const isCTA = keyLower.includes('cta') || keyLower.includes('button');
               const isImageField = key === 'url' && block.type === 'image';
               const isBackgroundImage = key === 'backgroundImage';
 
