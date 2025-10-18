@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 import BlockEditor from '../components/BlockEditor';
 import TemplatePicker from '../components/TemplatePicker';
+import DraggableBlock from '../components/DraggableBlock';
+import EnhancedBlockLibrary from '../components/EnhancedBlockLibrary';
 import type { Database } from '../lib/database.types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
@@ -165,6 +167,9 @@ export default function PageEditor() {
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [showThemeSettings, setShowThemeSettings] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [recentBlocks, setRecentBlocks] = useState<string[]>([]);
   const [theme, setTheme] = useState({
     primaryColor: '#3B82F6',
     secondaryColor: '#10B981',
@@ -176,6 +181,25 @@ export default function PageEditor() {
     if (!currentSite || !pageId) return;
     loadPage();
   }, [currentSite, pageId]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+      if (e.key === 'Delete' && editingBlockId) {
+        deleteBlock(editingBlockId);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'd' && editingBlockId) {
+        e.preventDefault();
+        duplicateBlock(editingBlockId);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [editingBlockId, blocks]);
 
   const loadPage = async () => {
     if (!currentSite || !pageId) return;
@@ -221,8 +245,10 @@ export default function PageEditor() {
     setSaving(false);
   };
 
-  const addBlock = (type: keyof typeof BLOCK_TEMPLATES) => {
-    const template = BLOCK_TEMPLATES[type];
+  const addBlock = (type: string) => {
+    const template = BLOCK_TEMPLATES[type as keyof typeof BLOCK_TEMPLATES];
+    if (!template) return;
+
     const newBlock: Block = {
       id: `block-${Date.now()}`,
       type: template.type as Block['type'],
@@ -237,10 +263,57 @@ export default function PageEditor() {
 
     setBlocks([...blocks, newBlock]);
     setShowBlockMenu(false);
+
+    setRecentBlocks((prev) => {
+      const updated = [type, ...prev.filter((t) => t !== type)].slice(0, 6);
+      return updated;
+    });
+  };
+
+  const duplicateBlock = (blockId: string) => {
+    const blockIndex = blocks.findIndex((b) => b.id === blockId);
+    if (blockIndex === -1) return;
+
+    const blockToDuplicate = blocks[blockIndex];
+    const newBlock: Block = {
+      ...blockToDuplicate,
+      id: `block-${Date.now()}`,
+    };
+
+    const newBlocks = [...blocks];
+    newBlocks.splice(blockIndex + 1, 0, newBlock);
+    setBlocks(newBlocks);
   };
 
   const deleteBlock = (blockId: string) => {
+    if (!confirm('Delete this block?')) return;
     setBlocks(blocks.filter((b) => b.id !== blockId));
+    setEditingBlockId(null);
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (index: number) => {
+    if (draggedIndex === null || draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    if (draggedIndex === null || dragOverIndex === null) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const newBlocks = [...blocks];
+    const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
+    newBlocks.splice(dragOverIndex, 0, draggedBlock);
+
+    setBlocks(newBlocks);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const updateBlock = (blockId: string, content: Record<string, any>) => {
@@ -408,6 +481,7 @@ export default function PageEditor() {
                 onClick={handleSave}
                 disabled={saving}
                 className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+                title="Save (Cmd+S)"
               >
                 <Save className="h-4 w-4" />
                 <span>{saving ? 'Saving...' : 'Save'}</span>
@@ -450,56 +524,24 @@ export default function PageEditor() {
               </div>
             ) : (
               blocks.map((block, index) => (
-                <div key={block.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                  <div className="flex items-center justify-between p-4 border-b bg-gray-50">
-                    <div className="flex items-center space-x-3">
-                      <GripVertical className="h-5 w-5 text-gray-400" />
-                      <span className="text-sm font-medium text-gray-700 capitalize">
-                        {block.type} Block
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => moveBlock(block.id, 'up')}
-                        disabled={index === 0}
-                        className="px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
-                      >
-                        ↑
-                      </button>
-                      <button
-                        onClick={() => moveBlock(block.id, 'down')}
-                        disabled={index === blocks.length - 1}
-                        className="px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
-                      >
-                        ↓
-                      </button>
-                      <button
-                        onClick={() =>
-                          setEditingBlockId(editingBlockId === block.id ? null : block.id)
-                        }
-                        className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteBlock(block.id)}
-                        className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-
-                  {editingBlockId === block.id ? (
-                    <BlockEditor
-                      block={block}
-                      onUpdate={(content) => updateBlock(block.id, content)}
-                      onStyleUpdate={(styles) => updateBlockStyles(block.id, styles)}
-                    />
-                  ) : (
-                    <BlockPreview block={block} getPaddingClass={getPaddingClass} getAlignmentClass={getAlignmentClass} />
-                  )}
-                </div>
+                <DraggableBlock
+                  key={block.id}
+                  block={block}
+                  index={index}
+                  isEditing={editingBlockId === block.id}
+                  onEdit={() => setEditingBlockId(editingBlockId === block.id ? null : block.id)}
+                  onUpdate={(content) => updateBlock(block.id, content)}
+                  onStyleUpdate={(styles) => updateBlockStyles(block.id, styles)}
+                  onDuplicate={() => duplicateBlock(block.id)}
+                  onDelete={() => deleteBlock(block.id)}
+                  onDragStart={handleDragStart}
+                  onDragOver={handleDragOver}
+                  onDragEnd={handleDragEnd}
+                  isDragging={draggedIndex === index}
+                  isDragOver={dragOverIndex === index}
+                  getPaddingClass={getPaddingClass}
+                  getAlignmentClass={getAlignmentClass}
+                />
               ))
             )}
 
@@ -515,33 +557,11 @@ export default function PageEditor() {
       </div>
 
       {showBlockMenu && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-3xl w-full p-6 max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Choose a Block</h2>
-              <button
-                onClick={() => setShowBlockMenu(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-              >
-                <X className="h-5 w-5 text-gray-600" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <BlockOption icon={<Sparkles />} title="Hero" description="Large header with headline and CTA" onClick={() => addBlock('hero')} />
-              <BlockOption icon={<Type />} title="Text" description="Paragraph or body text content" onClick={() => addBlock('text')} />
-              <BlockOption icon={<ImageIcon />} title="Image" description="Single image with optional caption" onClick={() => addBlock('image')} />
-              <BlockOption icon={<Sparkles />} title="Call to Action" description="Prominent CTA section" onClick={() => addBlock('cta')} />
-              <BlockOption icon={<Layout />} title="Features" description="Showcase key features or benefits" onClick={() => addBlock('features')} />
-              <BlockOption icon={<Quote />} title="Testimonial" description="Customer quote or review" onClick={() => addBlock('testimonial')} />
-              <BlockOption icon={<FileText />} title="Contact Form" description="Capture leads with a contact form" onClick={() => addBlock('form')} />
-              <BlockOption icon={<CreditCard />} title="Pricing" description="Display pricing plans" onClick={() => addBlock('pricing')} />
-              <BlockOption icon={<Video />} title="Video" description="Embed video content" onClick={() => addBlock('video')} />
-              <BlockOption icon={<Grid3x3 />} title="Gallery" description="Image gallery grid" onClick={() => addBlock('gallery')} />
-              <BlockOption icon={<BarChart3 />} title="Stats" description="Display key statistics" onClick={() => addBlock('stats')} />
-            </div>
-          </div>
-        </div>
+        <EnhancedBlockLibrary
+          onAddBlock={addBlock}
+          onClose={() => setShowBlockMenu(false)}
+          recentBlocks={recentBlocks}
+        />
       )}
 
       {showThemeSettings && (
