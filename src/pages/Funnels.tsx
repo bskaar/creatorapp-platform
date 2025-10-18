@@ -14,6 +14,7 @@ import {
   ExternalLink,
   X,
 } from 'lucide-react';
+import TemplatePicker from '../components/TemplatePicker';
 import type { Database } from '../lib/database.types';
 
 type Funnel = Database['public']['Tables']['funnels']['Row'];
@@ -27,6 +28,8 @@ export default function Funnels() {
   const [standalonePages, setStandalonePages] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewModal, setShowNewModal] = useState(false);
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const [templatePickerMode, setTemplatePickerMode] = useState<'homepage' | 'page'>('page');
   const [modalType, setModalType] = useState<'funnel' | 'page'>('funnel');
   const [formData, setFormData] = useState({
     name: '',
@@ -78,22 +81,36 @@ export default function Funnels() {
   };
 
   const handleCreateHomepage = async () => {
+    setTemplatePickerMode('homepage');
+    setShowTemplatePicker(true);
+  };
+
+  const handleTemplateSelect = async (template: any) => {
     if (!currentSite) return;
 
     setSaving(true);
     setError('');
+    setShowTemplatePicker(false);
 
     try {
+      const isHomepage = templatePickerMode === 'homepage';
+      const pageData: any = {
+        site_id: currentSite.id,
+        title: isHomepage ? 'Home' : formData.pageTitle,
+        slug: isHomepage ? 'home' : formData.pageSlug,
+        page_type: isHomepage ? 'landing' : formData.pageType,
+        status: 'draft',
+      };
+
+      if (template) {
+        pageData.content = { blocks: template.blocks, theme: template.theme };
+      } else {
+        pageData.content = { blocks: [] };
+      }
+
       const { data, error: insertError } = await supabase
         .from('pages')
-        .insert({
-          site_id: currentSite.id,
-          title: 'Home',
-          slug: 'home',
-          page_type: 'landing',
-          content: { blocks: [] },
-          status: 'draft',
-        })
+        .insert(pageData)
         .select()
         .single();
 
@@ -135,37 +152,22 @@ export default function Funnels() {
         if (funnelData) {
           navigate(`/funnels/${funnelData.id}`);
         }
+
+        setShowNewModal(false);
+        setFormData({
+          name: '',
+          description: '',
+          goalType: 'lead_generation',
+          pageTitle: '',
+          pageSlug: '',
+          pageType: 'landing',
+        });
+        loadData();
       } else {
-        const { data: pageData, error: pageError } = await supabase
-          .from('pages')
-          .insert({
-            site_id: currentSite.id,
-            title: formData.pageTitle,
-            slug: formData.pageSlug,
-            page_type: formData.pageType,
-            content: { blocks: [] },
-            status: 'draft',
-          })
-          .select()
-          .single();
-
-        if (pageError) throw pageError;
-
-        if (pageData) {
-          navigate(`/pages/${pageData.id}`);
-        }
+        setShowNewModal(false);
+        setTemplatePickerMode('page');
+        setShowTemplatePicker(true);
       }
-
-      setShowNewModal(false);
-      setFormData({
-        name: '',
-        description: '',
-        goalType: 'lead_generation',
-        pageTitle: '',
-        pageSlug: '',
-        pageType: 'landing',
-      });
-      loadData();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -576,6 +578,13 @@ export default function Funnels() {
             </form>
           </div>
         </div>
+      )}
+
+      {showTemplatePicker && (
+        <TemplatePicker
+          onSelect={handleTemplateSelect}
+          onClose={() => setShowTemplatePicker(false)}
+        />
       )}
     </div>
   );

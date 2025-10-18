@@ -22,8 +22,10 @@ import {
   Smartphone,
   Settings,
   X,
+  BarChart3,
 } from 'lucide-react';
 import BlockEditor from '../components/BlockEditor';
+import TemplatePicker from '../components/TemplatePicker';
 import type { Database } from '../lib/database.types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
@@ -162,6 +164,7 @@ export default function PageEditor() {
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [showThemeSettings, setShowThemeSettings] = useState(false);
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [theme, setTheme] = useState({
     primaryColor: '#3B82F6',
     secondaryColor: '#10B981',
@@ -278,6 +281,24 @@ export default function PageEditor() {
     }
   };
 
+  const handleTemplateSelect = async (template: any) => {
+    if (!page || !template) {
+      setShowTemplatePicker(false);
+      return;
+    }
+
+    if (!confirm('This will replace your current page content. Are you sure?')) {
+      setShowTemplatePicker(false);
+      return;
+    }
+
+    setBlocks(template.blocks);
+    setTheme(template.theme);
+    setShowTemplatePicker(false);
+
+    await handleSave();
+  };
+
   const getPreviewWidth = () => {
     switch (previewMode) {
       case 'mobile':
@@ -366,6 +387,14 @@ export default function PageEditor() {
                   <Smartphone className="h-4 w-4" />
                 </button>
               </div>
+
+              <button
+                onClick={() => setShowTemplatePicker(true)}
+                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                <Layout className="h-4 w-4" />
+                <span>Change Template</span>
+              </button>
 
               <button
                 onClick={() => setShowThemeSettings(true)}
@@ -608,6 +637,13 @@ export default function PageEditor() {
             </div>
           </div>
         </div>
+      )}
+
+      {showTemplatePicker && (
+        <TemplatePicker
+          onSelect={handleTemplateSelect}
+          onClose={() => setShowTemplatePicker(false)}
+        />
       )}
     </div>
   );
