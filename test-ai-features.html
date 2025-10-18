@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Features Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f3f4f6;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        h2 {
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+        .status.loading {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .result {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 12px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .image-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid #e5e7eb;
+        }
+        .color-palette {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .color-swatch {
+            flex: 1;
+            text-align: center;
+        }
+        .color-box {
+            width: 100%;
+            height: 80px;
+            border-radius: 6px;
+            border: 2px solid #e5e7eb;
+            margin-bottom: 4px;
+        }
+        .color-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #374151;
+            text-transform: capitalize;
+        }
+        .color-hex {
+            font-size: 10px;
+            color: #6b7280;
+        }
+        input {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 AI Features Testing Dashboard</h1>
+        <p style="color: #6b7280;">Testing all AI integrations with your configured API keys</p>
+    </div>
+
+    <div class="container">
+        <h2>📝 AI Text Generation Test</h2>
+        <p>Testing OpenAI API integration for various content types</p>
+
+        <div style="margin: 16px 0;">
+            <button onclick="testTextGeneration('headline', 'Write a headline for a fitness app')">Test Headline</button>
+            <button onclick="testTextGeneration('subheadline', 'Write a subheadline about productivity')">Test Subheadline</button>
+            <button onclick="testTextGeneration('cta', 'Call to action for sign up')">Test CTA</button>
+            <button onclick="testTextGeneration('paragraph', 'Write about the benefits of exercise')">Test Paragraph</button>
+        </div>
+
+        <div id="text-status"></div>
+        <div id="text-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="container">
+        <h2>🖼️ Pexels Image Search Test</h2>
+        <p>Testing Pexels API integration for stock photo search</p>
+
+        <div style="margin: 16px 0;">
+            <input type="text" id="image-query" placeholder="Enter search term" value="business">
+            <button onclick="testImageSearch()">Search Images</button>
+        </div>
+
+        <div id="image-status"></div>
+        <div id="image-result" class="image-grid"></div>
+    </div>
+
+    <div class="container">
+        <h2>🎨 AI Color Palette Test</h2>
+        <p>Testing AI-powered color palette generation</p>
+
+        <div style="margin: 16px 0;">
+            <button onclick="testColorPalette('Professional', 'Technology')">Professional Tech</button>
+            <button onclick="testColorPalette('Creative', 'Fashion')">Creative Fashion</button>
+            <button onclick="testColorPalette('Modern', 'E-commerce')">Modern E-commerce</button>
+        </div>
+
+        <div id="palette-status"></div>
+        <div id="palette-result"></div>
+    </div>
+
+    <script type="module">
+        // You'll need to update these values
+        const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+        const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        window.testTextGeneration = async function(type, prompt) {
+            const statusDiv = document.getElementById('text-status');
+            const resultDiv = document.getElementById('text-result');
+
+            statusDiv.className = 'status loading';
+            statusDiv.innerHTML = '⏳ Generating text...';
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-generate-text`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ type, prompt }),
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '✅ Text generated successfully!';
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `Type: ${type}\nPrompt: "${prompt}"\n\nResult:\n"${data.text}"`;
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `❌ Error: ${error.message}`;
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `Error details:\n${error.stack || error.message}`;
+            }
+        };
+
+        window.testImageSearch = async function() {
+            const query = document.getElementById('image-query').value;
+            const statusDiv = document.getElementById('image-status');
+            const resultDiv = document.getElementById('image-result');
+
+            statusDiv.className = 'status loading';
+            statusDiv.innerHTML = '⏳ Searching images...';
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/functions/v1/search-images?query=${encodeURIComponent(query)}&per_page=6`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        },
+                    }
+                );
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `✅ Found ${data.images.length} images for "${query}"`;
+
+                data.images.forEach(image => {
+                    const img = document.createElement('img');
+                    img.src = image.thumbnail;
+                    img.alt = image.alt;
+                    img.title = `Photo by ${image.photographer}`;
+                    resultDiv.appendChild(img);
+                });
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `❌ Error: ${error.message}`;
+            }
+        };
+
+        window.testColorPalette = async function(mood, industry) {
+            const statusDiv = document.getElementById('palette-status');
+            const resultDiv = document.getElementById('palette-result');
+
+            statusDiv.className = 'status loading';
+            statusDiv.innerHTML = '⏳ Generating color palette...';
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/generate-color-palette`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ mood, industry }),
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = `✅ Palette generated: ${mood} × ${industry}`;
+
+                if (data.palette.description) {
+                    const desc = document.createElement('p');
+                    desc.style.cssText = 'font-style: italic; color: #6b7280; margin-top: 8px;';
+                    desc.textContent = data.palette.description;
+                    resultDiv.appendChild(desc);
+                }
+
+                const paletteDiv = document.createElement('div');
+                paletteDiv.className = 'color-palette';
+
+                Object.entries(data.palette).forEach(([key, value]) => {
+                    if (key !== 'description') {
+                        const swatch = document.createElement('div');
+                        swatch.className = 'color-swatch';
+                        swatch.innerHTML = `
+                            <div class="color-box" style="background-color: ${value}"></div>
+                            <div class="color-label">${key}</div>
+                            <div class="color-hex">${value}</div>
+                        `;
+                        paletteDiv.appendChild(swatch);
+                    }
+                });
+
+                resultDiv.appendChild(paletteDiv);
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `❌ Error: ${error.message}`;
+            }
+        };
+
+        // Run initial tests on page load
+        console.log('AI Features Test Dashboard Ready');
+        console.log('Supabase URL:', SUPABASE_URL);
+    </script>
+</body>
+</html>
