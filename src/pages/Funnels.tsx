@@ -13,6 +13,7 @@ import {
   FileText,
   ExternalLink,
   X,
+  Copy,
 } from 'lucide-react';
 import TemplatePicker from '../components/TemplatePicker';
 import type { Database } from '../lib/database.types';
@@ -168,6 +169,73 @@ export default function Funnels() {
         setTemplatePickerMode('page');
         setShowTemplatePicker(true);
       }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDuplicate = async (id: string, type: 'funnel' | 'page') => {
+    if (!currentSite) return;
+
+    setSaving(true);
+    try {
+      if (type === 'page') {
+        const { data: originalPage } = await supabase
+          .from('pages')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (originalPage) {
+          const { data: newPage } = await supabase
+            .from('pages')
+            .insert({
+              site_id: currentSite.id,
+              funnel_id: originalPage.funnel_id,
+              title: `${originalPage.title} (Copy)`,
+              slug: `${originalPage.slug}-copy-${Date.now()}`,
+              page_type: originalPage.page_type,
+              content: originalPage.content,
+              status: 'draft',
+              seo_title: originalPage.seo_title,
+              seo_description: originalPage.seo_description,
+            })
+            .select()
+            .single();
+
+          if (newPage) {
+            navigate(`/pages/${newPage.id}`);
+          }
+        }
+      } else {
+        const { data: originalFunnel } = await supabase
+          .from('funnels')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (originalFunnel) {
+          const { data: newFunnel } = await supabase
+            .from('funnels')
+            .insert({
+              site_id: currentSite.id,
+              name: `${originalFunnel.name} (Copy)`,
+              description: originalFunnel.description,
+              goal_type: originalFunnel.goal_type,
+              status: 'draft',
+            })
+            .select()
+            .single();
+
+          if (newFunnel) {
+            navigate(`/funnels/${newFunnel.id}`);
+          }
+        }
+      }
+
+      loadData();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -361,6 +429,13 @@ export default function Funnels() {
                       <span>Edit</span>
                     </Link>
                     <button
+                      onClick={() => handleDuplicate(funnel.id, 'funnel')}
+                      className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                      title="Duplicate funnel"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </button>
+                    <button
                       onClick={() => handleDelete(funnel.id, 'funnel')}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
                     >
@@ -413,6 +488,13 @@ export default function Funnels() {
                       <Edit className="h-4 w-4" />
                       <span>Edit</span>
                     </Link>
+                    <button
+                      onClick={() => handleDuplicate(page.id, 'page')}
+                      className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                      title="Duplicate page"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </button>
                     <button
                       onClick={() => handleDelete(page.id, 'page')}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"

@@ -7,7 +7,9 @@ import {
   Save,
   Eye,
   Plus,
+  Upload,
   GripVertical,
+  Search,
   Type,
   Image as ImageIcon,
   Layout,
@@ -166,8 +168,15 @@ export default function PageEditor() {
   const [showBlockMenu, setShowBlockMenu] = useState(false);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [showFullPreview, setShowFullPreview] = useState(false);
   const [showThemeSettings, setShowThemeSettings] = useState(false);
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const [showSeoSettings, setShowSeoSettings] = useState(false);
+  const [seoData, setSeoData] = useState({
+    seo_title: '',
+    seo_description: '',
+    seo_image_url: '',
+  });
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [recentBlocks, setRecentBlocks] = useState<string[]>([]);
@@ -219,6 +228,11 @@ export default function PageEditor() {
       if (content?.theme) {
         setTheme(content.theme);
       }
+      setSeoData({
+        seo_title: data.seo_title || '',
+        seo_description: data.seo_description || '',
+        seo_image_url: data.seo_image_url || '',
+      });
     } else {
       navigate('/funnels');
     }
@@ -235,6 +249,9 @@ export default function PageEditor() {
       .from('pages')
       .update({
         content: { blocks, theme },
+        seo_title: seoData.seo_title || null,
+        seo_description: seoData.seo_description || null,
+        seo_image_url: seoData.seo_image_url || null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', page.id);
@@ -463,6 +480,14 @@ export default function PageEditor() {
               </div>
 
               <button
+                onClick={() => setShowFullPreview(true)}
+                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                <Eye className="h-4 w-4" />
+                <span>Preview</span>
+              </button>
+
+              <button
                 onClick={() => setShowTemplatePicker(true)}
                 className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
               >
@@ -476,6 +501,14 @@ export default function PageEditor() {
               >
                 <Settings className="h-4 w-4" />
                 <span>Theme</span>
+              </button>
+
+              <button
+                onClick={() => setShowSeoSettings(true)}
+                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                <Search className="h-4 w-4" />
+                <span>SEO</span>
               </button>
 
               <button
@@ -493,7 +526,7 @@ export default function PageEditor() {
                   onClick={publishPage}
                   className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                 >
-                  <Eye className="h-4 w-4" />
+                  <Upload className="h-4 w-4" />
                   <span>Publish</span>
                 </button>
               )}
@@ -679,6 +712,174 @@ export default function PageEditor() {
           onSelect={handleTemplateSelect}
           onClose={() => setShowTemplatePicker(false)}
         />
+      )}
+
+      {showFullPreview && (
+        <div className="fixed inset-0 bg-white z-50 overflow-auto">
+          <div className="sticky top-0 bg-white border-b shadow-sm z-10">
+            <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Preview Mode</h2>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setPreviewMode('desktop')}
+                    className={`p-2 rounded ${
+                      previewMode === 'desktop' ? 'bg-white shadow' : 'hover:bg-gray-200'
+                    }`}
+                    title="Desktop"
+                  >
+                    <Monitor className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('tablet')}
+                    className={`p-2 rounded ${
+                      previewMode === 'tablet' ? 'bg-white shadow' : 'hover:bg-gray-200'
+                    }`}
+                    title="Tablet"
+                  >
+                    <Tablet className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('mobile')}
+                    className={`p-2 rounded ${
+                      previewMode === 'mobile' ? 'bg-white shadow' : 'hover:bg-gray-200'
+                    }`}
+                    title="Mobile"
+                  >
+                    <Smartphone className="h-4 w-4" />
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowFullPreview(false)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
+                >
+                  <X className="h-4 w-4" />
+                  <span>Exit Preview</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center py-8 px-6 bg-gray-50 min-h-screen">
+            <div style={{ width: getPreviewWidth(), maxWidth: '100%' }} className="transition-all duration-300">
+              {blocks.map((block) => (
+                <div key={block.id}>
+                  <BlockPreview block={block} getPaddingClass={getPaddingClass} getAlignmentClass={getAlignmentClass} />
+                </div>
+              ))}
+              {blocks.length === 0 && (
+                <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+                  <Layout className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <h2 className="text-xl font-bold text-gray-900 mb-2">No Content Yet</h2>
+                  <p className="text-gray-600">Add blocks to see your page preview</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSeoSettings && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">SEO Settings</h2>
+                <p className="text-gray-600 mt-1">Optimize your page for search engines</p>
+              </div>
+              <button
+                onClick={() => setShowSeoSettings(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  SEO Title
+                </label>
+                <input
+                  type="text"
+                  value={seoData.seo_title}
+                  onChange={(e) => setSeoData({ ...seoData, seo_title: e.target.value })}
+                  placeholder={page?.title || 'Page Title'}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  maxLength={60}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {seoData.seo_title.length}/60 characters (optimal: 50-60)
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Meta Description
+                </label>
+                <textarea
+                  value={seoData.seo_description}
+                  onChange={(e) => setSeoData({ ...seoData, seo_description: e.target.value })}
+                  placeholder="A brief description of your page for search results"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={3}
+                  maxLength={160}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {seoData.seo_description.length}/160 characters (optimal: 150-160)
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Social Share Image URL
+                </label>
+                <input
+                  type="url"
+                  value={seoData.seo_image_url}
+                  onChange={(e) => setSeoData({ ...seoData, seo_image_url: e.target.value })}
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Image shown when sharing on social media (recommended: 1200x630px)
+                </p>
+              </div>
+
+              {seoData.seo_image_url && (
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Preview</p>
+                  <img
+                    src={seoData.seo_image_url}
+                    alt="SEO preview"
+                    className="w-full h-48 object-cover rounded-lg"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex space-x-3 pt-6 border-t mt-6">
+              <button
+                onClick={() => setShowSeoSettings(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowSeoSettings(false);
+                  handleSave();
+                }}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                Save SEO Settings
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
