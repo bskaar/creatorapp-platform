@@ -28,6 +28,7 @@ import BlockEditor from '../components/BlockEditor';
 import TemplatePicker from '../components/TemplatePicker';
 import DraggableBlock from '../components/DraggableBlock';
 import EnhancedBlockLibrary from '../components/EnhancedBlockLibrary';
+import AIColorPalette from '../components/AIColorPalette';
 import type { Database } from '../lib/database.types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
@@ -578,6 +579,20 @@ export default function PageEditor() {
             </div>
 
             <div className="space-y-4">
+              <AIColorPalette
+                onApply={(palette) => {
+                  setTheme({
+                    ...theme,
+                    primaryColor: palette.primary,
+                    secondaryColor: palette.secondary,
+                  });
+                }}
+              />
+
+              <div className="border-t pt-4">
+                <h3 className="text-sm font-semibold text-gray-700 mb-4">Manual Color Settings</h3>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Primary Color</label>
                 <div className="flex items-center space-x-2">

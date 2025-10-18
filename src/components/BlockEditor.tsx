@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Type, Image, Palette, Move } from 'lucide-react';
+import AITextGenerator from './AITextGenerator';
+import ImageSearchModal from './ImageSearchModal';
 
 interface BlockEditorProps {
   block: any;
@@ -10,6 +12,7 @@ interface BlockEditorProps {
 export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEditorProps) {
   const [activeTab, setActiveTab] = useState<'content' | 'style'>('content');
   const [content, setContent] = useState(block.content);
+  const [showImageSearch, setShowImageSearch] = useState(false);
   const [styles, setStyles] = useState(block.styles || {
     backgroundColor: '',
     textColor: '',
@@ -82,7 +85,14 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                   type="text"
                   value={content.headline || ''}
                   onChange={(e) => handleContentChange('headline', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                />
+                <AITextGenerator
+                  type="headline"
+                  currentText={content.headline}
+                  context={`Creating a headline for ${block.type} block`}
+                  onGenerate={(text) => handleContentChange('headline', text)}
+                  placeholder="Describe what your headline should be about..."
                 />
               </div>
 
@@ -124,25 +134,68 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
             Object.entries(content).map(([key, value]) => {
               if (Array.isArray(value)) return null;
 
+              const isTextField = key.includes('text') || key.includes('description') || key === 'quote';
+              const isHeadline = key.includes('headline');
+              const isSubheadline = key.includes('subheadline');
+              const isCTA = key.includes('cta') || key.includes('button');
+              const isImageField = key === 'url' && block.type === 'image';
+              const isBackgroundImage = key === 'backgroundImage';
+
               return (
                 <div key={key}>
                   <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
                     {key.replace(/([A-Z])/g, ' $1').trim()}
                   </label>
-                  {key.includes('text') || key.includes('description') || key === 'quote' ? (
-                    <textarea
-                      value={value}
-                      onChange={(e) => handleContentChange(key, e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      rows={3}
-                    />
+                  {isTextField ? (
+                    <>
+                      <textarea
+                        value={value}
+                        onChange={(e) => handleContentChange(key, e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                        rows={3}
+                      />
+                      <AITextGenerator
+                        type={key === 'quote' ? 'testimonial' : 'paragraph'}
+                        currentText={value}
+                        context={`Writing ${key} for ${block.type} block`}
+                        onGenerate={(text) => handleContentChange(key, text)}
+                        placeholder={`Describe what you want for ${key}...`}
+                      />
+                    </>
+                  ) : isImageField || isBackgroundImage ? (
+                    <>
+                      <input
+                        type="url"
+                        value={value}
+                        onChange={(e) => handleContentChange(key, e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                      />
+                      <button
+                        onClick={() => setShowImageSearch(true)}
+                        className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                      >
+                        <Image className="h-4 w-4" />
+                        <span>Search Images</span>
+                      </button>
+                    </>
                   ) : (
-                    <input
-                      type={key.includes('url') || key.includes('Url') ? 'url' : 'text'}
-                      value={value}
-                      onChange={(e) => handleContentChange(key, e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                    <>
+                      <input
+                        type={key.includes('url') || key.includes('Url') ? 'url' : 'text'}
+                        value={value}
+                        onChange={(e) => handleContentChange(key, e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                      />
+                      {(isHeadline || isSubheadline || isCTA) && (
+                        <AITextGenerator
+                          type={isHeadline ? 'headline' : isSubheadline ? 'subheadline' : 'cta'}
+                          currentText={value}
+                          context={`Creating ${key} for ${block.type} block`}
+                          onGenerate={(text) => handleContentChange(key, text)}
+                          placeholder={`Describe what you want for ${key}...`}
+                        />
+                      )}
+                    </>
                   )}
                 </div>
               );
@@ -217,6 +270,22 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
             </select>
           </div>
         </div>
+      )}
+
+      {showImageSearch && (
+        <ImageSearchModal
+          onSelect={(url, alt) => {
+            if (block.type === 'image') {
+              handleContentChange('url', url);
+              handleContentChange('alt', alt);
+            } else {
+              handleContentChange('backgroundImage', url);
+            }
+            setShowImageSearch(false);
+          }}
+          onClose={() => setShowImageSearch(false)}
+          initialQuery={block.type}
+        />
       )}
     </div>
   );
