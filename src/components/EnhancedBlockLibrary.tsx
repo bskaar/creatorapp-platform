@@ -14,6 +14,7 @@ import {
   BarChart3,
   Mail,
   Users,
+  BookmarkCheck,
 } from 'lucide-react';
 
 interface BlockType {
@@ -27,6 +28,7 @@ interface BlockType {
 interface EnhancedBlockLibraryProps {
   onAddBlock: (type: string) => void;
   onClose: () => void;
+  onOpenCustomBlocks?: () => void;
   recentBlocks?: string[];
 }
 
@@ -60,6 +62,7 @@ const categories = [
 export default function EnhancedBlockLibrary({
   onAddBlock,
   onClose,
+  onOpenCustomBlocks,
   recentBlocks = [],
 }: EnhancedBlockLibraryProps) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -108,6 +111,15 @@ export default function EnhancedBlockLibrary({
         <div className="flex flex-1 overflow-hidden">
           <div className="w-48 border-r bg-gray-50 p-4 overflow-y-auto">
             <div className="space-y-1">
+              {onOpenCustomBlocks && (
+                <button
+                  onClick={onOpenCustomBlocks}
+                  className="w-full text-left px-3 py-2 rounded-lg text-sm transition flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 mb-2"
+                >
+                  <BookmarkCheck className="h-4 w-4" />
+                  <span>My Blocks</span>
+                </button>
+              )}
               {categories.map((category) => {
                 const Icon = category.icon;
                 return (

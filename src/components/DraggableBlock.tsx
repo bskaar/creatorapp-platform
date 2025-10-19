@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GripVertical, Edit2, Copy, Trash2 } from 'lucide-react';
+import { GripVertical, Edit2, Copy, Trash2, BookmarkPlus } from 'lucide-react';
 import BlockEditor from './BlockEditor';
 
 interface Block {
@@ -18,6 +18,7 @@ interface DraggableBlockProps {
   onStyleUpdate: (styles: any) => void;
   onDuplicate: () => void;
   onDelete: () => void;
+  onSaveAsCustom?: () => void;
   onDragStart: (index: number) => void;
   onDragOver: (index: number) => void;
   onDragEnd: () => void;
@@ -36,6 +37,7 @@ export default function DraggableBlock({
   onStyleUpdate,
   onDuplicate,
   onDelete,
+  onSaveAsCustom,
   onDragStart,
   onDragOver,
   onDragEnd,
@@ -89,6 +91,15 @@ export default function DraggableBlock({
               >
                 <Copy className="h-4 w-4" />
               </button>
+              {onSaveAsCustom && (
+                <button
+                  onClick={onSaveAsCustom}
+                  className="p-1.5 hover:bg-green-50 text-green-600 rounded transition"
+                  title="Save as custom block"
+                >
+                  <BookmarkPlus className="h-4 w-4" />
+                </button>
+              )}
               <button
                 onClick={onDelete}
                 className="p-1.5 hover:bg-red-50 text-red-600 rounded transition"
