@@ -155,7 +155,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="my-site"
             />
-            <span className="ml-2 text-sm text-gray-500">.creatorapp.com</span>
+            <span className="ml-2 text-sm text-gray-500">.creatorapp.us</span>
           </div>
           <p className="text-xs text-gray-500 mt-1">URL-safe identifier for your site</p>
         </div>
