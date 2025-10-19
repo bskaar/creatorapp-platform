@@ -76,16 +76,49 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
   };
 
   const timezones = [
-    'America/New_York',
-    'America/Chicago',
-    'America/Denver',
-    'America/Los_Angeles',
-    'America/Toronto',
-    'Europe/London',
-    'Europe/Paris',
-    'Asia/Tokyo',
-    'Asia/Shanghai',
-    'Australia/Sydney',
+    { value: 'Pacific/Midway', label: 'Midway Island (GMT-11:00)' },
+    { value: 'Pacific/Honolulu', label: 'Hawaii (GMT-10:00)' },
+    { value: 'America/Anchorage', label: 'Alaska (GMT-09:00)' },
+    { value: 'America/Los_Angeles', label: 'Pacific Time - US & Canada (GMT-08:00)' },
+    { value: 'America/Denver', label: 'Mountain Time - US & Canada (GMT-07:00)' },
+    { value: 'America/Chicago', label: 'Central Time - US & Canada (GMT-06:00)' },
+    { value: 'America/New_York', label: 'Eastern Time - US & Canada (GMT-05:00)' },
+    { value: 'America/Caracas', label: 'Caracas (GMT-04:00)' },
+    { value: 'America/Halifax', label: 'Atlantic Time - Canada (GMT-04:00)' },
+    { value: 'America/Sao_Paulo', label: 'Brasilia (GMT-03:00)' },
+    { value: 'America/Argentina/Buenos_Aires', label: 'Buenos Aires (GMT-03:00)' },
+    { value: 'Atlantic/Azores', label: 'Azores (GMT-01:00)' },
+    { value: 'Europe/London', label: 'London (GMT+00:00)' },
+    { value: 'Europe/Dublin', label: 'Dublin (GMT+00:00)' },
+    { value: 'Africa/Lagos', label: 'Lagos (GMT+01:00)' },
+    { value: 'Europe/Paris', label: 'Paris (GMT+01:00)' },
+    { value: 'Europe/Berlin', label: 'Berlin (GMT+01:00)' },
+    { value: 'Europe/Madrid', label: 'Madrid (GMT+01:00)' },
+    { value: 'Europe/Rome', label: 'Rome (GMT+01:00)' },
+    { value: 'Europe/Athens', label: 'Athens (GMT+02:00)' },
+    { value: 'Africa/Cairo', label: 'Cairo (GMT+02:00)' },
+    { value: 'Africa/Johannesburg', label: 'Johannesburg (GMT+02:00)' },
+    { value: 'Europe/Helsinki', label: 'Helsinki (GMT+02:00)' },
+    { value: 'Europe/Istanbul', label: 'Istanbul (GMT+03:00)' },
+    { value: 'Asia/Riyadh', label: 'Riyadh (GMT+03:00)' },
+    { value: 'Europe/Moscow', label: 'Moscow (GMT+03:00)' },
+    { value: 'Asia/Dubai', label: 'Dubai (GMT+04:00)' },
+    { value: 'Asia/Karachi', label: 'Karachi (GMT+05:00)' },
+    { value: 'Asia/Kolkata', label: 'Mumbai, New Delhi (GMT+05:30)' },
+    { value: 'Asia/Dhaka', label: 'Dhaka (GMT+06:00)' },
+    { value: 'Asia/Bangkok', label: 'Bangkok (GMT+07:00)' },
+    { value: 'Asia/Singapore', label: 'Singapore (GMT+08:00)' },
+    { value: 'Asia/Hong_Kong', label: 'Hong Kong (GMT+08:00)' },
+    { value: 'Asia/Shanghai', label: 'Beijing (GMT+08:00)' },
+    { value: 'Australia/Perth', label: 'Perth (GMT+08:00)' },
+    { value: 'Asia/Tokyo', label: 'Tokyo (GMT+09:00)' },
+    { value: 'Asia/Seoul', label: 'Seoul (GMT+09:00)' },
+    { value: 'Australia/Adelaide', label: 'Adelaide (GMT+09:30)' },
+    { value: 'Australia/Sydney', label: 'Sydney (GMT+10:00)' },
+    { value: 'Australia/Brisbane', label: 'Brisbane (GMT+10:00)' },
+    { value: 'Pacific/Guam', label: 'Guam (GMT+10:00)' },
+    { value: 'Pacific/Auckland', label: 'Auckland (GMT+12:00)' },
+    { value: 'Pacific/Fiji', label: 'Fiji (GMT+12:00)' },
   ];
 
   return (
@@ -160,8 +193,8 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {timezones.map((tz) => (
-              <option key={tz} value={tz}>
-                {tz.replace(/_/g, ' ')}
+              <option key={tz.value} value={tz.value}>
+                {tz.label}
               </option>
             ))}
           </select>
