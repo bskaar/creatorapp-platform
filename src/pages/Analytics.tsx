@@ -1,4 +1,7 @@
-import { BarChart3 } from 'lucide-react';
+import RealTimeMetrics from '../components/analytics/RealTimeMetrics';
+import FunnelVisualization from '../components/analytics/FunnelVisualization';
+import RevenueCharts from '../components/analytics/RevenueCharts';
+import TrafficAnalytics from '../components/analytics/TrafficAnalytics';
 
 export default function Analytics() {
   return (
@@ -10,11 +13,14 @@ export default function Analytics() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-        <BarChart3 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Analytics Dashboard</h2>
-        <p className="text-gray-600 mb-6">Comprehensive analytics and reporting coming soon</p>
+      <RealTimeMetrics />
+
+      <div className="grid grid-cols-1 gap-6">
+        <FunnelVisualization />
+        <RevenueCharts />
       </div>
+
+      <TrafficAnalytics />
     </div>
   );
 }
