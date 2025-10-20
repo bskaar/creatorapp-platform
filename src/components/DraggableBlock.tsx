@@ -227,6 +227,174 @@ function BlockPreview({ block, getPaddingClass, getAlignmentClass }: any) {
         </div>
       );
 
+    case 'testimonial':
+      return (
+        <div className={`bg-gray-50 ${padding}`}>
+          <div className={`max-w-4xl ${alignment} space-y-6`}>
+            <div className="bg-white rounded-xl shadow-md p-8">
+              <div className="flex items-start space-x-4">
+                {block.content.avatar && (
+                  <img
+                    src={block.content.avatar}
+                    alt={block.content.author}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                )}
+                <div className="flex-1">
+                  <p className="text-lg text-gray-700 italic mb-4">"{block.content.quote}"</p>
+                  <div>
+                    <p className="font-semibold text-gray-900">{block.content.author}</p>
+                    <p className="text-sm text-gray-600">{block.content.role}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'form':
+      return (
+        <div className={`${padding}`}>
+          <div className={`max-w-2xl ${alignment} space-y-6`}>
+            {block.content.headline && (
+              <h2 className="text-3xl font-bold text-gray-900 text-center">{block.content.headline}</h2>
+            )}
+            {block.content.description && (
+              <p className="text-gray-600 text-center">{block.content.description}</p>
+            )}
+            <div className="space-y-4">
+              {block.content.fields?.map((field: any, idx: number) => (
+                <div key={idx}>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {field.label} {field.required && <span className="text-red-500">*</span>}
+                  </label>
+                  <input
+                    type={field.type}
+                    placeholder={field.label}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              ))}
+              <button className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
+                {block.content.submitButtonText || 'Submit'}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'pricing':
+      return (
+        <div className={`${padding}`}>
+          <div className={`max-w-7xl ${alignment} space-y-8`}>
+            {block.content.headline && (
+              <div className="text-center">
+                <h2 className="text-3xl font-bold text-gray-900">{block.content.headline}</h2>
+                {block.content.subheadline && (
+                  <p className="text-xl text-gray-600 mt-2">{block.content.subheadline}</p>
+                )}
+              </div>
+            )}
+            <div className="grid md:grid-cols-3 gap-8">
+              {block.content.plans?.map((plan: any, idx: number) => (
+                <div
+                  key={idx}
+                  className={`bg-white rounded-xl shadow-md p-8 ${
+                    plan.highlighted ? 'ring-2 ring-blue-600 transform scale-105' : ''
+                  }`}
+                >
+                  <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
+                  <div className="mt-4 mb-6">
+                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="text-gray-600">{plan.period}</span>
+                  </div>
+                  <ul className="space-y-3 mb-8">
+                    {plan.features?.map((feature: string, featureIdx: number) => (
+                      <li key={featureIdx} className="flex items-start">
+                        <span className="text-green-500 mr-2">✓</span>
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    className={`w-full px-6 py-3 rounded-lg font-semibold transition ${
+                      plan.highlighted
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                    }`}
+                  >
+                    {plan.buttonText}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'video':
+      return (
+        <div className={`${padding}`}>
+          <div className={`max-w-5xl ${alignment} space-y-4`}>
+            {block.content.title && (
+              <h2 className="text-3xl font-bold text-gray-900 text-center">{block.content.title}</h2>
+            )}
+            {block.content.description && (
+              <p className="text-gray-600 text-center">{block.content.description}</p>
+            )}
+            <div className="aspect-video">
+              <iframe
+                src={block.content.url}
+                title={block.content.title || 'Video'}
+                className="w-full h-full rounded-lg"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'gallery':
+      return (
+        <div className={`${padding}`}>
+          <div className={`max-w-7xl ${alignment} space-y-8`}>
+            {block.content.headline && (
+              <h2 className="text-3xl font-bold text-gray-900 text-center">{block.content.headline}</h2>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {block.content.images?.map((image: any, idx: number) => (
+                <img
+                  key={idx}
+                  src={image.url}
+                  alt={image.alt || `Gallery image ${idx + 1}`}
+                  className="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'stats':
+      return (
+        <div className={`bg-blue-600 text-white ${padding}`}>
+          <div className={`max-w-7xl ${alignment} space-y-8`}>
+            {block.content.headline && (
+              <h2 className="text-3xl font-bold text-center">{block.content.headline}</h2>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {block.content.stats?.map((stat: any, idx: number) => (
+                <div key={idx} className="text-center">
+                  <div className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</div>
+                  <div className="text-blue-100">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+
     default:
       return (
         <div className={`${padding} ${alignment}`}>
