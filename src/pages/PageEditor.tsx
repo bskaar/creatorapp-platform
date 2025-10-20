@@ -26,6 +26,7 @@ import {
   X,
   BarChart3,
   Clock,
+  Download,
 } from 'lucide-react';
 import BlockEditor from '../components/BlockEditor';
 import TemplatePicker from '../components/TemplatePicker';
@@ -35,6 +36,7 @@ import AIColorPalette from '../components/AIColorPalette';
 import PageVersionHistory from '../components/PageVersionHistory';
 import SaveBlockModal from '../components/SaveBlockModal';
 import CustomBlocksLibrary from '../components/CustomBlocksLibrary';
+import ImportPageModal from '../components/ImportPageModal';
 import type { Database } from '../lib/database.types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
@@ -179,6 +181,7 @@ export default function PageEditor() {
   const [showVersionHistory, setShowVersionHistory] = useState(false);
   const [showSaveBlockModal, setShowSaveBlockModal] = useState(false);
   const [showCustomBlocksLibrary, setShowCustomBlocksLibrary] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [blockToSave, setBlockToSave] = useState<Block | null>(null);
   const [seoData, setSeoData] = useState({
     seo_title: '',
@@ -269,6 +272,11 @@ export default function PageEditor() {
     }
 
     setSaving(false);
+  };
+
+  const handleImportBlocks = (importedBlocks: Block[]) => {
+    setBlocks([...blocks, ...importedBlocks]);
+    setShowImportModal(false);
   };
 
   const addBlock = (type: string) => {
@@ -547,6 +555,15 @@ export default function PageEditor() {
               >
                 <Clock className="h-4 w-4" />
                 <span>History</span>
+              </button>
+
+              <button
+                onClick={() => setShowImportModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                title="Import page from URL"
+              >
+                <Download className="h-4 w-4" />
+                <span>Import</span>
               </button>
 
               <button
@@ -971,6 +988,13 @@ export default function PageEditor() {
             handleSave();
           }}
           onClose={() => setShowVersionHistory(false)}
+        />
+      )}
+
+      {showImportModal && (
+        <ImportPageModal
+          onClose={() => setShowImportModal(false)}
+          onImport={handleImportBlocks}
         />
       )}
     </div>
