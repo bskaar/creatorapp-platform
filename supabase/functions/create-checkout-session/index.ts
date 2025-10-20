@@ -72,7 +72,13 @@ Deno.serve(async (req: Request) => {
 
     const { data: product, error: productError } = await supabaseClient
       .from("products")
-      .select("*")
+      .select(`
+        *,
+        site:sites(
+          stripe_connect_account_id,
+          stripe_connect_charges_enabled
+        )
+      `)
       .eq("id", productId)
       .maybeSingle();
 
@@ -80,24 +86,41 @@ Deno.serve(async (req: Request) => {
       throw new Error("Product not found");
     }
 
+    const site = product.site as any;
+    if (!site?.stripe_connect_account_id) {
+      throw new Error("Stripe Connect not configured for this site");
+    }
+
+    if (!site?.stripe_connect_charges_enabled) {
+      throw new Error("Stripe Connect account not ready to accept charges");
+    }
+
+    const platformFeePercent = 10;
+    const applicationFeeAmount = Math.round(product.price_amount * quantity * 100 * (platformFeePercent / 100));
+
+    const params = new URLSearchParams({
+      "mode": "payment",
+      "success_url": successUrl || `${req.headers.get("origin")}/success?session_id={CHECKOUT_SESSION_ID}`,
+      "cancel_url": cancelUrl || `${req.headers.get("origin")}/cancel`,
+      "line_items[0][price_data][currency]": product.price_currency || "usd",
+      "line_items[0][price_data][product_data][name]": product.title,
+      "line_items[0][price_data][product_data][description]": product.description || "",
+      "line_items[0][price_data][unit_amount]": Math.round(product.price_amount * 100).toString(),
+      "line_items[0][quantity]": quantity.toString(),
+      "payment_intent_data[application_fee_amount]": applicationFeeAmount.toString(),
+      "payment_intent_data[transfer_data][destination]": site.stripe_connect_account_id,
+      "metadata[product_id]": productId,
+      "metadata[site_id]": product.site_id,
+      "metadata[user_id]": user.id,
+    });
+
     const response = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${stripeKey}`,
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams({
-        "mode": "payment",
-        "success_url": successUrl || `${req.headers.get("origin")}/success?session_id={CHECKOUT_SESSION_ID}`,
-        "cancel_url": cancelUrl || `${req.headers.get("origin")}/cancel`,
-        "line_items[0][price_data][currency]": "usd",
-        "line_items[0][price_data][product_data][name]": product.title,
-        "line_items[0][price_data][product_data][description]": product.description || "",
-        "line_items[0][price_data][unit_amount]": Math.round(product.price_amount * 100).toString(),
-        "line_items[0][quantity]": quantity.toString(),
-        "metadata[product_id]": productId,
-        "metadata[user_id]": user.id,
-      }).toString(),
+      body: params.toString(),
     });
 
     if (!response.ok) {

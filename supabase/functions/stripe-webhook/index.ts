@@ -64,6 +64,26 @@ Deno.serve(async (req: Request) => {
       console.log(`Order updated for session: ${session.id}`);
     }
 
+    if (event.type === "account.updated") {
+      const account = event.data.object;
+
+      const { error } = await supabaseClient
+        .from("sites")
+        .update({
+          stripe_connect_onboarding_complete: account.details_submitted,
+          stripe_connect_charges_enabled: account.charges_enabled,
+          stripe_connect_payouts_enabled: account.payouts_enabled,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("stripe_connect_account_id", account.id);
+
+      if (error) {
+        console.error("Failed to update Connect account:", error);
+      } else {
+        console.log(`Connect account updated: ${account.id}`);
+      }
+    }
+
     return new Response(
       JSON.stringify({ received: true }),
       {

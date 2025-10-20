@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import { CreditCard, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { supabase } from '../../lib/supabase';
+import StripeConnectOnboarding from './StripeConnectOnboarding';
 
 interface PaymentConfig {
   currency: string;
   tax_rate: number;
   tax_id: string;
-  stripe_publishable_key: string;
-  stripe_secret_key: string;
-  stripe_webhook_secret: string;
-  stripe_test_mode: boolean;
   refund_policy_url: string;
   terms_url: string;
 }
@@ -19,15 +16,11 @@ export default function PaymentSettings() {
   const { currentSite, refreshSite } = useSite();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState<'stripe' | 'general'>('general');
+  const [activeTab, setActiveTab] = useState<'stripe' | 'general'>('stripe');
   const [formData, setFormData] = useState<PaymentConfig>({
     currency: 'USD',
     tax_rate: 0,
     tax_id: '',
-    stripe_publishable_key: '',
-    stripe_secret_key: '',
-    stripe_webhook_secret: '',
-    stripe_test_mode: true,
     refund_policy_url: '',
     terms_url: '',
   });
@@ -39,10 +32,6 @@ export default function PaymentSettings() {
         currency: paymentConfig.currency || 'USD',
         tax_rate: paymentConfig.tax_rate || 0,
         tax_id: paymentConfig.tax_id || '',
-        stripe_publishable_key: paymentConfig.stripe_publishable_key || '',
-        stripe_secret_key: paymentConfig.stripe_secret_key || '',
-        stripe_webhook_secret: paymentConfig.stripe_webhook_secret || '',
-        stripe_test_mode: paymentConfig.stripe_test_mode ?? true,
         refund_policy_url: paymentConfig.refund_policy_url || '',
         terms_url: paymentConfig.terms_url || '',
       });
@@ -195,74 +184,7 @@ export default function PaymentSettings() {
         </div>
       )}
 
-      {activeTab === 'stripe' && (
-        <div className="space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-            <CreditCard className="h-5 w-5 text-blue-600 mt-0.5" />
-            <div>
-              <h4 className="font-medium text-blue-900 mb-1">Stripe Integration</h4>
-              <p className="text-sm text-blue-700">
-                Get your API keys from the{' '}
-                <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener noreferrer" className="underline">
-                  Stripe Dashboard
-                </a>
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Publishable Key
-            </label>
-            <input
-              type="text"
-              value={formData.stripe_publishable_key}
-              onChange={(e) => handleChange('stripe_publishable_key', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-              placeholder="pk_test_..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Secret Key
-            </label>
-            <input
-              type="password"
-              value={formData.stripe_secret_key}
-              onChange={(e) => handleChange('stripe_secret_key', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-              placeholder="sk_test_..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Webhook Secret
-            </label>
-            <input
-              type="password"
-              value={formData.stripe_webhook_secret}
-              onChange={(e) => handleChange('stripe_webhook_secret', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-              placeholder="whsec_..."
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="stripe-test-mode"
-              checked={formData.stripe_test_mode}
-              onChange={(e) => handleChange('stripe_test_mode', e.target.checked)}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <label htmlFor="stripe-test-mode" className="text-sm text-gray-700">
-              Test Mode (use test API keys)
-            </label>
-          </div>
-        </div>
-      )}
+      {activeTab === 'stripe' && <StripeConnectOnboarding />}
 
 
       <div className="pt-4 border-t border-gray-200">
