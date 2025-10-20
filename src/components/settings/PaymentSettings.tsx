@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CreditCard, Save, DollarSign, ShoppingBag } from 'lucide-react';
+import { CreditCard, Save } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { supabase } from '../../lib/supabase';
 
@@ -11,12 +11,6 @@ interface PaymentConfig {
   stripe_secret_key: string;
   stripe_webhook_secret: string;
   stripe_test_mode: boolean;
-  paypal_client_id: string;
-  paypal_secret: string;
-  paypal_sandbox: boolean;
-  shopify_store_url: string;
-  shopify_access_token: string;
-  shopify_sync_enabled: boolean;
   refund_policy_url: string;
   terms_url: string;
 }
@@ -25,7 +19,7 @@ export default function PaymentSettings() {
   const { currentSite, refreshSite } = useSite();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState<'stripe' | 'paypal' | 'shopify' | 'general'>('general');
+  const [activeTab, setActiveTab] = useState<'stripe' | 'general'>('general');
   const [formData, setFormData] = useState<PaymentConfig>({
     currency: 'USD',
     tax_rate: 0,
@@ -34,12 +28,6 @@ export default function PaymentSettings() {
     stripe_secret_key: '',
     stripe_webhook_secret: '',
     stripe_test_mode: true,
-    paypal_client_id: '',
-    paypal_secret: '',
-    paypal_sandbox: true,
-    shopify_store_url: '',
-    shopify_access_token: '',
-    shopify_sync_enabled: false,
     refund_policy_url: '',
     terms_url: '',
   });
@@ -55,12 +43,6 @@ export default function PaymentSettings() {
         stripe_secret_key: paymentConfig.stripe_secret_key || '',
         stripe_webhook_secret: paymentConfig.stripe_webhook_secret || '',
         stripe_test_mode: paymentConfig.stripe_test_mode ?? true,
-        paypal_client_id: paymentConfig.paypal_client_id || '',
-        paypal_secret: paymentConfig.paypal_secret || '',
-        paypal_sandbox: paymentConfig.paypal_sandbox ?? true,
-        shopify_store_url: paymentConfig.shopify_store_url || '',
-        shopify_access_token: paymentConfig.shopify_access_token || '',
-        shopify_sync_enabled: paymentConfig.shopify_sync_enabled || false,
         refund_policy_url: paymentConfig.refund_policy_url || '',
         terms_url: paymentConfig.terms_url || '',
       });
@@ -133,26 +115,6 @@ export default function PaymentSettings() {
             }`}
           >
             Stripe
-          </button>
-          <button
-            onClick={() => setActiveTab('paypal')}
-            className={`pb-3 px-2 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'paypal'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            PayPal
-          </button>
-          <button
-            onClick={() => setActiveTab('shopify')}
-            className={`pb-3 px-2 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'shopify'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Shopify
           </button>
         </nav>
       </div>
@@ -302,114 +264,6 @@ export default function PaymentSettings() {
         </div>
       )}
 
-      {activeTab === 'paypal' && (
-        <div className="space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-            <DollarSign className="h-5 w-5 text-blue-600 mt-0.5" />
-            <div>
-              <h4 className="font-medium text-blue-900 mb-1">PayPal Integration</h4>
-              <p className="text-sm text-blue-700">
-                Get your credentials from the{' '}
-                <a href="https://developer.paypal.com/dashboard/" target="_blank" rel="noopener noreferrer" className="underline">
-                  PayPal Developer Dashboard
-                </a>
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Client ID
-            </label>
-            <input
-              type="text"
-              value={formData.paypal_client_id}
-              onChange={(e) => handleChange('paypal_client_id', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-              placeholder="AYxxxxxxxxxxxxxxxxxxxxxxx"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Secret
-            </label>
-            <input
-              type="password"
-              value={formData.paypal_secret}
-              onChange={(e) => handleChange('paypal_secret', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-              placeholder="ELxxxxxxxxxxxxxxxxxxxxxxx"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="paypal-sandbox"
-              checked={formData.paypal_sandbox}
-              onChange={(e) => handleChange('paypal_sandbox', e.target.checked)}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <label htmlFor="paypal-sandbox" className="text-sm text-gray-700">
-              Sandbox Mode (for testing)
-            </label>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'shopify' && (
-        <div className="space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-            <ShoppingBag className="h-5 w-5 text-blue-600 mt-0.5" />
-            <div>
-              <h4 className="font-medium text-blue-900 mb-1">Shopify Integration</h4>
-              <p className="text-sm text-blue-700">
-                Sync products from your Shopify store (Growth tier and above)
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Store URL
-            </label>
-            <input
-              type="text"
-              value={formData.shopify_store_url}
-              onChange={(e) => handleChange('shopify_store_url', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="your-store.myshopify.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Access Token
-            </label>
-            <input
-              type="password"
-              value={formData.shopify_access_token}
-              onChange={(e) => handleChange('shopify_access_token', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-              placeholder="shpat_..."
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="shopify-sync"
-              checked={formData.shopify_sync_enabled}
-              onChange={(e) => handleChange('shopify_sync_enabled', e.target.checked)}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <label htmlFor="shopify-sync" className="text-sm text-gray-700">
-              Enable automatic product sync
-            </label>
-          </div>
-        </div>
-      )}
 
       <div className="pt-4 border-t border-gray-200">
         <button
