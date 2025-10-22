@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import { Settings as SettingsIcon, Palette, Users, Mail, CreditCard } from 'lucide-react';
+import { Settings as SettingsIcon, Palette, Users, Mail, CreditCard, Zap } from 'lucide-react';
 import GeneralSettings from '../components/settings/GeneralSettings';
 import TeamSettings from '../components/settings/TeamSettings';
 import EmailSettings from '../components/settings/EmailSettings';
 import PaymentSettings from '../components/settings/PaymentSettings';
+import SubscriptionSettings from '../components/settings/SubscriptionSettings';
 
-type SettingsTab = 'general' | 'team' | 'email' | 'payment';
+type SettingsTab = 'general' | 'subscription' | 'team' | 'email' | 'payment';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
 
   const tabs = [
     { id: 'general' as SettingsTab, label: 'General', icon: Palette },
+    { id: 'subscription' as SettingsTab, label: 'Subscription', icon: Zap },
     { id: 'team' as SettingsTab, label: 'Team', icon: Users },
     { id: 'email' as SettingsTab, label: 'Email', icon: Mail },
     { id: 'payment' as SettingsTab, label: 'Payment', icon: CreditCard },
@@ -49,6 +51,7 @@ export default function Settings() {
 
         <div className="p-6">
           {activeTab === 'general' && <GeneralSettings />}
+          {activeTab === 'subscription' && <SubscriptionSettings />}
           {activeTab === 'team' && <TeamSettings />}
           {activeTab === 'email' && <EmailSettings />}
           {activeTab === 'payment' && <PaymentSettings />}

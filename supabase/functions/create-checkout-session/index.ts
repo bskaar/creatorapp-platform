@@ -95,9 +95,6 @@ Deno.serve(async (req: Request) => {
       throw new Error("Stripe Connect account not ready to accept charges");
     }
 
-    const platformFeePercent = 10;
-    const applicationFeeAmount = Math.round(product.price_amount * quantity * 100 * (platformFeePercent / 100));
-
     const params = new URLSearchParams({
       "mode": "payment",
       "success_url": successUrl || `${req.headers.get("origin")}/success?session_id={CHECKOUT_SESSION_ID}`,
@@ -107,7 +104,7 @@ Deno.serve(async (req: Request) => {
       "line_items[0][price_data][product_data][description]": product.description || "",
       "line_items[0][price_data][unit_amount]": Math.round(product.price_amount * 100).toString(),
       "line_items[0][quantity]": quantity.toString(),
-      "payment_intent_data[application_fee_amount]": applicationFeeAmount.toString(),
+      "payment_intent_data[on_behalf_of]": site.stripe_connect_account_id,
       "payment_intent_data[transfer_data][destination]": site.stripe_connect_account_id,
       "metadata[product_id]": productId,
       "metadata[site_id]": product.site_id,

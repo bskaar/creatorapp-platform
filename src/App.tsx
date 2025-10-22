@@ -4,6 +4,7 @@ import { SiteProvider, useSite } from './contexts/SiteContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Pricing from './pages/Pricing';
 import SiteSetup from './pages/SiteSetup';
 import Dashboard from './pages/Dashboard';
 import Content from './pages/Content';
@@ -81,6 +82,7 @@ function AppRoutes() {
           </PublicRoute>
         }
       />
+      <Route path="/pricing" element={<Pricing />} />
       <Route
         path="/setup"
         element={
@@ -245,8 +247,8 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/pricing" replace />} />
+      <Route path="*" element={<Navigate to="/pricing" replace />} />
     </Routes>
   );
 }
