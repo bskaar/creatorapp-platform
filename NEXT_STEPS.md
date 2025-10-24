@@ -12,117 +12,68 @@ You've successfully added these secrets to Supabase:
 
 All edge functions now have access to these secrets and can communicate with Stripe and send emails.
 
-### ⚠️ Remaining Configuration
+### ✅ Stripe Products & Price IDs Configured
 
-**Stripe Products & Price IDs** - Not yet configured in database
-
-Your database currently shows:
+Your database now has:
 - starter: No Stripe IDs (correct - free plan)
-- growth: Missing stripe_price_id ❌
-- pro: Missing stripe_price_id ❌
+- growth: price_1SLpASB0OqX0uAjWLdOxur3P ✅
+- pro: price_1SLpDWB0OqX0uAjWYRYSSH8p ✅
 - enterprise: No Stripe IDs (correct - custom pricing)
 
 ---
 
 ## 🎯 Next Steps
 
-### Step 1: Create Stripe Products (5 minutes)
+### Step 1: Configure Stripe Connect (10 minutes)
 
-You need to create subscription products in Stripe Dashboard.
+Stripe Connect allows your users (site owners) to accept payments from their customers directly. This integration uses **Express accounts** which provide a balance between ease of integration and platform control.
 
-1. Go to: https://dashboard.stripe.com/test/products
+**Learn more about Stripe Connect**:
+- Overview and use cases: https://docs.stripe.com/connect
+- Account types: https://docs.stripe.com/connect/accounts
+- How Connect works: https://docs.stripe.com/connect/how-connect-works
+- Testing guide: https://docs.stripe.com/connect/testing
 
-2. Click **+ Add product**
+#### Enable Connect in Your Stripe Account
 
-3. Create **Growth Plan**:
-   - Name: `CreatorApp Growth`
-   - Description: `Unlimited products, 5 funnels, 10K contacts`
-   - Click **Add pricing**:
-     - Type: `Recurring`
-     - Price: `$99.00`
-     - Billing period: `Monthly`
-     - Currency: `USD`
-   - Click **Save product**
+1. **Go to Connect Overview**: https://dashboard.stripe.com/test/connect/accounts/overview
 
-4. **IMPORTANT**: Copy the Price ID
-   - After saving, you'll see a Price ID like: `price_1234567890abcdefg`
-   - Click to copy it
-   - Save it for Step 2
+2. **If this is your first time**, click **Get started**
 
-5. Create **Pro Plan**:
-   - Name: `CreatorApp Pro`
-   - Description: `Unlimited products & funnels, 50K contacts, 10 team members`
-   - Click **Add pricing**:
-     - Type: `Recurring`
-     - Price: `$199.00`
-     - Billing period: `Monthly`
-     - Currency: `USD`
-   - Click **Save product**
+3. **Choose your platform type**: Select **Platform or marketplace**
 
-6. **IMPORTANT**: Copy the Price ID
-   - Copy the Price ID for Pro plan
-   - Save it for Step 2
+4. **Complete the setup questionnaire**:
+   - What type of platform: **SaaS platform**
+   - How users accept payments: **Through your platform**
 
-### Step 2: Update Database with Stripe Price IDs (2 minutes)
+#### Configure OAuth Settings
 
-Once you have both Price IDs, run this SQL in Supabase SQL Editor:
+5. **Go to Connect Settings**: https://dashboard.stripe.com/test/settings/connect
 
-**Supabase SQL Editor**: https://supabase.com/dashboard/project/yhofzxqopjvrfufouqzt/sql/new
-
-```sql
--- Replace 'price_xxxxx' with your ACTUAL Price IDs from Step 1
-
--- Update Growth plan
-UPDATE subscription_plans
-SET stripe_price_id = 'price_xxxxxxxxxxxxx'  -- Your Growth Price ID
-WHERE name = 'growth';
-
--- Update Pro plan
-UPDATE subscription_plans
-SET stripe_price_id = 'price_xxxxxxxxxxxxx'  -- Your Pro Price ID
-WHERE name = 'pro';
-
--- Verify the update
-SELECT name, stripe_price_id FROM subscription_plans;
-```
-
-**You should see**:
-- starter: null (correct)
-- growth: price_1234... ✅
-- pro: price_5678... ✅
-- enterprise: null (correct)
-
-### Step 3: Configure Stripe Connect (10 minutes)
-
-This allows your users (site owners) to accept payments from their customers.
-
-1. Go to: https://dashboard.stripe.com/test/connect/accounts/overview
-
-2. If first time, click **Get started**
-
-3. Choose **Platform or marketplace**
-
-4. Complete the questionnaire:
-   - Platform type: SaaS platform
-   - Account type: Express (recommended)
-
-5. Go to Connect Settings: https://dashboard.stripe.com/test/settings/connect
-
-6. Under **OAuth settings**:
-   - Enable **OAuth for Express**
-   - Add redirect URI: `https://yhofzxqopjvrfufouqzt.supabase.co/functions/v1/stripe-connect-oauth`
-   - Save changes
+6. **Configure OAuth for Express accounts**:
+   - Find the **OAuth settings** section
+   - Enable **OAuth for Express accounts**
+   - Under **Redirects**, click **Add redirect URI**
+   - Add: `https://yhofzxqopjvrfufouqzt.supabase.co/functions/v1/stripe-connect-oauth`
+   - Click **Save changes**
 
 7. **Copy your Connect Client ID**:
-   - It looks like: `ca_xxxxxxxxxxxxx`
-   - You'll need to add this as a Supabase secret
+   - Still on the Connect Settings page
+   - Find your **Client ID** (starts with `ca_`)
+   - Click to copy it
+   - Example: `ca_xxxxxxxxxxxxx`
 
-8. Add Connect Client ID to Supabase:
+#### Add Client ID to Supabase
+
+8. **Configure the secret in Supabase**:
    - Go to: https://supabase.com/dashboard/project/yhofzxqopjvrfufouqzt/settings/functions
-   - Under **Secrets**, click **Add new secret**
+   - Scroll to **Secrets** section
+   - Click **Add new secret**
    - Name: `STRIPE_CONNECT_CLIENT_ID`
-   - Value: Your Client ID (e.g., `ca_xxxxxxxxxxxxx`)
+   - Value: Paste your Client ID (e.g., `ca_xxxxxxxxxxxxx`)
    - Click **Create secret**
+
+**Important**: This Client ID allows your edge function to initiate the OAuth flow that connects your users' Stripe accounts to your platform.
 
 ---
 
@@ -195,17 +146,28 @@ Once you've completed Steps 1-3, test everything:
 
 ### Test 3: Stripe Connect Onboarding
 
+This tests that your users can connect their Stripe accounts to start accepting payments.
+
+**Testing documentation**: https://docs.stripe.com/connect/testing
+
 1. **Go to Settings → Payment** in your app
 
 2. **Click "Connect with Stripe"**
 
 3. **Stripe Connect onboarding opens**:
-   - Fill in business details
-   - Use test data (it's Test Mode)
-   - Complete the form
+   - You'll see the Stripe-hosted onboarding flow
+   - Fill in business details using test data
+   - For phone verification, use SMS code: `000-000`
+   - Complete all required fields
 
-4. **Verify connection**:
-   - Should redirect back to Settings
+4. **Use test data for identity verification**:
+   - Test SSN: `000-00-0000`
+   - Test date of birth: `01/01/1901`
+   - Test address: Any valid US address format
+   - See full testing guide: https://docs.stripe.com/connect/testing
+
+5. **Verify connection**:
+   - After completion, you should redirect back to Settings
    - Payment tab should show "Connected" status
    - Check database:
      ```sql
@@ -217,9 +179,10 @@ Once you've completed Steps 1-3, test everything:
      WHERE stripe_connect_account_id IS NOT NULL;
      ```
 
-5. **Check Stripe Dashboard**:
+6. **Check Stripe Dashboard**:
    - Go to: https://dashboard.stripe.com/test/connect/accounts/overview
-   - Should see your connected account
+   - You should see your test connected account
+   - Click on it to view details and verification status
 
 ### Test 4: Customer Payment Flow (Optional - requires product setup)
 
@@ -241,10 +204,10 @@ Use this to track your progress:
 - [x] STRIPE_SECRET_KEY added to Supabase
 - [x] STRIPE_WEBHOOK_SECRET added to Supabase
 - [x] RESEND_API_KEY added to Supabase
-- [ ] Growth plan created in Stripe ($99/mo)
-- [ ] Pro plan created in Stripe ($199/mo)
-- [ ] Growth price_id updated in database
-- [ ] Pro price_id updated in database
+- [x] Growth plan created in Stripe ($99/mo)
+- [x] Pro plan created in Stripe ($199/mo)
+- [x] Growth price_id updated in database
+- [x] Pro price_id updated in database
 - [ ] Stripe Connect enabled
 - [ ] Connect OAuth configured
 - [ ] STRIPE_CONNECT_CLIENT_ID added to Supabase
@@ -297,9 +260,16 @@ Use this to track your progress:
 
 ## 📚 Additional Resources
 
+**Project Documentation:**
 - **STRIPE_SETUP_GUIDE.md** - Complete setup guide
 - **STRIPE_SETUP_CHECKLIST.md** - Quick checklist format
 - **WEBHOOK_SETUP_DETAILED.md** - Detailed webhook configuration
+
+**Official Stripe Connect Documentation:**
+- Overview and use cases: https://docs.stripe.com/connect
+- Account types explained: https://docs.stripe.com/connect/accounts
+- How Connect works: https://docs.stripe.com/connect/how-connect-works
+- Testing your integration: https://docs.stripe.com/connect/testing
 
 ---
 
