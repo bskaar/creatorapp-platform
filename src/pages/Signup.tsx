@@ -1,18 +1,27 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Loader2 } from 'lucide-react';
 
 export default function Signup() {
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [siteName, setSiteName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState('');
   const { signUp } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const plan = searchParams.get('plan');
+    if (plan) {
+      setSelectedPlan(plan);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +76,11 @@ export default function Signup() {
         console.error('Failed to create site member:', memberError);
       }
 
-      navigate('/subscription-select');
+      if (selectedPlan) {
+        navigate(`/subscription-select?plan=${selectedPlan}`);
+      } else {
+        navigate('/subscription-select');
+      }
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup');
       setLoading(false);
@@ -79,7 +92,16 @@ export default function Signup() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
         <div>
           <h2 className="text-3xl font-bold text-center text-gray-900">Create Your Account</h2>
-          <p className="mt-2 text-center text-gray-600">Start building your creator business</p>
+          <p className="mt-2 text-center text-gray-600">
+            {selectedPlan ? `Start your ${selectedPlan} plan trial` : 'Start building your creator business'}
+          </p>
+          {selectedPlan && (
+            <div className="mt-3 inline-flex items-center justify-center w-full">
+              <span className="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
+                14-day free trial • {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} Plan
+              </span>
+            </div>
+          )}
         </div>
 
         {error && (

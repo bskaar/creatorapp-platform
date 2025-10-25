@@ -1,14 +1,23 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Zap, TrendingUp, Building2, Loader2 } from 'lucide-react';
 import { useSubscription } from '../hooks/useSubscription';
 import { useSite } from '../contexts/SiteContext';
 
 export default function SubscriptionSelect() {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { subscribeToPlan, loading, error } = useSubscription();
   const { currentSite } = useSite();
   const [selectedPlan, setSelectedPlan] = useState<string>('');
+  const [preSelectedPlan, setPreSelectedPlan] = useState<string>('');
+
+  useEffect(() => {
+    const plan = searchParams.get('plan');
+    if (plan) {
+      setPreSelectedPlan(plan);
+    }
+  }, [searchParams]);
 
   const plans = [
     {
@@ -98,13 +107,13 @@ export default function SubscriptionSelect() {
               <div
                 key={plan.id}
                 className={`relative bg-white rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl ${
-                  plan.popular ? 'border-2 border-blue-500 ring-4 ring-blue-50' : 'border border-slate-200'
+                  plan.popular || preSelectedPlan === plan.id ? 'border-2 border-blue-500 ring-4 ring-blue-50' : 'border border-slate-200'
                 }`}
               >
-                {plan.popular && (
+                {(plan.popular || preSelectedPlan === plan.id) && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <span className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg">
-                      MOST POPULAR
+                      {preSelectedPlan === plan.id ? 'SELECTED' : 'MOST POPULAR'}
                     </span>
                   </div>
                 )}
