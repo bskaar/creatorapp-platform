@@ -22,6 +22,7 @@ import Contacts from './pages/Contacts';
 import ContactDetail from './pages/ContactDetail';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
+import UserManagement from './pages/UserManagement';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -252,6 +253,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <Layout>
               <Settings />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/user-management"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <UserManagement />
             </Layout>
           </ProtectedRoute>
         }
