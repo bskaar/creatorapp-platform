@@ -51,6 +51,10 @@ export function useSubscription() {
       const data = await response.json();
 
       if (!response.ok) {
+        if (data.setup_url) {
+          setError(`Stripe is not configured. Please set up Stripe first: ${data.setup_url}`);
+          throw new Error(data.error || 'Failed to create subscription');
+        }
         throw new Error(data.error || 'Failed to create subscription');
       }
 
