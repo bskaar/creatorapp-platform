@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Pricing from './pages/Pricing';
 import SiteSetup from './pages/SiteSetup';
+import SubscriptionSelect from './pages/SubscriptionSelect';
 import Dashboard from './pages/Dashboard';
 import Content from './pages/Content';
 import ProductNew from './pages/ProductNew';
@@ -88,6 +89,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <SiteSetup />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/subscription-select"
+        element={
+          <ProtectedRoute>
+            <SubscriptionSelect />
           </ProtectedRoute>
         }
       />

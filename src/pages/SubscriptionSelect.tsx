@@ -1,0 +1,182 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Check, Zap, TrendingUp, Building2, Loader2 } from 'lucide-react';
+import { useSubscription } from '../hooks/useSubscription';
+import { useSite } from '../contexts/SiteContext';
+
+export default function SubscriptionSelect() {
+  const navigate = useNavigate();
+  const { subscribeToPlan, loading, error } = useSubscription();
+  const { currentSite } = useSite();
+  const [selectedPlan, setSelectedPlan] = useState<string>('');
+
+  const plans = [
+    {
+      id: 'starter',
+      name: 'Starter',
+      price: 29,
+      icon: Zap,
+      description: 'Perfect for solo creators',
+      features: [
+        '1 product, 1 funnel',
+        'Up to 2,500 contacts',
+        '5,000 emails/month',
+        'AI Page Builder (basic)',
+        'Stripe & PayPal integration',
+      ],
+    },
+    {
+      id: 'growth',
+      name: 'Growth',
+      price: 99,
+      icon: TrendingUp,
+      popular: true,
+      description: 'Best for growing creators',
+      features: [
+        'Unlimited products, 5 funnels',
+        'Up to 10,000 contacts',
+        '50,000 emails/month',
+        'AI Copywriter',
+        'Affiliate program',
+      ],
+    },
+    {
+      id: 'pro',
+      name: 'Pro',
+      price: 199,
+      icon: Building2,
+      description: 'For scaling businesses',
+      features: [
+        'Unlimited products & funnels',
+        'Up to 50,000 contacts',
+        '250,000 emails/month',
+        'AI Analytics',
+        '10 team members',
+      ],
+    },
+  ];
+
+  const handleSelectPlan = async (planId: string) => {
+    setSelectedPlan(planId);
+    try {
+      await subscribeToPlan(planId);
+    } catch (err) {
+      console.error('Failed to subscribe:', err);
+    }
+  };
+
+  const handleSkip = () => {
+    navigate('/dashboard');
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-12">
+      <div className="max-w-6xl w-full">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Choose Your Plan
+          </h1>
+          <p className="text-xl text-gray-600 mb-6">
+            Start your 14-day free trial. No credit card required.
+          </p>
+          <div className="inline-flex items-center space-x-2 bg-green-50 border border-green-200 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
+            <Check className="w-4 h-4" />
+            <span>14-day free trial • Cancel anytime</span>
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-center">
+            {error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {plans.map((plan) => {
+            const Icon = plan.icon;
+            return (
+              <div
+                key={plan.id}
+                className={`relative bg-white rounded-2xl shadow-lg transition-all duration-300 hover:shadow-2xl ${
+                  plan.popular ? 'border-2 border-blue-500 ring-4 ring-blue-50' : 'border border-slate-200'
+                }`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg">
+                      MOST POPULAR
+                    </span>
+                  </div>
+                )}
+
+                <div className="p-8">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+                    plan.popular
+                      ? 'bg-gradient-to-br from-blue-500 to-blue-600'
+                      : 'bg-gradient-to-br from-slate-600 to-slate-700'
+                  }`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {plan.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    {plan.description}
+                  </p>
+
+                  <div className="mb-6">
+                    <div className="flex items-baseline">
+                      <span className="text-4xl font-extrabold text-gray-900">
+                        ${plan.price}
+                      </span>
+                      <span className="text-gray-600 ml-2">/mo</span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">after trial ends</p>
+                  </div>
+
+                  <ul className="space-y-3 mb-6">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start text-sm">
+                        <Check className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handleSelectPlan(plan.id)}
+                    disabled={loading && selectedPlan === plan.id}
+                    className={`w-full py-3 px-4 rounded-xl font-semibold text-center transition-all duration-200 flex items-center justify-center ${
+                      plan.popular
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-blue-800'
+                        : 'bg-gray-900 text-white hover:bg-gray-800'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {loading && selectedPlan === plan.id ? (
+                      <>
+                        <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                        Starting Trial...
+                      </>
+                    ) : (
+                      'Start Free Trial'
+                    )}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="text-center">
+          <button
+            onClick={handleSkip}
+            className="text-gray-600 hover:text-gray-900 font-medium underline"
+          >
+            Skip for now, explore the dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

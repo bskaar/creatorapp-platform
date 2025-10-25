@@ -19,32 +19,58 @@ export default function Signup() {
     setError('');
     setLoading(true);
 
-    const { error: signUpError } = await signUp(email, password, fullName);
+    try {
+      const { error: signUpError } = await signUp(email, password, fullName);
 
-    if (signUpError) {
-      setError(signUpError.message);
-      setLoading(false);
-      return;
-    }
-
-    const { data: userData } = await supabase.auth.getUser();
-    if (userData.user) {
-      const slug = siteName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-
-      const { error: siteError } = await supabase.from('sites').insert({
-        name: siteName,
-        slug: slug,
-        owner_id: userData.user.id,
-        tier: 'launch',
-      });
-
-      if (siteError) {
-        setError('Failed to create site: ' + siteError.message);
+      if (signUpError) {
+        setError(signUpError.message);
         setLoading(false);
         return;
       }
 
-      navigate('/dashboard');
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        setError('Failed to get user data');
+        setLoading(false);
+        return;
+      }
+
+      const slug = siteName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+      const { data: siteData, error: siteError } = await supabase
+        .from('sites')
+        .insert({
+          name: siteName,
+          slug: slug,
+          owner_id: userData.user.id,
+          tier: 'launch',
+        })
+        .select()
+        .single();
+
+      if (siteError || !siteData) {
+        setError('Failed to create site: ' + siteError?.message);
+        setLoading(false);
+        return;
+      }
+
+      const { error: memberError } = await supabase
+        .from('site_members')
+        .insert({
+          site_id: siteData.id,
+          user_id: userData.user.id,
+          role: 'owner',
+          accepted_at: new Date().toISOString(),
+        });
+
+      if (memberError) {
+        console.error('Failed to create site member:', memberError);
+      }
+
+      navigate('/subscription-select');
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during signup');
+      setLoading(false);
     }
   };
 
