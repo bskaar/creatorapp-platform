@@ -50,6 +50,8 @@ export function useSubscription() {
 
       const data = await response.json();
 
+      console.log('Subscription response:', { status: response.status, data });
+
       if (!response.ok) {
         if (data.setup_url) {
           setError(`Stripe is not configured. Please set up Stripe first: ${data.setup_url}`);
@@ -59,7 +61,10 @@ export function useSubscription() {
       }
 
       if (data.url) {
+        console.log('Redirecting to Stripe Checkout:', data.url);
         window.location.href = data.url;
+      } else {
+        console.log('No redirect URL - free plan activated');
       }
 
       return data;
