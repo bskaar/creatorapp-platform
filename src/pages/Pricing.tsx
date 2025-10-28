@@ -1,7 +1,16 @@
-import { Check, Zap, TrendingUp, Building2, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Check, Zap, TrendingUp, Building2, ArrowRight, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Pricing() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/pricing');
+  };
+
   const tiers = [
     {
       name: "Starter",
@@ -100,18 +109,38 @@ export default function Pricing() {
             <span className="text-xl font-bold text-gray-900">CreatorApp</span>
           </Link>
           <div className="flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-gray-600 hover:text-gray-900 font-medium transition"
-            >
-              Log In
-            </Link>
-            <Link
-              to="/signup"
-              className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
-            >
-              Sign Up
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="text-gray-600 hover:text-gray-900 font-medium transition"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Log Out</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-600 hover:text-gray-900 font-medium transition"
+                >
+                  Log In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
