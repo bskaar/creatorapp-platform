@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Zap, TrendingUp, Building2, Loader2 } from 'lucide-react';
 import { useSubscription } from '../hooks/useSubscription';
@@ -11,9 +11,11 @@ export default function SubscriptionSelect() {
   const { currentSite, loading: siteLoading } = useSite();
   const [selectedPlan, setSelectedPlan] = useState<string>('');
   const [preSelectedPlan, setPreSelectedPlan] = useState<string>('');
+  const autoSubscribeAttempted = useRef(false);
 
   useEffect(() => {
     const plan = searchParams.get('plan');
+    console.log('Plan from URL:', plan);
     if (plan) {
       setPreSelectedPlan(plan);
     }
@@ -21,17 +23,20 @@ export default function SubscriptionSelect() {
 
   useEffect(() => {
     const autoSubscribe = async () => {
-      if (preSelectedPlan && currentSite && !loading && !selectedPlan) {
+      if (preSelectedPlan && currentSite && !autoSubscribeAttempted.current && !siteLoading) {
+        autoSubscribeAttempted.current = true;
         setSelectedPlan(preSelectedPlan);
+        console.log('Auto-subscribing to plan:', preSelectedPlan);
         try {
           await subscribeToPlan(preSelectedPlan);
         } catch (err) {
           console.error('Auto-subscribe failed:', err);
+          autoSubscribeAttempted.current = false;
         }
       }
     };
     autoSubscribe();
-  }, [preSelectedPlan, currentSite]);
+  }, [preSelectedPlan, currentSite, siteLoading]);
 
   if (siteLoading) {
     return (
