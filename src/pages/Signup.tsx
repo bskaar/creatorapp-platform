@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
 import { Loader2 } from 'lucide-react';
 
@@ -14,6 +15,7 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('');
   const { signUp } = useAuth();
+  const { refreshSites } = useSite();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,6 +77,9 @@ export default function Signup() {
       if (memberError) {
         console.error('Failed to create site member:', memberError);
       }
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await refreshSites();
 
       if (selectedPlan) {
         navigate(`/subscription-select?plan=${selectedPlan}`);
