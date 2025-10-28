@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
 import { DollarSign, Users, Mail, TrendingUp, FolderOpen, GitBranch, Video, ShoppingCart, Home, Zap, ArrowRight } from 'lucide-react';
+import SiteGuard from '../components/SiteGuard';
 
 interface Stats {
   revenue: number;
@@ -113,18 +114,8 @@ export default function Dashboard() {
     },
   ];
 
-  if (!currentSite) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">No Site Selected</h2>
-          <p className="text-gray-600">Please create a site to get started</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
+    <SiteGuard>
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -270,5 +261,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+    </SiteGuard>
   );
 }
