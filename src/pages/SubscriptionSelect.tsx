@@ -19,12 +19,38 @@ export default function SubscriptionSelect() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    const autoSubscribe = async () => {
+      if (preSelectedPlan && currentSite && !loading && !selectedPlan) {
+        setSelectedPlan(preSelectedPlan);
+        try {
+          await subscribeToPlan(preSelectedPlan);
+        } catch (err) {
+          console.error('Auto-subscribe failed:', err);
+        }
+      }
+    };
+    autoSubscribe();
+  }, [preSelectedPlan, currentSite]);
+
   if (siteLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="animate-spin h-12 w-12 text-blue-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading your account...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading && selectedPlan) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin h-12 w-12 text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Setting up your subscription...</p>
+          <p className="text-sm text-gray-500 mt-2">You'll be redirected to complete payment</p>
         </div>
       </div>
     );
