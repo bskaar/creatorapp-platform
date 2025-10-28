@@ -78,8 +78,8 @@ export default function Signup() {
         console.error('Failed to create site member:', memberError);
       }
 
-      await new Promise(resolve => setTimeout(resolve, 500));
       await refreshSites();
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       if (selectedPlan) {
         navigate(`/subscription-select?plan=${selectedPlan}`);

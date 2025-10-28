@@ -121,6 +121,11 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const refreshSites = async () => {
+    setLoading(true);
+    await loadSites();
+  };
+
   const value = {
     currentSite,
     sites,
@@ -128,7 +133,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     loading,
     needsSetup,
     switchSite,
-    refreshSites: loadSites,
+    refreshSites,
   };
 
   return <SiteContext.Provider value={value}>{children}</SiteContext.Provider>;
