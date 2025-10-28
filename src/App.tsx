@@ -47,6 +47,24 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function AuthenticatedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
+
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
@@ -88,17 +106,17 @@ function AppRoutes() {
       <Route
         path="/setup"
         element={
-          <ProtectedRoute>
+          <AuthenticatedRoute>
             <SiteSetup />
-          </ProtectedRoute>
+          </AuthenticatedRoute>
         }
       />
       <Route
         path="/subscription-select"
         element={
-          <ProtectedRoute>
+          <AuthenticatedRoute>
             <SubscriptionSelect />
-          </ProtectedRoute>
+          </AuthenticatedRoute>
         }
       />
       <Route
