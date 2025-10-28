@@ -8,7 +8,7 @@ export default function SubscriptionSelect() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { subscribeToPlan, loading, error } = useSubscription();
-  const { currentSite } = useSite();
+  const { currentSite, loading: siteLoading } = useSite();
   const [selectedPlan, setSelectedPlan] = useState<string>('');
   const [preSelectedPlan, setPreSelectedPlan] = useState<string>('');
 
@@ -18,6 +18,17 @@ export default function SubscriptionSelect() {
       setPreSelectedPlan(plan);
     }
   }, [searchParams]);
+
+  if (siteLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin h-12 w-12 text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading your account...</p>
+        </div>
+      </div>
+    );
+  }
 
   const plans = [
     {
