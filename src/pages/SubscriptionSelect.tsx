@@ -47,7 +47,6 @@ export default function SubscriptionSelect() {
           await subscribeToPlan(preSelectedPlan);
         } catch (err) {
           console.error('Auto-subscribe failed:', err);
-          autoSubscribeAttempted.current = false;
         }
       }
     };
