@@ -164,6 +164,13 @@ Deno.serve(async (req: Request) => {
         "subscription_data[metadata][plan_name]": planName,
       });
 
+      console.log('Creating checkout session with params:', {
+        mode: 'subscription',
+        customer: customerId,
+        price: plan.stripe_price_id,
+        trial_days: 14
+      });
+
       const response = await fetch("https://api.stripe.com/v1/checkout/sessions", {
         method: "POST",
         headers: {
@@ -174,11 +181,13 @@ Deno.serve(async (req: Request) => {
       });
 
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Stripe API error: ${error}`);
+        const errorText = await response.text();
+        console.error('Stripe checkout session error:', errorText);
+        throw new Error(`Stripe API error: ${errorText}`);
       }
 
       const session = await response.json();
+      console.log('Created checkout session:', { id: session.id, url: session.url, mode: session.mode });
 
       return new Response(
         JSON.stringify({
