@@ -23,6 +23,13 @@ export default function SubscriptionSelect() {
 
   useEffect(() => {
     const autoSubscribe = async () => {
+      console.log('Auto-subscribe check:', {
+        preSelectedPlan,
+        currentSite: !!currentSite,
+        autoSubscribeAttempted: autoSubscribeAttempted.current,
+        siteLoading
+      });
+
       if (preSelectedPlan && currentSite && !autoSubscribeAttempted.current && !siteLoading) {
         autoSubscribeAttempted.current = true;
         setSelectedPlan(preSelectedPlan);
@@ -36,7 +43,7 @@ export default function SubscriptionSelect() {
       }
     };
     autoSubscribe();
-  }, [preSelectedPlan, currentSite, siteLoading]);
+  }, [preSelectedPlan, currentSite, siteLoading, subscribeToPlan]);
 
   if (siteLoading) {
     return (
