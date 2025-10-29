@@ -70,11 +70,13 @@ export function useSubscription() {
       if (data.url) {
         console.log('Redirecting to Stripe Checkout:', data.url);
         window.location.href = data.url;
-      } else {
+        return data;
+      } else if (data.success) {
         console.log('No redirect URL - free plan activated');
+        return data;
+      } else {
+        throw new Error('Unexpected response from subscription service');
       }
-
-      return data;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
       setError(message);

@@ -26,7 +26,7 @@ export default function SubscriptionSelect() {
     if (preSelectedPlan && !currentSite && !siteLoading && !refreshAttempted.current) {
       console.log('Site not loaded, attempting refresh...');
       refreshAttempted.current = true;
-      refreshSites();
+      setTimeout(() => refreshSites(), 500);
     }
   }, [preSelectedPlan, currentSite, siteLoading, refreshSites]);
 
@@ -44,9 +44,15 @@ export default function SubscriptionSelect() {
         setSelectedPlan(preSelectedPlan);
         console.log('Auto-subscribing to plan:', preSelectedPlan);
         try {
-          await subscribeToPlan(preSelectedPlan);
+          const result = await subscribeToPlan(preSelectedPlan);
+          if (!result?.url) {
+            navigate('/dashboard');
+          }
         } catch (err) {
           console.error('Auto-subscribe failed:', err);
+          setTimeout(() => {
+            navigate('/pricing');
+          }, 3000);
         }
       }
     };
