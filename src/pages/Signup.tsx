@@ -79,7 +79,7 @@ export default function Signup() {
       }
 
       await refreshSites();
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       if (selectedPlan) {
         navigate(`/subscription-select?plan=${selectedPlan}`);
