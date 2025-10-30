@@ -77,10 +77,14 @@ export function useSubscription() {
           throw new Error('Invalid checkout URL received from server');
         }
 
-        // Force navigation using window.open with _self
-        // This bypasses any React Router interference
-        console.log('Opening checkout URL in current window...');
-        window.open(data.url, '_self');
+        // Use form submission which is never blocked by browsers
+        // This is the most reliable way to navigate to external URLs
+        console.log('Submitting form redirect to Stripe...');
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = data.url;
+        document.body.appendChild(form);
+        form.submit();
 
         // Keep loading true and return a never-resolving promise
         return new Promise(() => {});
