@@ -159,7 +159,7 @@ Deno.serve(async (req: Request) => {
         "cancel_url": `${req.headers.get("origin")}/pricing?subscription=canceled`,
         "line_items[0][price]": plan.stripe_price_id || "",
         "line_items[0][quantity]": "1",
-        "subscription_data[trial_period_days]": "14",
+        "payment_method_collection": "always",
         "subscription_data[metadata][site_id]": siteId,
         "subscription_data[metadata][plan_name]": planName,
       });
@@ -168,7 +168,7 @@ Deno.serve(async (req: Request) => {
         mode: 'subscription',
         customer: customerId,
         price: plan.stripe_price_id,
-        trial_days: 14
+        payment_method_collection: 'always'
       });
 
       const response = await fetch("https://api.stripe.com/v1/checkout/sessions", {
