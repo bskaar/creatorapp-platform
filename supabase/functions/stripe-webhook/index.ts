@@ -60,67 +60,148 @@ async function handleEvent(event: Stripe.Event) {
     return;
   }
 
-  if (!('customer' in stripeData)) {
-    return;
-  }
+  console.info(`Processing webhook event: ${event.type}`);
 
-  // for one time payments, we only listen for the checkout.session.completed event
-  if (event.type === 'payment_intent.succeeded' && event.data.object.invoice === null) {
-    return;
-  }
+  if (event.type === 'checkout.session.completed') {
+    const session = stripeData as Stripe.Checkout.Session;
+    const customerId = session.customer as string;
 
-  const { customer: customerId } = stripeData;
-
-  if (!customerId || typeof customerId !== 'string') {
-    console.error(`No customer received on event: ${JSON.stringify(event)}`);
-  } else {
-    let isSubscription = true;
-
-    if (event.type === 'checkout.session.completed') {
-      const { mode } = stripeData as Stripe.Checkout.Session;
-
-      isSubscription = mode === 'subscription';
-
-      console.info(`Processing ${isSubscription ? 'subscription' : 'one-time payment'} checkout session`);
+    if (!customerId) {
+      console.error('No customer ID in checkout session');
+      return;
     }
 
-    const { mode, payment_status } = stripeData as Stripe.Checkout.Session;
+    // Check if this is a platform subscription (has site_id in metadata)
+    const siteId = session.subscription_data?.metadata?.site_id;
 
-    if (isSubscription) {
-      console.info(`Starting subscription sync for customer: ${customerId}`);
+    if (siteId && session.mode === 'subscription') {
+      console.info(`Processing platform subscription for site: ${siteId}`);
+      await syncPlatformSubscription(customerId, siteId);
+      return;
+    }
+
+    // Otherwise handle as generic subscription/payment
+    if (session.mode === 'subscription') {
+      console.info(`Processing generic subscription for customer: ${customerId}`);
       await syncCustomerFromStripe(customerId);
-    } else if (mode === 'payment' && payment_status === 'paid') {
-      try {
-        // Extract the necessary information from the session
-        const {
-          id: checkout_session_id,
-          payment_intent,
-          amount_subtotal,
-          amount_total,
-          currency,
-        } = stripeData as Stripe.Checkout.Session;
-
-        // Insert the order into the stripe_orders table
-        const { error: orderError } = await supabase.from('stripe_orders').insert({
-          checkout_session_id,
-          payment_intent_id: payment_intent,
-          customer_id: customerId,
-          amount_subtotal,
-          amount_total,
-          currency,
-          payment_status,
-          status: 'completed', // assuming we want to mark it as completed since payment is successful
-        });
-
-        if (orderError) {
-          console.error('Error inserting order:', orderError);
-          return;
-        }
-        console.info(`Successfully processed one-time payment for session: ${checkout_session_id}`);
-      } catch (error) {
-        console.error('Error processing one-time payment:', error);
-      }
+    } else if (session.mode === 'payment' && session.payment_status === 'paid') {
+      await handleOneTimePayment(session);
     }
+    return;
+  }
+
+  // Handle subscription updates
+  if (event.type.startsWith('customer.subscription.')) {
+    const subscription = stripeData as Stripe.Subscription;
+    const customerId = subscription.customer as string;
+
+    // Check if this is a platform subscription
+    const siteId = subscription.metadata?.site_id;
+
+    if (siteId) {
+      console.info(`Updating platform subscription for site: ${siteId}`);
+      await syncPlatformSubscription(customerId, siteId);
+    } else {
+      console.info(`Updating generic subscription for customer: ${customerId}`);
+      await syncCustomerFromStripe(customerId);
+    }
+    return;
+  }
+
+  // Handle one-time payment success
+  if (event.type === 'payment_intent.succeeded' && stripeData.invoice === null) {
+    return;
+  }
+}
+
+async function handleOneTimePayment(session: Stripe.Checkout.Session) {
+  try {
+    const {
+      id: checkout_session_id,
+      payment_intent,
+      amount_subtotal,
+      amount_total,
+      currency,
+      payment_status,
+      customer: customerId,
+    } = session;
+
+    const { error: orderError } = await supabase.from('stripe_orders').insert({
+      checkout_session_id,
+      payment_intent_id: payment_intent as string,
+      customer_id: customerId as string,
+      amount_subtotal: amount_subtotal || 0,
+      amount_total: amount_total || 0,
+      currency: currency || 'usd',
+      payment_status: payment_status || 'unpaid',
+      status: 'completed',
+    });
+
+    if (orderError) {
+      console.error('Error inserting order:', orderError);
+      return;
+    }
+    console.info(`Successfully processed one-time payment for session: ${checkout_session_id}`);
+  } catch (error) {
+    console.error('Error processing one-time payment:', error);
+  }
+}
+
+async function syncPlatformSubscription(customerId: string, siteId: string) {
+  try {
+    console.info(`Syncing platform subscription for site ${siteId}, customer ${customerId}`);
+
+    // Fetch the latest subscription from Stripe
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customerId,
+      limit: 1,
+      status: 'all',
+    });
+
+    if (subscriptions.data.length === 0) {
+      console.error(`No subscription found for customer: ${customerId}`);
+      return;
+    }
+
+    const subscription = subscriptions.data[0];
+    console.info(`Found subscription: ${subscription.id}, status: ${subscription.status}`);
+
+    // Get the plan name from metadata or lookup by price_id
+    const planName = subscription.metadata?.plan_name;
+    let planId = null;
+
+    if (planName) {
+      const { data: plan } = await supabase
+        .from('subscription_plans')
+        .select('id')
+        .eq('name', planName)
+        .maybeSingle();
+
+      planId = plan?.id;
+    }
+
+    // Update the sites table with subscription info
+    const { error: updateError } = await supabase
+      .from('sites')
+      .update({
+        platform_stripe_customer_id: customerId,
+        platform_stripe_subscription_id: subscription.id,
+        platform_subscription_status: subscription.status as any,
+        platform_subscription_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        ...(planId && { platform_subscription_plan_id: planId }),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', siteId);
+
+    if (updateError) {
+      console.error('Error updating site with subscription:', updateError);
+      throw updateError;
+    }
+
+    console.info(`Successfully synced platform subscription for site: ${siteId}`);
+  } catch (error) {
+    console.error(`Failed to sync platform subscription:`, error);
+    throw error;
   }
 }
 
