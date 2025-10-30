@@ -77,10 +77,12 @@ export function useSubscription() {
           throw new Error('Invalid checkout URL received from server');
         }
 
-        // Redirect immediately - don't set loading to false
-        window.location.href = data.url;
+        // Force navigation using window.open with _self
+        // This bypasses any React Router interference
+        console.log('Opening checkout URL in current window...');
+        window.open(data.url, '_self');
 
-        // Keep loading true and don't return - we're navigating away
+        // Keep loading true and return a never-resolving promise
         return new Promise(() => {});
       } else if (data.success) {
         console.log('No redirect URL - free plan activated');
