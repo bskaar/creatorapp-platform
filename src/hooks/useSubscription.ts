@@ -77,14 +77,14 @@ export function useSubscription() {
           throw new Error('Invalid checkout URL received from server');
         }
 
-        // Use replace instead of href to prevent back button issues
-        // and wrap in setTimeout to ensure state updates complete
-        setTimeout(() => {
-          window.location.replace(data.url);
-        }, 0);
-        return data;
+        // Redirect immediately - don't set loading to false
+        window.location.href = data.url;
+
+        // Keep loading true and don't return - we're navigating away
+        return new Promise(() => {});
       } else if (data.success) {
         console.log('No redirect URL - free plan activated');
+        setLoading(false);
         return data;
       } else {
         console.error('Unexpected response:', data);
@@ -93,9 +93,8 @@ export function useSubscription() {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
       setError(message);
-      throw err;
-    } finally {
       setLoading(false);
+      throw err;
     }
   };
 
