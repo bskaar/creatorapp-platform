@@ -44,10 +44,11 @@ export default function SubscriptionSelect() {
         setSelectedPlan(preSelectedPlan);
         console.log('Auto-subscribing to plan:', preSelectedPlan);
         try {
-          const result = await subscribeToPlan(preSelectedPlan);
-          if (!result?.url) {
+          await subscribeToPlan(preSelectedPlan);
+          // If we reach here without redirect, go to dashboard (free plan)
+          setTimeout(() => {
             navigate('/dashboard');
-          }
+          }, 100);
         } catch (err) {
           console.error('Auto-subscribe failed:', err);
           const errorMessage = err instanceof Error ? err.message : 'Unknown error';

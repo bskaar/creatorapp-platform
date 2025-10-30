@@ -77,7 +77,11 @@ export function useSubscription() {
           throw new Error('Invalid checkout URL received from server');
         }
 
-        window.location.href = data.url;
+        // Use replace instead of href to prevent back button issues
+        // and wrap in setTimeout to ensure state updates complete
+        setTimeout(() => {
+          window.location.replace(data.url);
+        }, 0);
         return data;
       } else if (data.success) {
         console.log('No redirect URL - free plan activated');
