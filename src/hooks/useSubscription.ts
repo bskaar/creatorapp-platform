@@ -80,11 +80,17 @@ export function useSubscription() {
         // Use form submission which is never blocked by browsers
         // This is the most reliable way to navigate to external URLs
         console.log('Submitting form redirect to Stripe...');
+        console.log('Target URL:', data.url);
+
         const form = document.createElement('form');
         form.method = 'GET';
         form.action = data.url;
+        form.style.display = 'none';
         document.body.appendChild(form);
+
+        console.log('Form created and appended, submitting now...');
         form.submit();
+        console.log('Form submit called');
 
         // Keep loading true and return a never-resolving promise
         return new Promise(() => {});
