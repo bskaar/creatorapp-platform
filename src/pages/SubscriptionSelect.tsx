@@ -13,6 +13,7 @@ export default function SubscriptionSelect() {
   const [preSelectedPlan, setPreSelectedPlan] = useState<string>('');
   const autoSubscribeAttempted = useRef(false);
   const refreshAttempted = useRef(false);
+  const isRedirecting = useRef(false);
 
   useEffect(() => {
     const plan = searchParams.get('plan');
@@ -41,16 +42,19 @@ export default function SubscriptionSelect() {
 
       if (preSelectedPlan && currentSite && !autoSubscribeAttempted.current && !siteLoading) {
         autoSubscribeAttempted.current = true;
+        isRedirecting.current = true;
         setSelectedPlan(preSelectedPlan);
         console.log('Auto-subscribing to plan:', preSelectedPlan);
         try {
           await subscribeToPlan(preSelectedPlan);
           // If we reach here without redirect, go to dashboard (free plan)
+          isRedirecting.current = false;
           setTimeout(() => {
             navigate('/dashboard');
           }, 100);
         } catch (err) {
           console.error('Auto-subscribe failed:', err);
+          isRedirecting.current = false;
           const errorMessage = err instanceof Error ? err.message : 'Unknown error';
           alert(`Subscription setup failed: ${errorMessage}\n\nPlease check:\n1. Your Stripe secret key is configured in Supabase\n2. The price IDs in the database match your Stripe account\n3. You're using the same mode (test/live) for both`);
           setTimeout(() => {
