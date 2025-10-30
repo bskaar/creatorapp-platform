@@ -69,12 +69,21 @@ export function useSubscription() {
 
       if (data.url) {
         console.log('Redirecting to Stripe Checkout:', data.url);
+
+        // Validate URL before redirecting
+        try {
+          new URL(data.url);
+        } catch (e) {
+          throw new Error('Invalid checkout URL received from server');
+        }
+
         window.location.href = data.url;
         return data;
       } else if (data.success) {
         console.log('No redirect URL - free plan activated');
         return data;
       } else {
+        console.error('Unexpected response:', data);
         throw new Error('Unexpected response from subscription service');
       }
     } catch (err) {

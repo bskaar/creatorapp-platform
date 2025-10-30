@@ -50,9 +50,11 @@ export default function SubscriptionSelect() {
           }
         } catch (err) {
           console.error('Auto-subscribe failed:', err);
+          const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+          alert(`Subscription setup failed: ${errorMessage}\n\nPlease check:\n1. Your Stripe secret key is configured in Supabase\n2. The price IDs in the database match your Stripe account\n3. You're using the same mode (test/live) for both`);
           setTimeout(() => {
             navigate('/pricing');
-          }, 3000);
+          }, 100);
         }
       }
     };
