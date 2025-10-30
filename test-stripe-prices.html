@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Stripe Prices</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Stripe Price Validation</h1>
+
+    <div id="status" class="mb-6 p-4 rounded-lg bg-blue-50 text-blue-800">
+      Checking Stripe prices...
+    </div>
+
+    <div id="results" class="space-y-4"></div>
+
+    <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <h3 class="font-bold mb-2">If prices don't exist, create them:</h3>
+      <ol class="list-decimal ml-6 space-y-2">
+        <li>Go to <a href="https://dashboard.stripe.com/test/products" target="_blank" class="text-blue-600 underline">Stripe Products</a></li>
+        <li>Create a product called "Growth Plan" with price $99/month recurring</li>
+        <li>Create a product called "Pro Plan" with price $199/month recurring</li>
+        <li>Copy the Price IDs (they start with "price_")</li>
+        <li>Update the subscription_plans table with these Price IDs</li>
+      </ol>
+    </div>
+  </div>
+
+  <script type="module">
+    const SUPABASE_URL = 'https://yhofzxqopjvrfufouqzt.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlob2Z6eHFvcGp2cmZ1Zm91cXp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NDY0MjQsImV4cCI6MjA3NjIyMjQyNH0.fyEbXus0074krCU60HOJ6GMzfHUTcFuhKagUUr91m_0';
+
+    async function testPrices() {
+      const statusDiv = document.getElementById('status');
+      const resultsDiv = document.getElementById('results');
+
+      try {
+        // Fetch plans from database
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/subscription_plans?is_active=eq.true&select=*`, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        });
+
+        const plans = await response.json();
+
+        statusDiv.innerHTML = `<span class="font-bold">Found ${plans.length} active plans</span>`;
+
+        for (const plan of plans) {
+          const planDiv = document.createElement('div');
+          planDiv.className = 'p-4 border rounded-lg';
+
+          if (!plan.stripe_price_id) {
+            planDiv.classList.add('bg-gray-100', 'border-gray-300');
+            planDiv.innerHTML = `
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-bold">${plan.display_name}</h3>
+                  <p class="text-sm text-gray-600">$${plan.price_monthly}/month</p>
+                </div>
+                <span class="px-3 py-1 bg-gray-500 text-white rounded-full text-sm">No Price ID</span>
+              </div>
+              <p class="mt-2 text-sm text-gray-600">This plan doesn't have a Stripe Price ID configured.</p>
+            `;
+          } else {
+            planDiv.classList.add('bg-white', 'border-gray-200');
+            planDiv.innerHTML = `
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-bold">${plan.display_name}</h3>
+                  <p class="text-sm text-gray-600">$${plan.price_monthly}/month</p>
+                </div>
+                <span class="px-3 py-1 bg-blue-500 text-white rounded-full text-sm">Configured</span>
+              </div>
+              <p class="mt-2 text-sm font-mono text-xs bg-gray-100 p-2 rounded">${plan.stripe_price_id}</p>
+              <p class="mt-2 text-sm text-orange-600">⚠️ Verify this Price ID exists in your Stripe Dashboard</p>
+            `;
+          }
+
+          resultsDiv.appendChild(planDiv);
+        }
+      } catch (error) {
+        statusDiv.innerHTML = `<span class="text-red-600 font-bold">Error: ${error.message}</span>`;
+      }
+    }
+
+    testPrices();
+  </script>
+</body>
+</html>
