@@ -102,7 +102,14 @@ function AppRoutes() {
           </PublicRoute>
         }
       />
-      <Route path="/pricing" element={<Pricing />} />
+      <Route
+        path="/pricing"
+        element={
+          <PublicRoute>
+            <Pricing />
+          </PublicRoute>
+        }
+      />
       <Route
         path="/setup"
         element={
@@ -285,8 +292,8 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/pricing" replace />} />
-      <Route path="*" element={<Navigate to="/pricing" replace />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
