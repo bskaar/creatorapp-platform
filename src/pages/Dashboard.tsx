@@ -13,6 +13,13 @@ interface Stats {
   upcomingWebinars: number;
 }
 
+interface PlanLimits {
+  max_products: number | null;
+  max_contacts: number | null;
+  max_funnels: number | null;
+  max_emails_per_month: number | null;
+}
+
 export default function Dashboard() {
   const { currentSite, loading: siteLoading } = useSite();
   const [stats, setStats] = useState<Stats>({
@@ -24,12 +31,19 @@ export default function Dashboard() {
     upcomingWebinars: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<string>('Launch');
+  const [planLimits, setPlanLimits] = useState<PlanLimits>({
+    max_products: 3,
+    max_contacts: 10000,
+    max_funnels: 3,
+    max_emails_per_month: 50000,
+  });
 
   useEffect(() => {
     if (!currentSite) return;
 
     const loadStats = async () => {
-      const [ordersResult, contactsResult, productsResult, funnelsResult, webinarsResult] = await Promise.all([
+      const [ordersResult, contactsResult, productsResult, funnelsResult, webinarsResult, planResult] = await Promise.all([
         supabase
           .from('orders')
           .select('amount')
@@ -55,9 +69,27 @@ export default function Dashboard() {
           .select('id', { count: 'exact', head: true })
           .eq('site_id', currentSite.id)
           .in('status', ['scheduled', 'live']),
+        supabase
+          .from('subscription_plans')
+          .select('display_name, limits')
+          .eq('id', currentSite.platform_subscription_plan_id)
+          .maybeSingle(),
       ]);
 
       const totalRevenue = ordersResult.data?.reduce((sum, order) => sum + Number(order.amount), 0) || 0;
+
+      if (planResult.data?.display_name) {
+        setSubscriptionPlan(planResult.data.display_name);
+      }
+
+      if (planResult.data?.limits) {
+        setPlanLimits({
+          max_products: planResult.data.limits.max_products ?? null,
+          max_contacts: planResult.data.limits.max_contacts ?? null,
+          max_funnels: planResult.data.limits.max_funnels ?? null,
+          max_emails_per_month: planResult.data.limits.max_emails_per_month ?? null,
+        });
+      }
 
       setStats({
         revenue: totalRevenue,
@@ -143,11 +175,11 @@ export default function Dashboard() {
           <p className="text-gray-600 mt-1">Welcome back to {currentSite.name}</p>
         </div>
         <div className="flex items-center space-x-3">
-          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium capitalize">
-            {currentSite.tier} Plan
+          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+            {subscriptionPlan} Plan
           </span>
           <Link
-            to="/pricing"
+            to="/settings"
             className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl group"
           >
             <Zap className="w-4 h-4" />
@@ -238,13 +270,17 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">Contacts</span>
-                <span className="text-sm text-gray-900">{stats.contacts} / {currentSite.tier === 'launch' ? '10,000' : currentSite.tier === 'growth' ? '50,000' : '250,000'}</span>
+                <span className="text-sm text-gray-900">
+                  {stats.contacts.toLocaleString()} / {planLimits.max_contacts ? planLimits.max_contacts.toLocaleString() : 'Unlimited'}
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-blue-600 h-2 rounded-full transition-all"
                   style={{
-                    width: `${Math.min((stats.contacts / (currentSite.tier === 'launch' ? 10000 : currentSite.tier === 'growth' ? 50000 : 250000)) * 100, 100)}%`
+                    width: planLimits.max_contacts
+                      ? `${Math.min((stats.contacts / planLimits.max_contacts) * 100, 100)}%`
+                      : '5%'
                   }}
                 />
               </div>
@@ -253,13 +289,17 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">Products</span>
-                <span className="text-sm text-gray-900">{stats.products} / {currentSite.tier === 'launch' ? '3' : 'Unlimited'}</span>
+                <span className="text-sm text-gray-900">
+                  {stats.products} / {planLimits.max_products ?? 'Unlimited'}
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-orange-600 h-2 rounded-full transition-all"
                   style={{
-                    width: currentSite.tier === 'launch' ? `${Math.min((stats.products / 3) * 100, 100)}%` : '100%'
+                    width: planLimits.max_products
+                      ? `${Math.min((stats.products / planLimits.max_products) * 100, 100)}%`
+                      : '5%'
                   }}
                 />
               </div>
@@ -268,12 +308,18 @@ export default function Dashboard() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">Emails This Month</span>
-                <span className="text-sm text-gray-900">{stats.emailsSent.toLocaleString()} / 50,000</span>
+                <span className="text-sm text-gray-900">
+                  {stats.emailsSent.toLocaleString()} / {planLimits.max_emails_per_month ? planLimits.max_emails_per_month.toLocaleString() : 'Unlimited'}
+                </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-purple-600 h-2 rounded-full transition-all"
-                  style={{ width: `${Math.min((stats.emailsSent / 50000) * 100, 100)}%` }}
+                  style={{
+                    width: planLimits.max_emails_per_month
+                      ? `${Math.min((stats.emailsSent / planLimits.max_emails_per_month) * 100, 100)}%`
+                      : '5%'
+                  }}
                 />
               </div>
             </div>
