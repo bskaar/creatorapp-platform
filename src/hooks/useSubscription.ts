@@ -77,15 +77,12 @@ export function useSubscription() {
           throw new Error('Invalid checkout URL received from server');
         }
 
-        // Use window.location.href for direct navigation
-        console.log('Redirecting to Stripe Checkout via window.location.href');
+        // Immediate redirect - no setTimeout to ensure it's synchronous with user action
+        console.log('Redirecting to Stripe Checkout immediately');
         console.log('Target URL:', data.url);
 
-        // Use setTimeout to ensure all state updates complete first
-        setTimeout(() => {
-          console.log('Executing redirect now...');
-          window.location.href = data.url;
-        }, 100);
+        // Direct assignment - most reliable method
+        window.location.href = data.url;
 
         // Keep loading true and return a never-resolving promise
         return new Promise(() => {});
