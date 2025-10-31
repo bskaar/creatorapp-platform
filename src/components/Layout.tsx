@@ -32,7 +32,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/login');
+    navigate('/');
   };
 
   const navigation = [
