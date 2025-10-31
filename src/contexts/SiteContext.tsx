@@ -6,9 +6,13 @@ import type { Database } from '../lib/database.types';
 type Site = Database['public']['Tables']['sites']['Row'];
 type SiteMember = Database['public']['Tables']['site_members']['Row'];
 
+interface SiteWithPlan extends Site {
+  subscription_plan_name?: string;
+}
+
 interface SiteContextType {
-  currentSite: Site | null;
-  sites: Site[];
+  currentSite: SiteWithPlan | null;
+  sites: SiteWithPlan[];
   userRole: SiteMember['role'] | null;
   loading: boolean;
   needsSetup: boolean;
@@ -20,8 +24,8 @@ const SiteContext = createContext<SiteContextType | undefined>(undefined);
 
 export function SiteProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [currentSite, setCurrentSite] = useState<Site | null>(null);
-  const [sites, setSites] = useState<Site[]>([]);
+  const [currentSite, setCurrentSite] = useState<SiteWithPlan | null>(null);
+  const [sites, setSites] = useState<SiteWithPlan[]>([]);
   const [userRole, setUserRole] = useState<SiteMember['role'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [needsSetup, setNeedsSetup] = useState(false);
@@ -55,12 +59,26 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       memberSites = data || [];
     }
 
-    const allSites = [
+    const allSitesRaw = [
       ...(ownedSites || []),
       ...memberSites
     ].filter((site, index, self) =>
       index === self.findIndex((s) => s.id === site.id)
     ) as Site[];
+
+    const allSites: SiteWithPlan[] = await Promise.all(
+      allSitesRaw.map(async (site) => {
+        if (site.platform_subscription_plan_id) {
+          const { data: plan } = await supabase
+            .from('subscription_plans')
+            .select('display_name')
+            .eq('id', site.platform_subscription_plan_id)
+            .maybeSingle();
+          return { ...site, subscription_plan_name: plan?.display_name || 'Launch' };
+        }
+        return { ...site, subscription_plan_name: 'Launch' };
+      })
+    );
 
     setSites(allSites);
 
