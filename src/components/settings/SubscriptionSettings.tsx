@@ -120,7 +120,7 @@ export default function SubscriptionSettings() {
 
       {currentSite && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-bold text-gray-900">Current Plan</h3>
               <p className="text-gray-600 text-sm">
@@ -137,8 +137,6 @@ export default function SubscriptionSettings() {
                   className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                     currentSite.platform_subscription_status === 'active'
                       ? 'bg-green-100 text-green-800'
-                      : currentSite.platform_subscription_status === 'trialing'
-                      ? 'bg-blue-100 text-blue-800'
                       : 'bg-yellow-100 text-yellow-800'
                   }`}
                 >
@@ -147,15 +145,6 @@ export default function SubscriptionSettings() {
               )}
             </div>
           </div>
-
-          {currentSite.platform_trial_ends_at && (
-            <div className="bg-white rounded-lg p-3 border border-blue-200">
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Trial ends:</span>{' '}
-                {new Date(currentSite.platform_trial_ends_at).toLocaleDateString()}
-              </p>
-            </div>
-          )}
         </div>
       )}
 

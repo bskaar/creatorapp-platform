@@ -98,15 +98,8 @@ export default function Signup() {
         <div>
           <h2 className="text-3xl font-bold text-center text-gray-900">Create Your Account</h2>
           <p className="mt-2 text-center text-gray-600">
-            {selectedPlan ? `Start your ${selectedPlan} plan trial` : 'Start building your creator business'}
+            Start building your creator business
           </p>
-          {selectedPlan && (
-            <div className="mt-3 inline-flex items-center justify-center w-full">
-              <span className="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
-                14-day free trial • {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} Plan
-              </span>
-            </div>
-          )}
         </div>
 
         {error && (
