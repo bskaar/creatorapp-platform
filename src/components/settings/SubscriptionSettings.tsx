@@ -206,7 +206,11 @@ export default function SubscriptionSettings() {
                 </li>
                 <li className="flex items-start text-sm">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <span>{plan.limits.max_contacts.toLocaleString()} contacts</span>
+                  <span>
+                    {plan.limits.max_contacts
+                      ? `${plan.limits.max_contacts.toLocaleString()} contacts`
+                      : 'Unlimited contacts'}
+                  </span>
                 </li>
               </ul>
 
