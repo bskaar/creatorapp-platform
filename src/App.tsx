@@ -260,6 +260,26 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/commerce/products/new"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <ProductNew />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/commerce/products/:id"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <ProductDetail />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/webinars"
         element={
           <ProtectedRoute>
