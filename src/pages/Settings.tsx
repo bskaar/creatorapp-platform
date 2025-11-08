@@ -27,15 +27,15 @@ export default function Settings() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="border-b border-gray-200">
-          <nav className="flex">
+        <div className="border-b border-gray-200 overflow-x-auto">
+          <nav className="flex min-w-min">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors ${
+                  className={`flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                     activeTab === tab.id
                       ? 'border-blue-600 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
