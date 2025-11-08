@@ -59,6 +59,10 @@ export default function StripeConnectOnboarding() {
         try {
           const errorJson = JSON.parse(errorText);
           errorMessage = errorJson.error || errorMessage;
+
+          if (errorMessage.includes('invalid_request_error') || errorMessage.includes('signed up for Connect')) {
+            errorMessage = 'Stripe Connect is not enabled for this API key. Please enable Stripe Connect in your Stripe Dashboard or use a Connect-enabled account.';
+          }
         } catch {
           errorMessage = errorText || errorMessage;
         }
@@ -127,29 +131,40 @@ export default function StripeConnectOnboarding() {
       )}
 
       {!isConnected ? (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h4 className="font-medium text-blue-900 mb-2">Connect Your Stripe Account</h4>
-          <p className="text-sm text-blue-700 mb-4">
-            You'll be redirected to Stripe to securely connect your account. This allows you to receive payments directly from customers.
-          </p>
-          <button
-            onClick={handleConnectStripe}
-            disabled={loading}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading ? (
-              <>
-                <Loader className="h-4 w-4 animate-spin" />
-                Connecting...
-              </>
-            ) : (
-              <>
-                <ExternalLink className="h-4 w-4" />
-                Connect with Stripe
-              </>
-            )}
-          </button>
-        </div>
+        <>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <h4 className="font-medium text-amber-900 mb-2 text-sm">Platform Requirements</h4>
+            <ul className="text-sm text-amber-800 space-y-1 list-disc list-inside">
+              <li>The platform must have a Stripe account with Connect enabled</li>
+              <li>The STRIPE_SECRET_KEY must be from a Connect-enabled account</li>
+              <li>Enable Connect at: <a href="https://dashboard.stripe.com/settings/connect" target="_blank" rel="noopener noreferrer" className="underline">Stripe Dashboard → Settings → Connect</a></li>
+            </ul>
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h4 className="font-medium text-blue-900 mb-2">Connect Your Stripe Account</h4>
+            <p className="text-sm text-blue-700 mb-4">
+              You'll be redirected to Stripe to securely connect your account. This allows you to receive payments directly from customers.
+            </p>
+            <button
+              onClick={handleConnectStripe}
+              disabled={loading}
+              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? (
+                <>
+                  <Loader className="h-4 w-4 animate-spin" />
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <ExternalLink className="h-4 w-4" />
+                  Connect with Stripe
+                </>
+              )}
+            </button>
+          </div>
+        </>
       ) : (
         <div className="space-y-4">
           <div className="bg-white border border-gray-200 rounded-lg p-6">
