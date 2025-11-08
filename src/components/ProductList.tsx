@@ -109,8 +109,7 @@ export default function ProductList() {
 
   const getProductTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      digital: 'Digital',
-      physical: 'Physical',
+      digital: 'Digital Product',
       course: 'Course',
       membership: 'Membership',
       coaching: 'Coaching',
@@ -140,7 +139,7 @@ export default function ProductList() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-600 mt-1">Manage your products and inventory</p>
+          <p className="text-gray-600 mt-1">Manage your courses, memberships, and digital products</p>
         </div>
         <Link
           to="/commerce/products/new"
@@ -188,10 +187,9 @@ export default function ProductList() {
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Types</option>
-              <option value="digital">Digital</option>
-              <option value="physical">Physical</option>
               <option value="course">Course</option>
               <option value="membership">Membership</option>
+              <option value="digital">Digital Product</option>
               <option value="coaching">Coaching</option>
             </select>
           </div>

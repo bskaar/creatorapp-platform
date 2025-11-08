@@ -15,21 +15,12 @@ export default function ProductNew() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    product_type: 'digital',
+    product_type: 'course',
     price_amount: '0',
     price_currency: 'USD',
     billing_type: 'one_time',
     billing_interval: '',
-    thumbnail_url: '',
     access_duration_days: '',
-    sku: '',
-    track_inventory: true,
-    stock_quantity: '0',
-    low_stock_threshold: '5',
-    allow_backorder: false,
-    weight: '',
-    weight_unit: 'lb',
-    requires_shipping: false,
     images: [] as string[],
   });
 
@@ -46,9 +37,6 @@ export default function ProductNew() {
     try {
       const productSettings = {
         images: formData.images,
-        requires_shipping: formData.requires_shipping,
-        weight: formData.weight ? parseFloat(formData.weight) : null,
-        weight_unit: formData.weight_unit,
       };
 
       const { data: product, error: insertError } = await supabase
@@ -62,7 +50,7 @@ export default function ProductNew() {
           price_currency: formData.price_currency,
           billing_type: formData.billing_type as 'one_time' | 'recurring',
           billing_interval: formData.billing_interval || null,
-          thumbnail_url: formData.images[0] || formData.thumbnail_url || null,
+          thumbnail_url: formData.images[0] || null,
           access_duration_days: formData.access_duration_days ? parseInt(formData.access_duration_days) : null,
           status: 'draft',
           settings: productSettings,
@@ -71,28 +59,6 @@ export default function ProductNew() {
         .single();
 
       if (insertError) throw insertError;
-
-      if (formData.track_inventory) {
-        const { error: variantError } = await supabase
-          .from('product_variants')
-          .insert({
-            product_id: product.id,
-            sku: formData.sku || `${product.id.substring(0, 8).toUpperCase()}`,
-            name: 'Default',
-            price: parseFloat(formData.price_amount),
-            stock_quantity: parseInt(formData.stock_quantity),
-            low_stock_threshold: parseInt(formData.low_stock_threshold),
-            track_inventory: formData.track_inventory,
-            allow_backorder: formData.allow_backorder,
-            weight: formData.weight ? parseFloat(formData.weight) : null,
-            weight_unit: formData.weight_unit,
-            requires_shipping: formData.requires_shipping,
-            is_active: true,
-            image_url: formData.images[0] || null,
-          });
-
-        if (variantError) throw variantError;
-      }
 
       navigate(`/commerce/products/${product.id}`);
     } catch (err: any) {
@@ -277,253 +243,134 @@ export default function ProductNew() {
             Product Details
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="product_type" className="block text-sm font-medium text-gray-700 mb-2">
-                Product Type *
-              </label>
-              <select
-                id="product_type"
-                name="product_type"
-                required
-                value={formData.product_type}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="digital">Digital Product</option>
-                <option value="physical">Physical Product</option>
-                <option value="course">Course</option>
-                <option value="membership">Membership</option>
-                <option value="coaching">Coaching</option>
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="sku" className="block text-sm font-medium text-gray-700 mb-2">
-                SKU
-              </label>
-              <input
-                type="text"
-                id="sku"
-                name="sku"
-                value={formData.sku}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Auto-generated if empty"
-              />
-            </div>
-          </div>
-
           <div>
-            <label htmlFor="billing_type" className="block text-sm font-medium text-gray-700 mb-2">
-              Billing Type *
+            <label htmlFor="product_type" className="block text-sm font-medium text-gray-700 mb-2">
+              Product Type *
             </label>
             <select
-              id="billing_type"
-              name="billing_type"
+              id="product_type"
+              name="product_type"
               required
-              value={formData.billing_type}
+              value={formData.product_type}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="one_time">One-Time Payment</option>
-              <option value="recurring">Recurring Subscription</option>
+              <option value="course">Course</option>
+              <option value="membership">Membership</option>
+              <option value="digital">Digital Product</option>
+              <option value="coaching">Coaching Session</option>
             </select>
+            <p className="text-sm text-gray-500 mt-1">
+              {formData.product_type === 'course' && 'Create a course with video lessons and content'}
+              {formData.product_type === 'membership' && 'Recurring access to content and community'}
+              {formData.product_type === 'digital' && 'Downloadable files like PDFs, templates, or guides'}
+              {formData.product_type === 'coaching' && 'One-on-one or group coaching sessions'}
+            </p>
           </div>
-        </div>
 
-        {formData.product_type === 'physical' && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
-            <h3 className="font-medium text-gray-900">Shipping Settings</h3>
-
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="requires_shipping"
-                name="requires_shipping"
-                checked={formData.requires_shipping}
-                onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="requires_shipping" className="ml-2 text-sm text-gray-700">
-                This product requires shipping
+          {formData.product_type === 'membership' ? (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Billing Type
               </label>
+              <div className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700">
+                Recurring Subscription (memberships are always recurring)
+              </div>
             </div>
-
-            {formData.requires_shipping && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-2">
-                    Weight
-                  </label>
-                  <input
-                    type="number"
-                    id="weight"
-                    name="weight"
-                    step="0.01"
-                    min="0"
-                    value={formData.weight}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="0.00"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="weight_unit" className="block text-sm font-medium text-gray-700 mb-2">
-                    Unit
-                  </label>
-                  <select
-                    id="weight_unit"
-                    name="weight_unit"
-                    value={formData.weight_unit}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="lb">Pounds (lb)</option>
-                    <option value="oz">Ounces (oz)</option>
-                    <option value="kg">Kilograms (kg)</option>
-                    <option value="g">Grams (g)</option>
-                  </select>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-4">
-          <h3 className="font-medium text-gray-900">Inventory Management</h3>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="track_inventory"
-              name="track_inventory"
-              checked={formData.track_inventory}
-              onChange={handleChange}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="track_inventory" className="ml-2 text-sm text-gray-700">
-              Track inventory for this product
-            </label>
-          </div>
-
-          {formData.track_inventory && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label htmlFor="stock_quantity" className="block text-sm font-medium text-gray-700 mb-2">
-                  Stock Quantity *
-                </label>
-                <input
-                  type="number"
-                  id="stock_quantity"
-                  name="stock_quantity"
-                  required
-                  min="0"
-                  value={formData.stock_quantity}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label htmlFor="low_stock_threshold" className="block text-sm font-medium text-gray-700 mb-2">
-                  Low Stock Alert
-                </label>
-                <input
-                  type="number"
-                  id="low_stock_threshold"
-                  name="low_stock_threshold"
-                  min="0"
-                  value={formData.low_stock_threshold}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div className="flex items-end">
-                <div className="flex items-center h-10">
-                  <input
-                    type="checkbox"
-                    id="allow_backorder"
-                    name="allow_backorder"
-                    checked={formData.allow_backorder}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="allow_backorder" className="ml-2 text-sm text-gray-700">
-                    Allow backorder
-                  </label>
-                </div>
-              </div>
+          ) : (
+            <div>
+              <label htmlFor="billing_type" className="block text-sm font-medium text-gray-700 mb-2">
+                Billing Type *
+              </label>
+              <select
+                id="billing_type"
+                name="billing_type"
+                required
+                value={formData.billing_type}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="one_time">One-Time Payment</option>
+                <option value="recurring">Recurring Subscription</option>
+              </select>
             </div>
           )}
         </div>
 
-        {formData.billing_type === 'recurring' && (
-          <div>
-            <label htmlFor="billing_interval" className="block text-sm font-medium text-gray-700 mb-2">
-              Billing Interval *
-            </label>
-            <select
-              id="billing_interval"
-              name="billing_interval"
-              required
-              value={formData.billing_interval}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">Select interval</option>
-              <option value="monthly">Monthly</option>
-              <option value="quarterly">Quarterly</option>
-              <option value="yearly">Yearly</option>
-            </select>
-          </div>
-        )}
+        <div className="space-y-6">
+          <h2 className="text-lg font-semibold text-gray-900">Pricing</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="price_amount" className="block text-sm font-medium text-gray-700 mb-2">
-              Price *
-            </label>
-            <div className="relative">
-              <span className="absolute left-4 top-2 text-gray-500">$</span>
-              <input
-                type="number"
-                id="price_amount"
-                name="price_amount"
+          {(formData.billing_type === 'recurring' || formData.product_type === 'membership') && (
+            <div>
+              <label htmlFor="billing_interval" className="block text-sm font-medium text-gray-700 mb-2">
+                Billing Interval *
+              </label>
+              <select
+                id="billing_interval"
+                name="billing_interval"
                 required
-                min="0"
-                step="0.01"
-                value={formData.price_amount}
+                value={formData.billing_interval}
                 onChange={handleChange}
-                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="0.00"
-              />
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select interval</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly (every 3 months)</option>
+                <option value="yearly">Yearly</option>
+              </select>
             </div>
-          </div>
+          )}
 
-          <div>
-            <label htmlFor="price_currency" className="block text-sm font-medium text-gray-700 mb-2">
-              Currency
-            </label>
-            <select
-              id="price_currency"
-              name="price_currency"
-              value={formData.price_currency}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="USD">USD - US Dollar</option>
-              <option value="EUR">EUR - Euro</option>
-              <option value="GBP">GBP - British Pound</option>
-              <option value="CAD">CAD - Canadian Dollar</option>
-              <option value="AUD">AUD - Australian Dollar</option>
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="price_amount" className="block text-sm font-medium text-gray-700 mb-2">
+                Price *
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-2 text-gray-500">$</span>
+                <input
+                  type="number"
+                  id="price_amount"
+                  name="price_amount"
+                  required
+                  min="0"
+                  step="0.01"
+                  value={formData.price_amount}
+                  onChange={handleChange}
+                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0.00"
+                />
+              </div>
+              {formData.billing_type === 'recurring' && formData.billing_interval && (
+                <p className="text-sm text-gray-500 mt-1">
+                  ${formData.price_amount} per {formData.billing_interval === 'monthly' ? 'month' : formData.billing_interval === 'yearly' ? 'year' : 'quarter'}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="price_currency" className="block text-sm font-medium text-gray-700 mb-2">
+                Currency
+              </label>
+              <select
+                id="price_currency"
+                name="price_currency"
+                value={formData.price_currency}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        {(formData.product_type === 'course' || formData.product_type === 'membership' || formData.product_type === 'digital') && (
-          <div>
+        {formData.product_type === 'course' && formData.billing_type === 'one_time' && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <label htmlFor="access_duration_days" className="block text-sm font-medium text-gray-700 mb-2">
-              Access Duration (Days)
+              Access Duration (Optional)
             </label>
             <input
               type="number"
@@ -533,9 +380,11 @@ export default function ProductNew() {
               value={formData.access_duration_days}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Leave empty for lifetime access"
+              placeholder="e.g., 365 for 1 year access"
             />
-            <p className="text-sm text-gray-500 mt-1">Leave empty for lifetime access</p>
+            <p className="text-sm text-gray-500 mt-1">
+              Leave empty for lifetime access. Set a number for limited-time access (useful for cohort-based courses).
+            </p>
           </div>
         )}
 
