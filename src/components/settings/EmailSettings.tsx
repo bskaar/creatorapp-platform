@@ -19,7 +19,7 @@ interface EmailConfig {
 }
 
 export default function EmailSettings() {
-  const { currentSite, refreshSite } = useSite();
+  const { currentSite, refreshSites } = useSite();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -84,7 +84,7 @@ export default function EmailSettings() {
 
       if (error) throw error;
 
-      await refreshSite();
+      await refreshSites();
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {

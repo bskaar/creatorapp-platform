@@ -4,7 +4,7 @@ import { useSite } from '../../contexts/SiteContext';
 import { supabase } from '../../lib/supabase';
 
 export default function StripeConnectOnboarding() {
-  const { currentSite, refreshSite } = useSite();
+  const { currentSite, refreshSites } = useSite();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,7 +105,7 @@ export default function StripeConnectOnboarding() {
         throw new Error(error.error || 'Failed to refresh status');
       }
 
-      await refreshSite();
+      await refreshSites();
     } catch (err: any) {
       console.error('Refresh error:', err);
       setError(err.message || 'Failed to refresh status');

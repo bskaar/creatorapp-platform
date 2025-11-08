@@ -8,7 +8,7 @@ interface GeneralSettingsProps {
 }
 
 export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
-  const { currentSite, refreshSite } = useSite();
+  const { currentSite, refreshSites } = useSite();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [formData, setFormData] = useState({
@@ -63,7 +63,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
 
       if (error) throw error;
 
-      await refreshSite();
+      await refreshSites();
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
       onSave?.();

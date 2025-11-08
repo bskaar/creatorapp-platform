@@ -13,7 +13,7 @@ interface PaymentConfig {
 }
 
 export default function PaymentSettings() {
-  const { currentSite, refreshSite } = useSite();
+  const { currentSite, refreshSites } = useSite();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<'stripe' | 'general'>('stripe');
@@ -63,7 +63,7 @@ export default function PaymentSettings() {
 
       if (error) throw error;
 
-      await refreshSite();
+      await refreshSites();
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (error) {
