@@ -36,30 +36,41 @@ export default function StripeConnectOnboarding() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-connect-oauth?action=create`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            siteId: currentSite.id,
-          }),
-        }
-      );
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-connect-oauth?action=create`;
+      console.log('Calling:', url);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          siteId: currentSite.id,
+        }),
+      });
+
+      console.log('Response status:', response.status);
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to start Stripe Connect');
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        let errorMessage = 'Failed to start Stripe Connect';
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.error || errorMessage;
+        } catch {
+          errorMessage = errorText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
+      console.log('Success, redirecting to:', data.onboardingUrl);
       window.location.href = data.onboardingUrl;
     } catch (err: any) {
       console.error('Stripe Connect error:', err);
-      setError(err.message || 'Failed to connect to Stripe');
+      setError(err.message || 'Failed to connect to Stripe. Please check console for details.');
     } finally {
       setLoading(false);
     }
