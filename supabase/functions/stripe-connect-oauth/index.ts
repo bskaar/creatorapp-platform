@@ -96,6 +96,8 @@ Deno.serve(async (req: Request) => {
         })
         .eq("id", siteId);
 
+      const appUrl = Deno.env.get("APP_URL") || "http://localhost:5173";
+
       const onboardingResponse = await fetch("https://api.stripe.com/v1/account_links", {
         method: "POST",
         headers: {
@@ -104,8 +106,8 @@ Deno.serve(async (req: Request) => {
         },
         body: new URLSearchParams({
           "account": account.id,
-          "refresh_url": `${url.origin}/settings?stripe_refresh=true`,
-          "return_url": `${url.origin}/settings?stripe_success=true`,
+          "refresh_url": `${appUrl}/settings?stripe_refresh=true`,
+          "return_url": `${appUrl}/settings?stripe_success=true`,
           "type": "account_onboarding",
         }).toString(),
       });
