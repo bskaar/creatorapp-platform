@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   ChevronDown,
+  Package,
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -41,6 +42,7 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Funnels & Pages', href: '/funnels', icon: GitBranch },
     { name: 'Email Marketing', href: '/email', icon: Mail },
     { name: 'Commerce', href: '/commerce', icon: ShoppingCart },
+    { name: 'Orders', href: '/orders', icon: Package },
     { name: 'Webinars', href: '/webinars', icon: Video },
     { name: 'Contacts & CRM', href: '/contacts', icon: Users },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },

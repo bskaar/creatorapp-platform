@@ -24,6 +24,10 @@ import ContactDetail from './pages/ContactDetail';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import UserManagement from './pages/UserManagement';
+import ProductPublic from './pages/ProductPublic';
+import Checkout from './pages/Checkout';
+import CheckoutSuccess from './pages/CheckoutSuccess';
+import Orders from './pages/Orders';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -280,6 +284,16 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/orders"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Orders />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/webinars"
         element={
           <ProtectedRoute>
@@ -339,6 +353,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/site/:siteId/product/:productId" element={<ProductPublic />} />
+      <Route path="/site/:siteId/checkout" element={<Checkout />} />
+      <Route path="/site/:siteId/success" element={<CheckoutSuccess />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
