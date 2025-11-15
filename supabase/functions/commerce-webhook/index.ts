@@ -351,17 +351,127 @@ async function sendOrderConfirmationEmail(order: any) {
 
   const { data: product } = await supabase
     .from('products')
-    .select('title')
+    .select('title, product_type, access_duration_days')
     .eq('id', order.product_id)
     .maybeSingle();
 
   const { data: site } = await supabase
     .from('sites')
-    .select('name')
+    .select('name, custom_domain')
     .eq('id', order.site_id)
     .maybeSingle();
 
-  console.log(`Would send email to ${order.billing_email}`);
-  console.log(`Product: ${product?.title}`);
-  console.log(`Site: ${site?.name}`);
+  if (!product || !site) {
+    console.error('Product or site not found for email');
+    return;
+  }
+
+  const resendApiKey = Deno.env.get('RESEND_API_KEY');
+  if (!resendApiKey) {
+    console.error('RESEND_API_KEY not configured');
+    return;
+  }
+
+  const customerName = order.metadata?.customer_name || 'Customer';
+  const orderAmount = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: order.currency || 'USD',
+  }).format(order.amount);
+
+  const accessInfo = product.access_duration_days
+    ? `You have ${product.access_duration_days} days of access to this ${product.product_type}.`
+    : `You have lifetime access to this ${product.product_type}.`;
+
+  const emailHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Order Confirmation</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">Thank You for Your Purchase!</h1>
+      </div>
+
+      <div style="background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+        <p style="font-size: 16px; margin-top: 0;">Hi ${customerName},</p>
+
+        <p style="font-size: 16px;">Your order has been confirmed and you now have access to your purchase!</p>
+
+        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea;">
+          <h2 style="margin-top: 0; color: #667eea; font-size: 20px;">Order Details</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Product:</strong></td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; text-align: right;">${product.title}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Type:</strong></td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; text-align: right; text-transform: capitalize;">${product.product_type}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Amount:</strong></td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; text-align: right;">${orderAmount}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0;"><strong>Order ID:</strong></td>
+              <td style="padding: 8px 0; text-align: right; font-family: monospace; font-size: 12px;">${order.external_order_id}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="background: #ecfdf5; border: 1px solid #10b981; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #065f46;"><strong>✓ Access Granted!</strong></p>
+          <p style="margin: 5px 0 0 0; color: #065f46;">${accessInfo}</p>
+        </div>
+
+        <p style="font-size: 16px;">You can access your purchase by logging in to your account.</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="https://${site.custom_domain || site.name + '.example.com'}" style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">Access Your Purchase</a>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+
+        <p style="font-size: 14px; color: #6b7280;">If you have any questions about your order, please reply to this email.</p>
+
+        <p style="font-size: 14px; color: #6b7280; margin-bottom: 0;">Best regards,<br><strong>${site.name}</strong></p>
+      </div>
+
+      <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
+        <p style="margin: 5px 0;">This is an automated email. Please do not reply directly.</p>
+        <p style="margin: 5px 0;">© ${new Date().getFullYear()} ${site.name}. All rights reserved.</p>
+      </div>
+    </body>
+    </html>
+  `;
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `${site.name} <orders@resend.dev>`,
+        to: [order.billing_email],
+        subject: `Order Confirmation - ${product.title}`,
+        html: emailHtml,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('Failed to send email:', error);
+      return;
+    }
+
+    const result = await response.json();
+    console.log(`Email sent successfully: ${result.id}`);
+  } catch (error: any) {
+    console.error('Error sending email:', error.message);
+  }
 }
