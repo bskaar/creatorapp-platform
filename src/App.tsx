@@ -17,6 +17,9 @@ import Funnels from './pages/Funnels';
 import FunnelDetail from './pages/FunnelDetail';
 import PageEditor from './pages/PageEditor';
 import Email from './pages/Email';
+import CampaignEditor from './pages/CampaignEditor';
+import SequenceEditor from './pages/SequenceEditor';
+import Automations from './pages/Automations';
 import Commerce from './pages/Commerce';
 import Webinars from './pages/Webinars';
 import Contacts from './pages/Contacts';
@@ -250,6 +253,36 @@ function AppRoutes() {
           <ProtectedRoute>
             <Layout>
               <Email />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/email/campaigns/:id"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <CampaignEditor />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/email/sequences/:id"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <SequenceEditor />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/automations"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Automations />
             </Layout>
           </ProtectedRoute>
         }

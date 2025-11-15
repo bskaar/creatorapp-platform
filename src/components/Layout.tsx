@@ -17,6 +17,7 @@ import {
   X,
   ChevronDown,
   Package,
+  Zap,
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -41,6 +42,7 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Content Library', href: '/content', icon: FolderOpen },
     { name: 'Funnels & Pages', href: '/funnels', icon: GitBranch },
     { name: 'Email Marketing', href: '/email', icon: Mail },
+    { name: 'Automations', href: '/automations', icon: Zap },
     { name: 'Commerce', href: '/commerce', icon: ShoppingCart },
     { name: 'Orders', href: '/orders', icon: Package },
     { name: 'Webinars', href: '/webinars', icon: Video },
