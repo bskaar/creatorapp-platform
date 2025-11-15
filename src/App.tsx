@@ -28,6 +28,7 @@ import ProductPublic from './pages/ProductPublic';
 import Checkout from './pages/Checkout';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import Orders from './pages/Orders';
+import OrderDetail from './pages/OrderDetail';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -289,6 +290,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <Layout>
               <Orders />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/orders/:id"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <OrderDetail />
             </Layout>
           </ProtectedRoute>
         }

@@ -15,10 +15,12 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'details' | 'variants' | 'images'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'variants' | 'images' | 'files'>('details');
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [downloadableFiles, setDownloadableFiles] = useState<Array<{name: string; url: string}>>([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -70,6 +72,7 @@ export default function ProductDetail() {
       sku: data.settings?.sku || '',
     });
     setImages(data.settings?.images || []);
+    setDownloadableFiles(data.settings?.downloadable_files || []);
     setLoading(false);
   };
 
@@ -84,6 +87,7 @@ export default function ProductDetail() {
     const productSettings = {
       ...product?.settings,
       images: images,
+      downloadable_files: downloadableFiles,
       sku: formData.sku,
     };
 
@@ -163,6 +167,46 @@ export default function ProductDetail() {
     setShowAIGenerator(false);
   };
 
+  const handleFileUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !product) return;
+
+    setUploadingFile(true);
+    const uploadedFiles: Array<{name: string; url: string}> = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${product.site_id}/files/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(fileName);
+
+        uploadedFiles.push({
+          name: file.name,
+          url: publicUrl
+        });
+      }
+
+      setDownloadableFiles(prev => [...prev, ...uploadedFiles]);
+    } catch (err: any) {
+      setError(err.message || 'Failed to upload files');
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setDownloadableFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -229,6 +273,18 @@ export default function ProductDetail() {
           >
             Images
           </button>
+          {(product?.product_type === 'digital' || product?.product_type === 'course') && (
+            <button
+              onClick={() => setActiveTab('files')}
+              className={`pb-4 px-1 border-b-2 font-medium transition ${
+                activeTab === 'files'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Files
+            </button>
+          )}
         </nav>
       </div>
 
@@ -467,7 +523,7 @@ export default function ProductDetail() {
             </button>
           </div>
         </form>
-      ) : (
+      ) : activeTab === 'images' ? (
         <div className="bg-white rounded-xl shadow-sm p-6 space-y-6">
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Images</h3>
@@ -538,6 +594,84 @@ export default function ProductDetail() {
                 <>
                   <Save className="h-5 w-5" />
                   <span>Save Images</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm p-6 space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Downloadable Files</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Upload files that customers will receive after purchase. Supports PDFs, videos, audio files, and more.
+            </p>
+
+            <div className="space-y-3">
+              {downloadableFiles.map((file, index) => (
+                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg group">
+                  <Package className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 truncate">{file.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{file.url}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(index)}
+                    className="p-2 text-gray-400 hover:text-red-600 transition opacity-0 group-hover:opacity-100"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+
+              <label className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-gray-300 hover:border-gray-400 rounded-lg cursor-pointer transition bg-gray-50 hover:bg-gray-100">
+                {uploadingFile ? (
+                  <>
+                    <Loader2 className="h-5 w-5 text-gray-400 animate-spin" />
+                    <span className="text-sm text-gray-600">Uploading...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-5 w-5 text-gray-400" />
+                    <span className="text-sm text-gray-600">Upload Files</span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  multiple
+                  onChange={(e) => handleFileUpload(e.target.files)}
+                  className="hidden"
+                  disabled={uploadingFile}
+                />
+              </label>
+            </div>
+
+            {downloadableFiles.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <Package className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                <p>No files uploaded yet</p>
+                <p className="text-xs">Customers will receive these files after purchase</p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-end pt-4 border-t">
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="animate-spin h-5 w-5" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="h-5 w-5" />
+                  <span>Save Files</span>
                 </>
               )}
             </button>
