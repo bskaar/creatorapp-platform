@@ -128,6 +128,9 @@ export default function CampaignEditor() {
       return;
     }
 
+    setSaving(true);
+    setError('');
+
     try {
       const { error: updateError } = await supabase
         .from('email_campaigns')
@@ -138,10 +141,28 @@ export default function CampaignEditor() {
 
       if (updateError) throw updateError;
 
-      alert('Campaign is being sent! This may take a few minutes.');
+      const broadcastUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/broadcast-campaign`;
+      const response = await fetch(broadcastUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ campaignId: campaign.id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send campaign');
+      }
+
+      const result = await response.json();
+      alert(`Campaign sent successfully! ${result.sentCount} emails delivered.`);
       navigate('/email');
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setSaving(false);
     }
   };
 
