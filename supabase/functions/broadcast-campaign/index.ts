@@ -16,11 +16,21 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { campaignId } = await req.json();
+    const { campaign_id, contact_ids } = await req.json();
 
-    if (!campaignId) {
+    if (!campaign_id) {
       return new Response(
-        JSON.stringify({ error: 'Campaign ID is required' }),
+        JSON.stringify({ error: 'campaign_id is required' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    if (!contact_ids || !Array.isArray(contact_ids) || contact_ids.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'contact_ids array is required and must not be empty' }),
         {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -36,7 +46,7 @@ Deno.serve(async (req: Request) => {
     const { data: campaign, error: campaignError } = await supabase
       .from('email_campaigns')
       .select('*')
-      .eq('id', campaignId)
+      .eq('id', campaign_id)
       .maybeSingle();
 
     if (campaignError || !campaign) {
@@ -49,25 +59,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (campaign.status !== 'sending') {
-      return new Response(
-        JSON.stringify({ error: 'Campaign must be in sending status' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
     const { data: contacts, error: contactsError } = await supabase
       .from('contacts')
       .select('id, email, first_name, last_name, metadata')
       .eq('site_id', campaign.site_id)
-      .eq('status', 'subscribed');
+      .in('id', contact_ids)
+      .eq('status', 'active');
 
     if (contactsError) throw contactsError;
 
-    console.log(`Broadcasting campaign ${campaignId} to ${contacts?.length || 0} contacts`);
+    console.log(`Broadcasting campaign ${campaign_id} to ${contacts?.length || 0} contacts`);
 
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
@@ -91,7 +92,15 @@ Deno.serve(async (req: Request) => {
     for (const contact of contacts || []) {
       try {
         const personalizedSubject = replaceVariables(campaign.subject, contact);
-        const personalizedContent = replaceVariables(campaign.content, contact);
+
+        let contentHtml = '';
+        if (typeof campaign.content === 'string') {
+          contentHtml = campaign.content;
+        } else if (campaign.content && typeof campaign.content === 'object') {
+          contentHtml = campaign.content.html || JSON.stringify(campaign.content);
+        }
+
+        const personalizedContent = replaceVariables(contentHtml, contact);
 
         const emailData = {
           from: campaign.from_email || 'noreply@resend.dev',
@@ -99,7 +108,7 @@ Deno.serve(async (req: Request) => {
           subject: personalizedSubject,
           html: personalizedContent,
           tags: [
-            { name: 'campaign_id', value: campaignId },
+            { name: 'campaign_id', value: campaign_id },
             { name: 'site_id', value: campaign.site_id },
           ],
         };
@@ -125,7 +134,7 @@ Deno.serve(async (req: Request) => {
 
         await supabase.from('email_logs').insert({
           site_id: campaign.site_id,
-          campaign_id: campaignId,
+          campaign_id: campaign_id,
           recipient: contact.email,
           subject: personalizedSubject,
           status: 'sent',
@@ -153,17 +162,18 @@ Deno.serve(async (req: Request) => {
       .update({
         status: 'sent',
         sent_count: sentCount,
+        recipients_count: contact_ids.length,
         sent_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq('id', campaignId);
+      .eq('id', campaign_id);
 
-    console.log(`Campaign ${campaignId} completed. Sent: ${sentCount}, Failed: ${failedCount}`);
+    console.log(`Campaign ${campaign_id} completed. Sent: ${sentCount}, Failed: ${failedCount}`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        campaignId,
+        campaign_id,
         sentCount,
         failedCount,
         errors: errors.slice(0, 10),
