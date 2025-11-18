@@ -1454,6 +1454,24 @@ Week 19:    🚀 MVP LAUNCH
 
 ### Phase 2: Enhanced Features (Months 4-6)
 
+**Commerce Enhancements:**
+- In-app refund processing UI
+  - Refund button in Order Detail page (site owner only)
+  - Edge function to process refunds via Stripe API
+  - Confirmation modal with reason dropdown
+  - Audit log to track who initiated refunds
+  - Partial refund support
+- Refund policy management
+  - Add `refund_policy` field to sites table
+  - Display in Settings → General
+  - Show on checkout page
+  - Include in order confirmation emails
+- Customer order portal (Phase 3 consideration)
+  - Customer login to view order history
+  - Request refund with reason selection
+  - Site owner approval workflow
+  - Email notifications for refund requests
+
 **Community & Social Features:**
 - Member forums and discussion boards
 - Private messaging between members
