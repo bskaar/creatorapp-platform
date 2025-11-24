@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play } from 'lucide-react';
+import Logo from '../components/Logo';
 
 export default function Landing() {
   return (
@@ -7,11 +8,9 @@ export default function Landing() {
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
         <div className="max-w-[1400px] mx-auto px-8">
           <div className="flex justify-between items-center h-20">
-            <div className="flex items-center">
-              <span className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                CreatorHub
-              </span>
-            </div>
+            <Link to="/" className="flex items-center">
+              <Logo variant="light" />
+            </Link>
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-text-primary hover:text-primary font-medium transition-colors relative group">
                 Features
@@ -369,9 +368,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="mb-6">
-                <span className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  CreatorHub
-                </span>
+                <Logo variant="light" />
               </div>
               <p className="text-sm text-gray-500">
                 The complete solution for modern creator businesses.
@@ -402,7 +399,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-sm text-center text-gray-600">
-            © 2025 CreatorHub. All rights reserved.
+            © 2025 CreatorApp. All rights reserved.
           </div>
         </div>
       </footer>

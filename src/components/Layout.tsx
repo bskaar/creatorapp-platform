@@ -2,6 +2,7 @@ import { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSite } from '../contexts/SiteContext';
+import Logo from './Logo';
 import {
   LayoutDashboard,
   FolderOpen,
@@ -63,7 +64,7 @@ export default function Layout({ children }: LayoutProps) {
           >
             {sidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
-          <h1 className="text-xl font-bold text-gray-900">Creator CMS</h1>
+          <Logo variant="light" className="scale-75" />
         </div>
       </div>
 
@@ -74,7 +75,9 @@ export default function Layout({ children }: LayoutProps) {
       >
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Creator CMS</h1>
+            <div className="mb-4">
+              <Logo variant="light" className="scale-90" />
+            </div>
 
             {currentSite && (
               <div className="relative">
