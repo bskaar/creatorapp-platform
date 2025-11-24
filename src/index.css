@@ -1,16 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary: #6C5CE7;
+    --primary-dark: #5F4FD6;
+    --accent: #FF6B9D;
+    --dark: #1A1A2E;
+    --text: #2D3748;
+    --text-secondary: #5A5A6E;
+    --light-bg: #FAFAFC;
+    --border: #F0F0F5;
+  }
+
   html {
     @apply antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--text);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    color: var(--dark);
+  }
+
   * {
-    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    --tw-ring-color: var(--primary);
   }
 }
 
