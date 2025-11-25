@@ -5,11 +5,11 @@ import TrafficAnalytics from '../components/analytics/TrafficAnalytics';
 
 export default function Analytics() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-          <p className="text-gray-600 mt-1">Track performance, conversions, and revenue</p>
+          <h1 className="text-4xl font-bold text-dark">Analytics</h1>
+          <p className="text-text-secondary mt-2 text-lg">Track performance, conversions, and revenue</p>
         </div>
       </div>
 

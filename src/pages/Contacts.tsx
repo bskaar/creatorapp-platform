@@ -294,23 +294,23 @@ export default function Contacts() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Contacts & CRM</h1>
-          <p className="text-gray-600 mt-1">Manage your contacts, leads, and customers</p>
+          <h1 className="text-4xl font-bold text-dark">Contacts & CRM</h1>
+          <p className="text-text-secondary mt-2 text-lg">Manage your contacts, leads, and customers</p>
         </div>
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setShowImportModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+            className="flex items-center space-x-2 px-4 py-2 border border-border text-gray-700 rounded-lg hover:bg-gray-50 transition"
           >
             <Upload className="h-5 w-5" />
             <span>Import</span>
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
           >
             <Plus className="h-5 w-5" />
             <span>Add Contact</span>
@@ -321,7 +321,7 @@ export default function Contacts() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Total Contacts</h3>
-          <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+          <p className="text-4xl font-bold text-dark">{stats.total}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Active</h3>
@@ -333,11 +333,11 @@ export default function Contacts() {
         </div>
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Tags</h3>
-          <p className="text-3xl font-bold text-gray-900">{stats.tagCount}</p>
+          <p className="text-4xl font-bold text-dark">{stats.tagCount}</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm">
+      <div className="bg-white rounded-card shadow-light border border-border">
         <div className="p-4 border-b flex items-center space-x-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -346,13 +346,13 @@ export default function Contacts() {
               placeholder="Search contacts..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -370,7 +370,7 @@ export default function Contacts() {
             </p>
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
             >
               Add First Contact
             </button>
@@ -509,7 +509,7 @@ export default function Contacts() {
                   </ul>
                 </div>
 
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                   {importing ? (
                     <div className="space-y-4">
                       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
@@ -526,7 +526,7 @@ export default function Contacts() {
                         onChange={handleFileImport}
                         className="hidden"
                       />
-                      <span className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                      <span className="inline-block px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition">
                         Choose File
                       </span>
                     </label>
@@ -583,7 +583,7 @@ jane@example.com,Jane,Smith,555-5678`}
                     setShowImportModal(false);
                     setImportResults(null);
                   }}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="w-full px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
                 >
                   Done
                 </button>
@@ -620,7 +620,7 @@ jane@example.com,Jane,Smith,555-5678`}
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="contact@example.com"
                 />
               </div>
@@ -634,7 +634,7 @@ jane@example.com,Jane,Smith,555-5678`}
                     type="text"
                     value={formData.first_name}
                     onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="John"
                   />
                 </div>
@@ -644,7 +644,7 @@ jane@example.com,Jane,Smith,555-5678`}
                     type="text"
                     value={formData.last_name}
                     onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Doe"
                   />
                 </div>
@@ -656,7 +656,7 @@ jane@example.com,Jane,Smith,555-5678`}
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="+1 (555) 000-0000"
                 />
               </div>
@@ -665,14 +665,14 @@ jane@example.com,Jane,Smith,555-5678`}
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : editingContact ? 'Update' : 'Add Contact'}
                 </button>

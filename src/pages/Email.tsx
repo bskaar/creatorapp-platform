@@ -198,18 +198,18 @@ export default function Email() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Email Marketing</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-4xl font-bold text-dark">Email Marketing</h1>
+          <p className="text-text-secondary mt-2 text-lg">
             Create campaigns, sequences, and automate your email marketing
           </p>
         </div>
         <div className="flex items-center space-x-3">
           <button
             onClick={() => handleCreateNew('campaign')}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
           >
             <Plus className="h-5 w-5" />
             <span>New Campaign</span>
@@ -220,7 +220,7 @@ export default function Email() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Total Sent</h3>
-          <p className="text-3xl font-bold text-gray-900">{stats.totalSent.toLocaleString()}</p>
+          <p className="text-4xl font-bold text-dark">{stats.totalSent.toLocaleString()}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Avg Open Rate</h3>
@@ -232,13 +232,13 @@ export default function Email() {
         </div>
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Active Sequences</h3>
-          <p className="text-3xl font-bold text-gray-900">
+          <p className="text-4xl font-bold text-dark">
             {sequences.filter((s) => s.status === 'active').length}
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm">
+      <div className="bg-white rounded-card shadow-light border border-border">
         <div className="border-b">
           <div className="flex space-x-8 px-6">
             <button
@@ -285,7 +285,7 @@ export default function Email() {
                 </p>
                 <button
                   onClick={() => handleCreateNew('campaign')}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
                 >
                   Create First Campaign
                 </button>
@@ -362,7 +362,7 @@ export default function Email() {
                 </p>
                 <button
                   onClick={() => handleCreateNew('sequence')}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
                 >
                   Create First Sequence
                 </button>
@@ -431,7 +431,7 @@ export default function Email() {
                 </p>
                 <button
                   onClick={() => handleCreateNew('template')}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
                 >
                   Create First Template
                 </button>
@@ -441,7 +441,7 @@ export default function Email() {
                 {templates.map((template) => (
                   <div
                     key={template.id}
-                    className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition"
+                    className="border border-border rounded-lg overflow-hidden hover:shadow-lg transition"
                   >
                     <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
                       <Mail className="h-12 w-12 text-gray-400" />
@@ -452,7 +452,7 @@ export default function Email() {
                         <p className="text-sm text-gray-600 mb-3">{template.subject}</p>
                       )}
                       <div className="flex items-center space-x-2">
-                        <button className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        <button className="flex-1 px-3 py-2 text-sm border border-border rounded-lg hover:bg-gray-50 transition">
                           Use Template
                         </button>
                         <button
@@ -498,7 +498,7 @@ export default function Email() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder={`My ${modalType}`}
                 />
               </div>
@@ -513,7 +513,7 @@ export default function Email() {
                     required={modalType !== 'sequence'}
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Enter email subject line"
                   />
                 </div>
@@ -528,7 +528,7 @@ export default function Email() {
                     <textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       rows={3}
                       placeholder="What is this sequence for?"
                     />
@@ -542,7 +542,7 @@ export default function Email() {
                       required
                       value={formData.triggerType}
                       onChange={(e) => setFormData({ ...formData, triggerType: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="manual">Manual</option>
                       <option value="tag_added">Tag Added</option>
@@ -559,14 +559,14 @@ export default function Email() {
                 <button
                   type="button"
                   onClick={() => setShowNewModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition disabled:opacity-50"
                 >
                   {saving ? 'Creating...' : 'Create'}
                 </button>

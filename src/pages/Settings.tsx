@@ -20,14 +20,14 @@ export default function Settings() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your site settings and preferences</p>
+        <h1 className="text-4xl font-bold text-dark">Settings</h1>
+        <p className="text-text-secondary mt-2 text-lg">Manage your site settings and preferences</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="border-b border-gray-200 overflow-x-auto">
+      <div className="bg-white rounded-card shadow-light overflow-hidden border border-border">
+        <div className="border-b border-border overflow-x-auto">
           <nav className="flex min-w-min">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -35,13 +35,13 @@ export default function Settings() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-2 px-6 py-4 border-b-2 font-semibold text-sm whitespace-nowrap transition-all ${
                     activeTab === tab.id
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-primary text-primary bg-gradient-to-b from-primary/5 to-transparent'
+                      : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-gradient-to-b hover:from-primary/5 hover:to-transparent'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-5 w-5" />
                   {tab.label}
                 </button>
               );
@@ -49,7 +49,7 @@ export default function Settings() {
           </nav>
         </div>
 
-        <div className="p-6">
+        <div className="p-8">
           {activeTab === 'general' && <GeneralSettings />}
           {activeTab === 'subscription' && <SubscriptionSettings />}
           {activeTab === 'team' && <TeamSettings />}

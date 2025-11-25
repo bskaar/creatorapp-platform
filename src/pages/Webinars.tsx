@@ -132,22 +132,22 @@ export default function Webinars() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Webinars</h1>
-          <p className="text-gray-600 mt-1">Schedule live and automated webinar events</p>
+          <h1 className="text-4xl font-bold text-dark">Webinars</h1>
+          <p className="text-text-secondary mt-2 text-lg">Schedule live and automated webinar events</p>
         </div>
         <button
           onClick={() => setShowNewModal(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
         >
           <Plus className="h-5 w-5" />
           <span>New Webinar</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm">
+      <div className="bg-white rounded-card shadow-light border border-border">
         <div className="border-b">
           <div className="flex space-x-8 px-6">
             <button
@@ -190,7 +190,7 @@ export default function Webinars() {
             <p className="text-gray-600 mb-6">Create your first webinar to engage with your audience live</p>
             <button
               onClick={() => setShowNewModal(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
             >
               Schedule Your First Webinar
             </button>
@@ -315,7 +315,7 @@ export default function Webinars() {
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Introduction to Product Marketing"
                 />
               </div>
@@ -326,7 +326,7 @@ export default function Webinars() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="What will attendees learn?"
                 />
               </div>
@@ -340,7 +340,7 @@ export default function Webinars() {
                     onChange={(e) =>
                       setFormData({ ...formData, webinar_type: e.target.value as any })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="live">Live</option>
                     <option value="automated">Automated</option>
@@ -359,7 +359,7 @@ export default function Webinars() {
                     onChange={(e) =>
                       setFormData({ ...formData, duration_minutes: parseInt(e.target.value) })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     min="15"
                     step="5"
                   />
@@ -376,7 +376,7 @@ export default function Webinars() {
                     required
                     value={formData.scheduled_at}
                     onChange={(e) => setFormData({ ...formData, scheduled_at: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -385,7 +385,7 @@ export default function Webinars() {
                   <select
                     value={formData.timezone}
                     onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="UTC">UTC</option>
                     <option value="America/New_York">Eastern Time</option>
@@ -407,7 +407,7 @@ export default function Webinars() {
                   required={formData.webinar_type === 'live'}
                   value={formData.stream_url}
                   onChange={(e) => setFormData({ ...formData, stream_url: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="https://youtube.com/live/..."
                 />
                 <p className="mt-1 text-sm text-gray-500">
@@ -428,7 +428,7 @@ export default function Webinars() {
                       max_attendees: e.target.value ? parseInt(e.target.value) : null,
                     })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Leave blank for unlimited"
                   min="1"
                 />
@@ -438,14 +438,14 @@ export default function Webinars() {
                 <button
                   type="button"
                   onClick={() => setShowNewModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition disabled:opacity-50"
                 >
                   {saving ? 'Creating...' : 'Create Webinar'}
                 </button>
