@@ -9,7 +9,7 @@ export default function Landing() {
         <div className="max-w-[1400px] mx-auto px-8">
           <div className="flex justify-between items-center h-20">
             <Link to="/" className="flex items-center">
-              <Logo variant="light" />
+              <Logo variant="light" className="scale-125" />
             </Link>
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-text-primary hover:text-primary font-medium transition-colors relative group">
