@@ -15,6 +15,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  FileText,
   X,
   ChevronDown,
   Package,
@@ -50,6 +51,11 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Contacts & CRM', href: '/contacts', icon: Users },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
+  ];
+
+  const adminMenuItems = [
+    { name: 'Marketing Pages', href: '/marketing-pages', icon: FileText },
+    { name: 'User Management', href: '/user-management', icon: Users },
   ];
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
@@ -131,26 +137,55 @@ export default function Layout({ children }: LayoutProps) {
             )}
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.href);
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                    active
-                      ? 'bg-gradient-to-r from-primary to-accent text-white shadow-light'
-                      : 'text-text-secondary hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 hover:text-text-primary'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span className="font-semibold">{item.name}</span>
-                </Link>
-              );
-            })}
+          <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+            <div className="space-y-1">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                      active
+                        ? 'bg-gradient-to-r from-primary to-accent text-white shadow-light'
+                        : 'text-text-secondary hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 hover:text-text-primary'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span className="font-semibold">{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="pt-4 border-t border-border">
+              <div className="px-4 mb-2">
+                <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">Admin</h3>
+              </div>
+              <div className="space-y-1">
+                {adminMenuItems.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      onClick={() => setSidebarOpen(false)}
+                      className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                        active
+                          ? 'bg-gradient-to-r from-primary to-accent text-white shadow-light'
+                          : 'text-text-secondary hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 hover:text-text-primary'
+                      }`}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span className="font-semibold">{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
           </nav>
 
           <div className="border-t border-border p-4">

@@ -32,6 +32,8 @@ import Checkout from './pages/Checkout';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
+import MarketingPage from './pages/MarketingPage';
+import MarketingPagesAdmin from './pages/MarketingPagesAdmin';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -397,6 +399,17 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/marketing-pages"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <MarketingPagesAdmin />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/pages/:slug" element={<MarketingPage />} />
       <Route path="/site/:siteId/product/:productId" element={<ProductPublic />} />
       <Route path="/site/:siteId/checkout" element={<Checkout />} />
       <Route path="/site/:siteId/success" element={<CheckoutSuccess />} />
