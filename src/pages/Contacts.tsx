@@ -288,7 +288,7 @@ export default function Contacts() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -303,7 +303,7 @@ export default function Contacts() {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setShowImportModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 border border-border text-gray-700 rounded-lg hover:bg-gray-50 transition"
+            className="flex items-center space-x-2 px-4 py-2 border border-border text-gray-700 rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition"
           >
             <Upload className="h-5 w-5" />
             <span>Import</span>
@@ -319,20 +319,20 @@ export default function Contacts() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Total Contacts</h3>
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
+          <h3 className="text-sm font-medium text-text-secondary mb-2 font-semibold">Total Contacts</h3>
           <p className="text-4xl font-bold text-dark">{stats.total}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Active</h3>
-          <p className="text-3xl font-bold text-green-600">{stats.active}</p>
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
+          <h3 className="text-sm font-medium text-text-secondary mb-2 font-semibold">Active</h3>
+          <p className="text-3xl font-bold bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">{stats.active}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Unsubscribed</h3>
-          <p className="text-3xl font-bold text-gray-600">{stats.unsubscribed}</p>
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
+          <h3 className="text-sm font-medium text-text-secondary mb-2 font-semibold">Unsubscribed</h3>
+          <p className="text-3xl font-bold text-text-secondary font-semibold">{stats.unsubscribed}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Tags</h3>
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
+          <h3 className="text-sm font-medium text-text-secondary mb-2 font-semibold">Tags</h3>
           <p className="text-4xl font-bold text-dark">{stats.tagCount}</p>
         </div>
       </div>
@@ -346,13 +346,13 @@ export default function Contacts() {
               placeholder="Search contacts..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -402,16 +402,16 @@ export default function Contacts() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {contacts.map((contact) => (
-                  <tr key={contact.id} className="hover:bg-gray-50 transition">
+                  <tr key={contact.id} className="hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <span className="text-blue-600 font-semibold text-sm">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center">
+                          <span className="text-primary font-semibold text-sm">
                             {contact.first_name?.[0] || contact.email[0].toUpperCase()}
                           </span>
                         </div>
                         <div className="ml-3">
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-dark">
                             {contact.first_name || contact.last_name
                               ? `${contact.first_name || ''} ${contact.last_name || ''}`.trim()
                               : 'No Name'}
@@ -420,12 +420,12 @@ export default function Contacts() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-600">
+                      <div className="flex items-center text-sm text-text-secondary font-semibold">
                         <Mail className="h-4 w-4 mr-2" />
                         {contact.email}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary font-semibold">
                       {contact.phone ? (
                         <div className="flex items-center">
                           <Phone className="h-4 w-4 mr-2" />
@@ -461,7 +461,7 @@ export default function Contacts() {
                         </Link>
                         <button
                           onClick={() => handleEdit(contact)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                          className="p-2 text-primary hover:bg-blue-50 rounded-lg transition"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
@@ -485,7 +485,7 @@ export default function Contacts() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-lg w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">Import Contacts</h2>
+              <h2 className="text-2xl font-bold text-dark">Import Contacts</h2>
               <button
                 onClick={() => {
                   setShowImportModal(false);
@@ -512,8 +512,8 @@ export default function Contacts() {
                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                   {importing ? (
                     <div className="space-y-4">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                      <p className="text-gray-600">Importing contacts...</p>
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                      <p className="text-text-secondary font-semibold">Importing contacts...</p>
                     </div>
                   ) : (
                     <label className="cursor-pointer">
@@ -551,7 +551,7 @@ jane@example.com,Jane,Smith,555-5678`}
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Import Complete</h3>
                   <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
                     <div className="bg-green-50 rounded-lg p-4">
-                      <p className="text-3xl font-bold text-green-600">{importResults.success}</p>
+                      <p className="text-3xl font-bold bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">{importResults.success}</p>
                       <p className="text-sm text-green-700">Imported</p>
                     </div>
                     <div className="bg-red-50 rounded-lg p-4">
@@ -597,7 +597,7 @@ jane@example.com,Jane,Smith,555-5678`}
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-dark">
                 {editingContact ? 'Edit Contact' : 'Add New Contact'}
               </h2>
               <button
@@ -620,7 +620,7 @@ jane@example.com,Jane,Smith,555-5678`}
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="contact@example.com"
                 />
               </div>
@@ -634,7 +634,7 @@ jane@example.com,Jane,Smith,555-5678`}
                     type="text"
                     value={formData.first_name}
                     onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="John"
                   />
                 </div>
@@ -644,7 +644,7 @@ jane@example.com,Jane,Smith,555-5678`}
                     type="text"
                     value={formData.last_name}
                     onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="Doe"
                   />
                 </div>
@@ -656,7 +656,7 @@ jane@example.com,Jane,Smith,555-5678`}
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="+1 (555) 000-0000"
                 />
               </div>
@@ -665,7 +665,7 @@ jane@example.com,Jane,Smith,555-5678`}
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                 >
                   Cancel
                 </button>

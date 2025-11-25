@@ -80,7 +80,7 @@ export default function Orders() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'paid':
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
+        return <CheckCircle className="h-5 w-5 text-emerald-600" />;
       case 'pending':
         return <Clock className="h-5 w-5 text-yellow-600" />;
       case 'failed':
@@ -129,7 +129,7 @@ export default function Orders() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -142,50 +142,50 @@ export default function Orders() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Orders</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.totalOrders}</p>
+              <p className="text-sm text-text-secondary font-semibold">Total Orders</p>
+              <p className="text-3xl font-bold text-dark mt-1">{stats.totalOrders}</p>
             </div>
-            <Package className="h-10 w-10 text-blue-600" />
+            <Package className="h-10 w-10 text-primary" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">{stats.paidOrders}</p>
+              <p className="text-sm text-text-secondary font-semibold">Completed</p>
+              <p className="text-2xl font-bold text-emerald-600 mt-1">{stats.paidOrders}</p>
             </div>
-            <CheckCircle className="h-10 w-10 text-green-600" />
+            <CheckCircle className="h-10 w-10 text-emerald-600" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Pending</p>
+              <p className="text-sm text-text-secondary font-semibold">Pending</p>
               <p className="text-2xl font-bold text-yellow-600 mt-1">{stats.pendingOrders}</p>
             </div>
             <Clock className="h-10 w-10 text-yellow-600" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
+              <p className="text-sm text-text-secondary font-semibold">Total Revenue</p>
+              <p className="text-3xl font-bold text-dark mt-1">
                 {formatPrice(stats.totalRevenue, orders[0]?.currency || 'USD')}
               </p>
             </div>
-            <CheckCircle className="h-10 w-10 text-blue-600" />
+            <CheckCircle className="h-10 w-10 text-primary" />
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-white rounded-card shadow-light p-6 border border-border">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -194,7 +194,7 @@ export default function Orders() {
               placeholder="Search by email, product, or order ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
@@ -203,7 +203,7 @@ export default function Orders() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="all">All Status</option>
               <option value="paid">Paid</option>
@@ -220,7 +220,7 @@ export default function Orders() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               {searchQuery || filterStatus !== 'all' ? 'No orders found' : 'No orders yet'}
             </h3>
-            <p className="text-gray-600">
+            <p className="text-text-secondary font-semibold">
               {searchQuery || filterStatus !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Orders will appear here once customers make purchases'}
@@ -256,29 +256,29 @@ export default function Orders() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50 transition">
+                  <tr key={order.id} className="hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         {getStatusIcon(order.payment_status)}
-                        <span className="text-sm font-mono text-gray-900">
+                        <span className="text-sm font-mono text-dark">
                           {order.external_order_id?.substring(0, 12)}...
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-dark">
                           {order.metadata?.customer_name || 'Unknown'}
                         </div>
-                        <div className="text-sm text-gray-600">{order.billing_email}</div>
+                        <div className="text-sm text-text-secondary font-semibold">{order.billing_email}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{order.products.title}</div>
+                      <div className="text-sm text-dark">{order.products.title}</div>
                       <div className="text-sm text-gray-500 capitalize">{order.products.product_type}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-dark">
                         {formatPrice(order.amount, order.currency)}
                       </span>
                     </td>
@@ -291,13 +291,13 @@ export default function Orders() {
                         {order.payment_status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary font-semibold">
                       {formatDate(order.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Link
                         to={`/orders/${order.id}`}
-                        className="text-blue-600 hover:text-blue-800 transition"
+                        className="text-primary hover:text-blue-800 transition"
                         title="View details"
                       >
                         <Eye className="h-5 w-5" />

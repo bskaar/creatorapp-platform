@@ -157,7 +157,7 @@ export default function Automations() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -181,42 +181,42 @@ export default function Automations() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Automations</p>
-              <p className="text-2xl font-bold text-gray-900">{workflows.length}</p>
+              <p className="text-sm text-text-secondary font-semibold">Total Automations</p>
+              <p className="text-2xl font-bold text-dark">{workflows.length}</p>
             </div>
-            <Zap className="h-8 w-8 text-blue-600" />
+            <Zap className="h-8 w-8 text-primary" />
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Active</p>
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-sm text-text-secondary font-semibold">Active</p>
+              <p className="text-2xl font-bold text-emerald-600">
                 {workflows.filter((w) => w.status === 'active').length}
               </p>
             </div>
-            <Play className="h-8 w-8 text-green-600" />
+            <Play className="h-8 w-8 text-emerald-600" />
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Subscribers</p>
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-sm text-text-secondary font-semibold">Total Subscribers</p>
+              <p className="text-2xl font-bold text-primary">
                 {workflows.reduce((sum, w) => sum + w.subscribers_count, 0)}
               </p>
             </div>
-            <Users className="h-8 w-8 text-blue-600" />
+            <Users className="h-8 w-8 text-primary" />
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Completions</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-text-secondary font-semibold">Completions</p>
+              <p className="text-2xl font-bold text-dark">
                 {workflows.reduce((sum, w) => sum + w.completion_count, 0)}
               </p>
             </div>
@@ -226,7 +226,7 @@ export default function Automations() {
       </div>
 
       {workflows.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+        <div className="bg-white rounded-card shadow-light p-12 border border-border text-center">
           <Zap className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-900 mb-2">No Automations Yet</h2>
           <p className="text-gray-600 mb-6">
@@ -242,11 +242,11 @@ export default function Automations() {
       ) : (
         <div className="bg-white rounded-xl shadow-sm divide-y">
           {workflows.map((workflow) => (
-            <div key={workflow.id} className="p-6 hover:bg-gray-50 transition">
+            <div key={workflow.id} className="p-6 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="font-semibold text-gray-900">{workflow.name}</h3>
+                    <h3 className="font-semibold text-dark">{workflow.name}</h3>
                     <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(workflow.status)}`}>
                       {workflow.status}
                     </span>
@@ -273,7 +273,7 @@ export default function Automations() {
                     className={`p-2 rounded-lg transition ${
                       workflow.status === 'active'
                         ? 'text-yellow-600 hover:bg-yellow-50'
-                        : 'text-green-600 hover:bg-green-50'
+                        : 'text-emerald-600 hover:bg-green-50'
                     }`}
                     title={workflow.status === 'active' ? 'Pause' : 'Activate'}
                   >
@@ -306,7 +306,7 @@ export default function Automations() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">Create New Automation</h2>
+              <h2 className="text-2xl font-bold text-dark">Create New Automation</h2>
               <button
                 onClick={() => setShowNewModal(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
@@ -327,7 +327,7 @@ export default function Automations() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Welcome Automation"
                 />
               </div>
@@ -339,7 +339,7 @@ export default function Automations() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   rows={3}
                   placeholder="What does this automation do?"
                 />
@@ -353,7 +353,7 @@ export default function Automations() {
                   required
                   value={formData.trigger_type}
                   onChange={(e) => setFormData({ ...formData, trigger_type: e.target.value })}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="manual">Manual</option>
                   <option value="tag_added">Tag Added</option>
@@ -369,7 +369,7 @@ export default function Automations() {
                 <button
                   type="button"
                   onClick={() => setShowNewModal(false)}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                 >
                   Cancel
                 </button>

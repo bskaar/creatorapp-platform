@@ -254,7 +254,7 @@ export default function Funnels() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -274,7 +274,7 @@ export default function Funnels() {
               setModalType('page');
               setShowNewModal(true);
             }}
-            className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
+            className="flex items-center space-x-2 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
           >
             <Plus className="h-5 w-5" />
             <span>New Page</span>
@@ -292,16 +292,16 @@ export default function Funnels() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-sm p-8 border-2 border-blue-200">
+      <div className="bg-gradient-to-br from-primary/5 via-white to-accent/5 rounded-xl shadow-sm p-8 border-2 border-primary/20">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center space-x-3 mb-3">
-              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-xl shadow-light flex items-center justify-center">
                 <Home className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Site Homepage</h2>
-                <p className="text-gray-600">Your main brand landing page</p>
+                <h2 className="text-2xl font-bold text-dark">Site Homepage</h2>
+                <p className="text-text-secondary font-semibold">Your main brand landing page</p>
               </div>
             </div>
 
@@ -324,7 +324,7 @@ export default function Funnels() {
                       }`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-600 hover:text-blue-700 flex items-center space-x-1"
+                      className="text-sm text-primary hover:text-blue-700 flex items-center space-x-1"
                     >
                       <span>View Live</span>
                       <ExternalLink className="h-3 w-3" />
@@ -342,7 +342,7 @@ export default function Funnels() {
                   {homepage.status === 'published' && (
                     <button
                       onClick={() => navigate(`/pages/${homepage.id}`)}
-                      className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
+                      className="flex items-center space-x-2 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                     >
                       <Eye className="h-4 w-4" />
                       <span>Preview</span>
@@ -371,7 +371,7 @@ export default function Funnels() {
 
       <div className="bg-white rounded-card shadow-light border border-border">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-bold text-gray-900">Sales Funnels</h2>
+          <h2 className="text-xl font-bold text-dark">Sales Funnels</h2>
           <p className="text-text-secondary mt-2 text-lg">Multi-step customer journey flows</p>
         </div>
 
@@ -395,7 +395,7 @@ export default function Funnels() {
         ) : (
           <div className="divide-y">
             {funnels.map((funnel) => (
-              <div key={funnel.id} className="p-6 hover:bg-gray-50 transition">
+              <div key={funnel.id} className="p-6 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
@@ -413,7 +413,7 @@ export default function Funnels() {
                       </span>
                     </div>
                     {funnel.description && (
-                      <p className="text-gray-600 mb-2">{funnel.description}</p>
+                      <p className="text-text-secondary mb-2 font-semibold">{funnel.description}</p>
                     )}
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
                       <span className="capitalize">Goal: {funnel.goal_type?.replace('_', ' ')}</span>
@@ -423,7 +423,7 @@ export default function Funnels() {
                   <div className="flex items-center space-x-2">
                     <Link
                       to={`/funnels/${funnel.id}`}
-                      className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
+                      className="flex items-center space-x-2 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                     >
                       <Edit className="h-4 w-4" />
                       <span>Edit</span>
@@ -452,13 +452,13 @@ export default function Funnels() {
       {standalonePages.length > 0 && (
         <div className="bg-white rounded-card shadow-light border border-border">
           <div className="p-6 border-b">
-            <h2 className="text-xl font-bold text-gray-900">Standalone Pages</h2>
+            <h2 className="text-xl font-bold text-dark">Standalone Pages</h2>
             <p className="text-text-secondary mt-2 text-lg">Individual landing pages not part of a funnel</p>
           </div>
 
           <div className="divide-y">
             {standalonePages.map((page) => (
-              <div key={page.id} className="p-6 hover:bg-gray-50 transition">
+              <div key={page.id} className="p-6 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
@@ -483,7 +483,7 @@ export default function Funnels() {
                   <div className="flex items-center space-x-2">
                     <Link
                       to={`/pages/${page.id}`}
-                      className="flex items-center space-x-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
+                      className="flex items-center space-x-2 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                     >
                       <Edit className="h-4 w-4" />
                       <span>Edit</span>
@@ -513,7 +513,7 @@ export default function Funnels() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-dark">
                 Create New {modalType === 'funnel' ? 'Funnel' : 'Page'}
               </h2>
               <button
@@ -540,7 +540,7 @@ export default function Funnels() {
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="My Sales Funnel"
                     />
                   </div>
@@ -552,7 +552,7 @@ export default function Funnels() {
                     <textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       rows={3}
                       placeholder="What is this funnel for?"
                     />
@@ -571,7 +571,7 @@ export default function Funnels() {
                           goalType: e.target.value as typeof formData.goalType,
                         })
                       }
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     >
                       <option value="lead_generation">Lead Generation</option>
                       <option value="product_sale">Product Sale</option>
@@ -591,7 +591,7 @@ export default function Funnels() {
                       required
                       value={formData.pageTitle}
                       onChange={(e) => setFormData({ ...formData, pageTitle: e.target.value })}
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="My Landing Page"
                     />
                   </div>
@@ -610,7 +610,7 @@ export default function Funnels() {
                           pageSlug: e.target.value.toLowerCase().replace(/\s+/g, '-'),
                         })
                       }
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="my-landing-page"
                     />
                   </div>
@@ -628,7 +628,7 @@ export default function Funnels() {
                           pageType: e.target.value as typeof formData.pageType,
                         })
                       }
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     >
                       <option value="landing">Landing Page</option>
                       <option value="sales">Sales Page</option>
@@ -645,7 +645,7 @@ export default function Funnels() {
                 <button
                   type="button"
                   onClick={() => setShowNewModal(false)}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                 >
                   Cancel
                 </button>

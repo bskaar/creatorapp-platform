@@ -192,7 +192,7 @@ export default function Email() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -218,20 +218,20 @@ export default function Email() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Total Sent</h3>
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
+          <h3 className="text-sm font-medium text-text-secondary mb-2 font-semibold">Total Sent</h3>
           <p className="text-4xl font-bold text-dark">{stats.totalSent.toLocaleString()}</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Avg Open Rate</h3>
-          <p className="text-3xl font-bold text-green-600">{stats.avgOpenRate.toFixed(1)}%</p>
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
+          <h3 className="text-sm font-medium text-text-secondary mb-2 font-semibold">Avg Open Rate</h3>
+          <p className="text-3xl font-bold bg-gradient-to-r from-emerald-500 to-green-600 bg-clip-text text-transparent">{stats.avgOpenRate.toFixed(1)}%</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Avg Click Rate</h3>
-          <p className="text-3xl font-bold text-blue-600">{stats.avgClickRate.toFixed(1)}%</p>
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
+          <h3 className="text-sm font-medium text-text-secondary mb-2 font-semibold">Avg Click Rate</h3>
+          <p className="text-3xl font-bold text-primary">{stats.avgClickRate.toFixed(1)}%</p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Active Sequences</h3>
+        <div className="bg-white rounded-card shadow-light p-6 border border-border">
+          <h3 className="text-sm font-medium text-text-secondary mb-2 font-semibold">Active Sequences</h3>
           <p className="text-4xl font-bold text-dark">
             {sequences.filter((s) => s.status === 'active').length}
           </p>
@@ -245,8 +245,8 @@ export default function Email() {
               onClick={() => setActiveTab('campaigns')}
               className={`py-4 px-2 border-b-2 font-medium text-sm transition ${
                 activeTab === 'campaigns'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-primary text-primary bg-gradient-to-b from-primary/5 to-transparent'
+                  : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-gradient-to-b hover:from-primary/5 hover:to-transparent'
               }`}
             >
               Campaigns ({stats.broadcasts})
@@ -255,8 +255,8 @@ export default function Email() {
               onClick={() => setActiveTab('sequences')}
               className={`py-4 px-2 border-b-2 font-medium text-sm transition ${
                 activeTab === 'sequences'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-primary text-primary bg-gradient-to-b from-primary/5 to-transparent'
+                  : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-gradient-to-b hover:from-primary/5 hover:to-transparent'
               }`}
             >
               Sequences ({stats.sequences})
@@ -265,8 +265,8 @@ export default function Email() {
               onClick={() => setActiveTab('templates')}
               className={`py-4 px-2 border-b-2 font-medium text-sm transition ${
                 activeTab === 'templates'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-primary text-primary bg-gradient-to-b from-primary/5 to-transparent'
+                  : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-gradient-to-b hover:from-primary/5 hover:to-transparent'
               }`}
             >
               Templates ({stats.templates})
@@ -293,11 +293,11 @@ export default function Email() {
             ) : (
               <div className="divide-y">
                 {campaigns.map((campaign) => (
-                  <div key={campaign.id} className="p-6 hover:bg-gray-50 transition">
+                  <div key={campaign.id} className="p-6 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="font-semibold text-gray-900">{campaign.name}</h3>
+                          <h3 className="font-semibold text-dark">{campaign.name}</h3>
                           <span
                             className={`text-xs px-2 py-1 rounded-full ${
                               campaign.status === 'sent'
@@ -312,7 +312,7 @@ export default function Email() {
                             {campaign.status}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-600">{campaign.subject}</p>
+                        <p className="text-sm text-text-secondary font-semibold">{campaign.subject}</p>
                         <div className="flex items-center space-x-6 mt-3 text-sm text-gray-500">
                           <span>
                             <Send className="h-4 w-4 inline mr-1" />
@@ -370,11 +370,11 @@ export default function Email() {
             ) : (
               <div className="divide-y">
                 {sequences.map((sequence) => (
-                  <div key={sequence.id} className="p-6 hover:bg-gray-50 transition">
+                  <div key={sequence.id} className="p-6 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="font-semibold text-gray-900">{sequence.name}</h3>
+                          <h3 className="font-semibold text-dark">{sequence.name}</h3>
                           <span
                             className={`text-xs px-2 py-1 rounded-full ${
                               sequence.status === 'active'
@@ -388,7 +388,7 @@ export default function Email() {
                           </span>
                         </div>
                         {sequence.description && (
-                          <p className="text-sm text-gray-600 mb-2">{sequence.description}</p>
+                          <p className="text-sm text-text-secondary mb-2 font-semibold">{sequence.description}</p>
                         )}
                         <div className="flex items-center space-x-4 text-sm text-gray-500">
                           <span className="capitalize">
@@ -452,7 +452,7 @@ export default function Email() {
                         <p className="text-sm text-gray-600 mb-3">{template.subject}</p>
                       )}
                       <div className="flex items-center space-x-2">
-                        <button className="flex-1 px-3 py-2 text-sm border border-border rounded-lg hover:bg-gray-50 transition">
+                        <button className="flex-1 px-3 py-2 text-sm border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition">
                           Use Template
                         </button>
                         <button
@@ -475,7 +475,7 @@ export default function Email() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-dark">
                 Create New {modalType === 'campaign' ? 'Campaign' : modalType === 'sequence' ? 'Sequence' : 'Template'}
               </h2>
               <button
@@ -498,7 +498,7 @@ export default function Email() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder={`My ${modalType}`}
                 />
               </div>
@@ -513,7 +513,7 @@ export default function Email() {
                     required={modalType !== 'sequence'}
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="Enter email subject line"
                   />
                 </div>
@@ -528,7 +528,7 @@ export default function Email() {
                     <textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       rows={3}
                       placeholder="What is this sequence for?"
                     />
@@ -542,7 +542,7 @@ export default function Email() {
                       required
                       value={formData.triggerType}
                       onChange={(e) => setFormData({ ...formData, triggerType: e.target.value })}
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     >
                       <option value="manual">Manual</option>
                       <option value="tag_added">Tag Added</option>
@@ -559,7 +559,7 @@ export default function Email() {
                 <button
                   type="button"
                   onClick={() => setShowNewModal(false)}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                 >
                   Cancel
                 </button>
