@@ -111,37 +111,37 @@ export default function Dashboard() {
       name: 'Total Revenue',
       value: `$${stats.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: DollarSign,
-      color: 'bg-green-500',
+      gradient: 'from-emerald-500 to-green-600',
     },
     {
       name: 'Active Contacts',
       value: stats.contacts.toLocaleString(),
       icon: Users,
-      color: 'bg-blue-500',
+      gradient: 'from-primary to-primary-dark',
     },
     {
       name: 'Published Products',
       value: stats.products.toLocaleString(),
       icon: FolderOpen,
-      color: 'bg-orange-500',
+      gradient: 'from-orange-500 to-red-500',
     },
     {
       name: 'Emails Sent (This Month)',
       value: stats.emailsSent.toLocaleString(),
       icon: Mail,
-      color: 'bg-purple-500',
+      gradient: 'from-primary to-accent',
     },
     {
       name: 'Active Funnels',
       value: stats.activeFunnels.toLocaleString(),
       icon: GitBranch,
-      color: 'bg-teal-500',
+      gradient: 'from-teal-500 to-cyan-600',
     },
     {
       name: 'Upcoming Webinars',
       value: stats.upcomingWebinars.toLocaleString(),
       icon: Video,
-      color: 'bg-red-500',
+      gradient: 'from-accent to-pink-600',
     },
   ];
 
@@ -168,19 +168,19 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back to {currentSite.name}</p>
+          <h1 className="text-4xl font-bold text-dark">Dashboard</h1>
+          <p className="text-text-secondary mt-2 text-lg">Welcome back to {currentSite.name}</p>
         </div>
         <div className="flex items-center space-x-3">
-          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+          <span className="px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary rounded-button text-sm font-semibold border border-primary/20">
             {subscriptionPlan} Plan
           </span>
           <Link
             to="/settings"
-            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl group"
+            className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 group"
           >
             <Zap className="w-4 h-4" />
             <span>Upgrade Plan</span>
@@ -192,7 +192,7 @@ export default function Dashboard() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm p-6 animate-pulse">
+            <div key={i} className="bg-white rounded-card shadow-light p-6 animate-pulse">
               <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
               <div className="h-8 bg-gray-200 rounded w-3/4"></div>
             </div>
@@ -205,15 +205,15 @@ export default function Dashboard() {
             return (
               <div
                 key={stat.name}
-                className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
+                className="bg-white rounded-card shadow-light p-6 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 border border-border"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">{stat.name}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                    <p className="text-sm font-semibold text-text-secondary mb-2">{stat.name}</p>
+                    <p className="text-3xl font-bold text-dark">{stat.value}</p>
                   </div>
-                  <div className={`${stat.color} p-3 rounded-lg`}>
-                    <Icon className="h-6 w-6 text-white" />
+                  <div className={`bg-gradient-to-br ${stat.gradient} p-4 rounded-xl shadow-light`}>
+                    <Icon className="h-7 w-7 text-white" />
                   </div>
                 </div>
               </div>
@@ -223,60 +223,70 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="space-y-3">
+        <div className="bg-white rounded-card shadow-light p-8 border border-border">
+          <h2 className="text-xl font-bold text-dark mb-6">Quick Actions</h2>
+          <div className="space-y-2">
             <a
               href="/funnels"
-              className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
+              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
             >
-              <Home className="h-5 w-5 text-gray-600" />
-              <span className="font-medium text-gray-900">Edit Site Homepage</span>
+              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
+                <Home className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Edit Site Homepage</span>
             </a>
             <a
               href="/content/new"
-              className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
+              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
             >
-              <FolderOpen className="h-5 w-5 text-gray-600" />
-              <span className="font-medium text-gray-900">Create New Product</span>
+              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
+                <FolderOpen className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Create New Product</span>
             </a>
             <a
               href="/funnels"
-              className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
+              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
             >
-              <GitBranch className="h-5 w-5 text-gray-600" />
-              <span className="font-medium text-gray-900">Build a Funnel</span>
+              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
+                <GitBranch className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Build a Funnel</span>
             </a>
             <a
               href="/email"
-              className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
+              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
             >
-              <Mail className="h-5 w-5 text-gray-600" />
-              <span className="font-medium text-gray-900">Send Email Campaign</span>
+              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
+                <Mail className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Send Email Campaign</span>
             </a>
             <a
               href="/webinars"
-              className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition"
+              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
             >
-              <Video className="h-5 w-5 text-gray-600" />
-              <span className="font-medium text-gray-900">Schedule Webinar</span>
+              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
+                <Video className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Schedule Webinar</span>
             </a>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Plan Usage</h2>
-          <div className="space-y-4">
+        <div className="bg-white rounded-card shadow-light p-8 border border-border">
+          <h2 className="text-xl font-bold text-dark mb-6">Plan Usage</h2>
+          <div className="space-y-6">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Contacts</span>
-                <span className="text-sm text-gray-900">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-text-secondary">Contacts</span>
+                <span className="text-sm font-bold text-dark">
                   {stats.contacts.toLocaleString()} / {planLimits.max_contacts ? planLimits.max_contacts.toLocaleString() : 'Unlimited'}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-border rounded-full h-3 overflow-hidden">
                 <div
-                  className="bg-blue-600 h-2 rounded-full transition-all"
+                  className="bg-gradient-to-r from-primary to-primary-dark h-3 rounded-full transition-all duration-500"
                   style={{
                     width: planLimits.max_contacts
                       ? `${Math.min((stats.contacts / planLimits.max_contacts) * 100, 100)}%`
@@ -287,15 +297,15 @@ export default function Dashboard() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Products</span>
-                <span className="text-sm text-gray-900">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-text-secondary">Products</span>
+                <span className="text-sm font-bold text-dark">
                   {stats.products} / {planLimits.max_products ?? 'Unlimited'}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-border rounded-full h-3 overflow-hidden">
                 <div
-                  className="bg-orange-600 h-2 rounded-full transition-all"
+                  className="bg-gradient-to-r from-orange-500 to-red-500 h-3 rounded-full transition-all duration-500"
                   style={{
                     width: planLimits.max_products
                       ? `${Math.min((stats.products / planLimits.max_products) * 100, 100)}%`
@@ -306,15 +316,15 @@ export default function Dashboard() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Emails This Month</span>
-                <span className="text-sm text-gray-900">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-text-secondary">Emails This Month</span>
+                <span className="text-sm font-bold text-dark">
                   {stats.emailsSent.toLocaleString()} / {planLimits.max_emails_per_month ? planLimits.max_emails_per_month.toLocaleString() : 'Unlimited'}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-border rounded-full h-3 overflow-hidden">
                 <div
-                  className="bg-purple-600 h-2 rounded-full transition-all"
+                  className="bg-gradient-to-r from-primary to-accent h-3 rounded-full transition-all duration-500"
                   style={{
                     width: planLimits.max_emails_per_month
                       ? `${Math.min((stats.emailsSent / planLimits.max_emails_per_month) * 100, 100)}%`
