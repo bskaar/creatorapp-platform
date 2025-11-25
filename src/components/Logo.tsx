@@ -2,30 +2,29 @@ interface LogoProps {
   className?: string;
   variant?: 'light' | 'dark';
   showText?: boolean;
+  iconOnly?: boolean;
 }
 
-export default function Logo({ className = '', variant = 'light', showText = true }: LogoProps) {
-  return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      {/* Logo image will be added here when provided */}
-      {/* <img
-        src="/logo-transparent.png"
-        alt="CreatorApp Logo"
-        className="h-8 w-auto"
-      /> */}
+export default function Logo({ className = '', iconOnly = false }: LogoProps) {
+  if (iconOnly) {
+    return (
+      <div className={`flex items-center ${className}`}>
+        <img
+          src="/creatorapp-c1-icon-gradient (2).svg"
+          alt="CreatorApp Icon"
+          className="h-8 w-auto"
+        />
+      </div>
+    );
+  }
 
-      {/* Temporary gradient text logo until image is provided */}
-      {showText && (
-        <span
-          className={`text-3xl font-bold ${
-            variant === 'light'
-              ? 'bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent'
-              : 'text-white'
-          }`}
-        >
-          CreatorApp
-        </span>
-      )}
+  return (
+    <div className={`flex items-center ${className}`}>
+      <img
+        src="/creatorapp-c1-logo-gradient.svg"
+        alt="CreatorApp Logo"
+        className="h-10 w-auto"
+      />
     </div>
   );
 }
