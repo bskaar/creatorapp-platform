@@ -13,22 +13,22 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, change, icon, color }: MetricCardProps) {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <div className="bg-white rounded-card shadow-light p-6 border border-border hover:shadow-medium transition-all duration-300">
       <div className="flex items-start justify-between mb-4">
-        <div className={`p-3 rounded-lg ${color}`}>
+        <div className={`p-3 rounded-xl shadow-light ${color}`}>
           {icon}
         </div>
         {change !== undefined && (
-          <div className={`flex items-center gap-1 text-sm font-medium ${
-            change >= 0 ? 'text-green-600' : 'text-red-600'
+          <div className={`flex items-center gap-1 text-sm font-semibold ${
+            change >= 0 ? 'text-emerald-600' : 'text-red-600'
           }`}>
             <TrendingUp className={`h-4 w-4 ${change < 0 ? 'rotate-180' : ''}`} />
             {Math.abs(change)}%
           </div>
         )}
       </div>
-      <h3 className="text-2xl font-bold text-gray-900 mb-1">{value}</h3>
-      <p className="text-sm text-gray-600">{title}</p>
+      <h3 className="text-3xl font-bold text-dark mb-1">{value}</h3>
+      <p className="text-sm text-text-secondary font-semibold">{title}</p>
     </div>
   );
 }
@@ -145,8 +145,8 @@ export default function RealTimeMetrics() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 animate-pulse">
-            <div className="h-12 w-12 bg-gray-200 rounded-lg mb-4" />
+          <div key={i} className="bg-white rounded-card shadow-light p-6 border border-border animate-pulse">
+            <div className="h-12 w-12 bg-gray-200 rounded-xl mb-4" />
             <div className="h-8 bg-gray-200 rounded mb-2" />
             <div className="h-4 bg-gray-200 rounded w-24" />
           </div>
@@ -159,11 +159,11 @@ export default function RealTimeMetrics() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Real-Time Overview</h2>
-          <p className="text-sm text-gray-600 mt-1">Live metrics updating every 30 seconds</p>
+          <h2 className="text-2xl font-bold text-dark">Real-Time Overview</h2>
+          <p className="text-sm text-text-secondary mt-1 font-medium">Live metrics updating every 30 seconds</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <Activity className="h-4 w-4 animate-pulse text-green-600" />
+        <div className="flex items-center gap-2 text-sm text-emerald-600 font-semibold">
+          <Activity className="h-4 w-4 animate-pulse" />
           Live
         </div>
       </div>
@@ -172,24 +172,24 @@ export default function RealTimeMetrics() {
         <MetricCard
           title="Active Visitors"
           value={metrics.activeVisitors}
-          icon={<Users className="h-6 w-6 text-blue-600" />}
-          color="bg-blue-100"
+          icon={<Users className="h-6 w-6 text-primary" />}
+          color="bg-gradient-to-br from-primary/10 to-primary/5"
         />
 
         <MetricCard
           title="Page Views Today"
           value={metrics.todayPageViews.toLocaleString()}
           change={calculateChange(metrics.todayPageViews, metrics.yesterdayPageViews)}
-          icon={<Eye className="h-6 w-6 text-purple-600" />}
-          color="bg-purple-100"
+          icon={<Eye className="h-6 w-6 text-accent" />}
+          color="bg-gradient-to-br from-accent/10 to-accent/5"
         />
 
         <MetricCard
           title="Conversions Today"
           value={metrics.todayConversions}
           change={calculateChange(metrics.todayConversions, metrics.yesterdayConversions)}
-          icon={<TrendingUp className="h-6 w-6 text-green-600" />}
-          color="bg-green-100"
+          icon={<TrendingUp className="h-6 w-6 text-emerald-600" />}
+          color="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5"
         />
 
         <MetricCard
@@ -197,7 +197,7 @@ export default function RealTimeMetrics() {
           value={`$${metrics.todayRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           change={calculateChange(metrics.todayRevenue, metrics.yesterdayRevenue)}
           icon={<DollarSign className="h-6 w-6 text-amber-600" />}
-          color="bg-amber-100"
+          color="bg-gradient-to-br from-amber-500/10 to-amber-500/5"
         />
       </div>
     </div>

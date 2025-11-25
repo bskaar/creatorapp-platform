@@ -158,13 +158,13 @@ export default function TeamSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Team & Permissions</h3>
-        <p className="text-sm text-gray-600">Manage your team members and their access levels</p>
+        <h3 className="text-xl font-bold text-dark mb-4">Team & Permissions</h3>
+        <p className="text-sm text-text-secondary font-medium">Manage your team members and their access levels</p>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-blue-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <UserPlus className="h-5 w-5 text-blue-600 mt-0.5" />
+          <UserPlus className="h-5 w-5 text-primary mt-0.5" />
           <div className="flex-1">
             <h4 className="font-medium text-blue-900 mb-1">Invite Team Member</h4>
             <p className="text-sm text-blue-700 mb-4">Add collaborators to help manage your site</p>
@@ -190,7 +190,7 @@ export default function TeamSettings() {
               <button
                 onClick={handleInvite}
                 disabled={inviting || !inviteEmail.trim()}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-8 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {inviting ? 'Inviting...' : 'Invite'}
               </button>
@@ -234,7 +234,7 @@ export default function TeamSettings() {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mt-2 ml-13">
+                  <p className="text-xs text-text-secondary mt-2 ml-13">
                     {roleDescriptions[member.role as keyof typeof roleDescriptions]}
                   </p>
                 </div>

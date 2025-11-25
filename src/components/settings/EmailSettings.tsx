@@ -98,8 +98,8 @@ export default function EmailSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Email Configuration</h3>
-        <p className="text-sm text-gray-600">Configure how emails are sent from your site</p>
+        <h3 className="text-xl font-bold text-dark mb-4">Email Configuration</h3>
+        <p className="text-sm text-text-secondary font-medium">Configure how emails are sent from your site</p>
       </div>
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
@@ -115,47 +115,47 @@ export default function EmailSettings() {
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-text-primary mb-1">
               From Name
             </label>
             <input
               type="text"
               value={formData.from_name}
               onChange={(e) => handleChange('from_name', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Your Company Name"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-text-primary mb-1">
               From Email
             </label>
             <input
               type="email"
               value={formData.from_email}
               onChange={(e) => handleChange('from_email', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="hello@yourdomain.com"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Reply-To Email
           </label>
           <input
             type="email"
             value={formData.reply_to_email}
             onChange={(e) => handleChange('reply_to_email', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
             placeholder="support@yourdomain.com"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Email Service Provider
           </label>
           <select
@@ -164,7 +164,7 @@ export default function EmailSettings() {
               handleChange('provider', e.target.value);
               setShowAdvanced(e.target.value === 'smtp');
             }}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             <option value="resend">Resend (Recommended)</option>
             <option value="sendgrid">SendGrid</option>
@@ -174,25 +174,25 @@ export default function EmailSettings() {
 
         {formData.provider !== 'smtp' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-text-primary mb-1">
               API Key
             </label>
             <input
               type="password"
               value={formData.api_key}
               onChange={(e) => handleChange('api_key', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+              className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
               placeholder="re_xxxxxxxxxxxxx"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-text-secondary mt-1">
               Get your API key from{' '}
               {formData.provider === 'resend' && (
-                <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                   Resend Dashboard
                 </a>
               )}
               {formData.provider === 'sendgrid' && (
-                <a href="https://app.sendgrid.com/settings/api_keys" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                <a href="https://app.sendgrid.com/settings/api_keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                   SendGrid Dashboard
                 </a>
               )}
@@ -206,54 +206,54 @@ export default function EmailSettings() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-semibold text-text-primary mb-1">
                   SMTP Host
                 </label>
                 <input
                   type="text"
                   value={formData.smtp_host}
                   onChange={(e) => handleChange('smtp_host', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="smtp.gmail.com"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-semibold text-text-primary mb-1">
                   SMTP Port
                 </label>
                 <input
                   type="number"
                   value={formData.smtp_port}
                   onChange={(e) => handleChange('smtp_port', parseInt(e.target.value))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="587"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-text-primary mb-1">
                 SMTP Username
               </label>
               <input
                 type="text"
                 value={formData.smtp_username}
                 onChange={(e) => handleChange('smtp_username', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="your-email@gmail.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-text-primary mb-1">
                 SMTP Password
               </label>
               <input
                 type="password"
                 value={formData.smtp_password}
                 onChange={(e) => handleChange('smtp_password', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="••••••••"
               />
             </div>
@@ -266,7 +266,7 @@ export default function EmailSettings() {
             id="double-optin"
             checked={formData.double_optin}
             onChange={(e) => handleChange('double_optin', e.target.checked)}
-            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-blue-500"
           />
           <label htmlFor="double-optin" className="text-sm text-gray-700">
             Require double opt-in for new subscribers
@@ -274,37 +274,37 @@ export default function EmailSettings() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Email Footer
           </label>
           <textarea
             value={formData.footer_text}
             onChange={(e) => handleChange('footer_text', e.target.value)}
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
             placeholder="Company Name | Address | Unsubscribe"
           />
-          <p className="text-xs text-gray-500 mt-1">Appears at the bottom of all emails</p>
+          <p className="text-xs text-text-secondary mt-1">Appears at the bottom of all emails</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Email Signature
           </label>
           <textarea
             value={formData.signature}
             onChange={(e) => handleChange('signature', e.target.value)}
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
             placeholder="Best regards,&#10;Your Name&#10;Company Name"
           />
         </div>
 
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-4 border-t border-border">
           <button
             onClick={handleSave}
             disabled={loading}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? (
               <>

@@ -112,7 +112,7 @@ export default function FunnelVisualization() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+      <div className="bg-white rounded-card shadow-light border border-border p-6 border border-border">
         <div className="animate-pulse space-y-4">
           <div className="h-6 bg-gray-200 rounded w-48" />
           <div className="h-64 bg-gray-200 rounded" />
@@ -123,18 +123,18 @@ export default function FunnelVisualization() {
 
   if (funnels.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-12 border border-gray-200 text-center">
+      <div className="bg-white rounded-card shadow-light border border-border p-12 border border-border text-center">
         <TrendingDown className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Funnels Yet</h3>
-        <p className="text-gray-600">Create a funnel to start tracking conversions</p>
+        <h3 className="text-lg font-semibold text-dark mb-2">No Funnels Yet</h3>
+        <p className="text-text-secondary">Create a funnel to start tracking conversions</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <div className="bg-white rounded-card shadow-light border border-border p-6 border border-border">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Funnel Analytics</h2>
+        <h2 className="text-xl font-bold text-dark">Funnel Analytics</h2>
         <div className="flex items-center gap-4">
           <select
             value={selectedFunnel || ''}
@@ -178,7 +178,7 @@ export default function FunnelVisualization() {
                           <ArrowRight className="h-4 w-4 text-gray-400" />
                         )}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-text-secondary">
                         {step.visitors.toLocaleString()} visitors
                       </div>
                     </div>
@@ -210,31 +210,31 @@ export default function FunnelVisualization() {
             );
           })}
 
-          <div className="pt-4 border-t border-gray-200 grid grid-cols-3 gap-4">
+          <div className="pt-4 border-t border-border grid grid-cols-3 gap-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-dark">
                 {currentFunnel.steps[0]?.visitors.toLocaleString() || 0}
               </p>
-              <p className="text-sm text-gray-600">Started</p>
+              <p className="text-sm text-text-secondary">Started</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-2xl font-bold text-dark">
                 {currentFunnel.steps[currentFunnel.steps.length - 1]?.conversions.toLocaleString() || 0}
               </p>
-              <p className="text-sm text-gray-600">Completed</p>
+              <p className="text-sm text-text-secondary">Completed</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-2xl font-bold text-emerald-600">
                 {currentFunnel.steps[0]?.visitors > 0
                   ? ((currentFunnel.steps[currentFunnel.steps.length - 1]?.conversions || 0) / currentFunnel.steps[0].visitors * 100).toFixed(1)
                   : '0'}%
               </p>
-              <p className="text-sm text-gray-600">Overall Conversion</p>
+              <p className="text-sm text-text-secondary">Overall Conversion</p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-600">
+        <div className="text-center py-8 text-text-secondary">
           No funnel steps configured
         </div>
       )}

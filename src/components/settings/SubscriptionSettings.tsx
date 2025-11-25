@@ -90,7 +90,7 @@ export default function SubscriptionSettings() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -119,7 +119,7 @@ export default function SubscriptionSettings() {
       )}
 
       {currentSite && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-blue-200 rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-bold text-gray-900">Current Plan</h3>
@@ -159,13 +159,13 @@ export default function SubscriptionSettings() {
               key={plan.id}
               className={`border rounded-xl p-6 ${
                 isCurrent
-                  ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-100'
+                  ? 'border-blue-500 bg-gradient-to-br from-primary/5 to-accent/5 ring-2 ring-blue-100'
                   : 'border-gray-200 bg-white hover:border-blue-300 transition'
               }`}
             >
               <div className="mb-4">
                 <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.display_name}</h3>
-                <p className="text-sm text-gray-600 mb-4">{plan.description}</p>
+                <p className="text-sm text-text-secondary font-medium mb-4">{plan.description}</p>
                 <div className="flex items-baseline">
                   <span className="text-3xl font-bold text-gray-900">
                     ${plan.price_monthly}
@@ -263,7 +263,7 @@ export default function SubscriptionSettings() {
                 <p className="text-sm text-gray-900 font-medium mb-3">
                   Are you sure you want to cancel your subscription?
                 </p>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-text-secondary font-medium mb-4">
                   You'll lose access to premium features at the end of your billing period.
                 </p>
                 <div className="flex space-x-3">

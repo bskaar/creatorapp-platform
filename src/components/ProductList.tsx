@@ -119,9 +119,9 @@ export default function ProductList() {
 
   const getStatusBadge = (status: string) => {
     const colors: Record<string, string> = {
-      active: 'bg-green-100 text-green-800',
-      draft: 'bg-gray-100 text-gray-800',
-      archived: 'bg-red-100 text-red-800',
+      active: 'bg-gradient-to-r from-emerald-500/10 to-green-500/10 text-emerald-700 border border-emerald-500/20',
+      draft: 'bg-gray-100 text-gray-700',
+      archived: 'bg-gradient-to-r from-red-500/10 to-pink-500/10 text-red-700 border border-red-500/20',
     };
     return colors[status] || colors.draft;
   };
@@ -129,48 +129,48 @@ export default function ProductList() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-600 mt-1">Manage your courses, memberships, and digital products</p>
+          <h1 className="text-4xl font-bold text-dark">Products</h1>
+          <p className="text-text-secondary mt-2 text-lg">Manage your courses, memberships, and digital products</p>
         </div>
         <Link
           to="/commerce/products/new"
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5"
         >
           <Plus className="h-5 w-5" />
           <span>Add Product</span>
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-4">
+      <div className="bg-white rounded-card shadow-light p-6 border border-border">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-text-secondary" />
             <input
               type="text"
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium"
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <select
               value={filterStatus}
               onChange={(e) => {
                 setFilterStatus(e.target.value);
                 loadProducts();
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-semibold text-text-primary"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -184,7 +184,7 @@ export default function ProductList() {
                 setFilterType(e.target.value);
                 loadProducts();
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-semibold text-text-primary"
             >
               <option value="all">All Types</option>
               <option value="course">Course</option>
@@ -197,13 +197,13 @@ export default function ProductList() {
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-          <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">No Products Yet</h2>
-          <p className="text-gray-600 mb-6">Create your first product to start selling</p>
+        <div className="bg-white rounded-card shadow-light p-12 text-center border border-border">
+          <Package className="h-16 w-16 text-text-secondary mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-dark mb-2">No Products Yet</h2>
+          <p className="text-text-secondary mb-6 text-lg">Create your first product to start selling</p>
           <Link
             to="/commerce/products/new"
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5"
           >
             <Plus className="h-5 w-5" />
             <span>Create Product</span>
@@ -214,7 +214,7 @@ export default function ProductList() {
           {filteredProducts.map((product) => (
             <div
               key={product.id}
-              className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition"
+              className="bg-white rounded-card shadow-light overflow-hidden hover:shadow-medium transition-all duration-300 hover:-translate-y-1 border border-border group"
             >
               <div
                 className="h-48 bg-gray-200 bg-cover bg-center"

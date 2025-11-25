@@ -141,7 +141,7 @@ export default function TrafficAnalytics() {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[1, 2].map((i) => (
-          <div key={i} className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+          <div key={i} className="bg-white rounded-card shadow-light border border-border p-6 border border-border">
             <div className="animate-pulse space-y-4">
               <div className="h-6 bg-gray-200 rounded w-48" />
               <div className="space-y-2">
@@ -161,7 +161,7 @@ export default function TrafficAnalytics() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Traffic Analytics</h2>
+        <h2 className="text-2xl font-bold text-dark">Traffic Analytics</h2>
         <select
           value={dateRange}
           onChange={(e) => setDateRange(e.target.value as '7d' | '30d' | '90d')}
@@ -174,10 +174,10 @@ export default function TrafficAnalytics() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white rounded-card shadow-light border border-border p-6 border border-border">
           <div className="flex items-center gap-2 mb-4">
-            <Globe className="h-5 w-5 text-blue-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Traffic Sources</h3>
+            <Globe className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-semibold text-dark">Traffic Sources</h3>
           </div>
 
           {sources.length > 0 ? (
@@ -189,8 +189,8 @@ export default function TrafficAnalytics() {
                 return (
                   <div key={index} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-gray-900">{source.source}</span>
-                      <span className="text-gray-600">{source.visitors} visitors</span>
+                      <span className="font-medium text-dark">{source.source}</span>
+                      <span className="text-text-secondary">{source.visitors} visitors</span>
                     </div>
                     <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div
@@ -207,16 +207,16 @@ export default function TrafficAnalytics() {
               })}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-600">
+            <div className="text-center py-8 text-text-secondary">
               No traffic data available
             </div>
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white rounded-card shadow-light border border-border p-6 border border-border">
           <div className="flex items-center gap-2 mb-4">
             <ExternalLink className="h-5 w-5 text-purple-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Top Pages</h3>
+            <h3 className="text-lg font-semibold text-dark">Top Pages</h3>
           </div>
 
           {topPages.length > 0 ? (
@@ -224,27 +224,27 @@ export default function TrafficAnalytics() {
               {topPages.map((page, index) => (
                 <div key={index} className="flex items-start justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{page.title}</p>
+                    <p className="font-medium text-dark truncate">{page.title}</p>
                     <p className="text-xs text-gray-500 truncate">{page.url}</p>
                   </div>
                   <div className="ml-4 text-right">
-                    <p className="text-sm font-medium text-gray-900">{page.views}</p>
+                    <p className="text-sm font-medium text-dark">{page.views}</p>
                     <p className="text-xs text-gray-500">{formatDuration(page.avgDuration)}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-600">
+            <div className="text-center py-8 text-text-secondary">
               No page data available
             </div>
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white rounded-card shadow-light border border-border p-6 border border-border">
           <div className="flex items-center gap-2 mb-4">
-            <Monitor className="h-5 w-5 text-green-600" />
-            <h3 className="text-lg font-semibold text-gray-900">Device Breakdown</h3>
+            <Monitor className="h-5 w-5 text-emerald-600" />
+            <h3 className="text-lg font-semibold text-dark">Device Breakdown</h3>
           </div>
 
           {totalDevices > 0 ? (
@@ -252,10 +252,10 @@ export default function TrafficAnalytics() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Monitor className="h-4 w-4 text-gray-600" />
+                    <Monitor className="h-4 w-4 text-text-secondary" />
                     <span className="text-sm text-gray-700">Desktop</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-dark">
                     {devices.desktop} ({((devices.desktop / totalDevices) * 100).toFixed(1)}%)
                   </span>
                 </div>
@@ -270,10 +270,10 @@ export default function TrafficAnalytics() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Smartphone className="h-4 w-4 text-gray-600" />
+                    <Smartphone className="h-4 w-4 text-text-secondary" />
                     <span className="text-sm text-gray-700">Mobile</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-dark">
                     {devices.mobile} ({((devices.mobile / totalDevices) * 100).toFixed(1)}%)
                   </span>
                 </div>
@@ -288,10 +288,10 @@ export default function TrafficAnalytics() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Monitor className="h-4 w-4 text-gray-600" />
+                    <Monitor className="h-4 w-4 text-text-secondary" />
                     <span className="text-sm text-gray-700">Tablet</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-dark">
                     {devices.tablet} ({((devices.tablet / totalDevices) * 100).toFixed(1)}%)
                   </span>
                 </div>
@@ -304,7 +304,7 @@ export default function TrafficAnalytics() {
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-600">
+            <div className="text-center py-8 text-text-secondary">
               No device data available
             </div>
           )}

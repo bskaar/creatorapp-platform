@@ -102,7 +102,7 @@ export default function RevenueCharts() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+      <div className="bg-white rounded-card shadow-light border border-border p-6 border border-border">
         <div className="animate-pulse space-y-4">
           <div className="h-6 bg-gray-200 rounded w-48" />
           <div className="grid grid-cols-4 gap-4">
@@ -119,9 +119,9 @@ export default function RevenueCharts() {
   const maxRevenue = Math.max(...data.map(d => d.revenue), 1);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+    <div className="bg-white rounded-card shadow-light border border-border p-6 border border-border">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Revenue Analytics</h2>
+        <h2 className="text-xl font-bold text-dark">Revenue Analytics</h2>
         <select
           value={dateRange}
           onChange={(e) => setDateRange(e.target.value as '7d' | '30d' | '90d')}
@@ -136,45 +136,45 @@ export default function RevenueCharts() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="p-4 bg-green-50 rounded-lg border border-green-200">
           <div className="flex items-center justify-between mb-2">
-            <DollarSign className="h-5 w-5 text-green-600" />
+            <DollarSign className="h-5 w-5 text-emerald-600" />
             <span className={`text-xs font-medium ${
-              summary.revenueChange >= 0 ? 'text-green-600' : 'text-red-600'
+              summary.revenueChange >= 0 ? 'text-emerald-600' : 'text-red-600'
             }`}>
               {summary.revenueChange >= 0 ? '+' : ''}{summary.revenueChange.toFixed(1)}%
             </span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-dark">
             ${summary.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
-          <p className="text-sm text-gray-600">Total Revenue</p>
+          <p className="text-sm text-text-secondary">Total Revenue</p>
         </div>
 
         <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
           <div className="flex items-center justify-between mb-2">
-            <ShoppingCart className="h-5 w-5 text-blue-600" />
+            <ShoppingCart className="h-5 w-5 text-primary" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">{summary.totalOrders}</p>
-          <p className="text-sm text-gray-600">Total Orders</p>
+          <p className="text-2xl font-bold text-dark">{summary.totalOrders}</p>
+          <p className="text-sm text-text-secondary">Total Orders</p>
         </div>
 
         <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
           <div className="flex items-center justify-between mb-2">
             <TrendingUp className="h-5 w-5 text-purple-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-dark">
             ${summary.averageOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
-          <p className="text-sm text-gray-600">Average Order Value</p>
+          <p className="text-sm text-text-secondary">Average Order Value</p>
         </div>
 
         <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
           <div className="flex items-center justify-between mb-2">
             <UsersIcon className="h-5 w-5 text-amber-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-dark">
             {summary.newCustomers} / {summary.returningCustomers}
           </p>
-          <p className="text-sm text-gray-600">New / Returning</p>
+          <p className="text-sm text-text-secondary">New / Returning</p>
         </div>
       </div>
 
@@ -197,7 +197,7 @@ export default function RevenueCharts() {
                       title={`${label}: $${item.revenue.toFixed(2)}`}
                     />
                   </div>
-                  <span className="text-xs text-gray-600 -rotate-45 origin-top-left whitespace-nowrap mt-4">
+                  <span className="text-xs text-text-secondary -rotate-45 origin-top-left whitespace-nowrap mt-4">
                     {label}
                   </span>
                 </div>
@@ -205,11 +205,11 @@ export default function RevenueCharts() {
             })}
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
+          <div className="pt-4 border-t border-border">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="text-left text-sm text-gray-600 border-b border-gray-200">
+                  <tr className="text-left text-sm text-text-secondary border-b border-border">
                     <th className="pb-2">Date</th>
                     <th className="pb-2 text-right">Revenue</th>
                     <th className="pb-2 text-right">Orders</th>
@@ -219,14 +219,14 @@ export default function RevenueCharts() {
                 <tbody>
                   {data.slice(-10).reverse().map((item, index) => (
                     <tr key={index} className="text-sm border-b border-gray-100 last:border-0">
-                      <td className="py-2 text-gray-900">
+                      <td className="py-2 text-dark">
                         {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
-                      <td className="py-2 text-right font-medium text-gray-900">
+                      <td className="py-2 text-right font-medium text-dark">
                         ${item.revenue.toFixed(2)}
                       </td>
-                      <td className="py-2 text-right text-gray-600">{item.orders}</td>
-                      <td className="py-2 text-right text-gray-600">
+                      <td className="py-2 text-right text-text-secondary">{item.orders}</td>
+                      <td className="py-2 text-right text-text-secondary">
                         ${item.aov.toFixed(2)}
                       </td>
                     </tr>
@@ -237,7 +237,7 @@ export default function RevenueCharts() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-600">
+        <div className="text-center py-12 text-text-secondary">
           No revenue data available for this period
         </div>
       )}

@@ -124,27 +124,27 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">General Settings</h3>
-        <p className="text-sm text-gray-600">Manage your site's basic information and branding</p>
+        <h3 className="text-xl font-bold text-dark mb-4">General Settings</h3>
+        <p className="text-sm text-text-secondary font-medium">Manage your site's basic information and branding</p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Site Name
           </label>
           <input
             type="text"
             value={formData.name}
             onChange={(e) => handleChange('name', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
             placeholder="My Awesome Site"
           />
-          <p className="text-xs text-gray-500 mt-1">This is your site's display name</p>
+          <p className="text-xs text-text-secondary mt-1">This is your site's display name</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Site Slug
           </label>
           <div className="flex items-center">
@@ -152,16 +152,16 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
               type="text"
               value={formData.slug}
               onChange={(e) => handleChange('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="my-site"
             />
             <span className="ml-2 text-sm text-gray-500">.creatorapp.us</span>
           </div>
-          <p className="text-xs text-gray-500 mt-1">URL-safe identifier for your site</p>
+          <p className="text-xs text-text-secondary mt-1">URL-safe identifier for your site</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Primary Brand Color
           </label>
           <div className="flex items-center gap-4">
@@ -175,22 +175,22 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
               type="text"
               value={formData.primary_color}
               onChange={(e) => handleChange('primary_color', e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+              className="flex-1 px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
               placeholder="#3B82F6"
             />
             <Palette className="h-5 w-5 text-gray-400" />
           </div>
-          <p className="text-xs text-gray-500 mt-1">Used for buttons, links, and accents</p>
+          <p className="text-xs text-text-secondary mt-1">Used for buttons, links, and accents</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Timezone
           </label>
           <select
             value={formData.timezone}
             onChange={(e) => handleChange('timezone', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             {timezones.map((tz) => (
               <option key={tz.value} value={tz.value}>
@@ -198,42 +198,42 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-500 mt-1">Default timezone for scheduling and reports</p>
+          <p className="text-xs text-text-secondary mt-1">Default timezone for scheduling and reports</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Site Description
           </label>
           <textarea
             value={formData.description}
             onChange={(e) => handleChange('description', e.target.value)}
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
             placeholder="A brief description of your site for SEO"
           />
-          <p className="text-xs text-gray-500 mt-1">Displayed in search engine results</p>
+          <p className="text-xs text-text-secondary mt-1">Displayed in search engine results</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-semibold text-text-primary mb-1">
             Keywords
           </label>
           <input
             type="text"
             value={formData.keywords}
             onChange={(e) => handleChange('keywords', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
             placeholder="online courses, education, coaching"
           />
-          <p className="text-xs text-gray-500 mt-1">Comma-separated keywords for SEO</p>
+          <p className="text-xs text-text-secondary mt-1">Comma-separated keywords for SEO</p>
         </div>
 
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-4 border-t border-border">
           <button
             onClick={handleSave}
             disabled={loading}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? (
               <>

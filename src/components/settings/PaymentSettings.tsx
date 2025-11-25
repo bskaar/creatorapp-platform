@@ -79,8 +79,8 @@ export default function PaymentSettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Settings</h3>
-        <p className="text-sm text-gray-600">Configure payment processors and commerce settings</p>
+        <h3 className="text-xl font-bold text-dark mb-4">Payment Settings</h3>
+        <p className="text-sm text-text-secondary font-medium">Configure payment processors and commerce settings</p>
       </div>
 
       <div className="border-b border-gray-200">
@@ -89,7 +89,7 @@ export default function PaymentSettings() {
             onClick={() => setActiveTab('general')}
             className={`pb-3 px-2 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'general'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-blue-600 text-primary'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
@@ -99,7 +99,7 @@ export default function PaymentSettings() {
             onClick={() => setActiveTab('stripe')}
             className={`pb-3 px-2 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'stripe'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-blue-600 text-primary'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
@@ -112,13 +112,13 @@ export default function PaymentSettings() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-text-primary mb-1">
                 Currency
               </label>
               <select
                 value={formData.currency}
                 onChange={(e) => handleChange('currency', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 {currencies.map((currency) => (
                   <option key={currency} value={currency}>
@@ -129,7 +129,7 @@ export default function PaymentSettings() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-text-primary mb-1">
                 Tax Rate (%)
               </label>
               <input
@@ -137,47 +137,47 @@ export default function PaymentSettings() {
                 step="0.01"
                 value={formData.tax_rate}
                 onChange={(e) => handleChange('tax_rate', parseFloat(e.target.value) || 0)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                 placeholder="0.00"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-text-primary mb-1">
               Tax ID / VAT Number
             </label>
             <input
               type="text"
               value={formData.tax_id}
               onChange={(e) => handleChange('tax_id', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="US123456789"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-text-primary mb-1">
               Refund Policy URL
             </label>
             <input
               type="url"
               value={formData.refund_policy_url}
               onChange={(e) => handleChange('refund_policy_url', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="https://yoursite.com/refund-policy"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-text-primary mb-1">
               Terms & Conditions URL
             </label>
             <input
               type="url"
               value={formData.terms_url}
               onChange={(e) => handleChange('terms_url', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="https://yoursite.com/terms"
             />
           </div>
@@ -187,11 +187,11 @@ export default function PaymentSettings() {
       {activeTab === 'stripe' && <StripeConnectOnboarding />}
 
 
-      <div className="pt-4 border-t border-gray-200">
+      <div className="pt-4 border-t border-border">
         <button
           onClick={handleSave}
           disabled={loading}
-          className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {loading ? (
             <>

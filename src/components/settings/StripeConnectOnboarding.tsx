@@ -117,8 +117,8 @@ export default function StripeConnectOnboarding() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Stripe Connect</h3>
-        <p className="text-sm text-gray-600">
+        <h3 className="text-xl font-bold text-dark mb-2">Stripe Connect</h3>
+        <p className="text-sm text-text-secondary font-medium">
           Connect your Stripe account to receive payments directly. The platform takes a 10% fee on each transaction.
         </p>
       </div>
@@ -141,7 +141,7 @@ export default function StripeConnectOnboarding() {
             </ul>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-blue-200 rounded-lg p-6">
             <h4 className="font-medium text-blue-900 mb-2">Connect Your Stripe Account</h4>
             <p className="text-sm text-blue-700 mb-4">
               You'll be redirected to Stripe to securely connect your account. This allows you to receive payments directly from customers.
@@ -149,7 +149,7 @@ export default function StripeConnectOnboarding() {
             <button
               onClick={handleConnectStripe}
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? (
                 <>
@@ -173,7 +173,7 @@ export default function StripeConnectOnboarding() {
               <button
                 onClick={handleRefreshStatus}
                 disabled={refreshing}
-                className="text-sm text-blue-600 hover:text-blue-700 disabled:opacity-50"
+                className="text-sm text-primary hover:text-blue-700 disabled:opacity-50"
               >
                 {refreshing ? 'Refreshing...' : 'Refresh Status'}
               </button>
@@ -215,8 +215,8 @@ export default function StripeConnectOnboarding() {
             </div>
 
             {!onboardingComplete && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-600 mb-3">
+              <div className="mt-4 pt-4 border-t border-border">
+                <p className="text-sm text-text-secondary font-medium mb-3">
                   Complete your Stripe onboarding to start accepting payments.
                 </p>
                 <button
