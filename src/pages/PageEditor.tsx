@@ -410,7 +410,12 @@ export default function PageEditor() {
   };
 
   const handleTemplateSelect = async (template: any) => {
-    if (!page || !template) {
+    if (!page) {
+      setShowTemplatePicker(false);
+      return;
+    }
+
+    if (template === null) {
       setShowTemplatePicker(false);
       return;
     }
@@ -420,11 +425,29 @@ export default function PageEditor() {
       return;
     }
 
-    setBlocks(template.blocks);
-    setTheme(template.theme);
+    const newBlocks = template.blocks || [];
+    const newTheme = template.theme || theme;
+
+    setBlocks(newBlocks);
+    setTheme(newTheme);
     setShowTemplatePicker(false);
 
-    await handleSave();
+    setSaving(true);
+    const { error } = await supabase
+      .from('pages')
+      .update({
+        content: { blocks: newBlocks, theme: newTheme },
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', page.id);
+
+    if (!error) {
+      alert('Template applied successfully!');
+    } else {
+      console.error('Error applying template:', error);
+      alert('Failed to apply template. Please try again.');
+    }
+    setSaving(false);
   };
 
   const getPreviewWidth = () => {
