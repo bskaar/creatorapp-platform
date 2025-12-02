@@ -40,15 +40,15 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Content Library', href: '/content', icon: FolderOpen },
-    { name: 'Funnels & Pages', href: '/funnels', icon: GitBranch },
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, dataTour: 'nav-dashboard' },
+    { name: 'Content Library', href: '/content', icon: FolderOpen, dataTour: 'nav-products' },
+    { name: 'Funnels & Pages', href: '/funnels', icon: GitBranch, dataTour: 'nav-funnels' },
     { name: 'Email Marketing', href: '/email', icon: Mail },
     { name: 'Automations', href: '/automations', icon: Zap },
     { name: 'Commerce', href: '/commerce', icon: ShoppingCart },
     { name: 'Orders', href: '/orders', icon: Package },
     { name: 'Webinars', href: '/webinars', icon: Video },
-    { name: 'Contacts & CRM', href: '/contacts', icon: Users },
+    { name: 'Contacts & CRM', href: '/contacts', icon: Users, dataTour: 'nav-contacts' },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
@@ -147,6 +147,7 @@ export default function Layout({ children }: LayoutProps) {
                     key={item.name}
                     to={item.href}
                     onClick={() => setSidebarOpen(false)}
+                    data-tour={item.dataTour}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                       active
                         ? 'bg-gradient-to-r from-primary to-accent text-white shadow-light'
@@ -189,7 +190,7 @@ export default function Layout({ children }: LayoutProps) {
           </nav>
 
           <div className="border-t border-border p-4">
-            <div className="flex items-center space-x-3 px-4 py-3 mb-2 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl">
+            <div data-tour="user-menu" className="flex items-center space-x-3 px-4 py-3 mb-2 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold shadow-light">
                 {user?.email?.charAt(0).toUpperCase()}
               </div>

@@ -79,6 +79,89 @@ export default function Signup() {
         console.error('Failed to create site member:', memberError);
       }
 
+      const defaultHomepageBlocks = [
+        {
+          id: 'hero-1',
+          type: 'hero',
+          content: {
+            heading: `Welcome to ${siteName}`,
+            subheading: 'Transform your passion into profit. Start your creator journey today.',
+            ctaText: 'Get Started',
+            ctaLink: '#products',
+            backgroundType: 'gradient',
+            backgroundValue: 'from-primary to-accent',
+          },
+          styles: {
+            textAlign: 'center',
+            padding: 'large',
+          },
+          order: 0,
+        },
+        {
+          id: 'features-1',
+          type: 'features',
+          content: {
+            heading: 'Everything You Need to Succeed',
+            features: [
+              {
+                icon: 'package',
+                title: 'Digital Products',
+                description: 'Sell courses, memberships, and downloads',
+              },
+              {
+                icon: 'users',
+                title: 'Build Community',
+                description: 'Connect with your audience and grow together',
+              },
+              {
+                icon: 'trending-up',
+                title: 'Scale Your Business',
+                description: 'Tools to help you grow and automate',
+              },
+            ],
+          },
+          styles: {
+            backgroundColor: 'white',
+            padding: 'large',
+          },
+          order: 1,
+        },
+        {
+          id: 'cta-1',
+          type: 'cta',
+          content: {
+            heading: 'Ready to Get Started?',
+            subheading: 'Join thousands of creators building their business',
+            ctaText: 'Start Your Journey',
+            ctaLink: '#signup',
+          },
+          styles: {
+            backgroundColor: 'primary',
+            textColor: 'white',
+            textAlign: 'center',
+            padding: 'large',
+          },
+          order: 2,
+        },
+      ];
+
+      const { error: pageError } = await supabase
+        .from('pages')
+        .insert({
+          site_id: siteData.id,
+          title: 'Home',
+          slug: 'home',
+          page_type: 'landing',
+          status: 'published',
+          blocks: defaultHomepageBlocks,
+          seo_title: `${siteName} - Home`,
+          seo_description: `Welcome to ${siteName}. Start your creator journey today.`,
+        });
+
+      if (pageError) {
+        console.error('Failed to create homepage:', pageError);
+      }
+
       await refreshSites();
       await new Promise(resolve => setTimeout(resolve, 500));
 

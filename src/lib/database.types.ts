@@ -58,6 +58,9 @@ export interface Database {
           products_count: number
           emails_sent_month: number
           status: 'active' | 'suspended' | 'cancelled'
+          onboarding_completed: boolean
+          onboarding_data: Json
+          show_tour: boolean
           created_at: string
           updated_at: string
         }
@@ -80,6 +83,9 @@ export interface Database {
           products_count?: number
           emails_sent_month?: number
           status?: 'active' | 'suspended' | 'cancelled'
+          onboarding_completed?: boolean
+          onboarding_data?: Json
+          show_tour?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -98,6 +104,9 @@ export interface Database {
           dns_records?: Json
           ssl_status?: 'not_provisioned' | 'provisioning' | 'active' | 'failed'
           settings?: Json
+          onboarding_completed?: boolean
+          onboarding_data?: Json
+          show_tour?: boolean
           contacts_count?: number
           products_count?: number
           emails_sent_month?: number

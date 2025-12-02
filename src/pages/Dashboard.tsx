@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
 import { DollarSign, Users, Mail, TrendingUp, FolderOpen, GitBranch, Video, ShoppingCart, Home, Zap, ArrowRight } from 'lucide-react';
+import OnboardingWizard from '../components/OnboardingWizard';
+import GettingStartedChecklist from '../components/GettingStartedChecklist';
+import OnboardingTour, { dashboardTourSteps } from '../components/OnboardingTour';
 
 interface Stats {
   revenue: number;
@@ -38,11 +41,26 @@ export default function Dashboard() {
     max_funnels: 3,
     max_emails_per_month: 50000,
   });
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showTour, setShowTour] = useState(false);
 
   useEffect(() => {
     if (!currentSite) return;
 
-    const loadStats = async () => {
+    if (!currentSite.onboarding_completed) {
+      setShowOnboarding(true);
+    } else if (currentSite.show_tour) {
+      const hasSeenTour = localStorage.getItem(`tour-completed-${currentSite.id}`);
+      if (!hasSeenTour) {
+        setTimeout(() => setShowTour(true), 1000);
+      }
+    }
+
+    loadStats();
+  }, [currentSite]);
+
+  const loadStats = async () => {
+    if (!currentSite) return;
       const [ordersResult, contactsResult, productsResult, funnelsResult, webinarsResult, planResult] = await Promise.all([
         supabase
           .from('orders')
@@ -103,8 +121,28 @@ export default function Dashboard() {
       setLoading(false);
     };
 
-    loadStats();
-  }, [currentSite]);
+  const handleOnboardingComplete = async () => {
+    setShowOnboarding(false);
+    setShowTour(true);
+  };
+
+  const handleTourComplete = async () => {
+    setShowTour(false);
+    if (currentSite) {
+      localStorage.setItem(`tour-completed-${currentSite.id}`, 'true');
+      await supabase
+        .from('sites')
+        .update({ show_tour: false })
+        .eq('id', currentSite.id);
+    }
+  };
+
+  const handleTourSkip = () => {
+    setShowTour(false);
+    if (currentSite) {
+      localStorage.setItem(`tour-completed-${currentSite.id}`, 'true');
+    }
+  };
 
   const statCards = [
     {
@@ -168,8 +206,21 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <>
+      {showOnboarding && (
+        <OnboardingWizard onComplete={handleOnboardingComplete} />
+      )}
+
+      {showTour && (
+        <OnboardingTour
+          steps={dashboardTourSteps}
+          onComplete={handleTourComplete}
+          onSkip={handleTourSkip}
+        />
+      )}
+
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold text-dark">Dashboard</h1>
           <p className="text-text-secondary mt-2 text-lg">Welcome back to {currentSite.name}</p>
@@ -221,6 +272,8 @@ export default function Dashboard() {
           })}
         </div>
       )}
+
+      <GettingStartedChecklist />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-card shadow-light p-8 border border-border">
@@ -337,5 +390,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }
