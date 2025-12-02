@@ -48,6 +48,11 @@ export interface Database {
           logo_url: string | null
           primary_color: string
           custom_domain: string | null
+          domain_verification_status: 'not_verified' | 'pending' | 'verified' | 'failed'
+          domain_verification_token: string | null
+          domain_verified_at: string | null
+          dns_records: Json
+          ssl_status: 'not_provisioned' | 'provisioning' | 'active' | 'failed'
           settings: Json
           contacts_count: number
           products_count: number
@@ -65,6 +70,11 @@ export interface Database {
           logo_url?: string | null
           primary_color?: string
           custom_domain?: string | null
+          domain_verification_status?: 'not_verified' | 'pending' | 'verified' | 'failed'
+          domain_verification_token?: string | null
+          domain_verified_at?: string | null
+          dns_records?: Json
+          ssl_status?: 'not_provisioned' | 'provisioning' | 'active' | 'failed'
           settings?: Json
           contacts_count?: number
           products_count?: number
@@ -82,6 +92,11 @@ export interface Database {
           logo_url?: string | null
           primary_color?: string
           custom_domain?: string | null
+          domain_verification_status?: 'not_verified' | 'pending' | 'verified' | 'failed'
+          domain_verification_token?: string | null
+          domain_verified_at?: string | null
+          dns_records?: Json
+          ssl_status?: 'not_provisioned' | 'provisioning' | 'active' | 'failed'
           settings?: Json
           contacts_count?: number
           products_count?: number
