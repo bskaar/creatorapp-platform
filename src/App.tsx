@@ -34,6 +34,11 @@ import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import MarketingPage from './pages/MarketingPage';
 import MarketingPagesAdmin from './pages/MarketingPagesAdmin';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import CookiePolicy from './pages/CookiePolicy';
+import ErrorBoundary from './components/ErrorBoundary';
+import CookieConsent from './components/CookieConsent';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -410,6 +415,9 @@ function AppRoutes() {
         }
       />
       <Route path="/pages/:slug" element={<MarketingPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/cookie-policy" element={<CookiePolicy />} />
       <Route path="/site/:siteId/product/:productId" element={<ProductPublic />} />
       <Route path="/site/:siteId/checkout" element={<Checkout />} />
       <Route path="/site/:siteId/success" element={<CheckoutSuccess />} />
@@ -420,12 +428,15 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <SiteProvider>
-          <AppRoutes />
-        </SiteProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <SiteProvider>
+            <AppRoutes />
+            <CookieConsent />
+          </SiteProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
