@@ -16,7 +16,7 @@ interface SubscriptionPlan {
 
 export default function SubscriptionSettings() {
   const { currentSite, refreshSites } = useSite();
-  const { subscribeToPlan, upgradePlan, downgradePlan, cancelSubscription, loading: actionLoading } = useSubscription();
+  const { subscribeToPlan, upgradePlan, downgradePlan, cancelSubscription, openCustomerPortal, loading: actionLoading } = useSubscription();
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -251,12 +251,28 @@ export default function SubscriptionSettings() {
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Manage Subscription</h3>
           <div className="space-y-4">
-            <button
-              onClick={() => setShowCancelConfirm(true)}
-              className="px-4 py-2 text-red-600 hover:bg-red-50 border border-red-300 rounded-lg font-medium transition"
-            >
-              Cancel Subscription
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={openCustomerPortal}
+                disabled={actionLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium transition"
+              >
+                {actionLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <CreditCard className="w-4 h-4" />
+                    Manage Payment & Billing
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setShowCancelConfirm(true)}
+                className="px-4 py-2 text-red-600 hover:bg-red-50 border border-red-300 rounded-lg font-medium transition"
+              >
+                Cancel Subscription
+              </button>
+            </div>
 
             {showCancelConfirm && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">

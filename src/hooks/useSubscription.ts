@@ -242,6 +242,57 @@ export function useSubscription() {
     }
   };
 
+  const openCustomerPortal = async () => {
+    if (!currentSite) {
+      throw new Error('No site selected');
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-customer-portal`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            siteId: currentSite.id,
+            returnUrl: window.location.href,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to open customer portal');
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+        return new Promise(() => {});
+      }
+
+      return data;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const checkUsageLimits = (resource: 'products' | 'funnels' | 'contacts' | 'emails' | 'team_members'): {
     canCreate: boolean;
     currentUsage: number;
@@ -301,6 +352,7 @@ export function useSubscription() {
     upgradePlan,
     downgradePlan,
     cancelSubscription,
+    openCustomerPortal,
     checkUsageLimits,
     loading,
     error,

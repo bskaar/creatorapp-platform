@@ -35,6 +35,8 @@ Deno.serve(async (req) => {
     });
   }
 
+  let eventId: string | null = null;
+
   try {
     const signature = req.headers.get('stripe-signature');
     if (!signature) {
@@ -61,7 +63,35 @@ Deno.serve(async (req) => {
       });
     }
 
-    console.log(`Received event: ${event.type}`);
+    eventId = event.id;
+    console.log(`Received event: ${event.type} (${eventId})`);
+
+    await supabase.rpc('log_webhook_event', {
+      p_event_id: event.id,
+      p_event_type: event.type,
+      p_webhook_type: 'stripe_commerce',
+      p_payload: event as any,
+    });
+
+    const { data: existingEvent } = await supabase
+      .from('webhook_events')
+      .select('processing_status')
+      .eq('event_id', event.id)
+      .eq('processing_status', 'completed')
+      .maybeSingle();
+
+    if (existingEvent) {
+      console.log(`Event ${event.id} already processed, skipping`);
+      return new Response(JSON.stringify({ received: true, status: 'already_processed' }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    await supabase
+      .from('webhook_events')
+      .update({ processing_status: 'processing' })
+      .eq('event_id', event.id);
 
     switch (event.type) {
       case 'checkout.session.completed':
@@ -93,12 +123,25 @@ Deno.serve(async (req) => {
         console.log(`Unhandled event type: ${event.type}`);
     }
 
-    return new Response(JSON.stringify({ received: true }), {
+    await supabase.rpc('complete_webhook_event', {
+      p_event_id: event.id,
+      p_error: null,
+    });
+
+    return new Response(JSON.stringify({ received: true, status: 'processed' }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error: any) {
     console.error('Webhook error:', error);
+
+    if (eventId) {
+      await supabase.rpc('complete_webhook_event', {
+        p_event_id: eventId,
+        p_error: error.message,
+      }).catch(console.error);
+    }
+
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -123,7 +166,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   if (findError) {
     console.error('Error finding orders:', findError);
-    return;
+    throw findError;
   }
 
   if (!orders || orders.length === 0) {
@@ -132,7 +175,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   for (const order of orders) {
-    if (session.payment_status === 'paid') {
+    if (session.payment_status === 'paid' && order.payment_status !== 'paid') {
       const { error: updateError } = await supabase
         .from('orders')
         .update({
@@ -143,7 +186,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
       if (updateError) {
         console.error(`Error updating order ${order.id}:`, updateError);
-        continue;
+        throw updateError;
       }
 
       console.log(`Order ${order.id} marked as paid`);
@@ -162,32 +205,64 @@ async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
     .select('*')
     .eq('metadata->>payment_intent_id', paymentIntent.id);
 
-  if (findError || !orders || orders.length === 0) {
+  if (findError) {
+    console.error('Error finding orders:', findError);
+    throw findError;
+  }
+
+  if (!orders || orders.length === 0) {
     console.log(`No orders found for payment intent ${paymentIntent.id}`);
     return;
   }
 
   for (const order of orders) {
-    const { error: updateError } = await supabase
-      .from('orders')
-      .update({
-        payment_status: 'paid',
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', order.id);
+    if (order.payment_status !== 'paid') {
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({
+          payment_status: 'paid',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', order.id);
 
-    if (updateError) {
-      console.error(`Error updating order ${order.id}:`, updateError);
-      continue;
+      if (updateError) {
+        console.error(`Error updating order ${order.id}:`, updateError);
+        throw updateError;
+      }
+
+      console.log(`Order ${order.id} marked as paid via payment intent`);
+      await grantProductAccess(order);
     }
-
-    console.log(`Order ${order.id} marked as paid via payment intent`);
-    await grantProductAccess(order);
   }
 }
 
 async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
   console.log(`Processing payment_intent.payment_failed: ${paymentIntent.id}`);
+
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('metadata->>payment_intent_id', paymentIntent.id);
+
+  const order = orders?.[0];
+  const siteId = order?.site_id;
+  const customerEmail = paymentIntent.receipt_email || order?.billing_email || 'unknown@example.com';
+
+  await supabase.rpc('log_payment_failure', {
+    p_site_id: siteId,
+    p_order_id: order?.id || null,
+    p_stripe_payment_intent_id: paymentIntent.id,
+    p_customer_email: customerEmail,
+    p_amount: paymentIntent.amount,
+    p_currency: paymentIntent.currency,
+    p_failure_code: paymentIntent.last_payment_error?.code || 'unknown',
+    p_failure_message: paymentIntent.last_payment_error?.message || 'Payment failed',
+    p_failure_type: paymentIntent.last_payment_error?.type || 'unknown',
+    p_metadata: {
+      decline_code: paymentIntent.last_payment_error?.decline_code,
+      payment_method_type: paymentIntent.payment_method_types?.[0],
+    },
+  });
 
   const { error } = await supabase
     .from('orders')
@@ -199,7 +274,10 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
 
   if (error) {
     console.error('Error updating failed payment:', error);
+    throw error;
   }
+
+  console.log(`Payment failure logged for intent ${paymentIntent.id}`);
 }
 
 async function handleChargeRefunded(charge: Stripe.Charge) {
@@ -210,7 +288,12 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
     .select('*')
     .eq('metadata->>charge_id', charge.id);
 
-  if (findError || !orders || orders.length === 0) {
+  if (findError) {
+    console.error('Error finding orders:', findError);
+    throw findError;
+  }
+
+  if (!orders || orders.length === 0) {
     console.log(`No orders found for charge ${charge.id}`);
     return;
   }
@@ -226,7 +309,7 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
 
     if (updateError) {
       console.error(`Error updating refunded order ${order.id}:`, updateError);
-      continue;
+      throw updateError;
     }
 
     console.log(`Order ${order.id} marked as refunded`);
@@ -243,20 +326,49 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     return;
   }
 
+  const { data: existingOrders } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('metadata->>subscription_id', subscription.id)
+    .eq('site_id', siteId)
+    .limit(1);
+
+  const previousStatus = existingOrders?.[0]?.payment_status;
+
+  await supabase.rpc('log_subscription_change', {
+    p_site_id: siteId,
+    p_stripe_subscription_id: subscription.id,
+    p_change_type: subscription.created === subscription.current_period_start ? 'created' : 'updated',
+    p_previous_status: previousStatus || null,
+    p_new_status: subscription.status,
+    p_previous_plan: null,
+    p_new_plan: subscription.items.data[0]?.price?.id || null,
+    p_change_reason: null,
+    p_metadata: {
+      cancel_at_period_end: subscription.cancel_at_period_end,
+      current_period_end: subscription.current_period_end,
+    },
+  });
+
   const { data: orders, error: findError } = await supabase
     .from('orders')
     .select('*')
     .eq('metadata->>subscription_id', subscription.id)
     .eq('site_id', siteId);
 
-  if (findError || !orders || orders.length === 0) {
+  if (findError) {
+    console.error('Error finding orders:', findError);
+    throw findError;
+  }
+
+  if (!orders || orders.length === 0) {
     console.log(`No orders found for subscription ${subscription.id}`);
     return;
   }
 
   for (const order of orders) {
     if (subscription.status === 'active' && order.payment_status !== 'paid') {
-      await supabase
+      const { error: updateError } = await supabase
         .from('orders')
         .update({
           payment_status: 'paid',
@@ -264,13 +376,45 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
         })
         .eq('id', order.id);
 
+      if (updateError) {
+        console.error(`Error updating order ${order.id}:`, updateError);
+        throw updateError;
+      }
+
       await grantProductAccess(order);
+    } else if (['canceled', 'unpaid', 'past_due'].includes(subscription.status)) {
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({
+          payment_status: 'cancelled',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', order.id);
+
+      if (updateError) {
+        console.error(`Error updating cancelled order ${order.id}:`, updateError);
+      }
     }
   }
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   console.log(`Processing subscription deleted: ${subscription.id}`);
+
+  const siteId = subscription.metadata?.site_id;
+  if (siteId) {
+    await supabase.rpc('log_subscription_change', {
+      p_site_id: siteId,
+      p_stripe_subscription_id: subscription.id,
+      p_change_type: 'cancelled',
+      p_previous_status: subscription.status,
+      p_new_status: 'canceled',
+      p_previous_plan: subscription.items.data[0]?.price?.id || null,
+      p_new_plan: null,
+      p_change_reason: subscription.cancellation_details?.reason || null,
+      p_metadata: subscription.cancellation_details as any,
+    });
+  }
 
   const { data: orders } = await supabase
     .from('orders')
@@ -280,6 +424,14 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   if (orders) {
     for (const order of orders) {
       await revokeProductAccess(order);
+
+      await supabase
+        .from('orders')
+        .update({
+          payment_status: 'cancelled',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', order.id);
     }
   }
 }
@@ -321,7 +473,7 @@ async function grantProductAccess(order: any) {
 
   if (accessError) {
     console.error('Error granting product access:', accessError);
-    return;
+    throw accessError;
   }
 
   console.log(`Access granted for order ${order.id}`);
@@ -340,7 +492,7 @@ async function revokeProductAccess(order: any) {
 
   if (error) {
     console.error('Error revoking access:', error);
-    return;
+    throw error;
   }
 
   console.log(`Access revoked for order ${order.id}`);
@@ -349,106 +501,42 @@ async function revokeProductAccess(order: any) {
 async function sendOrderConfirmationEmail(order: any) {
   console.log(`Sending confirmation email for order ${order.id}`);
 
-  const { data: product } = await supabase
-    .from('products')
-    .select('title, product_type, access_duration_days')
-    .eq('id', order.product_id)
-    .maybeSingle();
-
-  const { data: site } = await supabase
-    .from('sites')
-    .select('name, custom_domain')
-    .eq('id', order.site_id)
-    .maybeSingle();
-
-  if (!product || !site) {
-    console.error('Product or site not found for email');
-    return;
-  }
-
-  const resendApiKey = Deno.env.get('RESEND_API_KEY');
-  if (!resendApiKey) {
-    console.error('RESEND_API_KEY not configured');
-    return;
-  }
-
-  const customerName = order.metadata?.customer_name || 'Customer';
-  const orderAmount = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: order.currency || 'USD',
-  }).format(order.amount);
-
-  const accessInfo = product.access_duration_days
-    ? `You have ${product.access_duration_days} days of access to this ${product.product_type}.`
-    : `You have lifetime access to this ${product.product_type}.`;
-
-  const emailHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Order Confirmation</title>
-    </head>
-    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-        <h1 style="color: white; margin: 0; font-size: 28px;">Thank You for Your Purchase!</h1>
-      </div>
-
-      <div style="background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
-        <p style="font-size: 16px; margin-top: 0;">Hi ${customerName},</p>
-
-        <p style="font-size: 16px;">Your order has been confirmed and you now have access to your purchase!</p>
-
-        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea;">
-          <h2 style="margin-top: 0; color: #667eea; font-size: 20px;">Order Details</h2>
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Product:</strong></td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; text-align: right;">${product.title}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Type:</strong></td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; text-align: right; text-transform: capitalize;">${product.product_type}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Amount:</strong></td>
-              <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb; text-align: right;">${orderAmount}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0;"><strong>Order ID:</strong></td>
-              <td style="padding: 8px 0; text-align: right; font-family: monospace; font-size: 12px;">${order.external_order_id}</td>
-            </tr>
-          </table>
-        </div>
-
-        <div style="background: #ecfdf5; border: 1px solid #10b981; padding: 15px; border-radius: 8px; margin: 20px 0;">
-          <p style="margin: 0; color: #065f46;"><strong>✓ Access Granted!</strong></p>
-          <p style="margin: 5px 0 0 0; color: #065f46;">${accessInfo}</p>
-        </div>
-
-        <p style="font-size: 16px;">You can access your purchase by logging in to your account.</p>
-
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="https://${site.custom_domain || site.name + '.example.com'}" style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">Access Your Purchase</a>
-        </div>
-
-        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-
-        <p style="font-size: 14px; color: #6b7280;">If you have any questions about your order, please reply to this email.</p>
-
-        <p style="font-size: 14px; color: #6b7280; margin-bottom: 0;">Best regards,<br><strong>${site.name}</strong></p>
-      </div>
-
-      <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
-        <p style="margin: 5px 0;">This is an automated email. Please do not reply directly.</p>
-        <p style="margin: 5px 0;">© ${new Date().getFullYear()} ${site.name}. All rights reserved.</p>
-      </div>
-    </body>
-    </html>
-  `;
-
   try {
+    const { data: product } = await supabase
+      .from('products')
+      .select('title, product_type, access_duration_days')
+      .eq('id', order.product_id)
+      .maybeSingle();
+
+    const { data: site } = await supabase
+      .from('sites')
+      .select('name, custom_domain')
+      .eq('id', order.site_id)
+      .maybeSingle();
+
+    if (!product || !site) {
+      console.error('Product or site not found for email');
+      return;
+    }
+
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    if (!resendApiKey) {
+      console.log('RESEND_API_KEY not configured, skipping email');
+      return;
+    }
+
+    const customerName = order.metadata?.customer_name || 'Customer';
+    const orderAmount = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: order.currency || 'USD',
+    }).format(order.amount);
+
+    const accessInfo = product.access_duration_days
+      ? `You have ${product.access_duration_days} days of access to this ${product.product_type}.`
+      : `You have lifetime access to this ${product.product_type}.`;
+
+    const emailHtml = `<!DOCTYPE html><html><body style="font-family: Arial, sans-serif;"><h1>Thank You for Your Purchase!</h1><p>Hi ${customerName},</p><p>Your order has been confirmed.</p><p><strong>Product:</strong> ${product.title}</p><p><strong>Amount:</strong> ${orderAmount}</p><p>${accessInfo}</p></body></html>`;
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
