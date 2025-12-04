@@ -1,7 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SiteProvider, useSite } from './contexts/SiteContext';
+import { PlatformAdminProvider } from './contexts/PlatformAdminContext';
 import Layout from './components/Layout';
+import PlatformAdminLayout from './components/PlatformAdminLayout';
+import PlatformAdminGuard from './components/PlatformAdminGuard';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -39,6 +42,11 @@ import TermsOfService from './pages/TermsOfService';
 import CookiePolicy from './pages/CookiePolicy';
 import ErrorBoundary from './components/ErrorBoundary';
 import CookieConsent from './components/CookieConsent';
+import PlatformAdminDashboard from './pages/PlatformAdmin/Dashboard';
+import PlatformAdminSites from './pages/PlatformAdmin/Sites';
+import PlatformAdminUsers from './pages/PlatformAdmin/Users';
+import PlatformAdminAuditLog from './pages/PlatformAdmin/AuditLog';
+import PlatformAdminSettings from './pages/PlatformAdmin/Settings';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -421,6 +429,58 @@ function AppRoutes() {
       <Route path="/site/:siteId/product/:productId" element={<ProductPublic />} />
       <Route path="/site/:siteId/checkout" element={<Checkout />} />
       <Route path="/site/:siteId/success" element={<CheckoutSuccess />} />
+
+      <Route
+        path="/platform-admin"
+        element={
+          <PlatformAdminGuard>
+            <PlatformAdminLayout>
+              <PlatformAdminDashboard />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+      <Route
+        path="/platform-admin/sites"
+        element={
+          <PlatformAdminGuard requiredPermission="view_sites">
+            <PlatformAdminLayout>
+              <PlatformAdminSites />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+      <Route
+        path="/platform-admin/users"
+        element={
+          <PlatformAdminGuard requiredPermission="view_users">
+            <PlatformAdminLayout>
+              <PlatformAdminUsers />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+      <Route
+        path="/platform-admin/audit-log"
+        element={
+          <PlatformAdminGuard requiredPermission="view_analytics">
+            <PlatformAdminLayout>
+              <PlatformAdminAuditLog />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+      <Route
+        path="/platform-admin/settings"
+        element={
+          <PlatformAdminGuard requiredPermission="manage_platform_settings">
+            <PlatformAdminLayout>
+              <PlatformAdminSettings />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -431,10 +491,12 @@ export default function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
-          <SiteProvider>
-            <AppRoutes />
-            <CookieConsent />
-          </SiteProvider>
+          <PlatformAdminProvider>
+            <SiteProvider>
+              <AppRoutes />
+              <CookieConsent />
+            </SiteProvider>
+          </PlatformAdminProvider>
         </AuthProvider>
       </BrowserRouter>
     </ErrorBoundary>
