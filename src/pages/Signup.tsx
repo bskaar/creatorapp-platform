@@ -32,7 +32,7 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      const { error: signUpError } = await signUp(email, password, fullName);
+      const { data: signUpData, error: signUpError } = await signUp(email, password, fullName);
 
       if (signUpError) {
         setError(signUpError.message);
@@ -40,9 +40,8 @@ export default function Signup() {
         return;
       }
 
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
-        setError('Failed to get user data');
+      if (!signUpData?.user) {
+        setError('Failed to create user account');
         setLoading(false);
         return;
       }
@@ -54,7 +53,7 @@ export default function Signup() {
         .insert({
           name: siteName,
           slug: slug,
-          owner_id: userData.user.id,
+          owner_id: signUpData.user.id,
           tier: 'launch',
         })
         .select()
@@ -70,7 +69,7 @@ export default function Signup() {
         .from('site_members')
         .insert({
           site_id: siteData.id,
-          user_id: userData.user.id,
+          user_id: signUpData.user.id,
           role: 'owner',
           accepted_at: new Date().toISOString(),
         });

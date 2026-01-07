@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session, AuthError } from '@supabase/supabase-js';
+import { User, Session, AuthError, AuthResponse } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
 interface AuthContextType {
@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
-  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, fullName?: string) => Promise<{ data: AuthResponse['data'] | null; error: AuthError | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
 }
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     }
 
-    return { error };
+    return { data, error };
   };
 
   const signOut = async () => {
