@@ -152,7 +152,7 @@ export default function Signup() {
           slug: 'home',
           page_type: 'landing',
           status: 'published',
-          blocks: defaultHomepageBlocks,
+          content: { blocks: defaultHomepageBlocks },
           seo_title: `${siteName} - Home`,
           seo_description: `Welcome to ${siteName}. Start your creator journey today.`,
         });
