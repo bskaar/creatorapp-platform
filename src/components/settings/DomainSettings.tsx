@@ -263,6 +263,17 @@ export default function DomainSettings() {
                       Add these DNS records to your domain provider:
                     </p>
 
+                    {!customDomain.startsWith('www.') && (
+                      <div className="bg-orange-50 border border-orange-300 rounded-lg p-3 mb-3">
+                        <p className="text-sm font-semibold text-orange-800 mb-1">⚠️ Root Domain Detected</p>
+                        <p className="text-xs text-orange-700">
+                          Most DNS providers (including GoDaddy) don't allow CNAME records for root domains.
+                          <strong> We recommend using "www.{customDomain}"</strong> instead. If you want to use the root domain,
+                          set up forwarding from {customDomain} → www.{customDomain} in your DNS provider.
+                        </p>
+                      </div>
+                    )}
+
                     <div className="bg-white rounded-lg border border-yellow-200 overflow-hidden">
                       <table className="w-full text-sm">
                         <thead className="bg-yellow-100 border-b border-yellow-200">
@@ -328,6 +339,17 @@ export default function DomainSettings() {
                     <ol className="list-decimal list-inside space-y-2 text-sm text-text-secondary font-medium">
                       <li>Log in to your domain provider (GoDaddy, Namecheap, Cloudflare, etc.)</li>
                       <li>Navigate to your DNS settings or DNS management page</li>
+                      {!customDomain.startsWith('www.') && (
+                        <li className="text-orange-700 font-semibold">
+                          <strong>For root domains:</strong> If your provider doesn't allow CNAME for "@",
+                          change your domain to "www.{customDomain}" or use domain forwarding
+                        </li>
+                      )}
+                      {customDomain.startsWith('www.') && (
+                        <li>
+                          <strong>Delete any existing CNAME</strong> record for "www" that points elsewhere
+                        </li>
+                      )}
                       <li>Add both DNS records shown above</li>
                       <li>Wait 5-10 minutes for DNS propagation (can take up to 48 hours)</li>
                       <li>Click "Verify Domain" below to check if your domain is configured correctly</li>
@@ -386,16 +408,36 @@ export default function DomainSettings() {
 
         <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
           <h5 className="font-bold text-dark mb-3">Need Help?</h5>
-          <div className="space-y-2 text-sm text-text-secondary font-medium">
-            <p>Common domain providers and where to find DNS settings:</p>
-            <ul className="list-disc list-inside space-y-1 ml-2">
-              <li><strong>GoDaddy:</strong> Domain Settings → Manage DNS</li>
-              <li><strong>Namecheap:</strong> Domain List → Manage → Advanced DNS</li>
-              <li><strong>Cloudflare:</strong> Select Domain → DNS</li>
-              <li><strong>Google Domains:</strong> My Domains → DNS</li>
-            </ul>
-            <p className="mt-4">
-              DNS changes can take anywhere from a few minutes to 48 hours to propagate globally.
+          <div className="space-y-3 text-sm text-text-secondary font-medium">
+            <div>
+              <p className="font-semibold text-dark mb-2">GoDaddy Specific Instructions:</p>
+              <ol className="list-decimal list-inside space-y-1 ml-2">
+                <li>Log into GoDaddy and go to your Domain Portfolio</li>
+                <li>Click on your domain → <strong>DNS</strong> or <strong>Manage DNS</strong></li>
+                <li><strong>Delete the existing CNAME</strong> record where Name="www" and Value="creatorappu.com"</li>
+                <li>Click <strong>Add New Record</strong></li>
+                <li>Select <strong>CNAME</strong> from the Type dropdown</li>
+                <li>Enter <strong>www</strong> in the Name field</li>
+                <li>Enter your CreatorApp subdomain (shown above) in the Value field</li>
+                <li>Click <strong>Add New Record</strong> again for the TXT record</li>
+                <li>Select <strong>TXT</strong> from Type, enter <strong>_creatorapp-verification</strong> as Name</li>
+                <li>Paste the verification token (shown above) in the Value field</li>
+                <li>Save both records and wait 5-10 minutes</li>
+              </ol>
+            </div>
+
+            <div className="pt-3 border-t border-gray-300">
+              <p className="font-semibold text-dark mb-2">Other domain providers:</p>
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li><strong>Namecheap:</strong> Domain List → Manage → Advanced DNS</li>
+                <li><strong>Cloudflare:</strong> Select Domain → DNS</li>
+                <li><strong>Google Domains:</strong> My Domains → DNS</li>
+              </ul>
+            </div>
+
+            <p className="mt-4 pt-3 border-t border-gray-300">
+              <strong>Note:</strong> DNS changes can take anywhere from a few minutes to 48 hours to propagate globally.
+              Most changes are visible within 10-15 minutes.
             </p>
           </div>
         </div>
