@@ -1,4 +1,4 @@
-import { Check, Zap, TrendingUp, Building2, ArrowRight, LogOut } from 'lucide-react';
+import { Check, Rocket, TrendingUp, Award, Building, ArrowRight, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from '../components/Logo';
@@ -15,7 +15,7 @@ export default function Pricing() {
   const tiers = [
     {
       name: "Starter",
-      price: "$39-$49",
+      price: "$49",
       billingNote: "per month",
       description: "First-time creators",
       features: [
@@ -31,7 +31,7 @@ export default function Pricing() {
       cta: "Get Started",
       ctaLink: "/signup?plan=starter",
       highlight: false,
-      icon: Zap,
+      icon: Rocket,
       popular: false
     },
     {
@@ -75,7 +75,7 @@ export default function Pricing() {
       cta: "Upgrade to Pro",
       ctaLink: "/signup?plan=pro",
       highlight: false,
-      icon: Building2,
+      icon: Award,
       popular: false
     },
     {
@@ -97,7 +97,7 @@ export default function Pricing() {
       cta: "Contact Sales",
       ctaLink: "/signup?plan=enterprise",
       highlight: false,
-      icon: Building2,
+      icon: Building,
       popular: false
     }
   ];

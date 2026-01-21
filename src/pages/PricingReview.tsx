@@ -1,13 +1,13 @@
 import React from 'react';
-import { Check, X, Zap, TrendingUp, Building2 } from 'lucide-react';
+import { Check, X, Rocket, TrendingUp, Award, Building } from 'lucide-react';
 
 const PricingReview = () => {
   const tiers = [
     {
       name: 'Starter',
-      icon: Zap,
-      iconColor: 'text-blue-400',
-      price: '$39-$49',
+      icon: Rocket,
+      iconColor: 'text-blue-500',
+      price: '$49',
       period: 'per month',
       description: 'First-time creators',
       features: [
@@ -26,7 +26,7 @@ const PricingReview = () => {
     {
       name: 'Growth',
       icon: TrendingUp,
-      iconColor: 'text-blue-500',
+      iconColor: 'text-emerald-500',
       price: '$99',
       period: 'per month',
       description: 'Serious creators',
@@ -46,8 +46,8 @@ const PricingReview = () => {
     },
     {
       name: 'Pro',
-      icon: Building2,
-      iconColor: 'text-slate-600',
+      icon: Award,
+      iconColor: 'text-amber-500',
       price: '$199',
       period: 'per month',
       description: 'Scaling businesses',
@@ -67,8 +67,8 @@ const PricingReview = () => {
     },
     {
       name: 'Enterprise',
-      icon: Building2,
-      iconColor: 'text-slate-700',
+      icon: Building,
+      iconColor: 'text-slate-600',
       price: 'Custom',
       period: 'contact sales',
       description: 'Agencies & platforms',
