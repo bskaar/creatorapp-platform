@@ -197,10 +197,10 @@ export default function Pricing() {
                       </div>
                     </div>
 
-                    <h3 className="text-2xl font-bold text-dark mb-3">
+                    <h3 className="text-3xl font-bold text-dark mb-3">
                       {tier.name}
                     </h3>
-                    <p className="text-text-secondary text-sm mb-6 min-h-[40px] font-medium">
+                    <p className="text-text-secondary text-lg mb-6 min-h-[40px] font-medium">
                       {tier.description}
                     </p>
 

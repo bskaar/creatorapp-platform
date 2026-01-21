@@ -122,7 +122,7 @@ const PricingReview = () => {
                   {/* Icon & Name */}
                   <div className="flex items-center gap-3 mb-4">
                     <Icon className={`w-8 h-8 ${tier.iconColor}`} />
-                    <h3 className="text-2xl font-bold text-gray-900">{tier.name}</h3>
+                    <h3 className="text-3xl font-bold text-gray-900">{tier.name}</h3>
                   </div>
 
                   {/* Price */}
@@ -134,7 +134,7 @@ const PricingReview = () => {
                   </div>
 
                   {/* Description */}
-                  <p className="text-gray-600 mb-6">{tier.description}</p>
+                  <p className="text-lg text-gray-600 mb-6">{tier.description}</p>
 
                   {/* CTA Button */}
                   <button
