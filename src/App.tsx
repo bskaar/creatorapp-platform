@@ -47,6 +47,7 @@ import PlatformAdminSites from './pages/PlatformAdmin/Sites';
 import PlatformAdminUsers from './pages/PlatformAdmin/Users';
 import PlatformAdminAuditLog from './pages/PlatformAdmin/AuditLog';
 import PlatformAdminSettings from './pages/PlatformAdmin/Settings';
+import PricingReview from './pages/PricingReview';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -426,6 +427,7 @@ function AppRoutes() {
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route path="/cookie-policy" element={<CookiePolicy />} />
+      <Route path="/pricing-review" element={<PricingReview />} />
       <Route path="/site/:siteId/product/:productId" element={<ProductPublic />} />
       <Route path="/site/:siteId/checkout" element={<Checkout />} />
       <Route path="/site/:siteId/success" element={<CheckoutSuccess />} />
