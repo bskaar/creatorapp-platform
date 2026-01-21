@@ -116,7 +116,7 @@ export default function SubscriptionSelect() {
     {
       id: 'starter',
       name: 'Starter',
-      price: 29,
+      price: 49,
       icon: Zap,
       description: 'Perfect for solo creators',
       features: [
@@ -179,11 +179,11 @@ export default function SubscriptionSelect() {
             Choose Your Plan
           </h1>
           <p className="text-xl text-gray-600 mb-6">
-            Start your 14-day free trial. No credit card required.
+            Start your 14-day free trial. Credit card required for paid plans.
           </p>
           <div className="inline-flex items-center space-x-2 bg-green-50 border border-green-200 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
             <Check className="w-4 h-4" />
-            <span>14-day free trial • Cancel anytime</span>
+            <span>14-day free trial • No charge until trial ends • Cancel anytime</span>
           </div>
         </div>
 

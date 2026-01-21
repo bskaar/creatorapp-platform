@@ -153,12 +153,18 @@ export default function Pricing() {
           <h1 className="text-6xl font-extrabold text-dark mb-6 tracking-tight">
             Simple, Transparent Pricing
           </h1>
-          <p className="text-2xl text-text-secondary mb-10 font-medium">
+          <p className="text-2xl text-text-secondary mb-8 font-medium">
             Scale your creator business with AI-powered tools and automation.
           </p>
-          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 text-emerald-800 px-6 py-3 rounded-full text-sm font-semibold shadow-light">
-            <Check className="w-5 h-5" />
-            <span>All plans include core features. Upgrade as you grow.</span>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 text-emerald-800 px-6 py-3 rounded-full text-sm font-semibold shadow-light">
+              <Check className="w-5 h-5" />
+              <span>14-day free trial on all paid plans</span>
+            </div>
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 text-blue-800 px-6 py-3 rounded-full text-sm font-semibold shadow-light">
+              <Check className="w-5 h-5" />
+              <span>No charge until trial ends</span>
+            </div>
           </div>
         </div>
       </section>
@@ -214,6 +220,12 @@ export default function Pricing() {
                         )}
                       </div>
                       <p className="text-sm text-text-secondary mt-2 font-medium">{tier.billingNote}</p>
+                      {tier.price !== "Custom" && tier.price !== "$0" && (
+                        <div className="mt-3 inline-flex items-center text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
+                          <Check className="w-3.5 h-3.5 mr-1.5" />
+                          14-day free trial
+                        </div>
+                      )}
                     </div>
 
                     <ul className="space-y-3.5 mb-6">
@@ -255,16 +267,24 @@ export default function Pricing() {
           <p className="text-text-secondary mb-12 text-lg font-medium">
             Join thousands of creators building their digital empire with CreatorApp.
           </p>
-          <div className="flex flex-wrap justify-center gap-8 text-left">
-            <div className="flex-1 min-w-[280px] max-w-[400px] bg-white rounded-card shadow-light p-6 border border-border">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <div className="bg-white rounded-card shadow-light p-6 border border-border">
+              <h3 className="font-bold text-dark mb-3 text-lg">
+                How does the free trial work?
+              </h3>
+              <p className="text-text-secondary text-sm font-medium">
+                All paid plans include a 14-day free trial. Credit card required, but you won't be charged until the trial ends. Cancel anytime during the trial at no cost.
+              </p>
+            </div>
+            <div className="bg-white rounded-card shadow-light p-6 border border-border">
               <h3 className="font-bold text-dark mb-3 text-lg">
                 Can I change plans later?
               </h3>
               <p className="text-text-secondary text-sm font-medium">
-                Absolutely! Upgrade or downgrade anytime. Changes take effect immediately.
+                Absolutely! Upgrade or downgrade anytime. Changes take effect immediately with prorated billing adjustments.
               </p>
             </div>
-            <div className="flex-1 min-w-[280px] max-w-[400px] bg-white rounded-card shadow-light p-6 border border-border">
+            <div className="bg-white rounded-card shadow-light p-6 border border-border">
               <h3 className="font-bold text-dark mb-3 text-lg">
                 What payment methods do you accept?
               </h3>
