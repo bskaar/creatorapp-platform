@@ -1,73 +1,89 @@
 import React from 'react';
-import { Check, X, Zap, Crown, Rocket } from 'lucide-react';
+import { Check, X, Zap, TrendingUp, Building2 } from 'lucide-react';
 
 const PricingReview = () => {
   const tiers = [
     {
-      name: 'Free',
+      name: 'Starter',
       icon: Zap,
-      iconColor: 'text-gray-400',
-      price: '$0',
-      period: 'forever',
-      description: 'Perfect for trying out the platform',
+      iconColor: 'text-blue-400',
+      price: '$39-$49',
+      period: 'per month',
+      description: 'First-time creators',
       features: [
-        { name: '1 site', included: true },
-        { name: '5 pages per site', included: true },
-        { name: 'Basic templates', included: true },
-        { name: '100 MB storage', included: true },
-        { name: 'Community support', included: true },
-        { name: 'Custom domain', included: false },
-        { name: 'Remove branding', included: false },
-        { name: 'AI features', included: false },
+        { name: '3 products', included: true },
+        { name: '3 funnels', included: true },
+        { name: '1 admin user', included: true },
+        { name: 'Up to 2,500 contacts', included: true },
+        { name: '3 workflows (basic automations)', included: true },
+        { name: 'AI site + funnel + email generator (basic)', included: true },
+        { name: 'Resend email integration', included: true },
+        { name: 'CreatorApp branding', included: true },
       ],
       cta: 'Get Started',
       popular: false,
     },
     {
-      name: 'Creator',
-      icon: Crown,
+      name: 'Growth',
+      icon: TrendingUp,
       iconColor: 'text-blue-500',
-      price: '$29',
+      price: '$99',
       period: 'per month',
-      description: 'For creators building their business',
+      description: 'Serious creators',
       features: [
-        { name: '3 sites', included: true },
-        { name: 'Unlimited pages', included: true },
-        { name: 'All templates + themed templates', included: true },
-        { name: '10 GB storage', included: true },
-        { name: 'Custom domain (3 domains)', included: true },
-        { name: 'Remove branding', included: true },
-        { name: 'Basic AI features', included: true },
-        { name: 'Email support', included: true },
-        { name: 'Commerce (5% + Stripe fees)', included: true },
-        { name: 'Up to 1,000 contacts', included: true },
+        { name: '50 products', included: true },
+        { name: '10 funnels', included: true },
+        { name: '3 admin users', included: true },
+        { name: 'Up to 10,000 contacts', included: true },
+        { name: 'Unlimited workflows (advanced logic)', included: true },
+        { name: 'AI optimization + segmentation + funnel suggestions', included: true },
+        { name: 'Resend + 1 custom ESP', included: true },
+        { name: 'CreatorApp branding', included: true },
+        { name: 'Priority email support', included: true },
       ],
-      cta: 'Start Free Trial',
+      cta: 'Start Growth Plan',
       popular: true,
     },
     {
       name: 'Pro',
-      icon: Rocket,
-      iconColor: 'text-purple-500',
-      price: '$79',
+      icon: Building2,
+      iconColor: 'text-slate-600',
+      price: '$199',
       period: 'per month',
-      description: 'For professionals scaling their business',
+      description: 'Scaling businesses',
       features: [
-        { name: 'Unlimited sites', included: true },
-        { name: 'Unlimited pages', included: true },
-        { name: 'All templates + custom blocks', included: true },
-        { name: '100 GB storage', included: true },
-        { name: 'Unlimited custom domains', included: true },
-        { name: 'White label (remove all branding)', included: true },
-        { name: 'Advanced AI features', included: true },
-        { name: 'Priority support', included: true },
-        { name: 'Commerce (3% + Stripe fees)', included: true },
-        { name: 'Unlimited contacts', included: true },
-        { name: 'Advanced analytics', included: true },
-        { name: 'Marketing automation', included: true },
-        { name: 'Team collaboration (5 members)', included: true },
+        { name: 'Unlimited products', included: true },
+        { name: 'Unlimited funnels', included: true },
+        { name: '10 admin users', included: true },
+        { name: 'Up to 50,000 contacts', included: true },
+        { name: 'Unlimited workflows (advanced + APIs)', included: true },
+        { name: 'Predictive AI, LTV modeling, advanced analytics', included: true },
+        { name: 'Resend + unlimited ESPs', included: true },
+        { name: 'White-label (remove all branding)', included: true },
+        { name: 'Dedicated account manager', included: true },
       ],
-      cta: 'Start Free Trial',
+      cta: 'Upgrade to Pro',
+      popular: false,
+    },
+    {
+      name: 'Enterprise',
+      icon: Building2,
+      iconColor: 'text-slate-700',
+      price: 'Custom',
+      period: 'contact sales',
+      description: 'Agencies & platforms',
+      features: [
+        { name: 'Unlimited products', included: true },
+        { name: 'Unlimited funnels', included: true },
+        { name: 'Custom admin users', included: true },
+        { name: '100k+ contacts (custom)', included: true },
+        { name: 'Unlimited + custom workflows', included: true },
+        { name: 'Custom AI pipelines + governance', included: true },
+        { name: 'Custom email integration', included: true },
+        { name: 'Fully white-labeled', included: true },
+        { name: 'Dedicated CSM & SLA support', included: true },
+      ],
+      cta: 'Contact Sales',
       popular: false,
     },
   ];
@@ -86,7 +102,7 @@ const PricingReview = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {tiers.map((tier) => {
             const Icon = tier.icon;
             return (
@@ -162,37 +178,45 @@ const PricingReview = () => {
 
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Sites & Storage</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Products & Funnels</h3>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Free:</strong> 1 site, 5 pages, 100 MB</span>
+                  <span><strong>Starter:</strong> 3 products, 3 funnels</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Creator:</strong> 3 sites, unlimited pages, 10 GB</span>
+                  <span><strong>Growth:</strong> 50 products, 10 funnels</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Pro:</strong> Unlimited sites & pages, 100 GB</span>
+                  <span><strong>Pro:</strong> Unlimited products & funnels</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 mt-1">•</span>
+                  <span><strong>Enterprise:</strong> Unlimited products & funnels</span>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Commerce Fees</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Contacts & Automations</h3>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Free:</strong> No commerce features</span>
+                  <span><strong>Starter:</strong> 2,500 contacts, 3 basic workflows</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Creator:</strong> 5% platform fee + Stripe fees</span>
+                  <span><strong>Growth:</strong> 10,000 contacts, unlimited workflows</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Pro:</strong> 3% platform fee + Stripe fees</span>
+                  <span><strong>Pro:</strong> 50,000 contacts, unlimited workflows + APIs</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 mt-1">•</span>
+                  <span><strong>Enterprise:</strong> 100k+ contacts, custom workflows</span>
                 </li>
               </ul>
             </div>
@@ -202,33 +226,41 @@ const PricingReview = () => {
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Free:</strong> No AI features</span>
+                  <span><strong>Starter:</strong> Basic AI generator</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Creator:</strong> Basic AI (text generation, color palettes)</span>
+                  <span><strong>Growth:</strong> AI optimization + segmentation</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Pro:</strong> Advanced AI (themes, automations, insights)</span>
+                  <span><strong>Pro:</strong> Predictive AI + LTV modeling</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 mt-1">•</span>
+                  <span><strong>Enterprise:</strong> Custom AI pipelines</span>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Support & Collaboration</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Team & Branding</h3>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Free:</strong> Community support only</span>
+                  <span><strong>Starter:</strong> 1 admin, CreatorApp branding</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Creator:</strong> Email support</span>
+                  <span><strong>Growth:</strong> 3 admins, CreatorApp branding</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-gray-400 mt-1">•</span>
-                  <span><strong>Pro:</strong> Priority support + team collaboration</span>
+                  <span><strong>Pro:</strong> 10 admins, white-label</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gray-400 mt-1">•</span>
+                  <span><strong>Enterprise:</strong> Custom admins, fully white-labeled</span>
                 </li>
               </ul>
             </div>
@@ -251,10 +283,10 @@ const PricingReview = () => {
 
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                What happens to my sites if I downgrade from Pro to Creator?
+                What happens if I exceed my plan limits?
               </h3>
               <p className="text-gray-700">
-                If you have more than 3 sites, you'll need to choose which 3 to keep active. The others will be archived and can be reactivated if you upgrade again.
+                If you reach your product, funnel, or contact limits, you'll be prompted to upgrade. We'll never interrupt your service - you'll have time to choose a plan that fits your growth.
               </p>
             </div>
 
@@ -263,16 +295,16 @@ const PricingReview = () => {
                 Are there any setup fees or hidden costs?
               </h3>
               <p className="text-gray-700">
-                No setup fees. The only additional costs are Stripe payment processing fees (standard Stripe rates apply) and the platform fee for commerce transactions (5% for Creator, 3% for Pro).
+                No setup fees. All features are included in your plan. The only additional costs are Stripe payment processing fees (standard Stripe rates apply).
               </p>
             </div>
 
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Do you offer annual billing?
+                Can I bring my own email service provider (ESP)?
               </h3>
               <p className="text-gray-700">
-                Annual billing with a 20% discount is coming soon! Sign up to be notified when it launches.
+                Growth tier includes Resend + 1 custom ESP. Pro tier includes unlimited ESP integrations. Enterprise tier gets custom email integration support.
               </p>
             </div>
           </div>

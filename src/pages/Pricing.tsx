@@ -15,20 +15,21 @@ export default function Pricing() {
   const tiers = [
     {
       name: "Starter",
-      price: "$0",
-      billingNote: "Free forever, then $29/mo",
-      description: "For solo creators and side hustlers",
+      price: "$39-$49",
+      billingNote: "per month",
+      description: "First-time creators",
       features: [
-        "1 product, 1 funnel",
+        "3 products",
+        "3 funnels",
+        "1 admin user",
         "Up to 2,500 contacts",
-        "5,000 emails/month",
-        "AI Page Builder (basic)",
-        "Stripe & PayPal integration",
-        "1 course/membership",
-        "Email support"
+        "3 workflows (basic automations)",
+        "AI site + funnel + email generator (basic)",
+        "Resend email integration",
+        "CreatorApp branding"
       ],
-      cta: "Get Started Free",
-      ctaLink: "/signup",
+      cta: "Get Started",
+      ctaLink: "/signup?plan=starter",
       highlight: false,
       icon: Zap,
       popular: false
@@ -37,16 +38,17 @@ export default function Pricing() {
       name: "Growth",
       price: "$99",
       billingNote: "per month",
-      description: "Best for growing creators with multiple offers",
+      description: "Serious creators",
       features: [
-        "Unlimited products, up to 5 funnels",
+        "50 products",
+        "10 funnels",
+        "3 admin users",
         "Up to 10,000 contacts",
-        "50,000 emails/month",
-        "AI Copywriter for pages & emails",
-        "Affiliate/referral program",
-        "Unlimited courses/memberships",
-        "Stripe & PayPal integration",
-        "Priority email & chat support"
+        "Unlimited workflows (advanced logic)",
+        "AI optimization + segmentation + funnel suggestions",
+        "Resend + 1 custom ESP",
+        "CreatorApp branding",
+        "Priority email support"
       ],
       cta: "Start Growth Plan",
       ctaLink: "/signup?plan=growth",
@@ -58,16 +60,17 @@ export default function Pricing() {
       name: "Pro",
       price: "$199",
       billingNote: "per month",
-      description: "For scaling businesses and teams",
+      description: "Scaling businesses",
       features: [
-        "Unlimited products & funnels",
+        "Unlimited products",
+        "Unlimited funnels",
+        "10 admin users",
         "Up to 50,000 contacts",
-        "250,000 emails/month",
-        "AI Analytics: churn prediction, upsell recs",
-        "White-label membership sites",
-        "10 team members",
-        "Stripe & PayPal integration",
-        "Account manager support"
+        "Unlimited workflows (advanced + APIs)",
+        "Predictive AI, LTV modeling, advanced analytics",
+        "Resend + unlimited ESPs",
+        "White-label (remove all branding)",
+        "Dedicated account manager"
       ],
       cta: "Upgrade to Pro",
       ctaLink: "/signup?plan=pro",
@@ -79,15 +82,16 @@ export default function Pricing() {
       name: "Enterprise",
       price: "Custom",
       billingNote: "contact sales",
-      description: "For agencies and high-volume enterprises",
+      description: "Agencies & platforms",
       features: [
+        "Unlimited products",
+        "Unlimited funnels",
+        "Custom admin users",
         "100k+ contacts (custom)",
-        "Unlimited products, funnels, and domains",
-        "Unlimited emails",
-        "Custom AI pipelines, predictive modeling",
-        "Enterprise portals",
-        "Unlimited team members",
-        "Multi-gateway payments & invoicing",
+        "Unlimited + custom workflows",
+        "Custom AI pipelines + governance",
+        "Custom email integration",
+        "Fully white-labeled",
         "Dedicated CSM & SLA support"
       ],
       cta: "Contact Sales",
@@ -150,11 +154,11 @@ export default function Pricing() {
             Simple, Transparent Pricing
           </h1>
           <p className="text-2xl text-text-secondary mb-10 font-medium">
-            No hidden fees. Unlimited products. Pay only as you grow your audience.
+            Scale your creator business with AI-powered tools and automation.
           </p>
           <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 text-emerald-800 px-6 py-3 rounded-full text-sm font-semibold shadow-light">
             <Check className="w-5 h-5" />
-            <span>Start free with the Starter plan, upgrade anytime</span>
+            <span>All plans include core features. Upgrade as you grow.</span>
           </div>
         </div>
       </section>
