@@ -11,7 +11,6 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [siteName, setSiteName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('');
@@ -46,128 +45,13 @@ export default function Signup() {
         return;
       }
 
-      const slug = siteName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-
-      const { data: siteData, error: siteError } = await supabase
-        .from('sites')
-        .insert({
-          name: siteName,
-          slug: slug,
-          owner_id: signUpData.user.id,
-          tier: 'launch',
-        })
-        .select()
-        .single();
-
-      if (siteError || !siteData) {
-        setError('Failed to create site: ' + siteError?.message);
-        setLoading(false);
-        return;
-      }
-
-      const { error: memberError } = await supabase
-        .from('site_members')
-        .insert({
-          site_id: siteData.id,
-          user_id: signUpData.user.id,
-          role: 'owner',
-          accepted_at: new Date().toISOString(),
-        });
-
-      if (memberError) {
-        console.error('Failed to create site member:', memberError);
-      }
-
-      const defaultHomepageBlocks = [
-        {
-          id: 'hero-1',
-          type: 'hero',
-          content: {
-            heading: `Welcome to ${siteName}`,
-            subheading: 'Transform your passion into profit. Start your creator journey today.',
-            ctaText: 'Get Started',
-            ctaLink: '#products',
-            backgroundType: 'gradient',
-            backgroundValue: 'from-primary to-accent',
-          },
-          styles: {
-            textAlign: 'center',
-            padding: 'large',
-          },
-          order: 0,
-        },
-        {
-          id: 'features-1',
-          type: 'features',
-          content: {
-            heading: 'Everything You Need to Succeed',
-            features: [
-              {
-                icon: 'package',
-                title: 'Digital Products',
-                description: 'Sell courses, memberships, and downloads',
-              },
-              {
-                icon: 'users',
-                title: 'Build Community',
-                description: 'Connect with your audience and grow together',
-              },
-              {
-                icon: 'trending-up',
-                title: 'Scale Your Business',
-                description: 'Tools to help you grow and automate',
-              },
-            ],
-          },
-          styles: {
-            backgroundColor: 'white',
-            padding: 'large',
-          },
-          order: 1,
-        },
-        {
-          id: 'cta-1',
-          type: 'cta',
-          content: {
-            heading: 'Ready to Get Started?',
-            subheading: 'Join thousands of creators building their business',
-            ctaText: 'Start Your Journey',
-            ctaLink: '#signup',
-          },
-          styles: {
-            backgroundColor: 'primary',
-            textColor: 'white',
-            textAlign: 'center',
-            padding: 'large',
-          },
-          order: 2,
-        },
-      ];
-
-      const { error: pageError } = await supabase
-        .from('pages')
-        .insert({
-          site_id: siteData.id,
-          title: 'Home',
-          slug: 'home',
-          page_type: 'landing',
-          status: 'published',
-          content: { blocks: defaultHomepageBlocks },
-          seo_title: `${siteName} - Home`,
-          seo_description: `Welcome to ${siteName}. Start your creator journey today.`,
-        });
-
-      if (pageError) {
-        console.error('Failed to create homepage:', pageError);
-      }
-
       await refreshSites();
       await new Promise(resolve => setTimeout(resolve, 500));
 
       if (selectedPlan) {
-        navigate(`/subscription-select?plan=${selectedPlan}`);
+        navigate(`/site-setup?plan=${selectedPlan}`);
       } else {
-        navigate('/subscription-select');
+        navigate('/site-setup');
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup');
@@ -216,21 +100,6 @@ export default function Signup() {
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium"
                 placeholder="John Doe"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="siteName" className="block text-sm font-semibold text-text-primary mb-2">
-                Site Name
-              </label>
-              <input
-                id="siteName"
-                type="text"
-                required
-                value={siteName}
-                onChange={(e) => setSiteName(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium"
-                placeholder="My Creator Business"
               />
             </div>
 

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
@@ -7,10 +7,12 @@ import { Loader2, Sparkles, ArrowLeft } from 'lucide-react';
 import Logo from '../components/Logo';
 
 export default function SiteSetup() {
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { sites } = useSite();
   const navigate = useNavigate();
   const isFirstSite = sites.length === 0;
+  const [selectedPlan, setSelectedPlan] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -18,6 +20,13 @@ export default function SiteSetup() {
     name: '',
     slug: '',
   });
+
+  useEffect(() => {
+    const plan = searchParams.get('plan');
+    if (plan) {
+      setSelectedPlan(plan);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,8 +74,12 @@ export default function SiteSetup() {
         });
 
       localStorage.setItem('currentSiteId', site.id);
-      navigate('/dashboard');
-      window.location.reload();
+
+      if (selectedPlan) {
+        navigate(`/subscription-select?plan=${selectedPlan}`);
+      } else {
+        navigate('/subscription-select');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to create site');
       setLoading(false);

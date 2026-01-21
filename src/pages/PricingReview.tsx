@@ -6,7 +6,7 @@ const PricingReview = () => {
     {
       name: 'Starter',
       icon: Rocket,
-      iconColor: 'text-blue-500',
+      iconBg: 'bg-gradient-to-br from-slate-600 to-slate-700',
       price: '$49',
       period: 'per month',
       description: 'First-time creators',
@@ -26,7 +26,7 @@ const PricingReview = () => {
     {
       name: 'Growth',
       icon: TrendingUp,
-      iconColor: 'text-emerald-500',
+      iconBg: 'bg-gradient-to-br from-primary to-accent',
       price: '$99',
       period: 'per month',
       description: 'Serious creators',
@@ -47,7 +47,7 @@ const PricingReview = () => {
     {
       name: 'Pro',
       icon: Award,
-      iconColor: 'text-amber-500',
+      iconBg: 'bg-gradient-to-br from-slate-600 to-slate-700',
       price: '$199',
       period: 'per month',
       description: 'Scaling businesses',
@@ -68,7 +68,7 @@ const PricingReview = () => {
     {
       name: 'Enterprise',
       icon: Building,
-      iconColor: 'text-slate-600',
+      iconBg: 'bg-gradient-to-br from-slate-600 to-slate-700',
       price: 'Custom',
       period: 'contact sales',
       description: 'Agencies & platforms',
@@ -121,7 +121,9 @@ const PricingReview = () => {
                 <div className="p-8">
                   {/* Icon & Name */}
                   <div className="flex items-center gap-3 mb-4">
-                    <Icon className={`w-8 h-8 ${tier.iconColor}`} />
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center shadow-lg ${tier.iconBg}`}>
+                      <Icon className="w-7 h-7 text-white" />
+                    </div>
                     <h3 className="text-3xl font-bold text-gray-900">{tier.name}</h3>
                   </div>
 
