@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Activity,
   FileText,
+  Key,
 } from 'lucide-react';
 
 export default function PlatformAdminLayout({ children }: { children: React.ReactNode }) {
@@ -31,6 +32,7 @@ export default function PlatformAdminLayout({ children }: { children: React.Reac
     { name: 'Dashboard', href: '/platform-admin', icon: LayoutDashboard, permission: 'view_analytics' },
     { name: 'Sites', href: '/platform-admin/sites', icon: Globe, permission: 'view_sites' },
     { name: 'Users', href: '/platform-admin/users', icon: Users, permission: 'view_users' },
+    { name: 'Invitation Codes', href: '/platform-admin/invitation-codes', icon: Key, permission: 'manage_platform_settings' },
     { name: 'Activity Log', href: '/platform-admin/audit-log', icon: Activity, permission: 'view_analytics' },
     { name: 'Settings', href: '/platform-admin/settings', icon: Settings, permission: 'manage_platform_settings' },
   ];

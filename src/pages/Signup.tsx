@@ -11,6 +11,7 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [invitationCode, setInvitationCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('');
@@ -31,6 +32,21 @@ export default function Signup() {
     setLoading(true);
 
     try {
+      const { data: validationData, error: validationError } = await supabase
+        .rpc('validate_invitation_code', { code_text: invitationCode });
+
+      if (validationError) {
+        setError('Failed to validate invitation code. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      if (!validationData.valid) {
+        setError(validationData.error || 'Invalid invitation code');
+        setLoading(false);
+        return;
+      }
+
       const { data: signUpData, error: signUpError } = await signUp(email, password, fullName);
 
       if (signUpError) {
@@ -43,6 +59,16 @@ export default function Signup() {
         setError('Failed to create user account');
         setLoading(false);
         return;
+      }
+
+      const { error: useCodeError } = await supabase
+        .rpc('use_invitation_code', {
+          code_id_param: validationData.code_id,
+          user_id_param: signUpData.user.id
+        });
+
+      if (useCodeError) {
+        console.error('Failed to record code usage:', useCodeError);
       }
 
       await refreshSites();
@@ -88,6 +114,24 @@ export default function Signup() {
           )}
 
           <form className="space-y-5" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="invitationCode" className="block text-sm font-semibold text-text-primary mb-2">
+                Invitation Code
+              </label>
+              <input
+                id="invitationCode"
+                type="text"
+                required
+                value={invitationCode}
+                onChange={(e) => setInvitationCode(e.target.value.toUpperCase())}
+                className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium uppercase"
+                placeholder="ADMIN2025"
+              />
+              <p className="mt-2 text-sm text-text-secondary">
+                CreatorApp is currently in beta. Enter your invitation code to continue.
+              </p>
+            </div>
+
             <div>
               <label htmlFor="fullName" className="block text-sm font-semibold text-text-primary mb-2">
                 Full Name

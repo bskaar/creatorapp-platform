@@ -47,6 +47,7 @@ import PlatformAdminSites from './pages/PlatformAdmin/Sites';
 import PlatformAdminUsers from './pages/PlatformAdmin/Users';
 import PlatformAdminAuditLog from './pages/PlatformAdmin/AuditLog';
 import PlatformAdminSettings from './pages/PlatformAdmin/Settings';
+import PlatformAdminInvitationCodes from './pages/PlatformAdmin/InvitationCodes';
 import PricingReview from './pages/PricingReview';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -478,6 +479,16 @@ function AppRoutes() {
           <PlatformAdminGuard requiredPermission="manage_platform_settings">
             <PlatformAdminLayout>
               <PlatformAdminSettings />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+      <Route
+        path="/platform-admin/invitation-codes"
+        element={
+          <PlatformAdminGuard requiredPermission="manage_platform_settings">
+            <PlatformAdminLayout>
+              <PlatformAdminInvitationCodes />
             </PlatformAdminLayout>
           </PlatformAdminGuard>
         }
