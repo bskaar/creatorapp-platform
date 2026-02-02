@@ -56,6 +56,18 @@ Complete guide to deploy your app using only web browsers. No command line requi
 
 ## Phase 2: Deploy to Vercel (10 minutes)
 
+### ⚠️ Important: Private Repository Issue
+
+**If you created a Private repository**, Vercel won't be able to access it by default.
+
+**Two options**:
+1. **Make it Public**: GitHub → Repository Settings → Danger Zone → Change visibility
+2. **Grant Vercel Access**: Follow instructions in `QUICK_FIX_VERCEL_404.md`
+
+**If you created a Public repository**, you can skip this - everything will work fine!
+
+---
+
 ### Step 1: Create Vercel Account
 
 1. Go to https://vercel.com/signup
@@ -447,6 +459,14 @@ ON CONFLICT (code) DO NOTHING;
    - Missing environment variables (add in Settings)
    - TypeScript errors (check your code)
    - Missing dependencies (check package.json)
+
+### "Could not access the repository" in Vercel
+
+**Cause**: Private GitHub repository without granted access
+**Solution**:
+1. See `QUICK_FIX_VERCEL_404.md` for 2-minute fix
+2. Either make repository public OR grant Vercel access
+3. Full details in `GITHUB_VERCEL_PRIVATE_REPO_FIX.md`
 
 ---
 
