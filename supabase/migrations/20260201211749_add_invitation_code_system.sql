@@ -210,10 +210,6 @@ EXCEPTION
 END;
 $$;
 
--- Insert some starter codes for testing
-INSERT INTO invitation_codes (code, max_uses, notes, created_by)
-VALUES 
-  ('ADMIN2025', 1, 'Admin access code for initial setup', NULL),
-  ('BETA100', 100, 'Beta tester access - 100 uses', NULL),
-  ('LAUNCH', NULL, 'Public launch code - unlimited uses', NULL)
-ON CONFLICT (code) DO NOTHING;
+-- DO NOT insert starter codes in production
+-- Platform admins must create invitation codes through the admin panel
+-- This ensures codes are never hardcoded or exposed in source control
