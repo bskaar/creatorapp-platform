@@ -399,7 +399,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-sm text-center text-gray-600">
-            © 2025 CreatorApp. All rights reserved.
+            © 2026 CreatorApp. All rights reserved.
           </div>
         </div>
       </footer>
