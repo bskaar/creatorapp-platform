@@ -125,7 +125,7 @@ export default function Signup() {
                 value={invitationCode}
                 onChange={(e) => setInvitationCode(e.target.value.toUpperCase())}
                 className="w-full px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium uppercase"
-                placeholder="ADMIN2025"
+                placeholder="Enter your invitation code"
               />
               <p className="mt-2 text-sm text-text-secondary">
                 CreatorApp is currently in beta. Enter your invitation code to continue.
