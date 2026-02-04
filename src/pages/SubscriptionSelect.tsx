@@ -185,6 +185,9 @@ export default function SubscriptionSelect() {
             <Check className="w-4 h-4" />
             <span>14-day free trial • No charge until trial ends • Cancel anytime</span>
           </div>
+          <p className="text-sm text-gray-500 mt-3">
+            Promotion codes can be entered at checkout
+          </p>
         </div>
 
         {error && (

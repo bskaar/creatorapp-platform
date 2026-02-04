@@ -160,10 +160,16 @@ Deno.serve(async (req: Request) => {
         "line_items[0][price]": plan.stripe_price_id || "",
         "line_items[0][quantity]": "1",
         "payment_method_collection": "always",
+        "allow_promotion_codes": "true",
         "subscription_data[trial_period_days]": plan.trial_days?.toString() || "14",
         "subscription_data[metadata][site_id]": siteId,
         "subscription_data[metadata][plan_name]": planName,
       });
+
+      if (site.platform_coupon_code) {
+        params.append("discounts[0][coupon]", site.platform_coupon_code);
+        console.log('Pre-applying coupon:', site.platform_coupon_code);
+      }
 
       console.log('Creating checkout session with params:', {
         mode: 'subscription',

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Globe, Users, Calendar, DollarSign, ExternalLink, Search } from 'lucide-react';
+import { Globe, Users, Calendar, DollarSign, ExternalLink, Search, Tag, X } from 'lucide-react';
 
 interface Site {
   id: string;
@@ -10,6 +10,7 @@ interface Site {
   created_at: string;
   updated_at: string;
   stripe_account_id: string | null;
+  platform_coupon_code: string | null;
   member_count?: number;
   product_count?: number;
   order_count?: number;
@@ -21,6 +22,10 @@ export default function PlatformAdminSites() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [couponModalOpen, setCouponModalOpen] = useState(false);
+  const [selectedSite, setSelectedSite] = useState<Site | null>(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const fetchSites = async () => {
     try {
@@ -72,6 +77,44 @@ export default function PlatformAdminSites() {
   useEffect(() => {
     fetchSites();
   }, []);
+
+  const openCouponModal = (site: Site) => {
+    setSelectedSite(site);
+    setCouponCode(site.platform_coupon_code || '');
+    setCouponModalOpen(true);
+  };
+
+  const closeCouponModal = () => {
+    setCouponModalOpen(false);
+    setSelectedSite(null);
+    setCouponCode('');
+  };
+
+  const saveCoupon = async () => {
+    if (!selectedSite) return;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('sites')
+        .update({
+          platform_coupon_code: couponCode.trim() || null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', selectedSite.id);
+
+      if (error) throw error;
+
+      await fetchSites();
+      closeCouponModal();
+      alert('Coupon code updated successfully!');
+    } catch (error) {
+      console.error('Error saving coupon:', error);
+      alert('Failed to save coupon code. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const filteredSites = sites.filter((site) => {
     const matchesSearch =
@@ -211,17 +254,102 @@ export default function PlatformAdminSites() {
                 </div>
 
                 <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                  <div className="flex items-center text-xs text-gray-500">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    Created {new Date(site.created_at).toLocaleDateString()}
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      Created {new Date(site.created_at).toLocaleDateString()}
+                    </div>
+                    {site.platform_coupon_code && (
+                      <div className="flex items-center text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                        <Tag className="w-3 h-3 mr-1" />
+                        Coupon: {site.platform_coupon_code}
+                      </div>
+                    )}
                   </div>
-                  <div className="text-xs text-gray-500">
-                    Last active {new Date(site.updated_at).toLocaleDateString()}
+                  <div className="flex items-center gap-3">
+                    <div className="text-xs text-gray-500">
+                      Last active {new Date(site.updated_at).toLocaleDateString()}
+                    </div>
+                    <button
+                      onClick={() => openCouponModal(site)}
+                      className="text-xs px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    >
+                      {site.platform_coupon_code ? 'Edit Coupon' : 'Add Coupon'}
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {couponModalOpen && selectedSite && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-bold text-gray-900">
+                Assign Coupon Code
+              </h2>
+              <button
+                onClick={closeCouponModal}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <p className="text-sm text-gray-600 mb-2">
+                  Site: <span className="font-semibold">{selectedSite.name}</span>
+                </p>
+                <p className="text-xs text-gray-500">
+                  Pre-assign a Stripe coupon code for this site. The coupon will be automatically applied at checkout.
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="coupon" className="block text-sm font-medium text-gray-700 mb-2">
+                  Stripe Coupon Code
+                </label>
+                <input
+                  id="coupon"
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  placeholder="e.g., BETA100OFF"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="mt-2 text-xs text-gray-500">
+                  Enter the exact coupon code from your Stripe dashboard. Leave blank to remove.
+                </p>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-xs text-blue-800">
+                  <strong>Note:</strong> Users can still enter promotion codes at checkout even if no coupon is pre-assigned.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 p-6 border-t bg-gray-50">
+              <button
+                onClick={closeCouponModal}
+                disabled={saving}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveCoupon}
+                disabled={saving}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save Coupon'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
