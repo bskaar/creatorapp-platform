@@ -2,26 +2,121 @@
 
 ## Overview
 This guide walks through setting up Stripe in production with:
+- New Stripe Connect account (replacing test mode account)
 - 14-day free trials on all subscription tiers
 - Beta user discount codes (100% off)
 - Live payment processing
 
-## Step 1: Get Live Stripe Keys
+⚠️ **IMPORTANT**: You cannot convert a test mode Stripe Connect account to live mode. You must create a new Connect account.
 
-1. Go to https://dashboard.stripe.com
-2. **Toggle to "Live mode"** (top right - ensure the toggle says "LIVE" not "TEST")
-3. Go to **Developers** → **API keys**
-4. Copy your **Live Publishable key** (starts with `pk_live_`)
-5. Copy your **Live Secret key** (starts with `sk_live_`)
-6. Copy your **Live Webhook signing secret** (we'll get this in Step 4)
+## Quick Checklist
 
-⚠️ **CRITICAL**: Make sure you're in LIVE mode, not test mode!
+Before you start, you'll need to complete these steps in order:
 
-## Step 2: Create Products in Stripe
+- [ ] Create/Access Stripe account
+- [ ] Switch to LIVE mode
+- [ ] Enable Stripe Connect (Platform)
+- [ ] Copy Live Publishable Key
+- [ ] Copy Live Secret Key
+- [ ] Create 3 products with 14-day trials
+- [ ] Copy all Product IDs and Price IDs
+- [ ] Create BETA100 coupon (100% off forever)
+- [ ] Create webhook endpoint
+- [ ] Copy Webhook Signing Secret
+- [ ] Update Vercel environment variables
+- [ ] Update Supabase secrets
+- [ ] Update database with product IDs
+- [ ] Redeploy application
+- [ ] Test checkout flow
+
+## Understanding the Setup
+
+This platform uses Stripe Connect with two types of accounts:
+
+1. **Platform Account** (Your account)
+   - Manages platform subscriptions (Creator/Professional/Enterprise plans)
+   - Collects platform fees
+   - This is YOUR Stripe account
+
+2. **Connected Accounts** (Site owners' accounts)
+   - Individual creator accounts that connect via OAuth
+   - Handle their own product sales
+   - Automated via the Connect flow in the app
+
+This guide sets up #1 - YOUR platform account for collecting subscription fees.
+
+## Step 1: Create New Stripe Platform Account (Live Mode)
+
+### Option A: Brand New Stripe Account (Cleanest Approach)
+
+1. **Create a New Stripe Account**
+   - Go to https://dashboard.stripe.com/register
+   - Use a NEW email address (not the one with test account)
+   - Complete the registration process
+   - This account will be your LIVE production account
+
+2. **Activate Your Account**
+   - Go through Stripe's verification process
+   - Provide business information
+   - Add bank account for payouts
+   - Complete identity verification
+   - Wait for approval (usually instant, can take up to 1-2 business days)
+
+### Option B: Use Existing Stripe Account (Start Fresh)
+
+1. **Log into Existing Stripe Account**
+   - Go to https://dashboard.stripe.com
+   - Use your existing account credentials
+
+2. **Important: Ignore the Old Connect Setup**
+   - Do NOT try to modify the existing test Connect account
+   - We'll create fresh products and settings in LIVE mode
+
+## Step 2: Enable Stripe Connect (Live Mode)
+
+1. **Switch to Live Mode**
+   - In Stripe Dashboard, toggle to **"LIVE"** mode (top right)
+   - ⚠️ CRITICAL: Ensure toggle says "LIVE" not "TEST"
+
+2. **Enable Connect Platform**
+   - Go to **Settings** → **Connect**
+   - Click **Get started with Connect**
+   - Choose **Platform or marketplace**
+   - Fill in:
+     - **Platform name**: `CreatorApp Platform`
+     - **Platform URL**: `https://www.creatorapp.us`
+     - **Support email**: Your support email
+   - Click **Enable Connect**
+
+3. **Configure Connect Settings**
+   - Under **Branding**, upload your logo
+   - Under **Customer experience**, configure as needed
+   - Save changes
+
+## Step 3: Get Live API Keys
+
+1. **Get Platform API Keys**
+   - Still in LIVE mode
+   - Go to **Developers** → **API keys**
+   - You should see:
+     - **Publishable key** (starts with `pk_live_`)
+     - **Secret key** (starts with `sk_live_`)
+
+2. **Copy These Keys**
+   - Copy the **Publishable key** - save this as `VITE_STRIPE_PUBLISHABLE_KEY`
+   - Click **Reveal test key** on Secret key, then copy - save as `STRIPE_SECRET_KEY`
+
+⚠️ **CRITICAL**: These are your PLATFORM keys, not Connect Express account keys!
+
+## Step 4: Create Products in Stripe (Live Mode)
+
+⚠️ **REMINDER**: Ensure you're still in LIVE mode (check top right toggle)
+
+These are the platform subscription products that users will purchase to access the CreatorApp platform.
 
 ### Product 1: Creator Plan
 
-1. Go to **Products** → Click **Add Product**
+1. In Stripe Dashboard (LIVE mode), go to **Products** → Click **Add Product**
 2. Fill in:
    - **Name**: `Creator Plan`
    - **Description**: `Perfect for getting started with your creator business`
@@ -78,7 +173,7 @@ This guide walks through setting up Stripe in production with:
 
 5. Save and copy Product ID and Price IDs
 
-## Step 3: Create Beta User Discount Codes
+## Step 5: Create Beta User Discount Codes
 
 ### Option A: 100% Off Forever (Recommended for Beta)
 
@@ -103,7 +198,7 @@ Create additional codes for different beta user groups:
 **FOUNDER** - 100% off for 1 year, then full price
 **BETA50** - 50% off forever
 
-## Step 4: Set Up Live Webhook
+## Step 6: Set Up Live Webhook
 
 1. Go to **Developers** → **Webhooks**
 2. Click **Add endpoint**
@@ -124,7 +219,7 @@ Create additional codes for different beta user groups:
 5. Click **Add endpoint**
 6. Copy the **Signing secret** (starts with `whsec_`)
 
-## Step 5: Update Environment Variables
+## Step 7: Update Environment Variables
 
 ### In Vercel (Production):
 
@@ -149,7 +244,7 @@ STRIPE_SECRET_KEY=sk_live_YOUR_LIVE_KEY
 STRIPE_WEBHOOK_SECRET=whsec_YOUR_LIVE_WEBHOOK_SECRET
 ```
 
-## Step 6: Update Database Subscription Plans
+## Step 8: Update Database Subscription Plans
 
 Run this SQL in Supabase SQL Editor to update with your live Stripe IDs:
 
@@ -179,7 +274,7 @@ SET
 WHERE name = 'Enterprise';
 ```
 
-## Step 7: Redeploy Application
+## Step 9: Redeploy Application
 
 After updating environment variables in Vercel:
 
@@ -188,16 +283,21 @@ After updating environment variables in Vercel:
 3. Click **Redeploy**
 4. Or push a new commit to trigger automatic deployment
 
-## Step 8: Test the Setup
+## Step 10: Test the Setup
 
-### Test Free Trial:
+### Test Free Trial (Use Real Card in Live Mode):
 
 1. Go to www.creatorapp.us
 2. Sign up for a new account
 3. Select a plan
 4. Go through checkout
-5. Enter test card: `4242 4242 4242 4242` (any future date, any CVC)
+5. **Use a REAL credit card** (you're in live mode now!)
+   - The card will be charged $0 during trial
+   - After 14 days, it will be charged the subscription amount
 6. Verify subscription is created with trial period
+7. **Cancel immediately after testing** to avoid charges
+
+⚠️ **IMPORTANT**: You're in LIVE mode - test cards won't work!
 
 ### Test Beta Code:
 
@@ -252,6 +352,24 @@ ORDER BY s.created_at DESC;
 
 ## Troubleshooting
 
+### Cannot Enable Live Mode:
+- If you're stuck in test mode with existing Connect setup
+- You MUST create products in LIVE mode separately
+- Test mode and Live mode are completely separate environments
+- Products created in test mode won't appear in live mode
+
+### Wrong Keys Being Used:
+- Verify you copied keys while in LIVE mode
+- Keys starting with `pk_test_` or `sk_test_` are TEST keys
+- Keys starting with `pk_live_` or `sk_live_` are LIVE keys
+- Double-check environment variables in Vercel and Supabase
+
+### Connect vs Platform Confusion:
+- You need your PLATFORM account keys (from API Keys page)
+- NOT keys from a Connected Express account
+- If you see "Express Dashboard" you're in the wrong place
+- Use the main Stripe Dashboard → Developers → API Keys
+
 ### Trial Not Working:
 - Check product has trial period configured in Stripe
 - Verify price IDs are correct in database
@@ -271,18 +389,59 @@ ORDER BY s.created_at DESC;
 
 ## Security Checklist
 
-✅ Live mode enabled in Stripe
-✅ Live keys added to production environment
+✅ Live mode enabled in Stripe (toggle shows "LIVE")
+✅ Stripe Connect enabled for platform
+✅ Live Publishable Key added to Vercel (`pk_live_...`)
+✅ Live Secret Key added to Supabase (`sk_live_...`)
+✅ Live Webhook Secret added to Supabase (`whsec_...`)
+✅ All test keys removed from production environment
 ✅ Webhook endpoint secured with signing secret
-✅ Test mode keys removed from production
 ✅ Environment variables not exposed in client code
 ✅ Database RLS policies active
+✅ Products created in LIVE mode (not test mode)
+✅ All product IDs and price IDs updated in database
+
+## Key Differences from Test Setup
+
+| Aspect | Test Mode (Old) | Live Mode (New) |
+|--------|----------------|-----------------|
+| Keys | `pk_test_...` `sk_test_...` | `pk_live_...` `sk_live_...` |
+| Products | Test products | New live products |
+| Payments | Fake card numbers work | Real cards only |
+| Money | No real charges | Real charges processed |
+| Webhook | Test webhook secret | Live webhook secret |
+| Connect Account | Cannot convert to live | Fresh live setup required |
+
+## Summary of Changes
+
+What you're replacing:
+- Old test mode Stripe keys
+- Test mode products
+- Test webhook endpoint
+
+What you're creating new:
+- Live mode Stripe platform account
+- Three live products (Creator, Professional, Enterprise)
+- Each product with 14-day free trial
+- BETA100 coupon (100% off forever)
+- Live webhook endpoint
+- All new live API keys
 
 ## Next Steps
 
-1. ✅ Complete Stripe setup
-2. Generate beta invitation codes
-3. Send invites to beta users
-4. Monitor first signups
-5. Collect feedback
-6. Iterate on features
+1. ✅ Complete Stripe live setup (follow this guide)
+2. ✅ Test checkout with real card (then cancel)
+3. Generate beta invitation codes for the platform
+4. Send invites to beta users with BETA100 code
+5. Monitor first real signups
+6. Collect feedback
+7. Iterate on features
+
+## Support
+
+If you get stuck:
+- Check the Troubleshooting section above
+- Verify all keys are LIVE mode keys (not test)
+- Ensure webhook endpoint is accessible
+- Check Supabase Edge Function logs for errors
+- Review Stripe Dashboard → Developers → Logs
