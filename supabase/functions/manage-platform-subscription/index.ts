@@ -160,7 +160,7 @@ Deno.serve(async (req: Request) => {
         "line_items[0][price]": plan.stripe_price_id || "",
         "line_items[0][quantity]": "1",
         "payment_method_collection": "always",
-        "subscription_data[trial_period_days]": "14",
+        "subscription_data[trial_period_days]": plan.trial_days?.toString() || "14",
         "subscription_data[metadata][site_id]": siteId,
         "subscription_data[metadata][plan_name]": planName,
       });
