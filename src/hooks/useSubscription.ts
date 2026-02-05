@@ -39,6 +39,13 @@ export function useSubscription() {
         throw new Error('Not authenticated');
       }
 
+      console.log('Creating subscription request:', {
+        action: 'create',
+        planName,
+        siteId: currentSite.id,
+        url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-platform-subscription`
+      });
+
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-platform-subscription`,
         {
@@ -55,11 +62,22 @@ export function useSubscription() {
         }
       );
 
-      const data = await response.json();
+      console.log('Response status:', response.status, response.statusText);
+
+      let data;
+      try {
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Failed to parse response as JSON:', e);
+        throw new Error('Invalid response from server');
+      }
 
       console.log('Subscription response:', { status: response.status, data });
 
       if (!response.ok) {
+        console.error('Error response from server:', data);
         if (data.setup_url) {
           setError(`Stripe is not configured. Please set up Stripe first: ${data.setup_url}`);
           throw new Error(data.error || 'Failed to create subscription');
@@ -74,6 +92,7 @@ export function useSubscription() {
         try {
           new URL(data.url);
         } catch (e) {
+          console.error('Invalid URL:', data.url, e);
           throw new Error('Invalid checkout URL received from server');
         }
 
@@ -91,8 +110,9 @@ export function useSubscription() {
         setLoading(false);
         return data;
       } else {
-        console.error('Unexpected response:', data);
-        throw new Error('Unexpected response from subscription service');
+        console.error('Unexpected response format:', data);
+        console.error('Expected either data.url or data.success, but got:', Object.keys(data));
+        throw new Error(`Unexpected response from subscription service. Received: ${JSON.stringify(data)}`);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';

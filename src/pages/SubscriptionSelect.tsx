@@ -159,11 +159,16 @@ export default function SubscriptionSelect() {
   ];
 
   const handleSelectPlan = async (planId: string) => {
+    console.log('handleSelectPlan called with:', planId);
     setSelectedPlan(planId);
     try {
+      console.log('Calling subscribeToPlan...');
       await subscribeToPlan(planId);
+      console.log('subscribeToPlan completed without error');
     } catch (err) {
       console.error('Failed to subscribe:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      alert(`Subscription failed: ${errorMessage}\n\nPlease check the browser console for more details.`);
     }
   };
 
