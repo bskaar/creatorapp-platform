@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Flow Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+    .test-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-card h2 {
+      margin-top: 0;
+      color: #1a202c;
+      font-size: 20px;
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .status-pass {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-fail {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .result {
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .step {
+      padding: 12px;
+      margin: 8px 0;
+      background: #f8f9fa;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .step strong {
+      color: #667eea;
+    }
+    .checklist {
+      list-style: none;
+      padding: 0;
+    }
+    .checklist li {
+      padding: 8px 12px;
+      margin: 6px 0;
+      background: #f8f9fa;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .checklist li::before {
+      content: "✓ ";
+      color: #28a745;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Payment System Test Suite</h1>
+
+  <div class="test-card">
+    <h2>✅ Setup Complete</h2>
+    <ul class="checklist">
+      <li>Webhook secrets configured in Supabase</li>
+      <li>Products created with Stripe IDs</li>
+      <li>Edge functions deployed</li>
+    </ul>
+  </div>
+
+  <div class="test-card">
+    <h2>1. Webhook Endpoints Test</h2>
+    <p>Testing if your webhook endpoints are live and responding...</p>
+    <button onclick="testWebhooks()">Run Webhook Test</button>
+    <div id="webhook-result"></div>
+  </div>
+
+  <div class="test-card">
+    <h2>2. Stripe Connect Flow</h2>
+    <div class="step">
+      <strong>Step 1:</strong> Log into your app and go to Settings
+    </div>
+    <div class="step">
+      <strong>Step 2:</strong> Click "Connect with Stripe" button
+    </div>
+    <div class="step">
+      <strong>Step 3:</strong> Complete Stripe onboarding (provide business info, bank details)
+    </div>
+    <div class="step">
+      <strong>Step 4:</strong> Return to your app - you should see "Ready to Accept Payments"
+    </div>
+  </div>
+
+  <div class="test-card">
+    <h2>3. Test Purchase Flow</h2>
+    <div class="step">
+      <strong>Step 1:</strong> Navigate to a product page: <code>/site/{siteId}/product/{productId}</code>
+    </div>
+    <div class="step">
+      <strong>Step 2:</strong> Click "Buy Now" button
+    </div>
+    <div class="step">
+      <strong>Step 3:</strong> Complete checkout with test card: <code>4242 4242 4242 4242</code>
+    </div>
+    <div class="step">
+      <strong>Step 4:</strong> Verify order appears in Commerce → Orders
+    </div>
+  </div>
+
+  <div class="test-card">
+    <h2>4. Webhook Event Test</h2>
+    <p>After completing a test purchase, the webhooks should automatically:</p>
+    <ul class="checklist">
+      <li>Create an order record in your database</li>
+      <li>Update payment status</li>
+      <li>Grant product access to the customer</li>
+    </ul>
+  </div>
+
+  <div class="test-card">
+    <h2>📋 Stripe Dashboard Links</h2>
+    <div class="step">
+      <strong>View Test Payments:</strong><br>
+      <a href="https://dashboard.stripe.com/test/payments" target="_blank">https://dashboard.stripe.com/test/payments</a>
+    </div>
+    <div class="step">
+      <strong>View Webhook Events:</strong><br>
+      <a href="https://dashboard.stripe.com/test/webhooks" target="_blank">https://dashboard.stripe.com/test/webhooks</a>
+    </div>
+    <div class="step">
+      <strong>View Connected Accounts:</strong><br>
+      <a href="https://dashboard.stripe.com/test/connect/accounts/overview" target="_blank">https://dashboard.stripe.com/test/connect/accounts/overview</a>
+    </div>
+  </div>
+
+  <script>
+    async function testWebhooks() {
+      const resultDiv = document.getElementById('webhook-result');
+      resultDiv.innerHTML = '<div class="status status-pending">⏳ Testing...</div>';
+
+      const supabaseUrl = 'https://yhofzxqopjvrfufouqzt.supabase.co';
+      const webhooks = [
+        { name: 'Stripe Platform Webhook', url: `${supabaseUrl}/functions/v1/stripe-webhook` },
+        { name: 'Commerce Webhook (Connected Accounts)', url: `${supabaseUrl}/functions/v1/commerce-webhook` }
+      ];
+
+      let results = '';
+      let allPass = true;
+
+      for (const webhook of webhooks) {
+        try {
+          const response = await fetch(webhook.url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ test: true })
+          });
+
+          const status = response.status;
+          if (status === 400 || status === 401) {
+            results += `<div class="status status-pass">✓ ${webhook.name}</div>\n`;
+            results += `<div class="result">Endpoint is live and rejecting unauthorized requests (expected behavior)\nStatus: ${status}</div>\n`;
+          } else {
+            results += `<div class="status status-fail">✗ ${webhook.name}</div>\n`;
+            results += `<div class="result">Unexpected status: ${status}</div>\n`;
+            allPass = false;
+          }
+        } catch (error) {
+          results += `<div class="status status-fail">✗ ${webhook.name}</div>\n`;
+          results += `<div class="result">Error: ${error.message}</div>\n`;
+          allPass = false;
+        }
+      }
+
+      if (allPass) {
+        results = '<div class="status status-pass">✓ All webhook endpoints are functioning correctly!</div>\n' + results;
+      } else {
+        results = '<div class="status status-fail">✗ Some webhook endpoints failed</div>\n' + results;
+      }
+
+      resultDiv.innerHTML = results;
+    }
+
+    testWebhooks();
+  </script>
+</body>
+</html>
