@@ -74,14 +74,14 @@ Deno.serve(async (req: Request) => {
     }
 
     const emailData: any = {
-      from: from || "support@creatorapp.us",
+      from: from || "CreatorApp <notifications@creatorapp.us>",
       to: Array.isArray(to) ? to : [to],
       subject,
+      reply_to: replyTo || "support@creatorapp.us",
     };
 
     if (html) emailData.html = html;
     if (text) emailData.text = text;
-    if (replyTo) emailData.reply_to = replyTo;
     if (tags) emailData.tags = tags;
 
     const response = await fetch("https://api.resend.com/emails", {
