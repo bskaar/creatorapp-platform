@@ -74,7 +74,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const emailData: any = {
-      from: from || "onboarding@resend.dev",
+      from: from || "support@creatorapp.us",
       to: Array.isArray(to) ? to : [to],
       subject,
     };
