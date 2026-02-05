@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play } from 'lucide-react';
+import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle } from 'lucide-react';
 import Logo from '../components/Logo';
 
 export default function Landing() {
@@ -387,7 +387,15 @@ export default function Landing() {
               <ul className="space-y-3 text-sm">
                 <li><Link to="/pages/about" className="hover:text-white transition-colors">About</Link></li>
                 <li><Link to="/pages/blog" className="hover:text-white transition-colors">Blog</Link></li>
-                <li><Link to="/pages/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li>
+                  <a
+                    href="mailto:support@creatorapp.us"
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Contact Support
+                  </a>
+                </li>
               </ul>
             </div>
             <div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import { DollarSign, Users, Mail, TrendingUp, FolderOpen, GitBranch, Video, ShoppingCart, Home, Zap, ArrowRight } from 'lucide-react';
+import { DollarSign, Users, Mail, TrendingUp, FolderOpen, GitBranch, Video, ShoppingCart, Home, Zap, ArrowRight, HelpCircle, MessageCircle } from 'lucide-react';
 import OnboardingWizard from '../components/OnboardingWizard';
 import GettingStartedChecklist from '../components/GettingStartedChecklist';
 import OnboardingTour, { dashboardTourSteps } from '../components/OnboardingTour';
@@ -385,6 +385,36 @@ export default function Dashboard() {
                   }}
                 />
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-card shadow-light p-8 border border-primary/20">
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-gradient-to-br from-primary to-accent rounded-xl">
+            <HelpCircle className="h-6 w-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold text-dark mb-2">Need Help?</h2>
+            <p className="text-text-secondary mb-4">
+              Our support team is here to help you succeed. Get in touch with us for any questions or assistance.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="mailto:support@creatorapp.us"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary font-semibold rounded-button hover:shadow-medium transition-all duration-300 hover:-translate-y-0.5 border-2 border-primary/20"
+              >
+                <MessageCircle className="w-4 h-4" />
+                support@creatorapp.us
+              </a>
+              <Link
+                to="/pages/documentation"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5"
+              >
+                View Documentation
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
