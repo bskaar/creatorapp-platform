@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle } from 'lucide-react';
 import Logo from '../components/Logo';
+import DemoModal from '../components/DemoModal';
 
 export default function Landing() {
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-white">
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
@@ -66,7 +70,10 @@ export default function Landing() {
                 Get Started Free
                 <ArrowRight className="h-5 w-5" />
               </Link>
-              <button className="inline-flex items-center gap-2 bg-white text-primary px-10 py-4 rounded-button font-semibold text-lg border-2 border-primary hover:bg-primary hover:text-white transition-all duration-300 hover:-translate-y-1">
+              <button
+                onClick={() => setIsDemoOpen(true)}
+                className="inline-flex items-center gap-2 bg-white text-primary px-10 py-4 rounded-button font-semibold text-lg border-2 border-primary hover:bg-primary hover:text-white transition-all duration-300 hover:-translate-y-1"
+              >
                 <Play className="h-5 w-5" />
                 Watch Demo
               </button>
@@ -406,6 +413,8 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+
+      <DemoModal isOpen={isDemoOpen} onClose={() => setIsDemoOpen(false)} />
 
       <style>{`
         @keyframes fill-bar {
