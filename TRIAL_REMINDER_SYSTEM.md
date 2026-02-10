@@ -64,30 +64,37 @@ curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/send-trial-reminders 
 
 **Recommended Schedule**: Run once daily at 9:00 AM UTC
 
-### Option 2: pg_cron (Supabase Pro Plan)
+### Option 2: pg_cron (Supabase Pro Plan) - RECOMMENDED
 
-If you have Supabase Pro or higher, you can use pg_cron:
+If you have Supabase Pro or higher, you can use pg_cron for reliable scheduling:
 
-```sql
--- Enable pg_cron extension
-create extension if not exists pg_cron;
+**Steps:**
 
--- Schedule to run daily at 9:00 AM UTC
-select cron.schedule(
-  'send-trial-reminders',
-  '0 9 * * *',
-  $$
-  select
-    net.http_post(
-      url := 'https://YOUR_PROJECT.supabase.co/functions/v1/send-trial-reminders',
-      headers := jsonb_build_object(
-        'Content-Type', 'application/json',
-        'Authorization', 'Bearer YOUR_SERVICE_ROLE_KEY'
-      )
-    );
-  $$
-);
-```
+1. **Enable pg_cron Extension:**
+   - Go to Supabase Dashboard → Database → Extensions
+   - Search for "pg_cron"
+   - When prompted for schema, enter: `pg_catalog`
+   - Click "Enable extension"
+
+2. **Run the Setup Script:**
+   - Go to Supabase Dashboard → SQL Editor
+   - Open the file `SETUP_CRON_JOB.sql` from your project
+   - Replace `YOUR_PROJECT_ID` with your actual project reference ID
+     - Example: If your URL is `https://abcdefgh.supabase.co`, use `abcdefgh`
+   - Click "Run" to execute the script
+
+3. **Verify the Job:**
+   ```sql
+   -- Check if job was created
+   SELECT * FROM cron.job WHERE jobname = 'send-trial-reminders-daily';
+
+   -- View run history (after first execution)
+   SELECT * FROM cron.job_run_details
+   WHERE jobname = 'send-trial-reminders-daily'
+   ORDER BY start_time DESC LIMIT 10;
+   ```
+
+The job will now run automatically every day at 9:00 AM UTC.
 
 ## Testing the Function
 
