@@ -23,15 +23,13 @@ EXCEPTION
 END $$;
 
 -- Schedule the trial reminder job
--- IMPORTANT: Replace 'YOUR_PROJECT_ID' with your actual Supabase project reference
--- Example: If your project URL is https://abcdefgh.supabase.co, use 'abcdefgh'
 SELECT cron.schedule(
   'send-trial-reminders-daily',
   '0 9 * * *',
   $$
   SELECT
     net.http_post(
-      url := 'https://YOUR_PROJECT_ID.supabase.co/functions/v1/send-trial-reminders',
+      url := 'https://rtgybxfsuezmcvlshyzr.supabase.co/functions/v1/send-trial-reminders',
       headers := jsonb_build_object(
         'Content-Type', 'application/json',
         'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key', true)
