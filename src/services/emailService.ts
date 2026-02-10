@@ -137,6 +137,67 @@ export class EmailService {
     });
   }
 
+  static async sendTrialExpiring(
+    userEmail: string,
+    userName: string,
+    siteName: string,
+    daysRemaining: number
+  ) {
+    return this.send({
+      to: userEmail,
+      subject: `Your CreatorApp Trial Ends in ${daysRemaining} Days`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #2563eb;">Your Trial is Almost Over</h1>
+          <p>Hi ${userName},</p>
+          <p>Your 14-day free trial for <strong>${siteName}</strong> ends in <strong>${daysRemaining} days</strong>.</p>
+
+          <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 20px 0; border-radius: 4px;">
+            <p style="margin: 0; color: #92400e; font-weight: bold;">Important:</p>
+            <p style="margin: 8px 0 0 0; color: #92400e;">
+              To avoid being charged, you must cancel before your trial ends. If you don't cancel, your subscription will automatically convert to a paid plan.
+            </p>
+          </div>
+
+          <h2 style="color: #1f2937; font-size: 18px;">What happens next?</h2>
+          <ul style="color: #4b5563; line-height: 1.6;">
+            <li>If you do nothing, you'll be charged on the trial end date</li>
+            <li>If you subscribe now, you'll keep all your work and continue building</li>
+            <li>If you cancel, you'll lose access but won't be charged</li>
+          </ul>
+
+          <div style="margin: 30px 0; text-align: center;">
+            <a href="https://creatorapp.us/subscription-select"
+               style="display: inline-block; background: #2563eb; color: white;
+                      padding: 14px 28px; text-decoration: none; border-radius: 6px;
+                      font-weight: bold; margin-right: 10px;">
+              Choose a Plan
+            </a>
+            <a href="https://creatorapp.us/settings?tab=subscription"
+               style="display: inline-block; background: #6b7280; color: white;
+                      padding: 14px 28px; text-decoration: none; border-radius: 6px;
+                      font-weight: bold;">
+              Manage Trial
+            </a>
+          </div>
+
+          <h2 style="color: #1f2937; font-size: 18px;">What you get with a paid plan:</h2>
+          <ul style="color: #4b5563; line-height: 1.6;">
+            <li>Keep all your sites, pages, and content</li>
+            <li>Access to premium templates and AI features</li>
+            <li>E-commerce and email marketing tools</li>
+            <li>Priority customer support</li>
+          </ul>
+
+          <p style="color: #6b7280; font-size: 14px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            Questions? Reply to this email or contact us at <a href="mailto:support@creatorapp.us" style="color: #2563eb;">support@creatorapp.us</a>
+          </p>
+        </div>
+      `,
+      text: `Hi ${userName}, your 14-day trial for ${siteName} ends in ${daysRemaining} days. To avoid being charged, cancel before your trial ends. Subscribe now at https://creatorapp.us/subscription-select or manage your trial at https://creatorapp.us/settings?tab=subscription`,
+    });
+  }
+
   static async sendSubscriptionExpiring(
     userEmail: string,
     userName: string,
