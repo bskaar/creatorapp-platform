@@ -5,6 +5,7 @@ import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import Logo from '../components/Logo';
+import { EmailService } from '../services/emailService';
 
 export default function Signup() {
   const [searchParams] = useSearchParams();
@@ -69,6 +70,12 @@ export default function Signup() {
 
       if (useCodeError) {
         console.error('Failed to record code usage:', useCodeError);
+      }
+
+      try {
+        await EmailService.sendWelcomeEmail(email, fullName);
+      } catch (emailError) {
+        console.error('Failed to send welcome email:', emailError);
       }
 
       await refreshSites();
