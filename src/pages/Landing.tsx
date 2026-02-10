@@ -59,8 +59,8 @@ export default function Landing() {
             </h1>
 
             <p className="text-xl text-text-secondary leading-relaxed max-w-xl">
-              The all-in-one platform that makes it effortless to create courses,
-              build your brand, and scale your coaching business—without the tech headaches.
+              All-in-One Platform for Creators. Create courses, build your brand,
+              and scale your coaching business—without the tech headaches.
             </p>
 
             <div className="flex flex-wrap gap-4">
