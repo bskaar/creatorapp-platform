@@ -44,11 +44,6 @@ export default function Landing() {
 
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
           <div className="space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary px-5 py-2 rounded-button text-sm font-semibold border border-primary/20">
-              <Zap className="h-4 w-4" />
-              Trusted by 50,000+ Creators
-            </div>
-
             <h1 className="text-6xl lg:text-7xl font-bold leading-tight text-dark">
               Build & Grow Your{' '}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
