@@ -227,78 +227,76 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden animate-scale-in">
-        <div className="relative">
-          <button
-            onClick={onClose}
-            className="absolute top-6 right-6 z-10 bg-white/90 hover:bg-white rounded-full p-2 transition-all hover:scale-110 shadow-lg"
-          >
-            <X className="h-6 w-6 text-gray-600" />
-          </button>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden animate-scale-in flex flex-col">
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 z-10 bg-white/90 hover:bg-white rounded-full p-2 transition-all hover:scale-110 shadow-lg"
+        >
+          <X className="h-6 w-6 text-gray-600" />
+        </button>
 
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-8 text-white">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="bg-white/20 rounded-full p-3">
-                {step.icon}
-              </div>
-              <div>
-                <div className="text-sm font-medium text-white/80">Step {currentStep + 1} of {steps.length}</div>
-                <h2 className="text-3xl font-bold">{step.title}</h2>
-              </div>
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-8 text-white flex-shrink-0">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="bg-white/20 rounded-full p-3">
+              {step.icon}
             </div>
-            <p className="text-lg text-white/90 max-w-2xl">{step.description}</p>
+            <div>
+              <div className="text-sm font-medium text-white/80">Step {currentStep + 1} of {steps.length}</div>
+              <h2 className="text-3xl font-bold">{step.title}</h2>
+            </div>
           </div>
+          <p className="text-lg text-white/90 max-w-2xl">{step.description}</p>
+        </div>
 
-          <div className="p-8 min-h-[400px] flex items-center justify-center bg-gray-50">
-            {step.visual}
-          </div>
+        <div className="p-8 flex items-center justify-center bg-gray-50 overflow-y-auto flex-1">
+          {step.visual}
+        </div>
 
-          <div className="bg-white border-t-2 border-gray-100 px-8 py-6">
-            <div className="flex items-center justify-between">
+        <div className="bg-white border-t-2 border-gray-100 px-8 py-6 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={prevStep}
+              disabled={currentStep === 0}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+                currentStep === 0
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:-translate-x-1'
+              }`}
+            >
+              <ChevronLeft className="h-5 w-5" />
+              Previous
+            </button>
+
+            <div className="flex gap-2">
+              {steps.map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-2 rounded-full transition-all ${
+                    index === currentStep
+                      ? 'w-8 bg-gradient-to-r from-blue-600 to-purple-600'
+                      : 'w-2 bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {currentStep < steps.length - 1 ? (
               <button
-                onClick={prevStep}
-                disabled={currentStep === 0}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
-                  currentStep === 0
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:-translate-x-1'
-                }`}
+                onClick={nextStep}
+                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all hover:translate-x-1"
               >
-                <ChevronLeft className="h-5 w-5" />
-                Previous
+                Next
+                <ChevronRight className="h-5 w-5" />
               </button>
-
-              <div className="flex gap-2">
-                {steps.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`h-2 rounded-full transition-all ${
-                      index === currentStep
-                        ? 'w-8 bg-gradient-to-r from-blue-600 to-purple-600'
-                        : 'w-2 bg-gray-300'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {currentStep < steps.length - 1 ? (
-                <button
-                  onClick={nextStep}
-                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all hover:translate-x-1"
-                >
-                  Next
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              ) : (
-                <a
-                  href="/signup"
-                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all hover:scale-105"
-                >
-                  <CheckCircle2 className="h-5 w-5" />
-                  Get Started Free
-                </a>
-              )}
-            </div>
+            ) : (
+              <a
+                href="/signup"
+                className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all hover:scale-105"
+              >
+                <CheckCircle2 className="h-5 w-5" />
+                Get Started Free
+              </a>
+            )}
           </div>
         </div>
       </div>
