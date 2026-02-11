@@ -123,7 +123,7 @@ Make it distinctive, memorable, and appropriate for the industry. The theme shou
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-3-5-haiku-20241022",
+        model: "claude-3-haiku-20240307",
         max_tokens: 1500,
         temperature: 0.9,
         system: systemPrompt,
