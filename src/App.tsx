@@ -428,11 +428,11 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/pages/:slug" element={<MarketingPage />} />
       <Route path="/pages/about" element={<About />} />
       <Route path="/pages/documentation" element={<Documentation />} />
       <Route path="/pages/blog" element={<Blog />} />
       <Route path="/pages/contact" element={<Contact />} />
+      <Route path="/pages/:slug" element={<MarketingPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route path="/cookie-policy" element={<CookiePolicy />} />
