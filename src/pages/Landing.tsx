@@ -79,19 +79,24 @@ export default function Landing() {
               </button>
             </div>
 
-            <div className="flex gap-12 pt-6">
-              <div>
-                <div className="text-4xl font-bold text-primary">14 Days</div>
-                <div className="text-text-secondary text-sm mt-1">Free Trial</div>
+            <div className="space-y-4 pt-6">
+              <div className="flex gap-12">
+                <div>
+                  <div className="text-4xl font-bold text-primary">14 Days</div>
+                  <div className="text-text-secondary text-base font-bold mt-1">Free Trial</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-primary">$0</div>
+                  <div className="text-text-secondary text-base font-bold mt-1">Platform Fees*</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-primary">Unlimited</div>
+                  <div className="text-text-secondary text-base font-bold mt-1">Courses & Students</div>
+                </div>
               </div>
-              <div>
-                <div className="text-4xl font-bold text-primary">0%</div>
-                <div className="text-text-secondary text-sm mt-1">Transaction Fees</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-primary">Unlimited</div>
-                <div className="text-text-secondary text-sm mt-1">Courses & Students</div>
-              </div>
+              <p className="text-sm text-text-secondary italic">
+                *We don't take a cut of your success. Standard Stripe transaction fees apply.
+              </p>
             </div>
           </div>
 
