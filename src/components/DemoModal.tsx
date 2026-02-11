@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, ChevronLeft, ChevronRight, User, Globe, Layout, Package, Sparkles, CheckCircle2, Pause, Play } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, User, Globe, Layout, Package, Sparkles, CheckCircle2, Pause, Play, Brain, MessageCircle } from 'lucide-react';
 
 interface DemoModalProps {
   isOpen: boolean;
@@ -195,6 +195,94 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
     },
     {
       id: 4,
+      title: 'Meet Your AI Co-Founder',
+      description: 'Get strategic guidance from your AI business coach. Ask questions, generate content, and create custom gameplans powered by Claude AI.',
+      icon: <Brain className="h-8 w-8" />,
+      visual: (
+        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-8 border-2 border-blue-300 w-full max-w-3xl mx-auto shadow-xl">
+          <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl shadow-2xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
+
+            <div className="relative z-10 p-8">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-1">AI Co-Founder</h3>
+                  <p className="text-blue-100 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    Powered by Claude AI
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-4 border border-white/20">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <MessageCircle className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white text-sm font-medium mb-2">You:</p>
+                    <p className="text-white/90 text-sm bg-white/10 rounded-lg p-3">
+                      "How do I create my first sales funnel?"
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-white to-blue-100 flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white text-sm font-medium mb-2">AI Co-Founder:</p>
+                    <div className="text-white/90 text-sm bg-white/10 rounded-lg p-3 space-y-2">
+                      <p>"Great question! Let's build a simple but effective funnel..."</p>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3 h-3 text-green-400" />
+                          <span>1. Create a lead magnet offer</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3 h-3 text-green-400" />
+                          <span>2. Build an opt-in landing page</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-3 h-3 text-green-400" />
+                          <span>3. Set up email nurture sequence</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button className="text-left p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all border border-white/10 text-sm">
+                  <MessageCircle className="w-4 h-4 mb-2 text-blue-200" />
+                  <p className="text-white font-medium text-xs">What should my lead magnet be?</p>
+                </button>
+                <button className="text-left p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all border border-white/10 text-sm">
+                  <MessageCircle className="w-4 h-4 mb-2 text-blue-200" />
+                  <p className="text-white font-medium text-xs">Help me price my product</p>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 bg-white rounded-xl p-4 shadow-lg border-2 border-blue-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-gray-900">AI-Powered Features</p>
+                <p className="text-xs text-gray-600">Content generation, strategy, and more</p>
+              </div>
+              <Sparkles className="w-8 h-8 text-blue-600" />
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 5,
       title: 'Add Your First Product',
       description: 'Create your first course, membership, or digital product in minutes with our intuitive builder.',
       icon: <Package className="h-8 w-8" />,
@@ -246,7 +334,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
       )
     },
     {
-      id: 5,
+      id: 6,
       title: 'Customize & Launch',
       description: 'Customize your site with our drag-and-drop editor, then publish with one click. Your site goes live instantly!',
       icon: <Sparkles className="h-8 w-8" />,

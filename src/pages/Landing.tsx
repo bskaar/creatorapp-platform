@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle } from 'lucide-react';
+import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle, Sparkles, Brain } from 'lucide-react';
 import Logo from '../components/Logo';
 import DemoModal from '../components/DemoModal';
 
@@ -50,12 +50,12 @@ export default function Landing() {
                 Creator Business
               </span>
               <br />
-              In One Place
+              With AI-Powered Tools
             </h1>
 
             <p className="text-xl text-text-secondary leading-relaxed max-w-xl">
-              All-in-One Platform for Creators. Create courses, build your brand,
-              and scale your coaching business—without the tech headaches.
+              The first all-in-one platform with a built-in AI Co-Founder. Get personalized strategies,
+              generate content instantly, and scale your business with Claude-powered intelligence.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -140,19 +140,107 @@ export default function Landing() {
         <div className="max-w-[1400px] mx-auto">
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary px-5 py-2 rounded-button text-sm font-semibold border border-primary/20 mb-6">
-              🚀 Everything You Need
+              <Sparkles className="w-4 h-4" />
+              AI-Powered Platform
             </div>
             <h2 className="text-5xl lg:text-6xl font-bold text-dark mb-6">
-              Powerful Features.<br/>
-              Beautiful Results.
+              Your AI Co-Founder.<br/>
+              Your Complete Platform.
             </h2>
             <p className="text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed">
-              From course creation to marketing automation, we've built every tool
-              you need to grow your creator business—all in one intuitive platform.
+              The only creator platform with Claude AI built-in. Get strategic guidance,
+              generate content, and automate your workflow—all powered by cutting-edge AI.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-gradient-to-br from-primary via-primary-dark to-accent rounded-card p-12 border-2 border-primary shadow-heavy hover:shadow-heavy transition-all duration-300 hover:-translate-y-3 group relative overflow-hidden md:col-span-2 lg:col-span-3">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/30 rounded-full blur-3xl"></div>
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-[70px] h-[70px] bg-white/20 backdrop-blur-sm rounded-[18px] flex items-center justify-center group-hover:scale-105 transition-all">
+                      <Sparkles className="h-8 w-8 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-bold text-white mb-2">AI Co-Founder</h3>
+                      <p className="text-white/90 text-lg">Powered by Claude AI</p>
+                    </div>
+                  </div>
+                  <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white font-semibold text-sm flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    Available 24/7
+                  </div>
+                </div>
+                <p className="text-white/90 mb-6 leading-relaxed text-lg max-w-3xl">
+                  Your personal AI business strategist trained on proven digital marketing frameworks.
+                  Get instant advice on funnels, copywriting, product strategy, and growth tactics.
+                  It's like having a marketing expert on call whenever you need guidance.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-start gap-3 text-white">
+                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="font-semibold mb-1">Strategic Gameplans</div>
+                      <div className="text-sm text-white/80">Custom business roadmaps</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 text-white">
+                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="font-semibold mb-1">Content Generation</div>
+                      <div className="text-sm text-white/80">Copy, emails, and course outlines</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 text-white">
+                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="font-semibold mb-1">Real-Time Coaching</div>
+                      <div className="text-sm text-white/80">Chat for instant answers</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
+                <Brain className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
+              </div>
+              <h3 className="text-2xl font-bold text-dark mb-4">AI Content Tools</h3>
+              <p className="text-text-secondary mb-6 leading-relaxed">
+                Generate professional content in seconds with AI-powered writing and design tools.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-3 text-text-primary">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
+                  </div>
+                  AI copywriting assistant
+                </li>
+                <li className="flex items-center gap-3 text-text-primary">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
+                  </div>
+                  Theme & color palette generator
+                </li>
+                <li className="flex items-center gap-3 text-text-primary">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
+                  </div>
+                  Smart image search
+                </li>
+              </ul>
+            </div>
+
             <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
               <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">

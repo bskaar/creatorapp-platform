@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Book, Video, Mail, DollarSign, Layout, Settings, HelpCircle } from 'lucide-react';
+import { ChevronDown, ChevronUp, Book, Video, Mail, DollarSign, Layout, Settings, HelpCircle, Sparkles } from 'lucide-react';
 import Logo from '../components/Logo';
 
 interface FAQItem {
@@ -30,6 +30,7 @@ export default function Documentation() {
   };
 
   const faqCategories = [
+    { name: 'AI & Intelligence', icon: Sparkles },
     { name: 'Getting Started', icon: Book },
     { name: 'Courses & Content', icon: Video },
     { name: 'Email Marketing', icon: Mail },
@@ -40,6 +41,36 @@ export default function Documentation() {
 
   const faqs: FAQItem[] = [
     {
+      category: 'AI & Intelligence',
+      question: 'What is the AI Co-Founder?',
+      answer: 'The AI Co-Founder is your personal business strategist powered by Claude AI, one of the most advanced AI models available. It\'s trained on proven digital marketing frameworks and creator economy expertise. Think of it as having a marketing expert available 24/7 to answer questions, provide strategic guidance, generate content, and help you grow your business.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'How do I use the AI Co-Founder?',
+      answer: 'You can access the AI Co-Founder from your dashboard by clicking the AI Co-Founder card or the floating AI button throughout the platform. Simply ask questions in natural language, request custom gameplans for your business, or use the suggested prompts to get started. The AI understands context about your business and provides personalized advice.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'What can the AI Co-Founder help me with?',
+      answer: 'The AI Co-Founder can help with: creating personalized business gameplans, developing sales funnel strategies, writing compelling copy for emails and landing pages, suggesting lead magnet ideas, pricing strategies for your products, course outline creation, email sequence planning, marketing campaign ideas, and answering any business or marketing questions you have.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'What other AI features are available?',
+      answer: 'Beyond the AI Co-Founder chat, CreatorApp includes several AI-powered tools: AI copywriting assistant to generate professional sales copy and content, theme generator that creates custom color palettes and visual themes for your brand, smart image search powered by AI, and content suggestions throughout the platform to help you work faster and more effectively.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'Is there a limit on AI usage?',
+      answer: 'AI features are included with all paid plans. Usage limits vary by plan tier - check your plan details in Settings for specific limits. The AI Co-Founder is designed to be used regularly as part of your daily workflow. If you need higher usage limits, you can upgrade to a higher tier plan.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'How accurate and reliable is the AI Co-Founder?',
+      answer: 'The AI Co-Founder is powered by Claude AI and provides advice based on proven marketing frameworks and best practices. While it\'s an incredibly powerful tool, it\'s designed to augment your decision-making, not replace it. Always review and adapt AI suggestions to fit your specific business context and audience.'
+    },
+    {
       category: 'Getting Started',
       question: 'How do I get started with CreatorApp?',
       answer: 'Getting started is simple! Click "Sign Up" to create your free account. You\'ll enter your email and password, then choose a unique name for your creator site. Next, select a template that fits your brand, and you\'re ready to start building. No credit card required for the 14-day free trial.'
@@ -47,12 +78,12 @@ export default function Documentation() {
     {
       category: 'Getting Started',
       question: 'Do I need technical skills to use CreatorApp?',
-      answer: 'No technical skills required! CreatorApp is designed for creators, not developers. Our drag-and-drop builder, intuitive interface, and pre-built templates make it easy for anyone to create professional courses and websites without coding knowledge.'
+      answer: 'No technical skills required! CreatorApp is designed for creators, not developers. Our drag-and-drop builder, intuitive interface, pre-built templates, and AI Co-Founder make it easy for anyone to create professional courses and websites without coding knowledge. Plus, the AI can guide you through any questions you have along the way.'
     },
     {
       category: 'Getting Started',
       question: 'What is included in the free trial?',
-      answer: 'Your 14-day free trial includes full access to all CreatorApp features: course creation, email marketing, payment processing, landing pages, analytics, and more. No credit card required to start. You can explore everything and decide which plan is right for you before subscribing.'
+      answer: 'Your 14-day free trial includes full access to all CreatorApp features: AI Co-Founder and AI-powered tools, course creation, email marketing, payment processing, landing pages, analytics, and more. No credit card required to start. You can explore everything and decide which plan is right for you before subscribing.'
     },
     {
       category: 'Courses & Content',
