@@ -30,7 +30,7 @@ export default function CookieConsent() {
           <Cookie className="w-6 h-6 text-blue-600 flex-shrink-0" />
           <p className="text-sm text-gray-700">
             We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.{' '}
-            <a href="/privacy-policy" className="text-blue-600 hover:underline">Learn more</a>
+            <a href="/privacy-policy" className="text-blue-600 hover:underline" aria-label="Learn more about our privacy and cookie policy">Learn more</a>
           </p>
         </div>
         <div className="flex gap-2">

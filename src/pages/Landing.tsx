@@ -9,7 +9,13 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg"
+      >
+        Skip to main content
+      </a>
+      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100" aria-label="Main navigation">
         <div className="max-w-[1400px] mx-auto px-8">
           <div className="flex justify-between items-center h-20">
             <Link to="/" className="flex items-center">
@@ -38,13 +44,14 @@ export default function Landing() {
         </div>
       </nav>
 
-      <section className="pt-32 pb-20 px-8 relative overflow-hidden bg-gradient-to-br from-light-bg via-white to-pink-50">
+      <main id="main-content">
+      <section className="pt-32 pb-20 px-8 relative overflow-hidden bg-gradient-to-br from-light-bg via-white to-pink-50" aria-labelledby="hero-heading">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px] -z-10"></div>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/20 rounded-full blur-[150px] -z-10"></div>
 
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
           <div className="space-y-8 animate-fade-in">
-            <h1 className="text-6xl lg:text-7xl font-bold leading-tight text-dark">
+            <h1 id="hero-heading" className="text-6xl lg:text-7xl font-bold leading-tight text-dark">
               Build & Grow Your{' '}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Creator Business
@@ -69,8 +76,9 @@ export default function Landing() {
               <button
                 onClick={() => setIsDemoOpen(true)}
                 className="inline-flex items-center gap-2 bg-white text-primary px-10 py-4 rounded-button font-semibold text-lg border-2 border-primary hover:bg-primary hover:text-white transition-all duration-300 hover:-translate-y-1"
+                aria-label="Watch product demo video"
               >
-                <Play className="h-5 w-5" />
+                <Play className="h-5 w-5" aria-hidden="true" />
                 Watch Demo
               </button>
             </div>
@@ -136,14 +144,14 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="features" className="py-32 px-8 bg-gradient-to-b from-white to-light-bg">
+      <section id="features" className="py-32 px-8 bg-gradient-to-b from-white to-light-bg" aria-labelledby="features-heading">
         <div className="max-w-[1400px] mx-auto">
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary px-5 py-2 rounded-button text-sm font-semibold border border-primary/20 mb-6">
               <Sparkles className="w-4 h-4" />
               AI-Powered Platform
             </div>
-            <h2 className="text-5xl lg:text-6xl font-bold text-dark mb-6">
+            <h2 id="features-heading" className="text-5xl lg:text-6xl font-bold text-dark mb-6">
               Your AI Co-Founder.<br/>
               Your Complete Platform.
             </h2>
@@ -453,15 +461,16 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      </main>
 
-      <footer className="bg-dark text-gray-400 py-16 px-8">
+      <footer className="bg-dark text-gray-400 py-16 px-8" role="contentinfo">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="mb-6">
                 <Logo variant="light" />
               </div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-400">
                 The complete solution for modern creator businesses.
               </p>
             </div>
