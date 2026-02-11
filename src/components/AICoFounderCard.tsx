@@ -36,7 +36,7 @@ export default function AICoFounderCard() {
           </div>
 
           <p className="text-blue-50 mb-6 text-lg leading-relaxed">
-            I'm trained on proven frameworks from Russell Brunson, plus years of creator economy expertise.
+            I'm trained on proven digital marketing strategies and years of creator economy expertise.
             I'll help you build funnels, write copy, generate leads, and grow your business step by step.
           </p>
 
