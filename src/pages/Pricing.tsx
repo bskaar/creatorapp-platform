@@ -1,11 +1,30 @@
+import { useEffect } from 'react';
 import { Check, Rocket, TrendingUp, Award, Building, ArrowRight, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from '../components/Logo';
+import StructuredData, { faqSchema } from '../components/StructuredData';
 
 export default function Pricing() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = 'Pricing - CreatorApp | Affordable Plans for Course Creators';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Simple, transparent pricing for online course creators. Plans starting at $49/month with 14-day free trial. No setup fees, unlimited courses, AI-powered tools included.');
+    }
+    const metaKeywords = document.createElement('meta');
+    metaKeywords.name = 'keywords';
+    metaKeywords.content = 'course platform pricing, creator platform cost, affordable course hosting, online course pricing, membership site pricing, AI course creator pricing, course builder plans, creator business tools cost';
+    document.head.appendChild(metaKeywords);
+
+    return () => {
+      const keywords = document.querySelector('meta[name="keywords"]');
+      if (keywords) keywords.remove();
+    };
+  }, []);
 
   const handleLogout = async () => {
     await signOut();
@@ -102,8 +121,31 @@ export default function Pricing() {
     }
   ];
 
+  const pricingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: tiers.map((tier, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Product',
+        name: `${tier.name} Plan`,
+        description: tier.description,
+        offers: {
+          '@type': 'Offer',
+          price: tier.price === 'Custom' ? '0' : tier.price.replace('$', ''),
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+          url: `https://www.creatorapp.us${tier.ctaLink}`
+        }
+      }
+    }))
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+      <StructuredData data={pricingSchema} id="pricing-schema" />
+      <StructuredData data={faqSchema} id="faq-schema" />
       {/* Header */}
       <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -151,10 +193,10 @@ export default function Pricing() {
       <section className="py-20 px-6 text-center">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-6xl font-extrabold text-dark mb-6 tracking-tight">
-            Simple, Transparent Pricing
+            Affordable Course Platform Pricing
           </h1>
           <p className="text-2xl text-text-secondary mb-8 font-medium">
-            Scale your creator business with AI-powered tools and automation.
+            Scale your online course business with AI-powered course creation, email marketing automation, and sales funnel tools.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
             <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 text-emerald-800 px-6 py-3 rounded-full text-sm font-semibold shadow-light">
@@ -262,10 +304,10 @@ export default function Pricing() {
       <section className="py-20 px-6 bg-gradient-to-br from-slate-50 via-white to-slate-50 border-t border-border">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-dark mb-6">
-            Questions? We've Got Answers
+            Online Course Platform FAQ
           </h2>
           <p className="text-text-secondary mb-12 text-lg font-medium">
-            Join thousands of creators building their digital empire with CreatorApp.
+            Join thousands of online course creators and coaches building their digital businesses with CreatorApp.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
             <div className="bg-white rounded-card shadow-light p-6 border border-border">

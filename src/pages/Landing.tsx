@@ -1,14 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle, Sparkles, Brain } from 'lucide-react';
 import Logo from '../components/Logo';
 import DemoModal from '../components/DemoModal';
+import StructuredData, { organizationSchema, softwareApplicationSchema } from '../components/StructuredData';
 
 export default function Landing() {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
 
+  useEffect(() => {
+    document.title = 'CreatorApp - AI-Powered Platform for Online Course Creators & Coaches';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Build and grow your online course business with AI-powered tools. Create courses, sales funnels, email marketing automation, and scale your creator business. 14-day free trial.');
+    }
+    const metaKeywords = document.createElement('meta');
+    metaKeywords.name = 'keywords';
+    metaKeywords.content = 'online course platform, creator platform, AI course builder, email marketing automation, sales funnel builder, online coaching platform, digital product sales, membership site builder, course creator tools, AI content generator';
+    document.head.appendChild(metaKeywords);
+
+    return () => {
+      const keywords = document.querySelector('meta[name="keywords"]');
+      if (keywords) keywords.remove();
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
+      <StructuredData data={organizationSchema} id="organization-schema" />
+      <StructuredData data={softwareApplicationSchema} id="software-schema" />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg"
@@ -54,15 +74,15 @@ export default function Landing() {
             <h1 id="hero-heading" className="text-6xl lg:text-7xl font-bold leading-tight text-dark">
               Build & Grow Your{' '}
               <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Creator Business
+                Online Course Business
               </span>
               <br />
               With AI-Powered Tools
             </h1>
 
             <p className="text-xl text-text-secondary leading-relaxed max-w-xl">
-              The first all-in-one platform with a built-in AI Co-Founder. Get personalized strategies,
-              generate content instantly, and scale your business with Claude-powered intelligence.
+              The complete online course platform with AI Co-Founder built-in. Create courses, build sales funnels,
+              automate email marketing, and scale your creator business with Claude-powered intelligence.
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -153,11 +173,11 @@ export default function Landing() {
             </div>
             <h2 id="features-heading" className="text-5xl lg:text-6xl font-bold text-dark mb-6">
               Your AI Co-Founder.<br/>
-              Your Complete Platform.
+              Your Complete Course Platform.
             </h2>
             <p className="text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed">
-              The only creator platform with Claude AI built-in. Get strategic guidance,
-              generate content, and automate your workflow—all powered by cutting-edge AI.
+              The only online course platform with Claude AI built-in. Get strategic guidance for your courses and funnels,
+              generate marketing content instantly, and automate your email marketing workflow—all powered by cutting-edge AI.
             </p>
           </div>
 
@@ -254,9 +274,9 @@ export default function Landing() {
               <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
                 <Video className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Course Builder</h3>
+              <h3 className="text-2xl font-bold text-dark mb-4">Online Course Builder</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Create beautiful, engaging courses with our drag-and-drop builder. No coding required.
+                Create beautiful, engaging online courses with our drag-and-drop course builder. No coding required for your online learning platform.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
@@ -285,9 +305,9 @@ export default function Landing() {
               <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
                 <Mail className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Email Marketing</h3>
+              <h3 className="text-2xl font-bold text-dark mb-4">Email Marketing Automation</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Build your list and nurture relationships with powerful email automation.
+                Build your email list and nurture customer relationships with powerful email marketing automation sequences.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
@@ -347,9 +367,9 @@ export default function Landing() {
               <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
                 <TrendingUp className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Sales Funnels</h3>
+              <h3 className="text-2xl font-bold text-dark mb-4">Sales Funnel Builder</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Convert visitors with high-performing landing pages and sales funnels.
+                Convert visitors with high-performing landing pages and sales funnels. Build complete marketing funnels for your courses.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
@@ -445,10 +465,10 @@ export default function Landing() {
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
             <div className="relative z-10">
               <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-                Ready to Transform Your Creator Business?
+                Ready to Launch Your Online Course Business?
               </h2>
               <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-                Join thousands of successful creators who've already made the switch.
+                Join thousands of successful course creators and coaches who've already built their businesses with our platform.
               </p>
               <Link
                 to="/signup"
@@ -471,7 +491,7 @@ export default function Landing() {
                 <Logo variant="light" />
               </div>
               <p className="text-sm text-gray-400">
-                The complete solution for modern creator businesses.
+                The complete all-in-one platform for online course creators, coaches, and digital entrepreneurs.
               </p>
             </div>
             <div>
