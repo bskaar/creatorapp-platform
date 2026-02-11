@@ -6,6 +6,8 @@ import { DollarSign, Users, Mail, TrendingUp, FolderOpen, GitBranch, Video, Shop
 import OnboardingWizard from '../components/OnboardingWizard';
 import GettingStartedChecklist from '../components/GettingStartedChecklist';
 import OnboardingTour, { dashboardTourSteps } from '../components/OnboardingTour';
+import AICoFounderCard from '../components/AICoFounderCard';
+import GameplanManager from '../components/GameplanManager';
 
 interface Stats {
   revenue: number;
@@ -272,6 +274,10 @@ export default function Dashboard() {
           })}
         </div>
       )}
+
+      <AICoFounderCard />
+
+      <GameplanManager />
 
       <GettingStartedChecklist />
 

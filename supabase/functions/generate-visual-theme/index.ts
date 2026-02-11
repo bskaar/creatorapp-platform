@@ -55,9 +55,9 @@ Deno.serve(async (req: Request) => {
   try {
     const { industry, mood, brandName, targetAudience }: ThemeRequest = await req.json();
 
-    const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
-    if (!openaiApiKey) {
-      throw new Error("OpenAI API key not configured");
+    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!anthropicApiKey) {
+      throw new Error("Anthropic API key not configured");
     }
 
     const systemPrompt = `You are an expert brand designer and UI/UX specialist. Generate a complete, production-ready visual theme based on the provided information. The theme must include:
@@ -115,30 +115,31 @@ Ensure:
 
 Make it distinctive, memorable, and appropriate for the industry. The theme should communicate the right emotions and values through color, typography, and visual style.`;
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${openaiApiKey}`,
+        "x-api-key": anthropicApiKey,
+        "anthropic-version": "2023-06-01",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "claude-3-5-haiku-20241022",
+        max_tokens: 1500,
+        temperature: 0.9,
+        system: systemPrompt,
         messages: [
-          { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        temperature: 0.9,
-        max_tokens: 800,
       }),
     });
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`OpenAI API error: ${error}`);
+      throw new Error(`Anthropic API error: ${error}`);
     }
 
     const data = await response.json();
-    const generatedText = data.choices[0]?.message?.content?.trim() || "";
+    const generatedText = data.content[0]?.text?.trim() || "";
 
     let theme: VisualTheme;
     try {

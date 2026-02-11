@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSite } from '../contexts/SiteContext';
 import Logo from './Logo';
+import AIFloatingButton from './AIFloatingButton';
 import {
   LayoutDashboard,
   FolderOpen,
@@ -221,6 +222,8 @@ export default function Layout({ children }: LayoutProps) {
           {children}
         </main>
       </div>
+
+      <AIFloatingButton />
     </div>
   );
 }
