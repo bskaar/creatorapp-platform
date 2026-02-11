@@ -390,13 +390,13 @@ export default function Landing() {
                 <li><Link to="/pages/about" className="hover:text-white transition-colors">About</Link></li>
                 <li><Link to="/pages/blog" className="hover:text-white transition-colors">Blog</Link></li>
                 <li>
-                  <a
-                    href="mailto:support@creatorapp.us"
+                  <Link
+                    to="/pages/contact"
                     className="flex items-center gap-2 hover:text-white transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    Contact Support
-                  </a>
+                    Contact
+                  </Link>
                 </li>
               </ul>
             </div>

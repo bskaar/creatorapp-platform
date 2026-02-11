@@ -49,6 +49,10 @@ import PlatformAdminAuditLog from './pages/PlatformAdmin/AuditLog';
 import PlatformAdminSettings from './pages/PlatformAdmin/Settings';
 import PlatformAdminInvitationCodes from './pages/PlatformAdmin/InvitationCodes';
 import PricingReview from './pages/PricingReview';
+import About from './pages/About';
+import Documentation from './pages/Documentation';
+import Blog from './pages/Blog';
+import Contact from './pages/Contact';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -425,6 +429,10 @@ function AppRoutes() {
         }
       />
       <Route path="/pages/:slug" element={<MarketingPage />} />
+      <Route path="/pages/about" element={<About />} />
+      <Route path="/pages/documentation" element={<Documentation />} />
+      <Route path="/pages/blog" element={<Blog />} />
+      <Route path="/pages/contact" element={<Contact />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route path="/cookie-policy" element={<CookiePolicy />} />
