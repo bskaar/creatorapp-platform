@@ -27,7 +27,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
     {
       id: 1,
       title: 'Sign Up in Seconds',
-      description: 'Create your account with just an email and password. Start with a 14-day free trial, no credit card required.',
+      description: 'Create your account with just an email and password. Start your 14-day free trial. Credit card required, charged after trial ends.',
       icon: <User className="h-8 w-8" />,
       visual: (
         <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-white rounded-2xl p-8 border-2 border-blue-200 w-full max-w-md mx-auto shadow-xl">
@@ -54,8 +54,8 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
               </div>
             </div>
             <div className="flex items-center justify-center gap-2 mt-4">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <p className="text-sm text-gray-600">No credit card required</p>
+              <CheckCircle2 className="h-4 w-4 text-blue-600" />
+              <p className="text-sm text-gray-600">Card charged after 14-day trial</p>
             </div>
           </div>
         </div>

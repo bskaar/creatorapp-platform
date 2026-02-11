@@ -50,7 +50,7 @@ export default function TermsOfService() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">4. Free Trial Period</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              CreatorApp offers a 14-day free trial period for new subscribers to certain paid plans. During the trial period:
+              CreatorApp offers a 14-day free trial period for new subscribers to certain paid plans. A valid credit card is required to start your trial. During the trial period:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
               <li>You will have full access to all features included in your selected plan</li>

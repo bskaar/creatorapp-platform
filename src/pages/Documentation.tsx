@@ -73,7 +73,7 @@ export default function Documentation() {
     {
       category: 'Getting Started',
       question: 'How do I get started with CreatorApp?',
-      answer: 'Getting started is simple! Click "Sign Up" to create your free account. You\'ll enter your email and password, then choose a unique name for your creator site. Next, select a template that fits your brand, and you\'re ready to start building. No credit card required for the 14-day free trial.'
+      answer: 'Getting started is simple! Click "Sign Up" to create your free account. You\'ll enter your email and password, then choose a unique name for your creator site. Next, select a template that fits your brand, and you\'re ready to start building. Credit card required to start your 14-day free trial - you won\'t be charged until the trial ends.'
     },
     {
       category: 'Getting Started',
@@ -83,7 +83,7 @@ export default function Documentation() {
     {
       category: 'Getting Started',
       question: 'What is included in the free trial?',
-      answer: 'Your 14-day free trial includes full access to all CreatorApp features: AI Co-Founder and AI-powered tools, course creation, email marketing, payment processing, landing pages, analytics, and more. No credit card required to start. You can explore everything and decide which plan is right for you before subscribing.'
+      answer: 'Your 14-day free trial includes full access to all CreatorApp features: AI Co-Founder and AI-powered tools, course creation, email marketing, payment processing, landing pages, analytics, and more. Credit card required to begin trial, but you won\'t be charged until the 14 days are up. You can explore everything and decide which plan is right for you, or cancel anytime during the trial at no cost.'
     },
     {
       category: 'Courses & Content',
