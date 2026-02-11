@@ -81,16 +81,16 @@ export default function Landing() {
 
             <div className="flex gap-12 pt-6">
               <div>
-                <div className="text-4xl font-bold text-primary">$2.5B+</div>
-                <div className="text-text-secondary text-sm mt-1">Creator Revenue</div>
+                <div className="text-4xl font-bold text-primary">14 Days</div>
+                <div className="text-text-secondary text-sm mt-1">Free Trial</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-primary">4.8★</div>
-                <div className="text-text-secondary text-sm mt-1">Rated by Users</div>
+                <div className="text-4xl font-bold text-primary">0%</div>
+                <div className="text-text-secondary text-sm mt-1">Transaction Fees</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-primary">99.9%</div>
-                <div className="text-text-secondary text-sm mt-1">Uptime</div>
+                <div className="text-4xl font-bold text-primary">Unlimited</div>
+                <div className="text-text-secondary text-sm mt-1">Courses & Students</div>
               </div>
             </div>
           </div>
