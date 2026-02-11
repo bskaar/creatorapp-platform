@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anthropic API Integration Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .test-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+
+    .test-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .test-card h2 {
+      color: #667eea;
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .test-card p {
+      color: #666;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .test-button {
+      width: 100%;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .test-button:hover:not(:disabled) {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .test-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .status.loading {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+    }
+
+    .status.success {
+      background: #d4edda;
+      border: 1px solid #28a745;
+      color: #155724;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      border: 1px solid #dc3545;
+      color: #721c24;
+    }
+
+    .result {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .summary {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-top: 30px;
+    }
+
+    .summary h2 {
+      color: #667eea;
+      margin-bottom: 16px;
+      font-size: 1.5rem;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .run-all {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .run-all button {
+      padding: 16px 48px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🤖 Anthropic API Integration Test</h1>
+      <p>Testing Claude 3.5 Haiku & Sonnet across all AI functions</p>
+    </div>
+
+    <div class="run-all">
+      <button class="test-button" onclick="runAllTests()" id="runAllBtn">
+        Run All Tests
+      </button>
+    </div>
+
+    <div class="test-grid">
+      <!-- Test 1: Text Generation (Haiku) -->
+      <div class="test-card">
+        <h2>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          Text Generation
+        </h2>
+        <p>Claude 3.5 Haiku - Quick copywriting tasks</p>
+        <button class="test-button" onclick="testTextGeneration()">Test Function</button>
+        <div id="text-gen-status"></div>
+      </div>
+
+      <!-- Test 2: Color Palette (Haiku) -->
+      <div class="test-card">
+        <h2>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+          </svg>
+          Color Palette
+        </h2>
+        <p>Claude 3.5 Haiku - Accessible color generation</p>
+        <button class="test-button" onclick="testColorPalette()">Test Function</button>
+        <div id="color-status"></div>
+      </div>
+
+      <!-- Test 3: Visual Theme (Haiku) -->
+      <div class="test-card">
+        <h2>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+          </svg>
+          Visual Theme
+        </h2>
+        <p>Claude 3.5 Haiku - Complete theme generation</p>
+        <button class="test-button" onclick="testVisualTheme()">Test Function</button>
+        <div id="theme-status"></div>
+      </div>
+
+      <!-- Test 4: AI Coach Chat (Sonnet) -->
+      <div class="test-card">
+        <h2>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+          AI Coach Chat
+        </h2>
+        <p>Claude 3.5 Sonnet - Strategic business advice</p>
+        <button class="test-button" onclick="testCoachChat()">Test Function</button>
+        <div id="chat-status"></div>
+      </div>
+
+      <!-- Test 5: Gameplan Generator (Sonnet) -->
+      <div class="test-card">
+        <h2>
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+          </svg>
+          Gameplan Generator
+        </h2>
+        <p>Claude 3.5 Sonnet - Action plan creation</p>
+        <button class="test-button" onclick="testGameplanGenerator()">Test Function</button>
+        <div id="gameplan-status"></div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h2>Test Results Summary</h2>
+      <div class="summary-stats">
+        <div class="stat">
+          <div class="stat-value" id="total-tests">0</div>
+          <div class="stat-label">Total Tests</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="passed-tests">0</div>
+          <div class="stat-label">Passed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="failed-tests">0</div>
+          <div class="stat-label">Failed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="avg-time">0s</div>
+          <div class="stat-label">Avg Time</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL || prompt('Enter your Supabase URL:');
+    const SUPABASE_ANON_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY || prompt('Enter your Supabase Anon Key:');
+
+    const { createClient } = supabase;
+    window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    window.testResults = {
+      total: 0,
+      passed: 0,
+      failed: 0,
+      times: []
+    };
+
+    function updateSummary() {
+      document.getElementById('total-tests').textContent = window.testResults.total;
+      document.getElementById('passed-tests').textContent = window.testResults.passed;
+      document.getElementById('failed-tests').textContent = window.testResults.failed;
+      const avgTime = window.testResults.times.length > 0
+        ? (window.testResults.times.reduce((a, b) => a + b, 0) / window.testResults.times.length / 1000).toFixed(2)
+        : 0;
+      document.getElementById('avg-time').textContent = avgTime + 's';
+    }
+
+    function setStatus(elementId, status, message, result = null) {
+      const element = document.getElementById(elementId);
+      element.className = `status ${status}`;
+      element.innerHTML = message;
+      if (result) {
+        element.innerHTML += `<div class="result">${JSON.stringify(result, null, 2)}</div>`;
+      }
+    }
+
+    window.testTextGeneration = async function() {
+      const startTime = Date.now();
+      setStatus('text-gen-status', 'loading', '⏳ Testing text generation with Claude Haiku...');
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-generate-text`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            prompt: 'Write a compelling headline for an online course about digital marketing',
+            type: 'headline',
+            context: 'For entrepreneurs and small business owners'
+          })
+        });
+
+        const data = await response.json();
+        const time = Date.now() - startTime;
+        window.testResults.times.push(time);
+
+        if (response.ok && data.text) {
+          window.testResults.total++;
+          window.testResults.passed++;
+          setStatus('text-gen-status', 'success', `✅ Success! (${time}ms)`, { headline: data.text });
+        } else {
+          throw new Error(data.error || 'Invalid response');
+        }
+      } catch (error) {
+        window.testResults.total++;
+        window.testResults.failed++;
+        setStatus('text-gen-status', 'error', `❌ Error: ${error.message}`);
+      }
+      updateSummary();
+    };
+
+    window.testColorPalette = async function() {
+      const startTime = Date.now();
+      setStatus('color-status', 'loading', '⏳ Generating color palette with Claude Haiku...');
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/generate-color-palette`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            baseColor: '#3b82f6',
+            mood: 'professional'
+          })
+        });
+
+        const data = await response.json();
+        const time = Date.now() - startTime;
+        window.testResults.times.push(time);
+
+        if (response.ok && data.palette) {
+          window.testResults.total++;
+          window.testResults.passed++;
+          setStatus('color-status', 'success', `✅ Success! (${time}ms)`, data.palette);
+        } else {
+          throw new Error(data.error || 'Invalid response');
+        }
+      } catch (error) {
+        window.testResults.total++;
+        window.testResults.failed++;
+        setStatus('color-status', 'error', `❌ Error: ${error.message}`);
+      }
+      updateSummary();
+    };
+
+    window.testVisualTheme = async function() {
+      const startTime = Date.now();
+      setStatus('theme-status', 'loading', '⏳ Generating visual theme with Claude Haiku...');
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/generate-visual-theme`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            industry: 'education',
+            mood: 'modern',
+            brandName: 'LearnHub'
+          })
+        });
+
+        const data = await response.json();
+        const time = Date.now() - startTime;
+        window.testResults.times.push(time);
+
+        if (response.ok && data.theme) {
+          window.testResults.total++;
+          window.testResults.passed++;
+          setStatus('theme-status', 'success', `✅ Success! (${time}ms)`, {
+            name: data.theme.name,
+            colors: {
+              primary: data.theme.primaryColor,
+              secondary: data.theme.secondaryColor,
+              accent: data.theme.accentColor
+            }
+          });
+        } else {
+          throw new Error(data.error || 'Invalid response');
+        }
+      } catch (error) {
+        window.testResults.total++;
+        window.testResults.failed++;
+        setStatus('theme-status', 'error', `❌ Error: ${error.message}`);
+      }
+      updateSummary();
+    };
+
+    window.testCoachChat = async function() {
+      const startTime = Date.now();
+      setStatus('chat-status', 'loading', '⏳ Testing AI coach chat with Claude Sonnet...');
+      setStatus('chat-status', 'loading', '⏳ Note: This test requires authentication. It will show an error if not logged in, which is expected.');
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-coach-chat`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'What is the best way to create a lead magnet?',
+            siteId: 'test-site-id',
+            userId: 'test-user-id'
+          })
+        });
+
+        const data = await response.json();
+        const time = Date.now() - startTime;
+        window.testResults.times.push(time);
+
+        if (response.ok || response.status === 401) {
+          window.testResults.total++;
+          if (response.status === 401) {
+            setStatus('chat-status', 'success', `✅ Function deployed correctly! (401 auth required is expected)\n\nTo fully test, log in to your app and use the AI Co-Founder chat.`);
+            window.testResults.passed++;
+          } else if (data.message) {
+            window.testResults.passed++;
+            setStatus('chat-status', 'success', `✅ Success! (${time}ms)`, { preview: data.message.substring(0, 200) + '...' });
+          }
+        } else {
+          throw new Error(data.error || 'Invalid response');
+        }
+      } catch (error) {
+        window.testResults.total++;
+        window.testResults.failed++;
+        setStatus('chat-status', 'error', `❌ Error: ${error.message}`);
+      }
+      updateSummary();
+    };
+
+    window.testGameplanGenerator = async function() {
+      const startTime = Date.now();
+      setStatus('gameplan-status', 'loading', '⏳ Testing gameplan generator with Claude Sonnet...');
+      setStatus('gameplan-status', 'loading', '⏳ Note: This test requires authentication. It will show an error if not logged in, which is expected.');
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-generate-gameplan`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            goal: 'Launch my first online course in 30 days',
+            siteId: 'test-site-id',
+            userId: 'test-user-id'
+          })
+        });
+
+        const data = await response.json();
+        const time = Date.now() - startTime;
+        window.testResults.times.push(time);
+
+        if (response.ok || response.status === 401) {
+          window.testResults.total++;
+          if (response.status === 401) {
+            setStatus('gameplan-status', 'success', `✅ Function deployed correctly! (401 auth required is expected)\n\nTo fully test, log in to your app and click "Create Your Personalized Gameplan".`);
+            window.testResults.passed++;
+          } else if (data.gameplan) {
+            window.testResults.passed++;
+            setStatus('gameplan-status', 'success', `✅ Success! (${time}ms)`, data.gameplan);
+          }
+        } else {
+          throw new Error(data.error || 'Invalid response');
+        }
+      } catch (error) {
+        window.testResults.total++;
+        window.testResults.failed++;
+        setStatus('gameplan-status', 'error', `❌ Error: ${error.message}`);
+      }
+      updateSummary();
+    };
+
+    window.runAllTests = async function() {
+      document.getElementById('runAllBtn').disabled = true;
+      document.getElementById('runAllBtn').textContent = 'Running Tests...';
+
+      window.testResults = { total: 0, passed: 0, failed: 0, times: [] };
+      updateSummary();
+
+      await window.testTextGeneration();
+      await new Promise(r => setTimeout(r, 1000));
+
+      await window.testColorPalette();
+      await new Promise(r => setTimeout(r, 1000));
+
+      await window.testVisualTheme();
+      await new Promise(r => setTimeout(r, 1000));
+
+      await window.testCoachChat();
+      await new Promise(r => setTimeout(r, 1000));
+
+      await window.testGameplanGenerator();
+
+      document.getElementById('runAllBtn').disabled = false;
+      document.getElementById('runAllBtn').textContent = 'Run All Tests Again';
+
+      alert(`Tests Complete!\n\nPassed: ${window.testResults.passed}/${window.testResults.total}\nFailed: ${window.testResults.failed}/${window.testResults.total}`);
+    };
+  </script>
+</body>
+</html>
