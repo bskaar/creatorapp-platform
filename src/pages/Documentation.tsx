@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Book, Video, Mail, DollarSign, Layout, Settings, HelpCircle } from 'lucide-react';
 import Logo from '../components/Logo';
 
@@ -11,6 +11,23 @@ interface FAQItem {
 
 export default function Documentation() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const scrollToCategory = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    const element = categoryRefs.current[categoryName];
+    if (element) {
+      const offset = 100;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const faqCategories = [
     { name: 'Getting Started', icon: Book },
@@ -185,13 +202,18 @@ export default function Documentation() {
         <div className="max-w-[1200px] mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-16">
             {faqCategories.map((category) => (
-              <div
+              <button
                 key={category.name}
-                className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border-2 border-gray-200 hover:border-blue-500 transition-all hover:shadow-lg text-center cursor-pointer"
+                onClick={() => scrollToCategory(category.name)}
+                className={`bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border-2 transition-all hover:shadow-lg text-center cursor-pointer transform hover:scale-105 ${
+                  selectedCategory === category.name
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-gray-200 hover:border-blue-500'
+                }`}
               >
                 <category.icon className="h-8 w-8 text-blue-600 mx-auto mb-3" />
                 <div className="text-sm font-semibold text-gray-700">{category.name}</div>
-              </div>
+              </button>
             ))}
           </div>
 
@@ -203,7 +225,10 @@ export default function Documentation() {
               return (
                 <div key={index}>
                   {showCategoryHeader && (
-                    <h2 className="text-2xl font-bold text-gray-900 mt-12 mb-6 flex items-center gap-3">
+                    <h2
+                      ref={(el) => (categoryRefs.current[faq.category] = el)}
+                      className="text-2xl font-bold text-gray-900 mt-12 mb-6 flex items-center gap-3 scroll-mt-24"
+                    >
                       {faqCategories.find(cat => cat.name === faq.category)?.icon && (
                         <>
                           {(() => {
