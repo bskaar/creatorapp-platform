@@ -24,10 +24,6 @@ export default function Landing() {
                 Pricing
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
               </Link>
-              <a href="#templates" className="text-text-primary hover:text-primary font-medium transition-colors relative group">
-                Templates
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-              </a>
               <Link to="/login" className="text-text-primary hover:text-primary font-medium transition-colors">
                 Login
               </Link>
