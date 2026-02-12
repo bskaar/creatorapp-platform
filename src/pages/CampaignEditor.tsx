@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { supabase } from '../lib/supabase';
 import { ArrowLeft, Save, Send, Eye, Loader2, Mail, Users, Calendar } from 'lucide-react';
 import AITextGenerator from '../components/AITextGenerator';
@@ -435,7 +436,14 @@ export default function CampaignEditor() {
                 )}
               </div>
               <div className="prose max-w-none">
-                <div dangerouslySetInnerHTML={{ __html: formData.content }} />
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(formData.content, {
+                      ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'ul', 'ol', 'li', 'strong', 'em', 'br', 'div', 'span', 'blockquote', 'code', 'pre', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+                      ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'id', 'src', 'alt', 'title', 'width', 'height', 'style']
+                    })
+                  }}
+                />
               </div>
             </div>
           </div>

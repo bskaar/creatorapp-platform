@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import { supabase } from '../lib/supabase';
 import Logo from '../components/Logo';
 import { useAuth } from '../contexts/AuthContext';
@@ -167,7 +168,12 @@ export default function MarketingPage() {
         <article className="bg-white rounded-card shadow-light border border-border p-12">
           <div
             className="prose prose-lg max-w-none prose-headings:text-dark prose-headings:font-bold prose-p:text-text-primary prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-dark prose-ul:text-text-primary prose-ol:text-text-primary"
-            dangerouslySetInnerHTML={{ __html: page?.content || '' }}
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(page?.content || '', {
+                ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'ul', 'ol', 'li', 'strong', 'em', 'br', 'div', 'span', 'blockquote', 'code', 'pre', 'img'],
+                ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'id', 'src', 'alt', 'title', 'width', 'height']
+              })
+            }}
           />
         </article>
 
