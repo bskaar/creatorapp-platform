@@ -119,7 +119,7 @@ export default function StripeConnectOnboarding() {
       <div>
         <h3 className="text-xl font-bold text-dark mb-2">Stripe Connect</h3>
         <p className="text-sm text-text-secondary font-medium">
-          Connect your Stripe account to receive payments directly. You keep 100% of your revenue minus Stripe's standard transaction fees.
+          Connect your Stripe account to receive payments directly. The platform takes a 10% fee on each transaction.
         </p>
       </div>
 
