@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
@@ -27,10 +27,30 @@ import {
   BarChart3,
   Clock,
   Download,
+  ChevronLeft,
+  ChevronRight,
+  Layers,
+  Trash2,
+  Copy,
+  Eye as EyeIcon,
+  EyeOff,
+  Lock,
+  Unlock,
+  Move,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  Undo,
+  Redo,
+  Palette,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  MousePointer2,
+  Box,
 } from 'lucide-react';
 import BlockEditor from '../components/BlockEditor';
 import TemplatePicker from '../components/TemplatePicker';
-import DraggableBlock from '../components/DraggableBlock';
 import EnhancedBlockLibrary from '../components/EnhancedBlockLibrary';
 import AIColorPalette from '../components/AIColorPalette';
 import PageVersionHistory from '../components/PageVersionHistory';
@@ -46,6 +66,9 @@ interface Block {
   type: 'hero' | 'text' | 'image' | 'cta' | 'features' | 'testimonial' | 'form' | 'pricing' | 'video' | 'gallery' | 'stats';
   content: Record<string, any>;
   styles?: Record<string, any>;
+  locked?: boolean;
+  hidden?: boolean;
+  name?: string;
 }
 
 const BLOCK_TEMPLATES = {
@@ -167,12 +190,16 @@ export default function PageEditor() {
   const { funnelId, pageId } = useParams<{ funnelId: string; pageId: string }>();
   const { currentSite } = useSite();
   const navigate = useNavigate();
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  // State
   const [page, setPage] = useState<Page | null>(null);
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showBlockMenu, setShowBlockMenu] = useState(false);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [showFullPreview, setShowFullPreview] = useState(false);
   const [showThemeSettings, setShowThemeSettings] = useState(false);
@@ -198,6 +225,14 @@ export default function PageEditor() {
     borderRadius: 'medium',
   });
 
+  // UI State
+  const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
+  const [zoom, setZoom] = useState(100);
+  const [tool, setTool] = useState<'select' | 'hand'>('select');
+  const [history, setHistory] = useState<Block[][]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+
   useEffect(() => {
     if (!currentSite || !pageId) return;
     loadPage();
@@ -209,18 +244,50 @@ export default function PageEditor() {
         e.preventDefault();
         handleSave();
       }
-      if (e.key === 'Delete' && editingBlockId) {
-        deleteBlock(editingBlockId);
+      if (e.key === 'Delete' && selectedBlockId) {
+        const block = blocks.find(b => b.id === selectedBlockId);
+        if (block && !block.locked) {
+          deleteBlock(selectedBlockId);
+        }
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === 'd' && editingBlockId) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'd' && selectedBlockId) {
         e.preventDefault();
-        duplicateBlock(editingBlockId);
+        duplicateBlock(selectedBlockId);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'z') {
+        e.preventDefault();
+        redo();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [editingBlockId, blocks]);
+  }, [selectedBlockId, blocks, historyIndex]);
+
+  const saveHistory = () => {
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(JSON.parse(JSON.stringify(blocks)));
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  };
+
+  const undo = () => {
+    if (historyIndex > 0) {
+      setHistoryIndex(historyIndex - 1);
+      setBlocks(JSON.parse(JSON.stringify(history[historyIndex - 1])));
+    }
+  };
+
+  const redo = () => {
+    if (historyIndex < history.length - 1) {
+      setHistoryIndex(historyIndex + 1);
+      setBlocks(JSON.parse(JSON.stringify(history[historyIndex + 1])));
+    }
+  };
 
   const loadPage = async () => {
     if (!currentSite || !pageId) return;
@@ -235,7 +302,10 @@ export default function PageEditor() {
     if (data) {
       setPage(data);
       const content = data.content as any;
-      setBlocks(content?.blocks || []);
+      const loadedBlocks = content?.blocks || [];
+      setBlocks(loadedBlocks);
+      setHistory([JSON.parse(JSON.stringify(loadedBlocks))]);
+      setHistoryIndex(0);
       if (content?.theme) {
         setTheme(content.theme);
       }
@@ -268,7 +338,11 @@ export default function PageEditor() {
       .eq('id', page.id);
 
     if (!error) {
-      alert('Page saved successfully!');
+      const savedToast = document.createElement('div');
+      savedToast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up';
+      savedToast.textContent = 'Page saved successfully';
+      document.body.appendChild(savedToast);
+      setTimeout(() => savedToast.remove(), 2000);
     }
 
     setSaving(false);
@@ -276,6 +350,7 @@ export default function PageEditor() {
 
   const handleImportBlocks = (importedBlocks: Block[]) => {
     setBlocks([...blocks, ...importedBlocks]);
+    saveHistory();
     setShowImportModal(false);
   };
 
@@ -293,31 +368,79 @@ export default function PageEditor() {
         padding: 'medium',
         alignment: 'left',
       },
+      name: `${template.type.charAt(0).toUpperCase() + template.type.slice(1)} Block`,
     };
 
     setBlocks([...blocks, newBlock]);
     setShowBlockMenu(false);
+    setSelectedBlockId(newBlock.id);
+    saveHistory();
 
-    setRecentBlocks((prev) => {
-      const updated = [type, ...prev.filter((t) => t !== type)].slice(0, 6);
-      return updated;
-    });
+    if (!recentBlocks.includes(type)) {
+      setRecentBlocks([type, ...recentBlocks].slice(0, 5));
+    }
   };
 
-  const addCustomBlock = (blockData: any) => {
+  const addCustomBlock = (customBlock: any) => {
     const newBlock: Block = {
+      ...customBlock,
       id: `block-${Date.now()}`,
-      type: blockData.type,
-      content: { ...blockData.content },
-      styles: blockData.styles || {
-        backgroundColor: '',
-        textColor: '',
-        padding: 'medium',
-        alignment: 'left',
-      },
+    };
+    setBlocks([...blocks, newBlock]);
+    setShowCustomBlocksLibrary(false);
+    saveHistory();
+  };
+
+  const updateBlock = (id: string, content: any) => {
+    setBlocks(blocks.map(b => (b.id === id ? { ...b, content: { ...b.content, ...content } } : b)));
+    saveHistory();
+  };
+
+  const updateBlockStyles = (id: string, styles: any) => {
+    setBlocks(blocks.map(b => (b.id === id ? { ...b, styles: { ...b.styles, ...styles } } : b)));
+    saveHistory();
+  };
+
+  const duplicateBlock = (id: string) => {
+    const block = blocks.find(b => b.id === id);
+    if (!block) return;
+
+    const newBlock: Block = {
+      ...JSON.parse(JSON.stringify(block)),
+      id: `block-${Date.now()}`,
+      name: `${block.name} (Copy)`,
     };
 
-    setBlocks([...blocks, newBlock]);
+    const index = blocks.findIndex(b => b.id === id);
+    const newBlocks = [...blocks];
+    newBlocks.splice(index + 1, 0, newBlock);
+    setBlocks(newBlocks);
+    setSelectedBlockId(newBlock.id);
+    saveHistory();
+  };
+
+  const deleteBlock = (id: string) => {
+    setBlocks(blocks.filter(b => b.id !== id));
+    if (selectedBlockId === id) {
+      setSelectedBlockId(null);
+    }
+    saveHistory();
+  };
+
+  const moveBlock = (fromIndex: number, toIndex: number) => {
+    const newBlocks = [...blocks];
+    const [movedBlock] = newBlocks.splice(fromIndex, 1);
+    newBlocks.splice(toIndex, 0, movedBlock);
+    setBlocks(newBlocks);
+    saveHistory();
+  };
+
+  const toggleBlockVisibility = (id: string) => {
+    setBlocks(blocks.map(b => (b.id === id ? { ...b, hidden: !b.hidden } : b)));
+  };
+
+  const toggleBlockLock = (id: string) => {
+    setBlocks(blocks.map(b => (b.id === id ? { ...b, locked: !b.locked } : b)));
   };
 
   const handleSaveBlockAsCustom = (block: Block) => {
@@ -325,25 +448,27 @@ export default function PageEditor() {
     setShowSaveBlockModal(true);
   };
 
-  const duplicateBlock = (blockId: string) => {
-    const blockIndex = blocks.findIndex((b) => b.id === blockId);
-    if (blockIndex === -1) return;
+  const publishPage = async () => {
+    if (!page) return;
 
-    const blockToDuplicate = blocks[blockIndex];
-    const newBlock: Block = {
-      ...blockToDuplicate,
-      id: `block-${Date.now()}`,
-    };
+    const { error } = await supabase
+      .from('pages')
+      .update({ status: 'published' })
+      .eq('id', page.id);
 
-    const newBlocks = [...blocks];
-    newBlocks.splice(blockIndex + 1, 0, newBlock);
-    setBlocks(newBlocks);
+    if (!error) {
+      setPage({ ...page, status: 'published' });
+      alert('Page published successfully!');
+    }
   };
 
-  const deleteBlock = (blockId: string) => {
-    if (!confirm('Delete this block?')) return;
-    setBlocks(blocks.filter((b) => b.id !== blockId));
-    setEditingBlockId(null);
+  const handleTemplateSelect = async (template: any) => {
+    if (template) {
+      setBlocks(template.blocks || []);
+      setTheme(template.theme || theme);
+      saveHistory();
+    }
+    setShowTemplatePicker(false);
   };
 
   const handleDragStart = (index: number) => {
@@ -351,103 +476,15 @@ export default function PageEditor() {
   };
 
   const handleDragOver = (index: number) => {
-    if (draggedIndex === null || draggedIndex === index) return;
     setDragOverIndex(index);
   };
 
   const handleDragEnd = () => {
-    if (draggedIndex === null || dragOverIndex === null) {
-      setDraggedIndex(null);
-      setDragOverIndex(null);
-      return;
+    if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
+      moveBlock(draggedIndex, dragOverIndex);
     }
-
-    const newBlocks = [...blocks];
-    const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
-    newBlocks.splice(dragOverIndex, 0, draggedBlock);
-
-    setBlocks(newBlocks);
     setDraggedIndex(null);
     setDragOverIndex(null);
-  };
-
-  const updateBlock = (blockId: string, content: Record<string, any>) => {
-    setBlocks(blocks.map((b) => (b.id === blockId ? { ...b, content } : b)));
-  };
-
-  const updateBlockStyles = (blockId: string, styles: Record<string, any>) => {
-    setBlocks(blocks.map((b) => (b.id === blockId ? { ...b, styles } : b)));
-  };
-
-  const moveBlock = (blockId: string, direction: 'up' | 'down') => {
-    const index = blocks.findIndex((b) => b.id === blockId);
-    if (index === -1) return;
-
-    const newBlocks = [...blocks];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
-
-    if (targetIndex < 0 || targetIndex >= blocks.length) return;
-
-    [newBlocks[index], newBlocks[targetIndex]] = [newBlocks[targetIndex], newBlocks[index]];
-    setBlocks(newBlocks);
-  };
-
-  const publishPage = async () => {
-    if (!page) return;
-
-    const { error } = await supabase
-      .from('pages')
-      .update({
-        status: 'published',
-        published_at: new Date().toISOString(),
-      })
-      .eq('id', page.id);
-
-    if (!error) {
-      alert('Page published successfully!');
-      loadPage();
-    }
-  };
-
-  const handleTemplateSelect = async (template: any) => {
-    if (!page) {
-      setShowTemplatePicker(false);
-      return;
-    }
-
-    if (template === null) {
-      setShowTemplatePicker(false);
-      return;
-    }
-
-    if (!confirm('This will replace your current page content. Are you sure?')) {
-      setShowTemplatePicker(false);
-      return;
-    }
-
-    const newBlocks = template.blocks || [];
-    const newTheme = template.theme || theme;
-
-    setBlocks(newBlocks);
-    setTheme(newTheme);
-    setShowTemplatePicker(false);
-
-    setSaving(true);
-    const { error } = await supabase
-      .from('pages')
-      .update({
-        content: { blocks: newBlocks, theme: newTheme },
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', page.id);
-
-    if (!error) {
-      alert('Template applied successfully!');
-    } else {
-      console.error('Error applying template:', error);
-      alert('Failed to apply template. Please try again.');
-    }
-    setSaving(false);
   };
 
   const getPreviewWidth = () => {
@@ -461,214 +498,602 @@ export default function PageEditor() {
     }
   };
 
-  const getPaddingClass = (padding: string) => {
-    switch (padding) {
-      case 'none': return 'p-0';
-      case 'small': return 'p-4';
-      case 'medium': return 'p-8';
-      case 'large': return 'p-12';
-      case 'xlarge': return 'p-16';
-      default: return 'p-8';
-    }
-  };
-
-  const getAlignmentClass = (alignment: string) => {
-    switch (alignment) {
-      case 'center': return 'text-center';
-      case 'right': return 'text-right';
-      default: return 'text-left';
-    }
+  const getBlockIcon = (type: string) => {
+    const icons: Record<string, any> = {
+      hero: Layout,
+      text: Type,
+      image: ImageIcon,
+      cta: Sparkles,
+      features: Grid3x3,
+      testimonial: Quote,
+      form: FileText,
+      pricing: CreditCard,
+      video: Video,
+      gallery: ImageIcon,
+      stats: BarChart3,
+    };
+    return icons[type] || Box;
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex items-center justify-center h-screen bg-slate-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
   if (!page) return null;
 
+  const selectedBlock = blocks.find(b => b.id === selectedBlockId);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => navigate(funnelId ? `/funnels/${funnelId}` : '/funnels')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-              >
-                <ArrowLeft className="h-5 w-5 text-gray-600" />
-              </button>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">{page.title}</h1>
-                <p className="text-sm text-gray-500">/{page.slug}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => setPreviewMode('desktop')}
-                  className={`p-2 rounded ${
-                    previewMode === 'desktop' ? 'bg-white shadow' : 'hover:bg-gray-200'
-                  }`}
-                  title="Desktop"
-                >
-                  <Monitor className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => setPreviewMode('tablet')}
-                  className={`p-2 rounded ${
-                    previewMode === 'tablet' ? 'bg-white shadow' : 'hover:bg-gray-200'
-                  }`}
-                  title="Tablet"
-                >
-                  <Tablet className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => setPreviewMode('mobile')}
-                  className={`p-2 rounded ${
-                    previewMode === 'mobile' ? 'bg-white shadow' : 'hover:bg-gray-200'
-                  }`}
-                  title="Mobile"
-                >
-                  <Smartphone className="h-4 w-4" />
-                </button>
-              </div>
-
-              <button
-                onClick={() => setShowFullPreview(true)}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                <Eye className="h-4 w-4" />
-                <span>Preview</span>
-              </button>
-
-              <button
-                onClick={() => setShowTemplatePicker(true)}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                <Layout className="h-4 w-4" />
-                <span>Change Template</span>
-              </button>
-
-              <button
-                onClick={() => setShowThemeSettings(true)}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                <Settings className="h-4 w-4" />
-                <span>Theme</span>
-              </button>
-
-              <button
-                onClick={() => setShowSeoSettings(true)}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                <Search className="h-4 w-4" />
-                <span>SEO</span>
-              </button>
-
-              <button
-                onClick={() => setShowVersionHistory(true)}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                title="View version history"
-              >
-                <Clock className="h-4 w-4" />
-                <span>History</span>
-              </button>
-
-              <button
-                onClick={() => setShowImportModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                title="Import page from URL"
-              >
-                <Download className="h-4 w-4" />
-                <span>Import</span>
-              </button>
-
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
-                title="Save (Cmd+S)"
-              >
-                <Save className="h-4 w-4" />
-                <span>{saving ? 'Saving...' : 'Save'}</span>
-              </button>
-
-              {page.status !== 'published' && (
-                <button
-                  onClick={publishPage}
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                >
-                  <Upload className="h-4 w-4" />
-                  <span>Publish</span>
-                </button>
-              )}
-
-              {page.status === 'published' && (
-                <span className="px-4 py-2 bg-green-100 text-green-700 rounded-lg text-sm font-medium">
-                  Published
-                </span>
-              )}
-            </div>
+    <div className="h-screen flex flex-col bg-slate-900 text-white overflow-hidden">
+      {/* Top Toolbar */}
+      <div className="h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4 flex-shrink-0">
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => navigate(funnelId ? `/funnels/${funnelId}` : '/funnels')}
+            className="p-2 hover:bg-slate-700 rounded-lg transition"
+            title="Back"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <div className="h-8 w-px bg-slate-700"></div>
+          <div>
+            <h1 className="text-sm font-semibold">{page.title}</h1>
+            <p className="text-xs text-slate-400">/{page.slug}</p>
           </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          {/* Tool Selection */}
+          <div className="flex items-center space-x-1 bg-slate-900 rounded-lg p-1">
+            <button
+              onClick={() => setTool('select')}
+              className={`p-2 rounded ${tool === 'select' ? 'bg-slate-700' : 'hover:bg-slate-700'}`}
+              title="Select Tool (V)"
+            >
+              <MousePointer2 className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setTool('hand')}
+              className={`p-2 rounded ${tool === 'hand' ? 'bg-slate-700' : 'hover:bg-slate-700'}`}
+              title="Hand Tool (H)"
+            >
+              <Move className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="h-8 w-px bg-slate-700"></div>
+
+          {/* History */}
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={undo}
+              disabled={historyIndex <= 0}
+              className="p-2 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Undo (Cmd+Z)"
+            >
+              <Undo className="h-4 w-4" />
+            </button>
+            <button
+              onClick={redo}
+              disabled={historyIndex >= history.length - 1}
+              className="p-2 hover:bg-slate-700 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Redo (Cmd+Shift+Z)"
+            >
+              <Redo className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="h-8 w-px bg-slate-700"></div>
+
+          {/* Device Preview */}
+          <div className="flex items-center space-x-1 bg-slate-900 rounded-lg p-1">
+            <button
+              onClick={() => setPreviewMode('desktop')}
+              className={`p-2 rounded ${previewMode === 'desktop' ? 'bg-slate-700' : 'hover:bg-slate-700'}`}
+              title="Desktop"
+            >
+              <Monitor className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setPreviewMode('tablet')}
+              className={`p-2 rounded ${previewMode === 'tablet' ? 'bg-slate-700' : 'hover:bg-slate-700'}`}
+              title="Tablet"
+            >
+              <Tablet className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setPreviewMode('mobile')}
+              className={`p-2 rounded ${previewMode === 'mobile' ? 'bg-slate-700' : 'hover:bg-slate-700'}`}
+              title="Mobile"
+            >
+              <Smartphone className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Zoom Controls */}
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={() => setZoom(Math.max(25, zoom - 25))}
+              className="p-2 hover:bg-slate-700 rounded-lg transition"
+              title="Zoom Out"
+            >
+              <ZoomOut className="h-4 w-4" />
+            </button>
+            <span className="text-xs text-slate-400 w-12 text-center">{zoom}%</span>
+            <button
+              onClick={() => setZoom(Math.min(200, zoom + 25))}
+              className="p-2 hover:bg-slate-700 rounded-lg transition"
+              title="Zoom In"
+            >
+              <ZoomIn className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setZoom(100)}
+              className="p-2 hover:bg-slate-700 rounded-lg transition"
+              title="Fit to Screen"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="h-8 w-px bg-slate-700"></div>
+
+          {/* Actions */}
+          <button
+            onClick={() => setShowFullPreview(true)}
+            className="px-3 py-1.5 text-sm hover:bg-slate-700 rounded-lg transition"
+          >
+            Preview
+          </button>
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="px-3 py-1.5 text-sm hover:bg-slate-700 rounded-lg transition"
+            title="Import from URL"
+          >
+            <Download className="h-4 w-4" />
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 rounded-lg transition disabled:opacity-50"
+          >
+            {saving ? 'Saving...' : 'Save'}
+          </button>
+          {page.status !== 'published' && (
+            <button
+              onClick={publishPage}
+              className="px-3 py-1.5 text-sm bg-green-600 hover:bg-green-700 rounded-lg transition"
+            >
+              Publish
+            </button>
+          )}
+          {page.status === 'published' && (
+            <span className="px-3 py-1.5 text-sm bg-green-600/20 text-green-400 rounded-lg">
+              Published
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="flex items-center justify-center py-8 px-6">
-        <div style={{ width: getPreviewWidth(), maxWidth: '100%' }} className="transition-all duration-300">
-          <div className="space-y-4">
+      {/* Main Content Area */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Sidebar - Layers & Elements */}
+        <div
+          className={`bg-slate-800 border-r border-slate-700 flex flex-col transition-all duration-300 ${
+            leftSidebarOpen ? 'w-64' : 'w-0'
+          } overflow-hidden`}
+        >
+          <div className="flex items-center justify-between p-4 border-b border-slate-700">
+            <h2 className="text-sm font-semibold flex items-center space-x-2">
+              <Layers className="h-4 w-4" />
+              <span>Layers</span>
+            </h2>
+            <button
+              onClick={() => setLeftSidebarOpen(false)}
+              className="p-1 hover:bg-slate-700 rounded"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-2 space-y-1">
             {blocks.length === 0 ? (
-              <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-                <Layout className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Start Building Your Page</h2>
-                <p className="text-gray-600 mb-6">Add blocks to create your page layout</p>
-                <button
-                  onClick={() => setShowBlockMenu(true)}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                >
-                  Add Your First Block
-                </button>
+              <div className="text-center text-slate-400 text-sm py-8">
+                No blocks yet
               </div>
             ) : (
-              blocks.map((block, index) => (
-                <DraggableBlock
-                  key={block.id}
-                  block={block}
-                  index={index}
-                  isEditing={editingBlockId === block.id}
-                  onEdit={() => setEditingBlockId(editingBlockId === block.id ? null : block.id)}
-                  onUpdate={(content) => updateBlock(block.id, content)}
-                  onStyleUpdate={(styles) => updateBlockStyles(block.id, styles)}
-                  onDuplicate={() => duplicateBlock(block.id)}
-                  onDelete={() => deleteBlock(block.id)}
-                  onSaveAsCustom={() => handleSaveBlockAsCustom(block)}
-                  onDragStart={handleDragStart}
-                  onDragOver={handleDragOver}
-                  onDragEnd={handleDragEnd}
-                  isDragging={draggedIndex === index}
-                  isDragOver={dragOverIndex === index}
-                  getPaddingClass={getPaddingClass}
-                  getAlignmentClass={getAlignmentClass}
-                />
-              ))
+              blocks.map((block, index) => {
+                const Icon = getBlockIcon(block.type);
+                return (
+                  <div
+                    key={block.id}
+                    onClick={() => setSelectedBlockId(block.id)}
+                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer group transition ${
+                      selectedBlockId === block.id
+                        ? 'bg-blue-600 text-white'
+                        : 'hover:bg-slate-700'
+                    } ${block.hidden ? 'opacity-50' : ''}`}
+                  >
+                    <div className="flex items-center space-x-2 flex-1 min-w-0">
+                      <GripVertical
+                        className="h-4 w-4 opacity-0 group-hover:opacity-100 transition cursor-grab"
+                        draggable
+                        onDragStart={() => handleDragStart(index)}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          handleDragOver(index);
+                        }}
+                        onDragEnd={handleDragEnd}
+                      />
+                      <Icon className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-xs truncate">{block.name || block.type}</span>
+                    </div>
+                    <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleBlockVisibility(block.id);
+                        }}
+                        className="p-1 hover:bg-slate-600 rounded"
+                      >
+                        {block.hidden ? (
+                          <EyeOff className="h-3 w-3" />
+                        ) : (
+                          <EyeIcon className="h-3 w-3" />
+                        )}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleBlockLock(block.id);
+                        }}
+                        className="p-1 hover:bg-slate-600 rounded"
+                      >
+                        {block.locked ? (
+                          <Lock className="h-3 w-3" />
+                        ) : (
+                          <Unlock className="h-3 w-3" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
             )}
+          </div>
 
+          <div className="p-4 border-t border-slate-700">
             <button
               onClick={() => setShowBlockMenu(true)}
-              className="w-full py-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition text-gray-600 hover:text-blue-600 flex items-center justify-center space-x-2"
+              className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition flex items-center justify-center space-x-2"
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-4 w-4" />
               <span>Add Block</span>
             </button>
           </div>
         </div>
+
+        {/* Center Canvas */}
+        <div className="flex-1 bg-slate-900 overflow-auto relative">
+          {!leftSidebarOpen && (
+            <button
+              onClick={() => setLeftSidebarOpen(true)}
+              className="absolute left-4 top-4 z-10 p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          )}
+
+          <div
+            ref={canvasRef}
+            className="min-h-full flex items-center justify-center p-8"
+            style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'center top' }}
+          >
+            <div
+              style={{ width: getPreviewWidth() }}
+              className="bg-white shadow-2xl rounded-lg overflow-hidden transition-all duration-300"
+            >
+              {blocks.length === 0 ? (
+                <div className="p-24 text-center">
+                  <Layout className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Start Building</h3>
+                  <p className="text-slate-600 mb-6">Add blocks from the left panel to begin</p>
+                  <button
+                    onClick={() => setShowBlockMenu(true)}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  >
+                    Add Your First Block
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  {blocks.map((block, index) => {
+                    if (block.hidden) return null;
+                    return (
+                      <div
+                        key={block.id}
+                        onClick={() => setSelectedBlockId(block.id)}
+                        className={`relative cursor-pointer transition ${
+                          selectedBlockId === block.id
+                            ? 'ring-2 ring-blue-500 ring-inset'
+                            : 'hover:ring-1 hover:ring-slate-300 hover:ring-inset'
+                        }`}
+                      >
+                        <BlockEditor
+                          block={block}
+                          isEditing={editingBlockId === block.id}
+                          onUpdate={(content) => updateBlock(block.id, content)}
+                          theme={theme}
+                        />
+                        {selectedBlockId === block.id && (
+                          <div className="absolute top-2 right-2 flex items-center space-x-1 bg-slate-900 rounded-lg p-1 shadow-lg">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingBlockId(editingBlockId === block.id ? null : block.id);
+                              }}
+                              className="p-1.5 hover:bg-slate-700 rounded text-white"
+                              title="Edit"
+                            >
+                              <Settings className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                duplicateBlock(block.id);
+                              }}
+                              className="p-1.5 hover:bg-slate-700 rounded text-white"
+                              title="Duplicate"
+                            >
+                              <Copy className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!block.locked) deleteBlock(block.id);
+                              }}
+                              className="p-1.5 hover:bg-slate-700 rounded text-white disabled:opacity-30"
+                              disabled={block.locked}
+                              title="Delete"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar - Properties */}
+        <div
+          className={`bg-slate-800 border-l border-slate-700 flex flex-col transition-all duration-300 ${
+            rightSidebarOpen ? 'w-80' : 'w-0'
+          } overflow-hidden`}
+        >
+          <div className="flex items-center justify-between p-4 border-b border-slate-700">
+            <h2 className="text-sm font-semibold">Properties</h2>
+            <button
+              onClick={() => setRightSidebarOpen(false)}
+              className="p-1 hover:bg-slate-700 rounded"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {selectedBlock ? (
+              <>
+                <div>
+                  <label className="text-xs text-slate-400 uppercase tracking-wider mb-2 block">
+                    Block Name
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedBlock.name || selectedBlock.type}
+                    onChange={(e) => {
+                      setBlocks(
+                        blocks.map((b) =>
+                          b.id === selectedBlock.id ? { ...b, name: e.target.value } : b
+                        )
+                      );
+                    }}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-slate-400 uppercase tracking-wider mb-2 block">
+                    Block Type
+                  </label>
+                  <div className="px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm capitalize">
+                    {selectedBlock.type}
+                  </div>
+                </div>
+
+                {selectedBlock.styles && (
+                  <>
+                    <div>
+                      <label className="text-xs text-slate-400 uppercase tracking-wider mb-2 block">
+                        Background Color
+                      </label>
+                      <input
+                        type="color"
+                        value={selectedBlock.styles.backgroundColor || '#ffffff'}
+                        onChange={(e) =>
+                          updateBlockStyles(selectedBlock.id, {
+                            backgroundColor: e.target.value,
+                          })
+                        }
+                        className="w-full h-10 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-slate-400 uppercase tracking-wider mb-2 block">
+                        Text Color
+                      </label>
+                      <input
+                        type="color"
+                        value={selectedBlock.styles.textColor || '#000000'}
+                        onChange={(e) =>
+                          updateBlockStyles(selectedBlock.id, { textColor: e.target.value })
+                        }
+                        className="w-full h-10 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-slate-400 uppercase tracking-wider mb-2 block">
+                        Padding
+                      </label>
+                      <select
+                        value={selectedBlock.styles.padding || 'medium'}
+                        onChange={(e) =>
+                          updateBlockStyles(selectedBlock.id, { padding: e.target.value })
+                        }
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="none">None</option>
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                        <option value="xlarge">Extra Large</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-slate-400 uppercase tracking-wider mb-2 block">
+                        Alignment
+                      </label>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() =>
+                            updateBlockStyles(selectedBlock.id, { alignment: 'left' })
+                          }
+                          className={`flex-1 p-2 rounded-lg transition ${
+                            selectedBlock.styles.alignment === 'left'
+                              ? 'bg-blue-600'
+                              : 'bg-slate-900 hover:bg-slate-700'
+                          }`}
+                        >
+                          <AlignLeft className="h-4 w-4 mx-auto" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            updateBlockStyles(selectedBlock.id, { alignment: 'center' })
+                          }
+                          className={`flex-1 p-2 rounded-lg transition ${
+                            selectedBlock.styles.alignment === 'center'
+                              ? 'bg-blue-600'
+                              : 'bg-slate-900 hover:bg-slate-700'
+                          }`}
+                        >
+                          <AlignCenter className="h-4 w-4 mx-auto" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            updateBlockStyles(selectedBlock.id, { alignment: 'right' })
+                          }
+                          className={`flex-1 p-2 rounded-lg transition ${
+                            selectedBlock.styles.alignment === 'right'
+                              ? 'bg-blue-600'
+                              : 'bg-slate-900 hover:bg-slate-700'
+                          }`}
+                        >
+                          <AlignRight className="h-4 w-4 mx-auto" />
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <div className="pt-4 border-t border-slate-700 space-y-2">
+                  <button
+                    onClick={() => handleSaveBlockAsCustom(selectedBlock)}
+                    className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition"
+                  >
+                    Save as Custom Block
+                  </button>
+                  <button
+                    onClick={() => duplicateBlock(selectedBlock.id)}
+                    className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition"
+                  >
+                    Duplicate Block
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (!selectedBlock.locked) deleteBlock(selectedBlock.id);
+                    }}
+                    disabled={selectedBlock.locked}
+                    className="w-full py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg text-sm transition disabled:opacity-30"
+                  >
+                    Delete Block
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center text-slate-400 text-sm py-12">
+                <Box className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                <p>Select a block to view properties</p>
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-slate-700">
+              <button
+                onClick={() => setShowThemeSettings(true)}
+                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition flex items-center justify-center space-x-2"
+              >
+                <Palette className="h-4 w-4" />
+                <span>Page Theme</span>
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                onClick={() => setShowSeoSettings(true)}
+                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition flex items-center justify-center space-x-2"
+              >
+                <Search className="h-4 w-4" />
+                <span>SEO Settings</span>
+              </button>
+              <button
+                onClick={() => setShowVersionHistory(true)}
+                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition flex items-center justify-center space-x-2"
+              >
+                <Clock className="h-4 w-4" />
+                <span>Version History</span>
+              </button>
+              <button
+                onClick={() => setShowTemplatePicker(true)}
+                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition flex items-center justify-center space-x-2"
+              >
+                <Layout className="h-4 w-4" />
+                <span>Change Template</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {!rightSidebarOpen && (
+          <button
+            onClick={() => setRightSidebarOpen(true)}
+            className="absolute right-4 top-4 z-10 p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
+      {/* Modals */}
       {showBlockMenu && (
         <EnhancedBlockLibrary
           onAddBlock={addBlock}
@@ -692,7 +1117,11 @@ export default function PageEditor() {
         <SaveBlockModal
           block={blockToSave}
           onSave={() => {
-            alert('Block saved to your library!');
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            toast.textContent = 'Block saved to library';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
             loadPage();
           }}
           onClose={() => {
@@ -702,282 +1131,108 @@ export default function PageEditor() {
         />
       )}
 
-      {showThemeSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Theme Settings</h2>
-              <button
-                onClick={() => setShowThemeSettings(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-              >
-                <X className="h-5 w-5 text-gray-600" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <AIColorPalette
-                onApply={(palette) => {
-                  setTheme({
-                    ...theme,
-                    primaryColor: palette.primary,
-                    secondaryColor: palette.secondary,
-                  });
-                }}
-              />
-
-              <div className="border-t pt-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-4">Manual Color Settings</h3>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Primary Color</label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    value={theme.primaryColor}
-                    onChange={(e) => setTheme({ ...theme, primaryColor: e.target.value })}
-                    className="h-10 w-20 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    value={theme.primaryColor}
-                    onChange={(e) => setTheme({ ...theme, primaryColor: e.target.value })}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Secondary Color</label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    value={theme.secondaryColor}
-                    onChange={(e) => setTheme({ ...theme, secondaryColor: e.target.value })}
-                    className="h-10 w-20 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    value={theme.secondaryColor}
-                    onChange={(e) => setTheme({ ...theme, secondaryColor: e.target.value })}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Font Family</label>
-                <select
-                  value={theme.fontFamily}
-                  onChange={(e) => setTheme({ ...theme, fontFamily: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                >
-                  <option value="Inter, sans-serif">Inter</option>
-                  <option value="'Roboto', sans-serif">Roboto</option>
-                  <option value="'Open Sans', sans-serif">Open Sans</option>
-                  <option value="'Lato', sans-serif">Lato</option>
-                  <option value="'Montserrat', sans-serif">Montserrat</option>
-                  <option value="'Playfair Display', serif">Playfair Display</option>
-                  <option value="Georgia, serif">Georgia</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Border Radius</label>
-                <select
-                  value={theme.borderRadius}
-                  onChange={(e) => setTheme({ ...theme, borderRadius: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                >
-                  <option value="none">None</option>
-                  <option value="small">Small</option>
-                  <option value="medium">Medium</option>
-                  <option value="large">Large</option>
-                </select>
-              </div>
-
-              <button
-                onClick={() => {
-                  setShowThemeSettings(false);
-                  handleSave();
-                }}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Apply Theme
-              </button>
-            </div>
-          </div>
-        </div>
+      {showImportModal && (
+        <ImportPageModal
+          onImport={handleImportBlocks}
+          onClose={() => setShowImportModal(false)}
+        />
       )}
 
       {showTemplatePicker && (
         <TemplatePicker
           onSelect={handleTemplateSelect}
           onClose={() => setShowTemplatePicker(false)}
+          pageType={page.page_type as any}
         />
       )}
 
-      {showFullPreview && (
-        <div className="fixed inset-0 bg-white z-50 overflow-auto">
-          <div className="sticky top-0 bg-white border-b shadow-sm z-10">
-            <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Preview Mode</h2>
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
-                  <button
-                    onClick={() => setPreviewMode('desktop')}
-                    className={`p-2 rounded ${
-                      previewMode === 'desktop' ? 'bg-white shadow' : 'hover:bg-gray-200'
-                    }`}
-                    title="Desktop"
-                  >
-                    <Monitor className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setPreviewMode('tablet')}
-                    className={`p-2 rounded ${
-                      previewMode === 'tablet' ? 'bg-white shadow' : 'hover:bg-gray-200'
-                    }`}
-                    title="Tablet"
-                  >
-                    <Tablet className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setPreviewMode('mobile')}
-                    className={`p-2 rounded ${
-                      previewMode === 'mobile' ? 'bg-white shadow' : 'hover:bg-gray-200'
-                    }`}
-                    title="Mobile"
-                  >
-                    <Smartphone className="h-4 w-4" />
-                  </button>
-                </div>
-                <button
-                  onClick={() => setShowFullPreview(false)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
-                >
-                  <X className="h-4 w-4" />
-                  <span>Exit Preview</span>
-                </button>
-              </div>
-            </div>
-          </div>
+      {showVersionHistory && (
+        <PageVersionHistory
+          pageId={page.id}
+          onRestore={(version: any) => {
+            setBlocks(version.content?.blocks || []);
+            setShowVersionHistory(false);
+            saveHistory();
+          }}
+          onClose={() => setShowVersionHistory(false)}
+        />
+      )}
 
-          <div className="flex items-center justify-center py-8 px-6 bg-gray-50 min-h-screen">
-            <div style={{ width: getPreviewWidth(), maxWidth: '100%' }} className="transition-all duration-300">
-              {blocks.map((block) => (
-                <div key={block.id}>
-                  <BlockPreview block={block} getPaddingClass={getPaddingClass} getAlignmentClass={getAlignmentClass} />
-                </div>
-              ))}
-              {blocks.length === 0 && (
-                <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-                  <Layout className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h2 className="text-xl font-bold text-gray-900 mb-2">No Content Yet</h2>
-                  <p className="text-gray-600">Add blocks to see your page preview</p>
-                </div>
-              )}
+      {/* Theme Settings Modal */}
+      {showThemeSettings && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-slate-700">
+              <h3 className="text-lg font-semibold">Theme Settings</h3>
+              <button
+                onClick={() => setShowThemeSettings(false)}
+                className="p-2 hover:bg-slate-700 rounded-lg transition"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <AIColorPalette
+                onApplyTheme={(newTheme) => {
+                  setTheme({ ...theme, ...newTheme });
+                  setShowThemeSettings(false);
+                }}
+              />
             </div>
           </div>
         </div>
       )}
 
+      {/* SEO Settings Modal */}
       {showSeoSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-2xl w-full p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">SEO Settings</h2>
-                <p className="text-gray-600 mt-1">Optimize your page for search engines</p>
-              </div>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full">
+            <div className="flex items-center justify-between p-6 border-b border-slate-700">
+              <h3 className="text-lg font-semibold">SEO Settings</h3>
               <button
                 onClick={() => setShowSeoSettings(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-slate-700 rounded-lg transition"
               >
-                <X className="h-5 w-5 text-gray-600" />
+                <X className="h-5 w-5" />
               </button>
             </div>
-
-            <div className="space-y-4">
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  SEO Title
-                </label>
+                <label className="block text-sm font-medium mb-2">Meta Title</label>
                 <input
                   type="text"
                   value={seoData.seo_title}
                   onChange={(e) => setSeoData({ ...seoData, seo_title: e.target.value })}
-                  placeholder={page?.title || 'Page Title'}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  maxLength={60}
+                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Optimized page title for search engines"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  {seoData.seo_title.length}/60 characters (optimal: 50-60)
-                </p>
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Meta Description
-                </label>
+                <label className="block text-sm font-medium mb-2">Meta Description</label>
                 <textarea
                   value={seoData.seo_description}
                   onChange={(e) => setSeoData({ ...seoData, seo_description: e.target.value })}
-                  placeholder="A brief description of your page for search results"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows={3}
-                  maxLength={160}
+                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Brief description for search results"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  {seoData.seo_description.length}/160 characters (optimal: 150-160)
-                </p>
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Social Share Image URL
-                </label>
+                <label className="block text-sm font-medium mb-2">Social Share Image URL</label>
                 <input
                   type="url"
                   value={seoData.seo_image_url}
                   onChange={(e) => setSeoData({ ...seoData, seo_image_url: e.target.value })}
+                  className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Image shown when sharing on social media (recommended: 1200x630px)
-                </p>
               </div>
-
-              {seoData.seo_image_url && (
-                <div className="border border-gray-200 rounded-lg p-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Preview</p>
-                  <img
-                    src={seoData.seo_image_url}
-                    alt="SEO preview"
-                    className="w-full h-48 object-cover rounded-lg"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="flex space-x-3 pt-6 border-t mt-6">
-              <button
-                onClick={() => setShowSeoSettings(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                Cancel
-              </button>
               <button
                 onClick={() => {
-                  setShowSeoSettings(false);
                   handleSave();
+                  setShowSeoSettings(false);
                 }}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition"
               >
                 Save SEO Settings
               </button>
@@ -986,243 +1241,52 @@ export default function PageEditor() {
         </div>
       )}
 
-      {showVersionHistory && (
-        <PageVersionHistory
-          pageId={pageId!}
-          currentContent={{ blocks, theme }}
-          onRestore={(content, metadata) => {
-            const restored = content as any;
-            setBlocks(restored?.blocks || []);
-            if (restored?.theme) {
-              setTheme(restored.theme);
-            }
-            if (metadata) {
-              setPage(prev => prev ? {
-                ...prev,
-                title: metadata.title || prev.title,
-                slug: metadata.slug || prev.slug,
-              } : null);
-              setSeoData({
-                seo_title: metadata.seo_title || '',
-                seo_description: metadata.seo_description || '',
-                seo_image_url: metadata.seo_image_url || '',
-              });
-            }
-            handleSave();
-          }}
-          onClose={() => setShowVersionHistory(false)}
-        />
-      )}
-
-      {showImportModal && (
-        <ImportPageModal
-          onClose={() => setShowImportModal(false)}
-          onImport={handleImportBlocks}
-        />
-      )}
-    </div>
-  );
-}
-
-function BlockOption({
-  icon,
-  title,
-  description,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="p-4 border border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition text-left"
-    >
-      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3 text-blue-600">
-        {icon}
-      </div>
-      <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-      <p className="text-sm text-gray-600">{description}</p>
-    </button>
-  );
-}
-
-function BlockPreview({ block, getPaddingClass, getAlignmentClass }: { block: Block; getPaddingClass: (p: string) => string; getAlignmentClass: (a: string) => string }) {
-  const { content, styles } = block;
-  const paddingClass = getPaddingClass(styles?.padding || 'medium');
-  const alignmentClass = getAlignmentClass(styles?.alignment || 'left');
-  const bgColor = styles?.backgroundColor || 'transparent';
-  const textColor = styles?.textColor || 'inherit';
-
-  const containerStyle = {
-    backgroundColor: bgColor,
-    color: textColor,
-  };
-
-  switch (block.type) {
-    case 'hero':
-      return (
-        <div className={`${paddingClass} text-center bg-gradient-to-br from-blue-500 to-purple-600 text-white relative`} style={{ backgroundImage: content.backgroundImage ? `url(${content.backgroundImage})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-          <div className="relative z-10">
-            <h1 className="text-5xl font-bold mb-4">{content.headline}</h1>
-            <p className="text-xl mb-8 opacity-90">{content.subheadline}</p>
-            <button className="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold text-lg hover:bg-gray-100 transition">
-              {content.ctaText}
+      {/* Full Preview Modal */}
+      {showFullPreview && (
+        <div className="fixed inset-0 bg-slate-900 z-50 flex flex-col">
+          <div className="h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4">
+            <h3 className="text-sm font-semibold">Preview Mode</h3>
+            <button
+              onClick={() => setShowFullPreview(false)}
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition text-sm"
+            >
+              Close Preview
             </button>
           </div>
-        </div>
-      );
-
-    case 'text':
-      return (
-        <div className={`${paddingClass} ${alignmentClass}`} style={containerStyle}>
-          <p className="text-gray-700 leading-relaxed text-lg">{content.text}</p>
-        </div>
-      );
-
-    case 'image':
-      return (
-        <div className={`${paddingClass} ${alignmentClass}`} style={containerStyle}>
-          <img src={content.url} alt={content.alt} className="w-full rounded-lg" />
-          {content.caption && <p className="text-sm text-gray-600 mt-2">{content.caption}</p>}
-        </div>
-      );
-
-    case 'cta':
-      return (
-        <div className={`${paddingClass} text-center bg-blue-50`} style={containerStyle}>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">{content.headline}</h2>
-          <p className="text-lg text-gray-600 mb-8">{content.description}</p>
-          <button className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">
-            {content.buttonText}
-          </button>
-        </div>
-      );
-
-    case 'features':
-      return (
-        <div className={paddingClass} style={containerStyle}>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 text-center">{content.headline}</h2>
-          {content.subheadline && <p className="text-gray-600 mb-8 text-center">{content.subheadline}</p>}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {content.features?.map((feature: any, i: number) => (
-              <div key={i} className="text-center">
-                <div className="text-4xl mb-3">{feature.icon}</div>
-                <h3 className="font-semibold text-gray-900 mb-2 text-xl">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-
-    case 'testimonial':
-      return (
-        <div className={`${paddingClass} bg-gray-50`} style={containerStyle}>
-          <div className="max-w-3xl mx-auto text-center">
-            <blockquote className="text-2xl text-gray-700 italic mb-6">"{content.quote}"</blockquote>
-            <div className="flex items-center justify-center space-x-4">
-              <img src={content.avatar} alt={content.author} className="w-16 h-16 rounded-full" />
-              <div className="text-left">
-                <p className="font-semibold text-gray-900">{content.author}</p>
-                <p className="text-sm text-gray-600">{content.role}</p>
-              </div>
+          <div className="flex-1 overflow-auto bg-white">
+            <div style={{ width: getPreviewWidth(), margin: '0 auto' }}>
+              {blocks.map((block) => {
+                if (block.hidden) return null;
+                return (
+                  <BlockEditor
+                    key={block.id}
+                    block={block}
+                    isEditing={false}
+                    onUpdate={() => {}}
+                    theme={theme}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
-      );
+      )}
 
-    case 'form':
-      return (
-        <div className={`${paddingClass} bg-gradient-to-br from-gray-50 to-blue-50`} style={containerStyle}>
-          <div className="max-w-md mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">{content.headline}</h2>
-            <p className="text-gray-600 mb-6 text-center">{content.description}</p>
-            <div className="bg-white rounded-lg shadow-lg p-6 space-y-4">
-              {content.fields?.map((field: any, i: number) => (
-                <div key={i}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {field.label} {field.required && <span className="text-red-500">*</span>}
-                  </label>
-                  <input type={field.type} disabled placeholder={`Enter ${field.label.toLowerCase()}`} className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" />
-                </div>
-              ))}
-              <button disabled className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold opacity-70 cursor-not-allowed">
-                {content.submitButtonText}
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-
-    case 'pricing':
-      return (
-        <div className={paddingClass} style={containerStyle}>
-          <h2 className="text-3xl font-bold text-gray-900 mb-3 text-center">{content.headline}</h2>
-          <p className="text-gray-600 mb-10 text-center">{content.subheadline}</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {content.plans?.map((plan: any, i: number) => (
-              <div key={i} className={`border rounded-xl p-8 ${plan.highlighted ? 'border-blue-600 shadow-xl scale-105' : 'border-gray-200'}`}>
-                <h3 className="font-bold text-xl mb-2">{plan.name}</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-gray-600">{plan.period}</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features?.map((feature: string, j: number) => (
-                    <li key={j} className="text-gray-700">✓ {feature}</li>
-                  ))}
-                </ul>
-                <button className={`w-full py-3 rounded-lg font-semibold ${plan.highlighted ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'}`}>
-                  {plan.buttonText}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-
-    case 'video':
-      return (
-        <div className={`${paddingClass} ${alignmentClass}`} style={containerStyle}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{content.title}</h2>
-          <p className="text-gray-600 mb-6">{content.description}</p>
-          <div className="aspect-video rounded-lg overflow-hidden">
-            <iframe src={content.url} className="w-full h-full" allowFullScreen />
-          </div>
-        </div>
-      );
-
-    case 'gallery':
-      return (
-        <div className={paddingClass} style={containerStyle}>
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">{content.headline}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {content.images?.map((img: any, i: number) => (
-              <img key={i} src={img.url} alt={img.alt} className="w-full h-48 object-cover rounded-lg" />
-            ))}
-          </div>
-        </div>
-      );
-
-    case 'stats':
-      return (
-        <div className={`${paddingClass} bg-blue-600 text-white`} style={containerStyle}>
-          <h2 className="text-3xl font-bold mb-10 text-center">{content.headline}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {content.stats?.map((stat: any, i: number) => (
-              <div key={i} className="text-center">
-                <p className="text-4xl font-bold mb-2">{stat.value}</p>
-                <p className="text-blue-100">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-
-    default:
-      return <div className="p-6 text-gray-500">Unknown block type</div>;
-  }
+      <style jsx>{`
+        @keyframes slide-up {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-up {
+          animation: slide-up 0.3s ease-out;
+        }
+      `}</style>
+    </div>
+  );
 }
