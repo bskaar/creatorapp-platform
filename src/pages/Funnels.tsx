@@ -118,7 +118,7 @@ export default function Funnels() {
       if (insertError) throw insertError;
 
       if (data) {
-        navigate(`/pages/${data.id}`);
+        navigate(`/pages/editor/${data.id}`);
       }
     } catch (err: any) {
       setError(err.message);
@@ -206,7 +206,7 @@ export default function Funnels() {
             .single();
 
           if (newPage) {
-            navigate(`/pages/${newPage.id}`);
+            navigate(`/pages/editor/${newPage.id}`);
           }
         }
       } else {
@@ -333,7 +333,7 @@ export default function Funnels() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => navigate(`/pages/${homepage.id}`)}
+                    onClick={() => navigate(`/pages/editor/${homepage.id}`)}
                     className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
                   >
                     <Edit className="h-4 w-4" />
@@ -341,7 +341,7 @@ export default function Funnels() {
                   </button>
                   {homepage.status === 'published' && (
                     <button
-                      onClick={() => navigate(`/pages/${homepage.id}`)}
+                      onClick={() => navigate(`/pages/editor/${homepage.id}`)}
                       className="flex items-center space-x-2 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                     >
                       <Eye className="h-4 w-4" />
@@ -482,7 +482,7 @@ export default function Funnels() {
 
                   <div className="flex items-center space-x-2">
                     <Link
-                      to={`/pages/${page.id}`}
+                      to={`/pages/editor/${page.id}`}
                       className="flex items-center space-x-2 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                     >
                       <Edit className="h-4 w-4" />

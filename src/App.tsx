@@ -261,7 +261,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/pages/:pageId"
+        path="/pages/editor/:pageId"
         element={
           <ProtectedRoute>
             <PageEditor />
