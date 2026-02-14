@@ -471,7 +471,10 @@ Deno.serve(async (req: Request) => {
         `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Site Not Found</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:system-ui,sans-serif;background:#0f172a;min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;text-align:center;padding:2rem;}h1{font-size:3rem;margin-bottom:1rem;}p{font-size:1.2rem;opacity:0.7;}</style></head><body><div><h1>Site Not Found</h1><p>This domain is not configured or the site is inactive.</p></div></body></html>`,
         {
           status: 404,
-          headers: { ...corsHeaders, 'Content-Type': 'text/html' },
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+          },
         }
       );
     }
@@ -497,7 +500,10 @@ Deno.serve(async (req: Request) => {
       `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Error</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:system-ui,sans-serif;background:#f8fafc;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}.e{background:#fff;padding:3rem;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);text-align:center;max-width:500px;}h1{color:#dc2626;margin-bottom:1rem;}p{color:#64748b;}</style></head><body><div class="e"><h1>Something Went Wrong</h1><p>We encountered an error loading this site. Please try again later.</p></div></body></html>`,
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'text/html' },
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
       }
     );
   }
