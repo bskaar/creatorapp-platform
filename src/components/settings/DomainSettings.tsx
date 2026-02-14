@@ -175,6 +175,7 @@ export default function DomainSettings() {
   };
 
   const defaultDomain = currentSite?.slug ? `${currentSite.slug}.creatorapp.us` : '';
+  const previewUrl = currentSite?.slug ? `/s/${currentSite.slug}` : '';
 
   return (
     <div className="space-y-6">
@@ -184,22 +185,24 @@ export default function DomainSettings() {
       </div>
 
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6">
+        <div className="bg-gradient-to-r from-blue-50 to-sky-50 border-2 border-blue-200 rounded-xl p-6">
           <div className="flex items-start gap-4">
             <div className="p-3 bg-white rounded-lg shadow-light">
               <Globe className="h-6 w-6 text-primary" />
             </div>
             <div className="flex-1">
               <h4 className="font-bold text-dark mb-2">Default Site URL</h4>
-              <a
-                href={`https://${defaultDomain}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary hover:text-accent font-semibold transition-colors"
-              >
-                {defaultDomain}
-                <ExternalLink className="h-4 w-4" />
-              </a>
+              <div className="flex items-center gap-3 flex-wrap">
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary hover:text-accent font-semibold transition-colors"
+                >
+                  {defaultDomain}
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </div>
               <p className="text-sm text-text-secondary mt-2 font-medium">
                 This is your default CreatorApp subdomain. It's always active and can't be changed.
               </p>

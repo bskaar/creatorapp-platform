@@ -1,0 +1,140 @@
+import type { PageData } from './types';
+
+interface NavItem {
+  slug: string;
+  label: string;
+  isHome: boolean;
+  isCta: boolean;
+}
+
+function getNavItems(pages: PageData[]): NavItem[] {
+  return pages
+    .filter(p => p.page_type === 'landing' || ['pricing', 'about', 'contact', 'curriculum', 'free-creator-toolkit'].some(s => p.slug.includes(s)))
+    .slice(0, 7)
+    .map(p => ({
+      slug: p.slug,
+      label: p.page_type === 'landing' ? 'Home' : p.title,
+      isHome: p.page_type === 'landing',
+      isCta: p.slug.includes('pricing'),
+    }));
+}
+
+interface SiteHeaderProps {
+  siteName: string;
+  primaryColor: string;
+  pages: PageData[];
+  siteSlug: string;
+  currentPageSlug: string;
+  isHome: boolean;
+  menuOpen: boolean;
+  onToggleMenu: () => void;
+  buildPageUrl: (slug: string, isHome: boolean) => string;
+  onNavigate: (url: string) => void;
+}
+
+export function SiteHeader({ siteName, primaryColor, pages, currentPageSlug, isHome, menuOpen, onToggleMenu, buildPageUrl, onNavigate }: SiteHeaderProps) {
+  const navItems = getNavItems(pages);
+
+  if (navItems.length === 0 && pages.length > 0) {
+    const homePage = pages.find(p => p.page_type === 'landing') || pages[0];
+    navItems.push({ slug: homePage.slug, label: 'Home', isHome: true, isCta: false });
+    pages.slice(1, 6).forEach(p => {
+      navItems.push({ slug: p.slug, label: p.title, isHome: false, isCta: false });
+    });
+  }
+
+  return (
+    <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #e2e8f0', padding: '0 1.5rem' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
+        <a
+          href={buildPageUrl('', true)}
+          onClick={(e) => { e.preventDefault(); onNavigate(buildPageUrl('', true)); }}
+          style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', textDecoration: 'none', letterSpacing: '-0.02em' }}
+        >
+          {siteName}
+        </a>
+        <button
+          onClick={onToggleMenu}
+          aria-label="Toggle menu"
+          style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', flexDirection: 'column', gap: 5 }}
+          className="hamburger-btn"
+        >
+          <span style={{ display: 'block', width: 24, height: 2, background: '#0f172a' }} />
+          <span style={{ display: 'block', width: 24, height: 2, background: '#0f172a' }} />
+          <span style={{ display: 'block', width: 24, height: 2, background: '#0f172a' }} />
+        </button>
+        <nav style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }} className={`nav-links ${menuOpen ? 'open' : ''}`}>
+          {navItems.map(item => {
+            const url = buildPageUrl(item.slug, item.isHome);
+            const isActive = item.isHome ? isHome : item.slug === currentPageSlug;
+            return (
+              <a
+                key={item.slug}
+                href={url}
+                onClick={(e) => { e.preventDefault(); onNavigate(url); }}
+                style={{
+                  padding: item.isCta ? '0.5rem 1.25rem' : '0.5rem 0.85rem',
+                  fontSize: '0.9rem',
+                  fontWeight: item.isCta ? 600 : 500,
+                  color: item.isCta ? '#fff' : isActive ? primaryColor : '#475569',
+                  background: item.isCta ? primaryColor : isActive ? `${primaryColor}08` : 'transparent',
+                  textDecoration: 'none',
+                  borderRadius: 6,
+                  transition: 'all 0.15s',
+                }}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </nav>
+      </div>
+      <style>{`
+        @media (max-width: 768px) {
+          .hamburger-btn { display: flex !important; }
+          .nav-links { display: none !important; position: absolute; top: 64px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 1rem; border-bottom: 1px solid #e2e8f0; box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+          .nav-links.open { display: flex !important; }
+        }
+      `}</style>
+    </header>
+  );
+}
+
+interface SiteFooterProps {
+  siteName: string;
+  primaryColor: string;
+  pages: PageData[];
+  siteSlug: string;
+  buildPageUrl: (slug: string, isHome: boolean) => string;
+  onNavigate: (url: string) => void;
+}
+
+export function SiteFooter({ siteName, pages, buildPageUrl, onNavigate }: SiteFooterProps) {
+  const navItems = getNavItems(pages);
+
+  return (
+    <footer style={{ background: '#0f172a', color: '#94a3b8', padding: '3rem 1.5rem', textAlign: 'center' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1.5rem', flexWrap: 'wrap' as const }}>
+          {navItems.map(item => {
+            const url = buildPageUrl(item.slug, item.isHome);
+            return (
+              <a
+                key={item.slug}
+                href={url}
+                onClick={(e) => { e.preventDefault(); onNavigate(url); }}
+                style={{ fontSize: '0.9rem', color: '#cbd5e1', textDecoration: 'none', transition: 'color 0.15s' }}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </div>
+        <p style={{ fontSize: '0.9rem' }}>&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</p>
+        <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#64748b' }}>
+          Powered by <span style={{ color: '#94a3b8' }}>CreatorApp</span>
+        </p>
+      </div>
+    </footer>
+  );
+}

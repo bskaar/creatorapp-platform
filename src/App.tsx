@@ -439,6 +439,8 @@ function AppRoutes() {
       <Route path="/cookie-policy" element={<CookiePolicy />} />
       <Route path="/pricing-review" element={<PricingReview />} />
       <Route path="/site-preview" element={<PublicSitePreview />} />
+      <Route path="/s/:slug" element={<PublicSitePreview />} />
+      <Route path="/s/:slug/*" element={<PublicSitePreview />} />
       <Route path="/site/:siteId/product/:productId" element={<ProductPublic />} />
       <Route path="/site/:siteId/checkout" element={<Checkout />} />
       <Route path="/site/:siteId/success" element={<CheckoutSuccess />} />
