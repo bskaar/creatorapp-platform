@@ -7,16 +7,40 @@ interface NavItem {
   isCta: boolean;
 }
 
+const HIDDEN_SLUGS = ['thank-you', 'enrollment-confirmed', 'confirmation', 'success'];
+
+const LABEL_MAP: Record<string, string> = {
+  'pricing': 'Pricing',
+  'about': 'About',
+  'contact': 'Contact',
+  'curriculum': 'Curriculum',
+  'free-creator-toolkit': 'Free Toolkit',
+};
+
 function getNavItems(pages: PageData[]): NavItem[] {
-  return pages
-    .filter(p => p.page_type === 'landing' || ['pricing', 'about', 'contact', 'curriculum', 'free-creator-toolkit'].some(s => p.slug.includes(s)))
-    .slice(0, 7)
-    .map(p => ({
+  if (pages.length === 0) return [];
+
+  const homePage = pages[0];
+  const navPages = pages.filter(p =>
+    p.id !== homePage.id &&
+    !HIDDEN_SLUGS.some(h => p.slug.includes(h))
+  );
+
+  const items: NavItem[] = [
+    { slug: homePage.slug, label: 'Home', isHome: true, isCta: false },
+  ];
+
+  navPages.slice(0, 6).forEach(p => {
+    const mapped = Object.entries(LABEL_MAP).find(([key]) => p.slug.includes(key));
+    items.push({
       slug: p.slug,
-      label: p.page_type === 'landing' ? 'Home' : p.title,
-      isHome: p.page_type === 'landing',
+      label: mapped ? mapped[1] : p.title.replace(/^CreatorAppU\s*[-–]\s*/, ''),
+      isHome: false,
       isCta: p.slug.includes('pricing'),
-    }));
+    });
+  });
+
+  return items;
 }
 
 interface SiteHeaderProps {
@@ -34,14 +58,6 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ siteName, primaryColor, pages, currentPageSlug, isHome, menuOpen, onToggleMenu, buildPageUrl, onNavigate }: SiteHeaderProps) {
   const navItems = getNavItems(pages);
-
-  if (navItems.length === 0 && pages.length > 0) {
-    const homePage = pages.find(p => p.page_type === 'landing') || pages[0];
-    navItems.push({ slug: homePage.slug, label: 'Home', isHome: true, isCta: false });
-    pages.slice(1, 6).forEach(p => {
-      navItems.push({ slug: p.slug, label: p.title, isHome: false, isCta: false });
-    });
-  }
 
   return (
     <header style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #e2e8f0', padding: '0 1.5rem' }}>
