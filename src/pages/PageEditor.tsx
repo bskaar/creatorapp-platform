@@ -539,7 +539,7 @@ export default function PageEditor() {
           </button>
           <div className="h-8 w-px bg-slate-700"></div>
           <div>
-            <h1 className="text-sm font-semibold">{page.title}</h1>
+            <h1 className="text-sm font-semibold text-white">{page.title}</h1>
             <p className="text-xs text-slate-400">/{page.slug}</p>
           </div>
         </div>
@@ -643,7 +643,7 @@ export default function PageEditor() {
           {/* Actions */}
           <button
             onClick={() => setShowFullPreview(true)}
-            className="px-3 py-1.5 text-sm hover:bg-slate-700 rounded-lg transition"
+            className="px-3 py-1.5 text-sm text-white hover:bg-slate-700 rounded-lg transition"
           >
             Preview
           </button>
@@ -657,7 +657,7 @@ export default function PageEditor() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 rounded-lg transition disabled:opacity-50"
+            className="px-3 py-1.5 text-sm text-white bg-slate-700 hover:bg-slate-600 rounded-lg transition disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save'}
           </button>
@@ -686,7 +686,7 @@ export default function PageEditor() {
           } overflow-hidden`}
         >
           <div className="flex items-center justify-between p-4 border-b border-slate-700">
-            <h2 className="text-sm font-semibold flex items-center space-x-2">
+            <h2 className="text-sm font-semibold text-white flex items-center space-x-2">
               <Layers className="h-4 w-4" />
               <span>Layers</span>
             </h2>
@@ -700,7 +700,7 @@ export default function PageEditor() {
 
           <div className="flex-1 overflow-y-auto p-2 space-y-1">
             {blocks.length === 0 ? (
-              <div className="text-center text-slate-400 text-sm py-8">
+              <div className="text-center text-slate-300 text-sm py-8">
                 No blocks yet
               </div>
             ) : (
@@ -728,7 +728,7 @@ export default function PageEditor() {
                         onDragEnd={handleDragEnd}
                       />
                       <Icon className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-xs truncate">{block.name || block.type}</span>
+                      <span className="text-xs truncate text-slate-200">{block.name || block.type}</span>
                     </div>
                     <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition">
                       <button
@@ -879,7 +879,7 @@ export default function PageEditor() {
           } overflow-hidden`}
         >
           <div className="flex items-center justify-between p-4 border-b border-slate-700">
-            <h2 className="text-sm font-semibold">Properties</h2>
+            <h2 className="text-sm font-semibold text-white">Properties</h2>
             <button
               onClick={() => setRightSidebarOpen(false)}
               className="p-1 hover:bg-slate-700 rounded"
@@ -937,13 +937,13 @@ export default function PageEditor() {
                 <div className="pt-4 border-t border-slate-700 space-y-2">
                   <button
                     onClick={() => handleSaveBlockAsCustom(selectedBlock)}
-                    className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition"
+                    className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm text-slate-200 transition"
                   >
                     Save as Custom Block
                   </button>
                   <button
                     onClick={() => duplicateBlock(selectedBlock.id)}
-                    className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition"
+                    className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm text-slate-200 transition"
                   >
                     Duplicate Block
                   </button>
@@ -960,8 +960,8 @@ export default function PageEditor() {
               </div>
             ) : (
               <div className="p-4 space-y-4">
-                <div className="text-center text-slate-400 text-sm py-12">
-                  <Box className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                <div className="text-center text-slate-300 text-sm py-12">
+                  <Box className="h-12 w-12 mx-auto mb-3 text-slate-500" />
                   <p>Select a block to view properties</p>
                 </div>
               </div>
@@ -970,28 +970,28 @@ export default function PageEditor() {
             <div className="p-4 border-t border-slate-700 space-y-2">
               <button
                 onClick={() => setShowThemeSettings(true)}
-                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition flex items-center justify-center space-x-2"
+                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm text-slate-200 transition flex items-center justify-center space-x-2"
               >
                 <Palette className="h-4 w-4" />
                 <span>Page Theme</span>
               </button>
               <button
                 onClick={() => setShowSeoSettings(true)}
-                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition flex items-center justify-center space-x-2"
+                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm text-slate-200 transition flex items-center justify-center space-x-2"
               >
                 <Search className="h-4 w-4" />
                 <span>SEO Settings</span>
               </button>
               <button
                 onClick={() => setShowVersionHistory(true)}
-                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition flex items-center justify-center space-x-2"
+                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm text-slate-200 transition flex items-center justify-center space-x-2"
               >
                 <Clock className="h-4 w-4" />
                 <span>Version History</span>
               </button>
               <button
                 onClick={() => setShowTemplatePicker(true)}
-                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm transition flex items-center justify-center space-x-2"
+                className="w-full py-2 bg-slate-900 hover:bg-slate-700 rounded-lg text-sm text-slate-200 transition flex items-center justify-center space-x-2"
               >
                 <Layout className="h-4 w-4" />
                 <span>Change Template</span>
@@ -1080,7 +1080,7 @@ export default function PageEditor() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-700">
-              <h3 className="text-lg font-semibold">Theme Settings</h3>
+              <h3 className="text-lg font-semibold text-white">Theme Settings</h3>
               <button
                 onClick={() => setShowThemeSettings(false)}
                 className="p-2 hover:bg-slate-700 rounded-lg transition"
@@ -1105,7 +1105,7 @@ export default function PageEditor() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full">
             <div className="flex items-center justify-between p-6 border-b border-slate-700">
-              <h3 className="text-lg font-semibold">SEO Settings</h3>
+              <h3 className="text-lg font-semibold text-white">SEO Settings</h3>
               <button
                 onClick={() => setShowSeoSettings(false)}
                 className="p-2 hover:bg-slate-700 rounded-lg transition"
@@ -1162,7 +1162,7 @@ export default function PageEditor() {
       {showFullPreview && (
         <div className="fixed inset-0 bg-slate-900 z-50 flex flex-col">
           <div className="h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4">
-            <h3 className="text-sm font-semibold">Preview Mode</h3>
+            <h3 className="text-sm font-semibold text-white">Preview Mode</h3>
             <button
               onClick={() => setShowFullPreview(false)}
               className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition text-sm"
