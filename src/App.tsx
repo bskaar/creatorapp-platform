@@ -53,6 +53,7 @@ import About from './pages/About';
 import Documentation from './pages/Documentation';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
+import PublicSitePreview from './pages/PublicSitePreview';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -437,6 +438,7 @@ function AppRoutes() {
       <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route path="/cookie-policy" element={<CookiePolicy />} />
       <Route path="/pricing-review" element={<PricingReview />} />
+      <Route path="/site-preview" element={<PublicSitePreview />} />
       <Route path="/site/:siteId/product/:productId" element={<ProductPublic />} />
       <Route path="/site/:siteId/checkout" element={<Checkout />} />
       <Route path="/site/:siteId/success" element={<CheckoutSuccess />} />

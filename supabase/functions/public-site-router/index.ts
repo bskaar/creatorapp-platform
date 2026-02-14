@@ -486,13 +486,15 @@ Deno.serve(async (req: Request) => {
 
     const html = generateSiteHTML(site, pages, products, requestPath);
 
+    const responseHeaders = new Headers();
+    responseHeaders.set('content-type', 'text/html; charset=utf-8');
+    responseHeaders.set('access-control-allow-origin', '*');
+    responseHeaders.set('cache-control', 'no-transform, public, max-age=300');
+    responseHeaders.set('x-content-type-options', 'nosniff');
+
     return new Response(html, {
       status: 200,
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=300',
-      },
+      headers: responseHeaders,
     });
   } catch (error) {
     console.error('Public site router error:', error);
