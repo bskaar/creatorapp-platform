@@ -9,14 +9,14 @@ export default function Landing() {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
 
   useEffect(() => {
-    document.title = 'CreatorApp - AI-Powered Platform for Online Course Creators & Coaches';
+    document.title = 'CreatorAppU - Prototype Anything with AI | No Coding Required';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Build and grow your online course business with AI-powered tools. Create courses, sales funnels, email marketing automation, and scale your creator business. 14-day free trial.');
+      metaDescription.setAttribute('content', 'Learn to build AI prototypes without coding. Master the SPARK framework and create functional AI products in 6 weeks. From ideas to working prototypes with AI tools.');
     }
     const metaKeywords = document.createElement('meta');
     metaKeywords.name = 'keywords';
-    metaKeywords.content = 'online course platform, creator platform, AI course builder, email marketing automation, sales funnel builder, online coaching platform, digital product sales, membership site builder, course creator tools, AI content generator';
+    metaKeywords.content = 'AI prototyping, no-code AI, AI course, SPARK framework, AI product development, prompt engineering, AI tools, build with AI, AI prototypes, learn AI';
     document.head.appendChild(metaKeywords);
 
     return () => {
@@ -71,91 +71,92 @@ export default function Landing() {
 
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
           <div className="space-y-8 animate-fade-in">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-600 px-5 py-2 rounded-full text-sm font-semibold border border-blue-500/20 mb-2">
+              <Sparkles className="w-4 h-4" />
+              No Coding Experience Required
+            </div>
             <h1 id="hero-heading" className="text-6xl lg:text-7xl font-bold leading-tight text-dark">
-              Build & Grow Your{' '}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Online Course Business
+              Prototype{' '}
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                Anything
               </span>
-              <br />
-              With AI-Powered Tools
+              {' '}with AI
             </h1>
 
             <p className="text-xl text-text-secondary leading-relaxed max-w-xl">
-              The complete online course platform with AI Co-Founder built-in. Create courses, build sales funnels,
-              automate email marketing, and scale your creator business with Claude-powered intelligence.
+              Turn your ideas into working AI prototypes in weeks, not months. Learn the proven SPARK framework
+              and master the art of building functional AI products without writing a single line of code.
             </p>
 
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/signup"
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-dark text-white px-10 py-4 rounded-button font-semibold text-lg hover:shadow-button-hover transition-all duration-300 hover:-translate-y-1"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                Get Started Free
+                Join the Course & Build Your First AI Prototype
                 <ArrowRight className="h-5 w-5" />
               </Link>
-              <button
-                onClick={() => setIsDemoOpen(true)}
-                className="inline-flex items-center gap-2 bg-white text-primary px-10 py-4 rounded-button font-semibold text-lg border-2 border-primary hover:bg-primary hover:text-white transition-all duration-300 hover:-translate-y-1"
-                aria-label="Watch product demo video"
-              >
-                <Play className="h-5 w-5" aria-hidden="true" />
-                Watch Demo
-              </button>
             </div>
 
             <div className="space-y-4 pt-6">
               <div className="flex gap-12">
                 <div>
-                  <div className="text-4xl font-bold text-primary">14 Days</div>
-                  <div className="text-text-secondary text-base font-bold mt-1">Free Trial</div>
+                  <div className="text-4xl font-bold text-blue-600">6 Weeks</div>
+                  <div className="text-text-secondary text-base font-bold mt-1">Course Length</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-primary">$0</div>
-                  <div className="text-text-secondary text-base font-bold mt-1">Platform Fees*</div>
+                  <div className="text-4xl font-bold text-blue-600">6 Modules</div>
+                  <div className="text-text-secondary text-base font-bold mt-1">Complete Curriculum</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-primary">Unlimited</div>
-                  <div className="text-text-secondary text-base font-bold mt-1">Courses & Students</div>
+                  <div className="text-4xl font-bold text-blue-600">100+</div>
+                  <div className="text-text-secondary text-base font-bold mt-1">Prototype Ideas</div>
                 </div>
               </div>
-              <p className="text-sm text-text-secondary italic">
-                *We don't take a cut of your success. Standard Stripe transaction fees apply.
-              </p>
             </div>
           </div>
 
-          <div className="relative perspective-1000">
-            <div className="bg-white rounded-[20px] p-8 shadow-heavy transform hover:rotate-y-0 transition-transform duration-700 rotate-y-[-5deg]">
-              <div className="flex items-center justify-between pb-6 border-b-2 border-border">
-                <h3 className="text-2xl font-bold text-dark">Your Dashboard</h3>
+          <div className="relative">
+            <div className="bg-white rounded-[20px] p-8 shadow-heavy">
+              <div className="flex items-center gap-3 pb-6 border-b-2 border-border">
+                <Brain className="h-8 w-8 text-blue-600" />
+                <h3 className="text-2xl font-bold text-dark">What You'll Learn</h3>
               </div>
-              <div className="grid grid-cols-2 gap-6 mt-6">
-                <div className="bg-gradient-to-br from-light-bg to-white p-6 rounded-2xl border-2 border-border hover:border-primary transition-all hover:-translate-y-2 hover:shadow-medium">
-                  <div className="text-sm font-medium text-text-secondary mb-2">Active Students</div>
-                  <div className="text-4xl font-bold text-primary mb-3">1,247</div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full w-[78%] bg-gradient-to-r from-primary to-accent rounded-full animate-fill-bar"></div>
+              <div className="space-y-4 mt-6">
+                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:-translate-y-1 transition-all">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-dark mb-1">Master AI Fundamentals</div>
+                    <div className="text-sm text-text-secondary">Understand how AI works and identify opportunities</div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-light-bg to-white p-6 rounded-2xl border-2 border-border hover:border-accent transition-all hover:-translate-y-2 hover:shadow-medium">
-                  <div className="text-sm font-medium text-text-secondary mb-2">Revenue This Month</div>
-                  <div className="text-4xl font-bold text-accent mb-3">$24.8K</div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full w-[92%] bg-gradient-to-r from-primary to-accent rounded-full animate-fill-bar"></div>
+                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:-translate-y-1 transition-all">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-dark mb-1">The SPARK Framework</div>
+                    <div className="text-sm text-text-secondary">Proven 5-step process for building AI prototypes</div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-light-bg to-white p-6 rounded-2xl border-2 border-border hover:border-primary transition-all hover:-translate-y-2 hover:shadow-medium">
-                  <div className="text-sm font-medium text-text-secondary mb-2">Course Completion</div>
-                  <div className="text-4xl font-bold text-primary mb-3">89%</div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full w-[89%] bg-gradient-to-r from-primary to-accent rounded-full animate-fill-bar"></div>
+                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:-translate-y-1 transition-all">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-dark mb-1">Build Real Products</div>
+                    <div className="text-sm text-text-secondary">Create functional AI prototypes from scratch</div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-light-bg to-white p-6 rounded-2xl border-2 border-border hover:border-accent transition-all hover:-translate-y-2 hover:shadow-medium">
-                  <div className="text-sm font-medium text-text-secondary mb-2">Email Open Rate</div>
-                  <div className="text-4xl font-bold text-accent mb-3">45%</div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full w-[45%] bg-gradient-to-r from-primary to-accent rounded-full animate-fill-bar"></div>
+                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:-translate-y-1 transition-all">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-dark mb-1">No-Code Tools Mastery</div>
+                    <div className="text-sm text-text-secondary">Leverage powerful AI tools without programming</div>
                   </div>
                 </div>
               </div>
@@ -167,290 +168,288 @@ export default function Landing() {
       <section id="features" className="py-32 px-8 bg-gradient-to-b from-white to-light-bg" aria-labelledby="features-heading">
         <div className="max-w-[1400px] mx-auto">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary px-5 py-2 rounded-button text-sm font-semibold border border-primary/20 mb-6">
-              <Sparkles className="w-4 h-4" />
-              AI-Powered Platform
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-600 px-5 py-2 rounded-full text-sm font-semibold border border-blue-500/20 mb-6">
+              <Zap className="w-4 h-4" />
+              Complete 6-Module Curriculum
             </div>
             <h2 id="features-heading" className="text-5xl lg:text-6xl font-bold text-dark mb-6">
-              Your AI Co-Founder.<br/>
-              Your Complete Course Platform.
+              From Idea to<br/>
+              Working AI Prototype
             </h2>
             <p className="text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed">
-              The only online course platform with Claude AI built-in. Get strategic guidance for your courses and funnels,
-              generate marketing content instantly, and automate your email marketing workflow—all powered by cutting-edge AI.
+              Follow our proven SPARK framework to build functional AI prototypes. Each module builds on the last,
+              taking you from beginner to confident AI builder in just 6 weeks.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-primary via-primary-dark to-accent rounded-card p-12 border-2 border-primary shadow-heavy hover:shadow-heavy transition-all duration-300 hover:-translate-y-3 group relative overflow-hidden md:col-span-2 lg:col-span-3">
+            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 rounded-card p-12 border-2 border-blue-600 shadow-heavy hover:shadow-heavy transition-all duration-300 hover:-translate-y-3 group relative overflow-hidden md:col-span-2 lg:col-span-3">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/30 rounded-full blur-3xl"></div>
               <div className="relative z-10">
                 <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
                   <div className="flex items-center gap-4">
                     <div className="w-[70px] h-[70px] bg-white/20 backdrop-blur-sm rounded-[18px] flex items-center justify-center group-hover:scale-105 transition-all">
-                      <Sparkles className="h-8 w-8 text-white" />
+                      <Zap className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-3xl font-bold text-white mb-2">AI Co-Founder</h3>
-                      <p className="text-white/90 text-lg">Powered by Claude AI</p>
+                      <h3 className="text-3xl font-bold text-white mb-2">The SPARK Framework</h3>
+                      <p className="text-white/90 text-lg">Your 5-Step Prototyping Process</p>
                     </div>
                   </div>
                   <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white font-semibold text-sm flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    Available 24/7
+                    Proven Framework
                   </div>
                 </div>
                 <p className="text-white/90 mb-6 leading-relaxed text-lg max-w-3xl">
-                  Your personal AI business strategist trained on proven digital marketing frameworks.
-                  Get instant advice on funnels, copywriting, product strategy, and growth tactics.
-                  It's like having a marketing expert on call whenever you need guidance.
+                  A systematic approach to building AI prototypes that work. The SPARK framework takes you from
+                  concept to functional prototype through five clear, actionable steps that anyone can follow.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                   <div className="flex items-start gap-3 text-white">
-                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <CheckCircle2 className="h-4 w-4" />
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
+                      S
                     </div>
                     <div>
-                      <div className="font-semibold mb-1">Strategic Gameplans</div>
-                      <div className="text-sm text-white/80">Custom business roadmaps</div>
+                      <div className="font-semibold mb-1">Scope</div>
+                      <div className="text-sm text-white/80">Define your problem</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 text-white">
-                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <CheckCircle2 className="h-4 w-4" />
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
+                      P
                     </div>
                     <div>
-                      <div className="font-semibold mb-1">Content Generation</div>
-                      <div className="text-sm text-white/80">Copy, emails, and course outlines</div>
+                      <div className="font-semibold mb-1">Plan</div>
+                      <div className="text-sm text-white/80">Design your solution</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 text-white">
-                    <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <CheckCircle2 className="h-4 w-4" />
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
+                      A
                     </div>
                     <div>
-                      <div className="font-semibold mb-1">Real-Time Coaching</div>
-                      <div className="text-sm text-white/80">Chat for instant answers</div>
+                      <div className="font-semibold mb-1">Assemble</div>
+                      <div className="text-sm text-white/80">Build with AI tools</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 text-white">
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
+                      R
+                    </div>
+                    <div>
+                      <div className="font-semibold mb-1">Refine</div>
+                      <div className="text-sm text-white/80">Test and iterate</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 text-white">
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
+                      K
+                    </div>
+                    <div>
+                      <div className="font-semibold mb-1">Knowledge</div>
+                      <div className="text-sm text-white/80">Share and learn</div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
-                <Brain className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
+            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  1
+                </div>
+                <h3 className="text-2xl font-bold text-dark">AI Fundamentals</h3>
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">AI Content Tools</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Generate professional content in seconds with AI-powered writing and design tools.
+                Build your foundation in AI technology and understand how to identify AI opportunities.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  AI copywriting assistant
+                  How AI actually works
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Theme & color palette generator
+                  Finding AI opportunities
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Smart image search
+                  AI tools ecosystem
                 </li>
               </ul>
             </div>
 
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
-                <Video className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
+            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  2
+                </div>
+                <h3 className="text-2xl font-bold text-dark">Prompt Engineering</h3>
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Online Course Builder</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Create beautiful, engaging online courses with our drag-and-drop course builder. No coding required for your online learning platform.
+                Master the art of communicating with AI to get the results you want.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Video, audio & text content
+                  Effective prompt patterns
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Quizzes & assessments
+                  Advanced techniques
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Drip content scheduling
+                  Testing and iteration
                 </li>
               </ul>
             </div>
 
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
-                <Mail className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
+            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  3
+                </div>
+                <h3 className="text-2xl font-bold text-dark">No-Code AI Tools</h3>
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Email Marketing Automation</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Build your email list and nurture customer relationships with powerful email marketing automation sequences.
+                Explore and use the best no-code AI platforms to build functional prototypes.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Automated email sequences
+                  Platform comparisons
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Beautiful email templates
+                  Tool selection criteria
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Segmentation & tagging
+                  Hands-on practice
                 </li>
               </ul>
             </div>
 
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
-                <DollarSign className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
+            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  4
+                </div>
+                <h3 className="text-2xl font-bold text-dark">Building Prototypes</h3>
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Smart Payments</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Accept payments seamlessly with our integrated checkout system.
+                Apply the SPARK framework to build your first functional AI prototype.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  One-time & subscriptions
+                  SPARK framework deep dive
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Payment plans & trials
+                  Step-by-step build process
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Global currency support
+                  Real-world examples
                 </li>
               </ul>
             </div>
 
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
-                <TrendingUp className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
+            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  5
+                </div>
+                <h3 className="text-2xl font-bold text-dark">Testing & Iteration</h3>
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Sales Funnel Builder</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Convert visitors with high-performing landing pages and sales funnels. Build complete marketing funnels for your courses.
+                Learn to test, refine, and improve your AI prototypes based on feedback.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Professional templates
+                  User testing methods
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Custom domain support
+                  Iteration strategies
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Built-in analytics
+                  Performance optimization
                 </li>
               </ul>
             </div>
 
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
-                <Users className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
+            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  6
+                </div>
+                <h3 className="text-2xl font-bold text-dark">Launch & Scale</h3>
               </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Community Building</h3>
               <p className="text-text-secondary mb-6 leading-relaxed">
-                Foster engagement with built-in community features and discussion forums.
+                Take your prototype from concept to market and plan your scaling strategy.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Discussion boards
+                  Launch preparation
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Direct messaging
+                  Scaling strategies
                 </li>
                 <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  Member profiles
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-primary transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="w-[70px] h-[70px] bg-gradient-to-br from-primary/10 to-accent/10 rounded-[18px] flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-accent transition-all group-hover:rotate-[5deg] group-hover:scale-105">
-                <BarChart3 className="h-8 w-8 text-primary group-hover:text-white transition-colors" />
-              </div>
-              <h3 className="text-2xl font-bold text-dark mb-4">Advanced Analytics</h3>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Get deep insights into your business performance with real-time analytics.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Revenue tracking
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Engagement metrics
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Custom reports
+                  Next steps planning
                 </li>
               </ul>
             </div>
@@ -458,25 +457,40 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="py-32 px-8 bg-gradient-to-br from-light-bg via-white to-pink-50">
+      <section className="py-32 px-8 bg-gradient-to-br from-light-bg via-white to-blue-50">
         <div className="max-w-5xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-primary to-primary-dark rounded-[30px] p-16 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-accent/30 rounded-full blur-3xl"></div>
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-[30px] p-16 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/30 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
             <div className="relative z-10">
               <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-                Ready to Launch Your Online Course Business?
+                Ready to Build Your First AI Prototype?
               </h2>
               <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-                Join thousands of successful course creators and coaches who've already built their businesses with our platform.
+                Join the course today and start building functional AI products without writing a single line of code.
+                Master the SPARK framework and turn your ideas into reality.
               </p>
               <Link
                 to="/signup"
-                className="inline-flex items-center gap-2 bg-white text-primary px-10 py-4 rounded-button font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-heavy"
+                className="inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-heavy"
               >
-                Start Your Free Trial
+                Join the Course & Build Your First AI Prototype
                 <ArrowRight className="h-5 w-5" />
               </Link>
+              <div className="mt-8 flex items-center justify-center gap-8 text-sm text-white/80">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5" />
+                  100+ Prototype Ideas Included
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5" />
+                  Lifetime Access
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5" />
+                  No Coding Required
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -491,7 +505,7 @@ export default function Landing() {
                 <Logo variant="light" />
               </div>
               <p className="text-sm text-gray-400">
-                The complete all-in-one platform for online course creators, coaches, and digital entrepreneurs.
+                Learn to prototype anything with AI. No coding experience required.
               </p>
             </div>
             <div>
@@ -527,7 +541,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-sm text-center text-gray-600">
-            © 2026 CreatorApp. All rights reserved.
+            © 2026 CreatorAppU. All rights reserved.
           </div>
         </div>
       </footer>

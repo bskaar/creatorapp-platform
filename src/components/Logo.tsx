@@ -10,8 +10,8 @@ export default function Logo({ className = '', iconOnly = false }: LogoProps) {
     return (
       <div className={`flex items-center ${className}`}>
         <img
-          src="/creatorapp-c1-icon-gradient (2).svg"
-          alt="CreatorApp Icon"
+          src="/ChatGPT_Image_Dec_8,_2025,_06_43_29_PM.png"
+          alt="CreatorAppU Icon"
           className="h-8 w-auto"
         />
       </div>
@@ -19,12 +19,13 @@ export default function Logo({ className = '', iconOnly = false }: LogoProps) {
   }
 
   return (
-    <div className={`flex items-center ${className}`}>
+    <div className={`flex items-center gap-3 ${className}`}>
       <img
-        src="/creatorapp-c1-logo-gradient.svg"
-        alt="CreatorApp Logo"
+        src="/ChatGPT_Image_Dec_8,_2025,_06_43_29_PM.png"
+        alt="CreatorAppU Logo"
         className="h-10 w-auto"
       />
+      <span className="text-2xl font-bold text-slate-800">CreatorAppU</span>
     </div>
   );
 }
