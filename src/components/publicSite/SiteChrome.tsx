@@ -34,7 +34,7 @@ function getNavItems(pages: PageData[]): NavItem[] {
     const mapped = Object.entries(LABEL_MAP).find(([key]) => p.slug.includes(key));
     items.push({
       slug: p.slug,
-      label: mapped ? mapped[1] : p.title.replace(/^CreatorAppU\s*[-–]\s*/, ''),
+      label: mapped ? mapped[1] : p.title.replace(/^CreatorApp\s*[-–]\s*/, ''),
       isHome: false,
       isCta: p.slug.includes('pricing'),
     });
