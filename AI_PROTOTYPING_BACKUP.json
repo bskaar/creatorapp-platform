@@ -1,0 +1,59 @@
+{
+  "description": "Backup of AI Prototyping Masterclass content - created Feb 2026",
+  "site_name": "AI Prototyping Masterclass",
+  "tagline": "Build Production-Ready Apps with AI",
+  "pages": [
+    {
+      "slug": "pricing",
+      "title": "AI Prototyping Masterclass - Pricing",
+      "seo_title": "AI Prototyping Masterclass Pricing - Course Plans",
+      "seo_description": "Choose your AI prototyping course plan. Self-paced learning or coached program with live support.",
+      "content": {
+        "blocks": [
+          {
+            "id": "hero-1",
+            "type": "hero",
+            "styles": {
+              "overlay": "rgba(15, 23, 42, 0.7)",
+              "padding": "100px 20px",
+              "textAlign": "center"
+            },
+            "content": {
+              "headline": "Invest in Your Future as a Builder",
+              "subheadline": "Choose the plan that fits your learning style and goals",
+              "backgroundImage": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1600"
+            }
+          },
+          {
+            "id": "pricing-tiers",
+            "type": "text",
+            "content": {
+              "text": "<div style=\"max-width:1200px;margin:3rem auto;padding:0 20px;\"><div style=\"display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;margin-bottom:3rem;\"><div style=\"background:white;border:2px solid #e2e8f0;border-radius:12px;padding:2rem;\"><h3 style=\"font-size:1.5rem;font-weight:700;margin-bottom:0.5rem;\">Self-Paced</h3><div style=\"margin:1.5rem 0;\"><span style=\"font-size:2.5rem;font-weight:700;\">$297</span><span style=\"color:#64748b;\"> one-time</span></div><ul style=\"list-style:none;padding:0;margin:1.5rem 0;\"><li style=\"padding:0.5rem 0;color:#475569;\">✓ Complete course access</li><li style=\"padding:0.5rem 0;color:#475569;\">✓ All 6 modules & projects</li><li style=\"padding:0.5rem 0;color:#475569;\">✓ Lifetime updates</li><li style=\"padding:0.5rem 0;color:#475569;\">✓ Community forum access</li><li style=\"padding:0.5rem 0;color:#475569;\">✓ Downloadable resources</li></ul><a href=\"/pricing\" style=\"display:block;background:#0f172a;color:white;text-align:center;padding:1rem;border-radius:8px;text-decoration:none;font-weight:600;\">Get Started</a></div><div style=\"background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border:2px solid #0f172a;border-radius:12px;padding:2rem;color:white;position:relative;\"><div style=\"position:absolute;top:-12px;right:20px;background:#3b82f6;color:white;padding:0.25rem 1rem;border-radius:20px;font-size:0.875rem;font-weight:600;\">POPULAR</div><h3 style=\"font-size:1.5rem;font-weight:700;margin-bottom:0.5rem;\">Coached Program</h3><div style=\"margin:1.5rem 0;\"><span style=\"font-size:2.5rem;font-weight:700;\">$997</span><span style=\"opacity:0.8;\"> one-time</span></div><ul style=\"list-style:none;padding:0;margin:1.5rem 0;\"><li style=\"padding:0.5rem 0;\">✓ Everything in Self-Paced</li><li style=\"padding:0.5rem 0;\">✓ Weekly live coaching calls</li><li style=\"padding:0.5rem 0;\">✓ Direct instructor support</li><li style=\"padding:0.5rem 0;\">✓ Code review & feedback</li><li style=\"padding:0.5rem 0;\">✓ Priority community access</li><li style=\"padding:0.5rem 0;\">✓ Bonus: AI prompt library</li></ul><a href=\"/pricing\" style=\"display:block;background:white;color:#0f172a;text-align:center;padding:1rem;border-radius:8px;text-decoration:none;font-weight:600;\">Enroll Now</a></div><div style=\"background:white;border:2px solid #e2e8f0;border-radius:12px;padding:2rem;\"><h3 style=\"font-size:1.5rem;font-weight:700;margin-bottom:0.5rem;\">Enterprise</h3><div style=\"margin:1.5rem 0;\"><span style=\"font-size:2.5rem;font-weight:700;\">Custom</span></div><ul style=\"list-style:none;padding:0;margin:1.5rem 0;\"><li style=\"padding:0.5rem 0;color:#475569;\">✓ Team training (5+ people)</li><li style=\"padding:0.5rem 0;color:#475569;\">✓ Custom curriculum</li><li style=\"padding:0.5rem 0;color:#475569;\">✓ Private workshops</li><li style=\"padding:0.5rem 0;color:#475569;\">✓ Dedicated support</li><li style=\"padding:0.5rem 0;color:#475569;\">✓ Progress tracking</li></ul><a href=\"/contact\" style=\"display:block;background:#0f172a;color:white;text-align:center;padding:1rem;border-radius:8px;text-decoration:none;font-weight:600;\">Contact Sales</a></div></div><div style=\"text-align:center;margin-top:3rem;padding:2rem;background:#f8fafc;border-radius:12px;\"><h3 style=\"font-size:1.5rem;font-weight:700;margin-bottom:1rem;\">30-Day Money-Back Guarantee</h3><p style=\"color:#64748b;max-width:600px;margin:0 auto;\">Not satisfied? Get a full refund within 30 days, no questions asked. We are confident this course will transform how you build software.</p></div></div>"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "slug": "curriculum",
+      "title": "AI Prototyping Course - Full Curriculum",
+      "seo_title": "AI Prototyping Course Curriculum - Complete Module Breakdown",
+      "seo_description": "Explore the complete curriculum for the AI Prototyping Masterclass. 6 modules covering foundations to deployment.",
+      "note": "Full curriculum content with 6 modules"
+    },
+    {
+      "slug": "about",
+      "title": "About AI Prototyping Masterclass",
+      "seo_title": "About AI Prototyping Masterclass - Our Mission",
+      "seo_description": "Learn about the AI Prototyping Masterclass and our mission to democratize software development through AI.",
+      "note": "About page with mission and approach"
+    }
+  ],
+  "product": {
+    "title": "AI Prototyping Masterclass",
+    "description": "Master the revolutionary AI prototyping workflow that lets you create sophisticated web applications without traditional coding. Learn the prompting frameworks, testing strategies, and deployment techniques that turn ideas into live products. Includes 6 comprehensive modules, hands-on projects, and lifetime access to all course materials.",
+    "product_type": "course",
+    "price_amount": 297.00,
+    "price_currency": "usd"
+  }
+}
