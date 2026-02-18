@@ -88,7 +88,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                 </div>
                 <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                  Your site: <span className="font-semibold text-blue-600">mycreatorsite.creatorapp.us</span>
+                  Your site: <span className="font-semibold text-blue-600">mycreatorsite.creatorapp.site</span>
                 </p>
               </div>
               <div>
@@ -391,7 +391,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
             </div>
             <p className="text-green-800 font-bold text-lg">Your site is live!</p>
             <p className="text-sm text-green-700 mt-2 font-medium bg-white px-4 py-2 rounded-lg inline-block shadow-sm">
-              mycreatorsite.creatorapp.us
+              mycreatorsite.creatorapp.site
             </p>
             <div className="flex items-center justify-center gap-6 mt-4 text-xs text-green-700">
               <div className="flex items-center gap-1">

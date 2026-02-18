@@ -174,7 +174,7 @@ export default function DomainSettings() {
     }
   };
 
-  const defaultDomain = currentSite?.slug ? `${currentSite.slug}.creatorapp.us` : '';
+  const defaultDomain = currentSite?.slug ? `${currentSite.slug}.creatorapp.site` : '';
   const previewUrl = currentSite?.slug ? `/s/${currentSite.slug}` : '';
 
   return (

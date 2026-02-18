@@ -44,8 +44,8 @@ async function getSiteByDomain(supabase: any, domain: string): Promise<SiteData 
 
   if (siteByCustomDomainWWW) return siteByCustomDomainWWW;
 
-  if (domain.endsWith('.creatorapp.us')) {
-    const slug = domain.replace('.creatorapp.us', '');
+  if (domain.endsWith('.creatorapp.site')) {
+    const slug = domain.replace('.creatorapp.site', '');
     const { data: siteBySlug } = await supabase
       .from('sites')
       .select('id, name, slug, primary_color, settings')

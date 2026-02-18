@@ -118,7 +118,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const expectedTarget = `${site.slug}.creatorapp.us`;
+    const expectedTarget = `${site.slug}.creatorapp.site`;
 
     const [txtVerified, cnameVerified] = await Promise.all([
       verifyDNSRecord(domain, site.domain_verification_token),

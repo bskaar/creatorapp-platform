@@ -211,7 +211,7 @@ export default function PlatformAdminSites() {
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                       <a href={`/s/${site.subdomain}`} target="_blank" rel="noopener noreferrer" className="flex items-center hover:text-blue-600 transition-colors">
                         <Globe className="w-4 h-4 mr-1" />
-                        {site.subdomain}.creatorapp.us
+                        {site.subdomain}.creatorapp.site
                       </a>
                       {site.custom_domain && (
                         <span className="flex items-center text-blue-600">

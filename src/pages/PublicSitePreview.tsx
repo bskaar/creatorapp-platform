@@ -99,8 +99,8 @@ export default function PublicSitePreview() {
       .maybeSingle();
     if (byCustom) return byCustom as SiteData;
 
-    if (clean.endsWith('.creatorapp.us')) {
-      const slug = clean.replace('.creatorapp.us', '');
+    if (clean.endsWith('.creatorapp.site')) {
+      const slug = clean.replace('.creatorapp.site', '');
       return findSiteBySlug(slug);
     }
 
