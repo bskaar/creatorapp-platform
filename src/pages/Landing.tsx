@@ -96,23 +96,6 @@ export default function Landing() {
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
-
-            <div className="space-y-4 pt-6">
-              <div className="flex gap-12">
-                <div>
-                  <div className="text-4xl font-bold text-blue-600">5,000+</div>
-                  <div className="text-text-secondary text-base font-bold mt-1">Creators</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-blue-600">$10M+</div>
-                  <div className="text-text-secondary text-base font-bold mt-1">Revenue Generated</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-blue-600">99%</div>
-                  <div className="text-text-secondary text-base font-bold mt-1">Uptime</div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="relative">
