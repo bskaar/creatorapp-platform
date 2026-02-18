@@ -61,7 +61,7 @@ type Page = Database['public']['Tables']['pages']['Row'];
 
 interface Block {
   id: string;
-  type: 'hero' | 'text' | 'image' | 'cta' | 'features' | 'testimonial' | 'form' | 'pricing' | 'video' | 'gallery' | 'stats';
+  type: 'hero' | 'text' | 'image' | 'cta' | 'features' | 'feature-cards' | 'gradient-card' | 'module-list' | 'testimonial' | 'form' | 'pricing' | 'video' | 'gallery' | 'stats';
   content: Record<string, any>;
   styles?: Record<string, any>;
   locked?: boolean;

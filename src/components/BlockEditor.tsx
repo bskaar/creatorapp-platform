@@ -77,7 +77,196 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
 
       {activeTab === 'content' ? (
         <div className="space-y-4">
-          {block.type === 'features' && content.features ? (
+          {block.type === 'feature-cards' && content.cards ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
+                <input
+                  type="text"
+                  value={content.headline || ''}
+                  onChange={(e) => handleContentChange('headline', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Cards</label>
+                {content.cards.map((card: any, index: number) => (
+                  <div key={index} className="mb-3 p-4 border border-gray-200 rounded-lg">
+                    <input
+                      type="text"
+                      value={card.title}
+                      onChange={(e) => {
+                        const updated = [...content.cards];
+                        updated[index] = { ...updated[index], title: e.target.value };
+                        handleContentChange('cards', updated);
+                      }}
+                      placeholder="Card title"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
+                    />
+                    <textarea
+                      value={card.description}
+                      onChange={(e) => {
+                        const updated = [...content.cards];
+                        updated[index] = { ...updated[index], description: e.target.value };
+                        handleContentChange('cards', updated);
+                      }}
+                      placeholder="Card description"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      rows={2}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : block.type === 'gradient-card' && content.steps ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Badge</label>
+                <input
+                  type="text"
+                  value={content.badge || ''}
+                  onChange={(e) => handleContentChange('badge', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
+                <input
+                  type="text"
+                  value={content.headline || ''}
+                  onChange={(e) => handleContentChange('headline', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={content.description || ''}
+                  onChange={(e) => handleContentChange('description', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  rows={3}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Framework Title</label>
+                <input
+                  type="text"
+                  value={content.frameworkTitle || ''}
+                  onChange={(e) => handleContentChange('frameworkTitle', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Steps</label>
+                {content.steps.map((step: any, index: number) => (
+                  <div key={index} className="mb-3 p-4 border border-gray-200 rounded-lg">
+                    <div className="grid grid-cols-3 gap-2">
+                      <input
+                        type="text"
+                        value={step.letter}
+                        onChange={(e) => {
+                          const updated = [...content.steps];
+                          updated[index] = { ...updated[index], letter: e.target.value };
+                          handleContentChange('steps', updated);
+                        }}
+                        placeholder="Letter"
+                        className="px-3 py-2 border border-gray-300 rounded-lg"
+                        maxLength={1}
+                      />
+                      <input
+                        type="text"
+                        value={step.title}
+                        onChange={(e) => {
+                          const updated = [...content.steps];
+                          updated[index] = { ...updated[index], title: e.target.value };
+                          handleContentChange('steps', updated);
+                        }}
+                        placeholder="Title"
+                        className="col-span-2 px-3 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={step.description}
+                      onChange={(e) => {
+                        const updated = [...content.steps];
+                        updated[index] = { ...updated[index], description: e.target.value };
+                        handleContentChange('steps', updated);
+                      }}
+                      placeholder="Description"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mt-2"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : block.type === 'module-list' && content.modules ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
+                <input
+                  type="text"
+                  value={content.headline || ''}
+                  onChange={(e) => handleContentChange('headline', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Modules</label>
+                {content.modules.map((module: any, index: number) => (
+                  <div key={index} className="mb-3 p-4 border border-gray-200 rounded-lg">
+                    <div className="grid grid-cols-4 gap-2 mb-2">
+                      <input
+                        type="number"
+                        value={module.number}
+                        onChange={(e) => {
+                          const updated = [...content.modules];
+                          updated[index] = { ...updated[index], number: parseInt(e.target.value) };
+                          handleContentChange('modules', updated);
+                        }}
+                        placeholder="#"
+                        className="px-3 py-2 border border-gray-300 rounded-lg"
+                      />
+                      <input
+                        type="text"
+                        value={module.title}
+                        onChange={(e) => {
+                          const updated = [...content.modules];
+                          updated[index] = { ...updated[index], title: e.target.value };
+                          handleContentChange('modules', updated);
+                        }}
+                        placeholder="Title"
+                        className="col-span-3 px-3 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <textarea
+                      value={module.description}
+                      onChange={(e) => {
+                        const updated = [...content.modules];
+                        updated[index] = { ...updated[index], description: e.target.value };
+                        handleContentChange('modules', updated);
+                      }}
+                      placeholder="Description"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
+                      rows={2}
+                    />
+                    <div className="text-xs text-gray-500 mb-1">Topics (one per line):</div>
+                    <textarea
+                      value={module.topics?.join('\n') || ''}
+                      onChange={(e) => {
+                        const updated = [...content.modules];
+                        updated[index] = { ...updated[index], topics: e.target.value.split('\n').filter(t => t.trim()) };
+                        handleContentChange('modules', updated);
+                      }}
+                      placeholder="Topic 1&#10;Topic 2&#10;Topic 3"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      rows={3}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : block.type === 'features' && content.features ? (
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
