@@ -16,6 +16,12 @@ export function BlockRenderer({ block, primaryColor }: { block: Block; primaryCo
       return <StatsBlock content={c} styles={s} primaryColor={primaryColor} />;
     case 'features':
       return <FeaturesBlock content={c} primaryColor={primaryColor} />;
+    case 'feature-cards':
+      return <FeatureCardsBlock content={c} styles={s} primaryColor={primaryColor} />;
+    case 'gradient-card':
+      return <GradientCardBlock content={c} styles={s} primaryColor={primaryColor} />;
+    case 'module-list':
+      return <ModuleListBlock content={c} styles={s} primaryColor={primaryColor} />;
     case 'testimonial':
       return <TestimonialBlock content={c} />;
     case 'cta':
@@ -35,19 +41,39 @@ export function BlockRenderer({ block, primaryColor }: { block: Block; primaryCo
 
 function HeroBlock({ content: c, styles: s, primaryColor }: { content: any; styles: any; primaryColor: string }) {
   const overlay = s.overlay || 'rgba(10, 30, 60, 0.7)';
-  const bgImage = c.backgroundImage
+  const hasBackground = !!c.backgroundImage;
+  const bgImage = hasBackground
     ? { backgroundImage: `url(${c.backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    : { background: `linear-gradient(135deg, ${primaryColor} 0%, #0f172a 100%)` };
+    : { background: s.backgroundColor || '#ffffff' };
   const padding = s.padding || '100px 20px';
+  const textColor = hasBackground ? '#fff' : (s.backgroundColor === '#ffffff' ? '#0f172a' : '#fff');
 
   return (
     <section style={{ ...bgImage, position: 'relative' }}>
-      <div style={{ position: 'absolute', inset: 0, background: c.backgroundImage ? overlay : 'transparent' }} />
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: 900, margin: '0 auto', textAlign: (s.textAlign || 'center') as any, padding, color: '#fff' }}>
-        <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.15, marginBottom: '1.25rem' }}>{c.headline || ''}</h1>
-        <p style={{ fontSize: 'clamp(1rem, 2.5vw, 1.35rem)', opacity: 0.92, lineHeight: 1.65, marginBottom: '2rem', maxWidth: 700, marginLeft: 'auto', marginRight: 'auto' }}>{c.subheadline || ''}</p>
+      {hasBackground && <div style={{ position: 'absolute', inset: 0, background: overlay }} />}
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: 900, margin: '0 auto', textAlign: (s.textAlign || 'center') as any, padding, color: textColor }}>
+        {c.badge && (
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)', color: '#3B82F6', padding: '0.5rem 1.25rem', borderRadius: 9999, fontSize: '0.875rem', fontWeight: 600, marginBottom: '1.5rem' }}>
+            <span style={{ fontSize: '1rem' }}>✨</span>
+            {c.badge}
+          </div>
+        )}
+        <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.15, marginBottom: '1.25rem' }}>
+          {c.headlineHighlight ? (
+            <>
+              {c.headline.split(c.headlineHighlight)[0]}
+              <span style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                {c.headlineHighlight}
+              </span>
+              {c.headline.split(c.headlineHighlight)[1]}
+            </>
+          ) : (
+            c.headline || ''
+          )}
+        </h1>
+        <p style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', opacity: hasBackground ? 0.92 : 1, color: hasBackground ? 'inherit' : '#64748b', lineHeight: 1.65, marginBottom: '2rem', maxWidth: 700, marginLeft: 'auto', marginRight: 'auto' }}>{c.subheadline || ''}</p>
         {c.ctaText && (
-          <a href={c.ctaUrl || '#'} style={{ display: 'inline-block', padding: '1rem 2.5rem', background: '#fff', color: primaryColor, borderRadius: 8, fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
+          <a href={c.ctaUrl || '#'} style={{ display: 'inline-block', padding: '1rem 2.5rem', background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
             {c.ctaText}
           </a>
         )}
@@ -143,18 +169,29 @@ function TestimonialBlock({ content: c }: { content: any }) {
   );
 }
 
-function CtaBlock({ content: c, styles: s }: { content: any; styles: any; primaryColor: string }) {
+function CtaBlock({ content: c, styles: s, primaryColor }: { content: any; styles: any; primaryColor: string }) {
   const bgColor = s.backgroundColor || '#0f172a';
+  const padding = s.padding || '4rem 1.5rem';
 
   return (
-    <section style={{ background: bgColor, padding: '4rem 1.5rem' }}>
+    <section style={{ background: bgColor, padding }}>
       <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center', color: '#fff' }}>
         <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem' }}>{c.headline || ''}</h2>
         {c.description && <p style={{ fontSize: '1.1rem', opacity: 0.9, lineHeight: 1.7, marginBottom: '2rem' }}>{c.description}</p>}
         {c.buttonText && (
-          <a href={c.buttonUrl || '#'} style={{ display: 'inline-block', padding: '1rem 2.5rem', background: '#fff', color: bgColor, borderRadius: 8, fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
+          <a href={c.buttonUrl || '#'} style={{ display: 'inline-block', padding: '1rem 2.5rem', background: '#fff', color: bgColor, borderRadius: 8, fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.15)', marginBottom: c.features ? '2rem' : 0 }}>
             {c.buttonText}
           </a>
+        )}
+        {c.features && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginTop: '2rem', textAlign: 'left' }}>
+            {c.features.map((feature: string, i: number) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.9)', fontSize: '0.95rem' }}>
+                <span style={{ color: '#22c55e', fontSize: '1.25rem' }}>✓</span>
+                <span>{feature}</span>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </section>
@@ -305,6 +342,156 @@ function GalleryBlock({ content: c }: { content: any }) {
           {(c.images || []).map((img: any, i: number) => (
             <img key={i} src={img.url} alt={img.alt || `Gallery image ${i + 1}`} style={{ width: '100%', height: 240, objectFit: 'cover', borderRadius: 10 }} />
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeatureCardsBlock({ content: c, styles: s, primaryColor }: { content: any; styles: any; primaryColor: string }) {
+  const bgColor = s.backgroundColor || '#f0f4ff';
+  const padding = s.padding || '60px 20px';
+
+  return (
+    <section style={{ background: bgColor, padding }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        <div style={{ background: '#ffffff', borderRadius: 20, padding: '2.5rem', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+          {c.headline && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', paddingBottom: '1.5rem', borderBottom: '2px solid #e2e8f0', marginBottom: '1.5rem' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: '1.5rem' }}>🧠</span>
+              </div>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>{c.headline}</h2>
+            </div>
+          )}
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            {(c.cards || []).map((card: any, i: number) => (
+              <div key={i} style={{ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%)', borderRadius: 16, padding: '1.5rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+                <div style={{ width: 48, height: 48, borderRadius: 12, background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span style={{ color: '#fff', fontSize: '1.25rem' }}>✓</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>{card.title}</h3>
+                  <p style={{ fontSize: '0.95rem', color: '#64748b', lineHeight: 1.6, margin: 0 }}>{card.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function GradientCardBlock({ content: c, styles: s, primaryColor }: { content: any; styles: any; primaryColor: string }) {
+  const padding = s.padding || '60px 20px';
+
+  return (
+    <section style={{ background: s.backgroundColor || '#ffffff', padding }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        {c.badge && (
+          <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)', color: '#3B82F6', padding: '0.5rem 1.25rem', borderRadius: 9999, fontSize: '0.875rem', fontWeight: 600 }}>
+              <span>⚡</span>
+              {c.badge}
+            </span>
+          </div>
+        )}
+        {c.headline && (
+          <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#0f172a', textAlign: 'center', marginBottom: '1rem' }}>{c.headline}</h2>
+        )}
+        {c.description && (
+          <p style={{ fontSize: '1.1rem', color: '#64748b', textAlign: 'center', maxWidth: 700, margin: '0 auto 3rem', lineHeight: 1.7 }}>{c.description}</p>
+        )}
+
+        <div style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', borderRadius: 24, padding: '3rem 2rem', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, background: 'rgba(255,255,255,0.1)', borderRadius: '50%', filter: 'blur(60px)' }} />
+          <div style={{ position: 'absolute', bottom: -30, left: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.1)', borderRadius: '50%', filter: 'blur(50px)' }} />
+
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' as const, justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '2rem' }}>⚡</span>
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 800, color: '#ffffff', margin: 0, marginBottom: '0.25rem' }}>{c.frameworkTitle || 'The SPARK Framework'}</h3>
+                  <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.9)', margin: 0 }}>{c.frameworkSubtitle || 'Your 5-Step Process'}</p>
+                </div>
+              </div>
+              {c.frameworkBadge && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.2)', padding: '0.5rem 1rem', borderRadius: 9999, color: '#ffffff', fontSize: '0.875rem', fontWeight: 600 }}>
+                  <span style={{ width: 8, height: 8, background: '#22c55e', borderRadius: '50%' }} />
+                  {c.frameworkBadge}
+                </span>
+              )}
+            </div>
+
+            <p style={{ color: 'rgba(255,255,255,0.95)', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '2rem', maxWidth: 800 }}>
+              A systematic approach to building AI prototypes that work. The SPARK framework takes you from concept to functional prototype through five clear, actionable steps that anyone can follow.
+            </p>
+
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              {(c.steps || []).map((step: any, i: number) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', color: '#ffffff' }}>
+                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '1.25rem', fontWeight: 700 }}>
+                    {step.letter}
+                  </div>
+                  <div style={{ paddingTop: '0.25rem' }}>
+                    <h4 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0, marginBottom: '0.25rem' }}>{step.title}</h4>
+                    <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.85)', margin: 0 }}>{step.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ModuleListBlock({ content: c, styles: s, primaryColor }: { content: any; styles: any; primaryColor: string }) {
+  const bgColor = s.backgroundColor || '#faf8ff';
+  const padding = s.padding || '60px 20px';
+  const [expandedModule, setExpandedModule] = useState<number | null>(null);
+
+  return (
+    <section style={{ background: bgColor, padding }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        {c.headline && (
+          <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: '#0f172a', textAlign: 'center', marginBottom: '3rem' }}>{c.headline}</h2>
+        )}
+        <div style={{ display: 'grid', gap: '1.5rem' }}>
+          {(c.modules || []).map((module: any, i: number) => {
+            const isExpanded = expandedModule === i;
+            return (
+              <div key={i} style={{ background: '#ffffff', borderRadius: 20, padding: '2rem', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0', cursor: 'pointer' }} onClick={() => setExpandedModule(isExpanded ? null : i)}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.25rem' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 14, background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '1.5rem', fontWeight: 800, color: '#ffffff' }}>
+                    {module.number}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>{module.title}</h3>
+                    <p style={{ fontSize: '1rem', color: '#64748b', lineHeight: 1.65, marginBottom: isExpanded ? '1.25rem' : 0 }}>{module.description}</p>
+
+                    {isExpanded && module.topics && (
+                      <div style={{ display: 'grid', gap: '0.75rem', marginTop: '1.25rem' }}>
+                        {module.topics.map((topic: string, ti: number) => (
+                          <div key={ti} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <span style={{ color: '#fff', fontSize: '0.75rem' }}>✓</span>
+                            </div>
+                            <span style={{ fontSize: '0.95rem', color: '#475569' }}>{topic}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
