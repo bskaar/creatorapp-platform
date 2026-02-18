@@ -471,10 +471,6 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5" />
-                  No Credit Card Required
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5" />
                   Cancel Anytime
                 </div>
               </div>
