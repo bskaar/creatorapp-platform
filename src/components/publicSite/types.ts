@@ -4,6 +4,7 @@ export interface SiteData {
   slug: string;
   primary_color: string;
   settings: any;
+  logo_url?: string | null;
 }
 
 export interface PageData {

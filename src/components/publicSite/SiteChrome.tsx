@@ -45,6 +45,7 @@ function getNavItems(pages: PageData[]): NavItem[] {
 
 interface SiteHeaderProps {
   siteName: string;
+  logoUrl?: string | null;
   primaryColor: string;
   pages: PageData[];
   siteSlug: string;
@@ -56,7 +57,7 @@ interface SiteHeaderProps {
   onNavigate: (url: string) => void;
 }
 
-export function SiteHeader({ siteName, primaryColor, pages, currentPageSlug, isHome, menuOpen, onToggleMenu, buildPageUrl, onNavigate }: SiteHeaderProps) {
+export function SiteHeader({ siteName, logoUrl, primaryColor, pages, currentPageSlug, isHome, menuOpen, onToggleMenu, buildPageUrl, onNavigate }: SiteHeaderProps) {
   const navItems = getNavItems(pages);
 
   return (
@@ -65,9 +66,13 @@ export function SiteHeader({ siteName, primaryColor, pages, currentPageSlug, isH
         <a
           href={buildPageUrl('', true)}
           onClick={(e) => { e.preventDefault(); onNavigate(buildPageUrl('', true)); }}
-          style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', textDecoration: 'none', letterSpacing: '-0.02em' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
         >
-          {siteName}
+          {logoUrl ? (
+            <img src={logoUrl} alt={siteName} style={{ height: 40, width: 'auto', objectFit: 'contain' }} />
+          ) : (
+            <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>{siteName}</span>
+          )}
         </a>
         <button
           onClick={onToggleMenu}

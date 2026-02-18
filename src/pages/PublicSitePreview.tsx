@@ -80,7 +80,7 @@ export default function PublicSitePreview() {
   async function findSiteBySlug(slug: string): Promise<SiteData | null> {
     const { data } = await supabase
       .from('sites')
-      .select('id, name, slug, primary_color, settings')
+      .select('id, name, slug, primary_color, settings, logo_url')
       .eq('slug', slug)
       .eq('status', 'active')
       .maybeSingle();
@@ -92,7 +92,7 @@ export default function PublicSitePreview() {
 
     const { data: byCustom } = await supabase
       .from('sites')
-      .select('id, name, slug, primary_color, settings')
+      .select('id, name, slug, primary_color, settings, logo_url')
       .eq('custom_domain', clean)
       .eq('domain_verification_status', 'verified')
       .eq('status', 'active')
@@ -111,7 +111,8 @@ export default function PublicSitePreview() {
     if (isLegacyMode) {
       return `/site-preview?domain=${legacyDomain}&path=${isHome ? '/' : `/${targetPageSlug}`}`;
     }
-    return isHome ? `/s/${site?.slug}` : `/s/${site?.slug}/${targetPageSlug}`;
+    const homeSlug = pages[0]?.slug || 'home';
+    return isHome ? `/s/${site?.slug}/${homeSlug}` : `/s/${site?.slug}/${targetPageSlug}`;
   }
 
   function handleNavigate(url: string) {
@@ -140,10 +141,16 @@ export default function PublicSitePreview() {
   }
 
   const primaryColor = site.primary_color || '#0ea5e9';
-  const requestPath = isLegacyMode ? legacyPath : (pageSlug ? `/${pageSlug}` : '/');
-  const isHome = requestPath === '/' || requestPath === '';
-
   const homePage = pages.find(p => p.page_type === 'landing') || pages[0];
+
+  if (!isLegacyMode && !pageSlug && homePage && site) {
+    navigate(`/s/${site.slug}/${homePage.slug}`, { replace: true });
+    return null;
+  }
+
+  const requestPath = isLegacyMode ? legacyPath : (pageSlug ? `/${pageSlug}` : '/');
+  const isHome = requestPath === '/' || requestPath === '' || (homePage && pageSlug === homePage.slug);
+
   const currentPage = isHome ? homePage : pages.find(p => `/${p.slug}` === requestPath || p.slug === pageSlug);
 
   if (!currentPage) {
@@ -179,6 +186,7 @@ export default function PublicSitePreview() {
 
       <SiteHeader
         siteName={site.name}
+        logoUrl={site.logo_url}
         primaryColor={primaryColor}
         pages={pages}
         siteSlug={site.slug}
