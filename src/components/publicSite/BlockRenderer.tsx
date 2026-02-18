@@ -1,13 +1,31 @@
 import { useState } from 'react';
 import type { Block } from './types';
 
-export function BlockRenderer({ block, primaryColor }: { block: Block; primaryColor: string }) {
+interface BlockRendererProps {
+  block: Block;
+  primaryColor: string;
+  onNavigate?: (url: string) => void;
+  buildPageUrl?: (slug: string, isHome: boolean) => string;
+}
+
+function resolveUrl(url: string | undefined, buildPageUrl?: (slug: string, isHome: boolean) => string): string {
+  if (!url) return '#';
+  if (url.startsWith('http') || url.startsWith('mailto:') || url.startsWith('#')) return url;
+  if (buildPageUrl) {
+    const slug = url.replace(/^\//, '');
+    return slug === '' ? buildPageUrl('', true) : buildPageUrl(slug, false);
+  }
+  return url;
+}
+
+export function BlockRenderer({ block, primaryColor, onNavigate, buildPageUrl }: BlockRendererProps) {
   const c = block.content || {};
   const s = block.styles || {};
+  const nav = { onNavigate, buildPageUrl };
 
   switch (block.type) {
     case 'hero':
-      return <HeroBlock content={c} styles={s} primaryColor={primaryColor} />;
+      return <HeroBlock content={c} styles={s} primaryColor={primaryColor} nav={nav} />;
     case 'text':
       return <TextBlock content={c} />;
     case 'image':
@@ -25,7 +43,7 @@ export function BlockRenderer({ block, primaryColor }: { block: Block; primaryCo
     case 'testimonial':
       return <TestimonialBlock content={c} />;
     case 'cta':
-      return <CtaBlock content={c} styles={s} primaryColor={primaryColor} />;
+      return <CtaBlock content={c} styles={s} primaryColor={primaryColor} nav={nav} />;
     case 'form':
       return <FormBlock content={c} primaryColor={primaryColor} />;
     case 'pricing':
@@ -39,7 +57,9 @@ export function BlockRenderer({ block, primaryColor }: { block: Block; primaryCo
   }
 }
 
-function HeroBlock({ content: c, styles: s, primaryColor }: { content: any; styles: any; primaryColor: string }) {
+type NavProps = { onNavigate?: (url: string) => void; buildPageUrl?: (slug: string, isHome: boolean) => string };
+
+function HeroBlock({ content: c, styles: s, primaryColor, nav }: { content: any; styles: any; primaryColor: string; nav: NavProps }) {
   const overlay = s.overlay || 'rgba(10, 30, 60, 0.7)';
   const hasBackground = !!c.backgroundImage;
   const bgImage = hasBackground
@@ -73,7 +93,11 @@ function HeroBlock({ content: c, styles: s, primaryColor }: { content: any; styl
         </h1>
         <p style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', opacity: hasBackground ? 0.92 : 1, color: hasBackground ? 'inherit' : '#64748b', lineHeight: 1.65, marginBottom: '2rem', maxWidth: 700, marginLeft: 'auto', marginRight: 'auto' }}>{c.subheadline || ''}</p>
         {c.ctaText && (
-          <a href={c.ctaUrl || '#'} style={{ display: 'inline-block', padding: '1rem 2.5rem', background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
+          <a
+            href={resolveUrl(c.ctaUrl, nav.buildPageUrl)}
+            onClick={nav.onNavigate ? (e) => { e.preventDefault(); nav.onNavigate!(resolveUrl(c.ctaUrl, nav.buildPageUrl)); } : undefined}
+            style={{ display: 'inline-block', padding: '1rem 2.5rem', background: 'linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%)', color: '#fff', borderRadius: 8, fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}
+          >
             {c.ctaText}
           </a>
         )}
@@ -169,7 +193,7 @@ function TestimonialBlock({ content: c }: { content: any }) {
   );
 }
 
-function CtaBlock({ content: c, styles: s, primaryColor }: { content: any; styles: any; primaryColor: string }) {
+function CtaBlock({ content: c, styles: s, primaryColor, nav }: { content: any; styles: any; primaryColor: string; nav: NavProps }) {
   const bgColor = s.backgroundColor || '#0f172a';
   const padding = s.padding || '4rem 1.5rem';
 
@@ -179,7 +203,11 @@ function CtaBlock({ content: c, styles: s, primaryColor }: { content: any; style
         <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem' }}>{c.headline || ''}</h2>
         {c.description && <p style={{ fontSize: '1.1rem', opacity: 0.9, lineHeight: 1.7, marginBottom: '2rem' }}>{c.description}</p>}
         {c.buttonText && (
-          <a href={c.buttonUrl || '#'} style={{ display: 'inline-block', padding: '1rem 2.5rem', background: '#fff', color: bgColor, borderRadius: 8, fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.15)', marginBottom: c.features ? '2rem' : 0 }}>
+          <a
+            href={resolveUrl(c.buttonUrl, nav.buildPageUrl)}
+            onClick={nav.onNavigate ? (e) => { e.preventDefault(); nav.onNavigate!(resolveUrl(c.buttonUrl, nav.buildPageUrl)); } : undefined}
+            style={{ display: 'inline-block', padding: '1rem 2.5rem', background: '#fff', color: bgColor, borderRadius: 8, fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.15)', marginBottom: c.features ? '2rem' : 0 }}
+          >
             {c.buttonText}
           </a>
         )}

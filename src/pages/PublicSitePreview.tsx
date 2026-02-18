@@ -164,6 +164,8 @@ export default function PublicSitePreview() {
   const seoTitle = currentPage.seo_title || currentPage.title || site.name;
   const seoDesc = currentPage.seo_description || site.settings?.description || '';
 
+  document.title = seoTitle;
+
   return (
     <>
       <style>{`
@@ -173,7 +175,6 @@ export default function PublicSitePreview() {
         img { max-width: 100%; }
         a { color: inherit; }
       `}</style>
-      <title>{seoTitle}</title>
       {seoDesc && <meta name="description" content={seoDesc} />}
 
       <SiteHeader
@@ -191,7 +192,13 @@ export default function PublicSitePreview() {
 
       <main>
         {blocks.map((block, i) => (
-          <BlockRenderer key={block.id || i} block={block} primaryColor={primaryColor} />
+          <BlockRenderer
+            key={block.id || i}
+            block={block}
+            primaryColor={primaryColor}
+            onNavigate={handleNavigate}
+            buildPageUrl={buildPageUrl}
+          />
         ))}
 
         {products.length > 0 && (

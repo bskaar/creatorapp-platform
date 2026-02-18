@@ -83,6 +83,18 @@ export function SiteHeader({ siteName, primaryColor, pages, currentPageSlug, isH
           {navItems.map(item => {
             const url = buildPageUrl(item.slug, item.isHome);
             const isActive = item.isHome ? isHome : item.slug === currentPageSlug;
+            let color: string;
+            let background: string;
+            if (item.isCta) {
+              color = '#fff';
+              background = primaryColor;
+            } else if (isActive) {
+              color = primaryColor;
+              background = 'transparent';
+            } else {
+              color = '#475569';
+              background = 'transparent';
+            }
             return (
               <a
                 key={item.slug}
@@ -91,9 +103,9 @@ export function SiteHeader({ siteName, primaryColor, pages, currentPageSlug, isH
                 style={{
                   padding: item.isCta ? '0.5rem 1.25rem' : '0.5rem 0.85rem',
                   fontSize: '0.9rem',
-                  fontWeight: item.isCta ? 600 : 500,
-                  color: item.isCta ? '#fff' : isActive ? primaryColor : '#475569',
-                  background: item.isCta ? primaryColor : isActive ? `${primaryColor}08` : 'transparent',
+                  fontWeight: item.isCta || isActive ? 600 : 500,
+                  color,
+                  background,
                   textDecoration: 'none',
                   borderRadius: 6,
                   transition: 'all 0.15s',
