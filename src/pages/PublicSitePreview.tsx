@@ -6,12 +6,21 @@ import { BlockRenderer } from '../components/publicSite/BlockRenderer';
 import { ProductCard } from '../components/publicSite/ProductCard';
 import type { SiteData, PageData, ProductData, Block } from '../components/publicSite/types';
 
+function getSubdomainSlug(): string {
+  const hostname = window.location.hostname;
+  if (hostname.endsWith('.creatorapp.site') && hostname !== 'creatorapp.site' && hostname !== 'www.creatorapp.site') {
+    return hostname.replace('.creatorapp.site', '');
+  }
+  return '';
+}
+
 export default function PublicSitePreview() {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const siteSlug = params.slug || '';
+  const subdomainSlug = getSubdomainSlug();
+  const siteSlug = params.slug || subdomainSlug;
   const pageSlug = params['*'] || '';
   const legacyDomain = searchParams.get('domain') || '';
   const legacyPath = searchParams.get('path') || '';
@@ -23,6 +32,7 @@ export default function PublicSitePreview() {
   const [error, setError] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const isSubdomainMode = !!subdomainSlug;
   const isLegacyMode = !siteSlug && !!legacyDomain;
 
   useEffect(() => {
@@ -111,6 +121,10 @@ export default function PublicSitePreview() {
     if (isLegacyMode) {
       return `/site-preview?domain=${legacyDomain}&path=${isHome ? '/' : `/${targetPageSlug}`}`;
     }
+    if (isSubdomainMode) {
+      const homeSlug = pages[0]?.slug || 'home';
+      return isHome ? `/${homeSlug}` : `/${targetPageSlug}`;
+    }
     const homeSlug = pages[0]?.slug || 'home';
     return isHome ? `/s/${site?.slug}/${homeSlug}` : `/s/${site?.slug}/${targetPageSlug}`;
   }
@@ -144,11 +158,16 @@ export default function PublicSitePreview() {
   const homePage = pages.find(p => p.page_type === 'landing') || pages[0];
 
   if (!isLegacyMode && !pageSlug && homePage && site) {
-    navigate(`/s/${site.slug}/${homePage.slug}`, { replace: true });
+    const homeTarget = isSubdomainMode ? `/${homePage.slug}` : `/s/${site.slug}/${homePage.slug}`;
+    navigate(homeTarget, { replace: true });
     return null;
   }
 
-  const requestPath = isLegacyMode ? legacyPath : (pageSlug ? `/${pageSlug}` : '/');
+  const requestPath = isLegacyMode
+    ? legacyPath
+    : isSubdomainMode
+      ? window.location.pathname
+      : (pageSlug ? `/${pageSlug}` : '/');
   const isHome = requestPath === '/' || requestPath === '' || (homePage && pageSlug === homePage.slug);
 
   const currentPage = isHome ? homePage : pages.find(p => `/${p.slug}` === requestPath || p.slug === pageSlug);

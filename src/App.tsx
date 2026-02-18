@@ -132,7 +132,39 @@ function LandingRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+const MAIN_APP_DOMAINS = [
+  'creatorapp.site',
+  'www.creatorapp.site',
+  'creatorapp.us',
+  'www.creatorapp.us',
+  'creatorapp.vercel.app',
+  'localhost',
+  '127.0.0.1',
+];
+
+function isCreatorSiteSubdomain(): string | null {
+  const hostname = window.location.hostname;
+  if (hostname.endsWith('.creatorapp.site') && !MAIN_APP_DOMAINS.includes(hostname)) {
+    return hostname.replace('.creatorapp.site', '');
+  }
+  return null;
+}
+
+function SubdomainSiteWrapper() {
+  return <PublicSitePreview />;
+}
+
 function AppRoutes() {
+  const subdomainSlug = isCreatorSiteSubdomain();
+
+  if (subdomainSlug) {
+    return (
+      <Routes>
+        <Route path="*" element={<SubdomainSiteWrapper />} />
+      </Routes>
+    );
+  }
+
   return (
     <Routes>
       <Route
