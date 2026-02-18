@@ -709,7 +709,7 @@ export default function PageEditor() {
                 return (
                   <div
                     key={block.id}
-                    onClick={() => setSelectedBlockId(block.id)}
+                    onClick={() => { setSelectedBlockId(block.id); setEditingBlockId(block.id); }}
                     className={`flex items-center justify-between p-2 rounded-lg cursor-pointer group transition ${
                       selectedBlockId === block.id
                         ? 'bg-blue-600 text-white'
@@ -892,6 +892,7 @@ export default function PageEditor() {
             {editingBlockId && selectedBlock ? (
               <div className="bg-white rounded-lg m-2">
                 <BlockEditor
+                  key={selectedBlock.id}
                   block={selectedBlock}
                   onUpdate={(content) => updateBlock(selectedBlock.id, content)}
                   onStyleUpdate={(styles) => updateBlockStyles(selectedBlock.id, styles)}
