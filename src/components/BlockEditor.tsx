@@ -49,7 +49,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 text-gray-900">
       <div className="flex space-x-2 border-b">
         <button
           onClick={() => setActiveTab('content')}
@@ -85,7 +85,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                   type="text"
                   value={content.headline || ''}
                   onChange={(e) => handleContentChange('headline', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -101,7 +101,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                         handleContentChange('cards', updated);
                       }}
                       placeholder="Card title"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2 text-gray-900 bg-white"
                     />
                     <textarea
                       value={card.description}
@@ -111,7 +111,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                         handleContentChange('cards', updated);
                       }}
                       placeholder="Card description"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                       rows={2}
                     />
                   </div>
@@ -126,7 +126,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                   type="text"
                   value={content.badge || ''}
                   onChange={(e) => handleContentChange('badge', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -135,7 +135,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                   type="text"
                   value={content.headline || ''}
                   onChange={(e) => handleContentChange('headline', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -143,7 +143,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                 <textarea
                   value={content.description || ''}
                   onChange={(e) => handleContentChange('description', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                   rows={3}
                 />
               </div>
@@ -153,7 +153,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                   type="text"
                   value={content.frameworkTitle || ''}
                   onChange={(e) => handleContentChange('frameworkTitle', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -170,7 +170,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                           handleContentChange('steps', updated);
                         }}
                         placeholder="Letter"
-                        className="px-3 py-2 border border-gray-300 rounded-lg"
+                        className="px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                         maxLength={1}
                       />
                       <input
@@ -182,7 +182,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                           handleContentChange('steps', updated);
                         }}
                         placeholder="Title"
-                        className="col-span-2 px-3 py-2 border border-gray-300 rounded-lg"
+                        className="col-span-2 px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                       />
                     </div>
                     <input
@@ -208,7 +208,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                   type="text"
                   value={content.headline || ''}
                   onChange={(e) => handleContentChange('headline', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                 />
               </div>
               <div>
@@ -225,7 +225,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                           handleContentChange('modules', updated);
                         }}
                         placeholder="#"
-                        className="px-3 py-2 border border-gray-300 rounded-lg"
+                        className="px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                       />
                       <input
                         type="text"
@@ -236,7 +236,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                           handleContentChange('modules', updated);
                         }}
                         placeholder="Title"
-                        className="col-span-3 px-3 py-2 border border-gray-300 rounded-lg"
+                        className="col-span-3 px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
                       />
                     </div>
                     <textarea
@@ -247,7 +247,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                         handleContentChange('modules', updated);
                       }}
                       placeholder="Description"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2 text-gray-900 bg-white"
                       rows={2}
                     />
                     <div className="text-xs text-gray-500 mb-1">Topics (one per line):</div>
@@ -259,7 +259,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                         handleContentChange('modules', updated);
                       }}
                       placeholder="Topic 1&#10;Topic 2&#10;Topic 3"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white"
                       rows={3}
                     />
                   </div>
@@ -274,7 +274,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                   type="text"
                   value={content.headline || ''}
                   onChange={(e) => handleContentChange('headline', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2 text-gray-900 bg-white"
                 />
                 <AITextGenerator
                   type="headline"
@@ -294,13 +294,13 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                       value={feature.title}
                       onChange={(e) => handleFeatureChange(index, 'title', e.target.value)}
                       placeholder="Feature title"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2 text-gray-900 bg-white"
                     />
                     <textarea
                       value={feature.description}
                       onChange={(e) => handleFeatureChange(index, 'description', e.target.value)}
                       placeholder="Feature description"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2 text-gray-900 bg-white"
                       rows={2}
                     />
                     <button
@@ -341,7 +341,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                       <textarea
                         value={value}
                         onChange={(e) => handleContentChange(key, e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2 text-gray-900 bg-white"
                         rows={3}
                       />
                       <AITextGenerator
@@ -358,7 +358,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                         type="url"
                         value={value}
                         onChange={(e) => handleContentChange(key, e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2 text-gray-900 bg-white"
                       />
                       <button
                         onClick={() => setShowImageSearch(true)}
@@ -374,7 +374,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                         type={key.includes('url') || key.includes('Url') ? 'url' : 'text'}
                         value={value}
                         onChange={(e) => handleContentChange(key, e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2 text-gray-900 bg-white"
                       />
                       {(isHeadline || isSubheadline || isCTA) && (
                         <AITextGenerator
@@ -408,7 +408,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                 value={styles.backgroundColor || ''}
                 onChange={(e) => handleStyleChange('backgroundColor', e.target.value)}
                 placeholder="#ffffff or transparent"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -427,7 +427,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
                 value={styles.textColor || ''}
                 onChange={(e) => handleStyleChange('textColor', e.target.value)}
                 placeholder="#000000"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -437,7 +437,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
             <select
               value={styles.padding || 'medium'}
               onChange={(e) => handleStyleChange('padding', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
             >
               <option value="none">None</option>
               <option value="small">Small</option>
@@ -452,7 +452,7 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
             <select
               value={styles.alignment || 'left'}
               onChange={(e) => handleStyleChange('alignment', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white"
             >
               <option value="left">Left</option>
               <option value="center">Center</option>
