@@ -60,7 +60,16 @@ export default function StripeConnectOnboarding() {
           const errorJson = JSON.parse(errorText);
           errorMessage = errorJson.error || errorMessage;
 
-          if (errorMessage.includes('invalid_request_error') || errorMessage.includes('signed up for Connect')) {
+          if (errorMessage.startsWith('STRIPE_ERROR:')) {
+            const parts = errorMessage.split(':');
+            const code = parts[1] || '';
+            const msg = parts.slice(2).join(':');
+            if (code.includes('invalid_request_error') || msg.includes('signed up for Connect') || msg.includes('Connect')) {
+              errorMessage = `Stripe Connect error: ${msg}. Please verify Connect is enabled at Stripe Dashboard → Settings → Connect.`;
+            } else {
+              errorMessage = `Stripe error (${code}): ${msg}`;
+            }
+          } else if (errorMessage.includes('invalid_request_error') || errorMessage.includes('signed up for Connect')) {
             errorMessage = 'Stripe Connect is not enabled for this API key. Please enable Stripe Connect in your Stripe Dashboard or use a Connect-enabled account.';
           }
         } catch {

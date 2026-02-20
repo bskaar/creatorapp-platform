@@ -81,8 +81,11 @@ Deno.serve(async (req: Request) => {
       });
 
       if (!accountResponse.ok) {
-        const error = await accountResponse.text();
-        throw new Error(`Stripe API error: ${error}`);
+        const errorBody = await accountResponse.json().catch(() => null);
+        const stripeMessage = errorBody?.error?.message || 'Unknown Stripe error';
+        const stripeCode = errorBody?.error?.code || errorBody?.error?.type || '';
+        console.error("Stripe create account error:", JSON.stringify(errorBody));
+        throw new Error(`STRIPE_ERROR:${stripeCode}:${stripeMessage}`);
       }
 
       const account = await accountResponse.json();
