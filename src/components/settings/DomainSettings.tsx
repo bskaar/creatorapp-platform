@@ -22,19 +22,11 @@ export default function DomainSettings() {
     }
   }, [currentSite]);
 
-  const generateVerificationToken = async () => {
-    if (!currentSite) return;
-
-    try {
-      const { data, error } = await supabase
-        .rpc('generate_domain_verification_token');
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error generating token:', error);
-      return null;
-    }
+  const generateVerificationToken = () => {
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    const hex = Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
+    return `crtr_verify_${hex}`;
   };
 
   const handleSaveDomain = async () => {
@@ -44,8 +36,7 @@ export default function DomainSettings() {
     try {
       const domain = customDomain.toLowerCase().trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
 
-      const token = await generateVerificationToken();
-      if (!token) throw new Error('Failed to generate verification token');
+      const token = generateVerificationToken();
 
       const { error } = await supabase
         .from('sites')
