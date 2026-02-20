@@ -92,8 +92,11 @@ export default function DomainSettings() {
 
       if (result.verified) {
         setDomainStatus('verified');
+
+        await addDomainsToVercel();
+
         await refreshSites();
-        alert('Domain verified successfully!');
+        alert('Domain verified and added to hosting successfully!');
       } else {
         setDomainStatus('failed');
         alert(result.message || 'Domain verification failed. Please check your DNS records and try again.');
@@ -103,6 +106,48 @@ export default function DomainSettings() {
       alert('Failed to verify domain. Please try again.');
     } finally {
       setVerifying(false);
+    }
+  };
+
+  const addDomainsToVercel = async () => {
+    if (!currentSite || !customDomain) return;
+
+    try {
+      const isRootDomain = !customDomain.startsWith('www.');
+      const rootDomain = customDomain.replace(/^www\./, '');
+      const wwwDomain = `www.${rootDomain}`;
+
+      const addDomain = async (domain: string) => {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-vercel-domain`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              action: 'add',
+              domain: domain,
+              site_id: currentSite.id,
+            }),
+          }
+        );
+        return response.json();
+      };
+
+      if (isRootDomain) {
+        await Promise.all([
+          addDomain(rootDomain),
+          addDomain(wwwDomain),
+        ]);
+      } else {
+        await addDomain(wwwDomain);
+      }
+
+      setVercelStatus({ added: true, verified: false });
+    } catch (error) {
+      console.error('Error adding domains to Vercel:', error);
     }
   };
 
@@ -301,17 +346,6 @@ export default function DomainSettings() {
                       Add these DNS records to your domain provider:
                     </p>
 
-                    {!customDomain.startsWith('www.') && (
-                      <div className="bg-orange-50 border border-orange-300 rounded-lg p-3 mb-3">
-                        <p className="text-sm font-semibold text-orange-800 mb-1">⚠️ Root Domain Detected</p>
-                        <p className="text-xs text-orange-700">
-                          Most DNS providers (including GoDaddy) don't allow CNAME records for root domains.
-                          <strong> We recommend using "www.{customDomain}"</strong> instead. If you want to use the root domain,
-                          set up forwarding from {customDomain} → www.{customDomain} in your DNS provider.
-                        </p>
-                      </div>
-                    )}
-
                     <div className="bg-white rounded-lg border border-yellow-200 overflow-hidden">
                       <table className="w-full text-sm">
                         <thead className="bg-yellow-100 border-b border-yellow-200">
@@ -322,28 +356,67 @@ export default function DomainSettings() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-yellow-100">
+                          {!customDomain.startsWith('www.') ? (
+                            <>
+                              <tr>
+                                <td className="px-4 py-3 font-mono font-semibold text-blue-600">A</td>
+                                <td className="px-4 py-3 font-mono font-semibold">@</td>
+                                <td className="px-4 py-3">
+                                  <div className="flex items-center gap-2">
+                                    <code className="flex-1 px-3 py-1.5 bg-gray-50 rounded font-mono text-xs font-semibold">
+                                      76.76.21.21
+                                    </code>
+                                    <button
+                                      onClick={() => copyToClipboard('76.76.21.21')}
+                                      className="p-2 hover:bg-yellow-100 rounded-lg transition-colors"
+                                      title="Copy to clipboard"
+                                    >
+                                      <Copy className="h-4 w-4 text-gray-600" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td className="px-4 py-3 font-mono font-semibold text-green-600">CNAME</td>
+                                <td className="px-4 py-3 font-mono font-semibold">www</td>
+                                <td className="px-4 py-3">
+                                  <div className="flex items-center gap-2">
+                                    <code className="flex-1 px-3 py-1.5 bg-gray-50 rounded font-mono text-xs font-semibold">
+                                      cname.vercel-dns.com
+                                    </code>
+                                    <button
+                                      onClick={() => copyToClipboard('cname.vercel-dns.com')}
+                                      className="p-2 hover:bg-yellow-100 rounded-lg transition-colors"
+                                      title="Copy to clipboard"
+                                    >
+                                      <Copy className="h-4 w-4 text-gray-600" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            </>
+                          ) : (
+                            <tr>
+                              <td className="px-4 py-3 font-mono font-semibold text-green-600">CNAME</td>
+                              <td className="px-4 py-3 font-mono font-semibold">www</td>
+                              <td className="px-4 py-3">
+                                <div className="flex items-center gap-2">
+                                  <code className="flex-1 px-3 py-1.5 bg-gray-50 rounded font-mono text-xs font-semibold">
+                                    cname.vercel-dns.com
+                                  </code>
+                                  <button
+                                    onClick={() => copyToClipboard('cname.vercel-dns.com')}
+                                    className="p-2 hover:bg-yellow-100 rounded-lg transition-colors"
+                                    title="Copy to clipboard"
+                                  >
+                                    <Copy className="h-4 w-4 text-gray-600" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
                           <tr>
-                            <td className="px-4 py-3 font-mono font-semibold">CNAME</td>
-                            <td className="px-4 py-3 font-mono font-semibold">
-                              {customDomain.startsWith('www.') ? 'www' : '@'}
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-2">
-                                <code className="flex-1 px-3 py-1.5 bg-gray-50 rounded font-mono text-xs font-semibold">
-                                  {defaultDomain}
-                                </code>
-                                <button
-                                  onClick={() => copyToClipboard(defaultDomain)}
-                                  className="p-2 hover:bg-yellow-100 rounded-lg transition-colors"
-                                  title="Copy to clipboard"
-                                >
-                                  <Copy className="h-4 w-4 text-gray-600" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3 font-mono font-semibold">TXT</td>
+                            <td className="px-4 py-3 font-mono font-semibold text-purple-600">TXT</td>
                             <td className="px-4 py-3 font-mono font-semibold">_creatorapp-verification</td>
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-2">
@@ -364,6 +437,16 @@ export default function DomainSettings() {
                       </table>
                     </div>
 
+                    {!customDomain.startsWith('www.') && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
+                        <p className="text-sm font-semibold text-blue-800 mb-1">Root Domain Setup</p>
+                        <p className="text-xs text-blue-700">
+                          Since you're using a root domain ({customDomain}), you need both an <strong>A record</strong> for the root
+                          and a <strong>CNAME</strong> for www. This ensures both {customDomain} and www.{customDomain} work correctly.
+                        </p>
+                      </div>
+                    )}
+
                     {copied && (
                       <p className="text-xs text-green-600 font-semibold mt-2 flex items-center gap-1">
                         <Check className="h-3.5 w-3.5" />
@@ -377,18 +460,8 @@ export default function DomainSettings() {
                     <ol className="list-decimal list-inside space-y-2 text-sm text-text-secondary font-medium">
                       <li>Log in to your domain provider (GoDaddy, Namecheap, Cloudflare, etc.)</li>
                       <li>Navigate to your DNS settings or DNS management page</li>
-                      {!customDomain.startsWith('www.') && (
-                        <li className="text-orange-700 font-semibold">
-                          <strong>For root domains:</strong> If your provider doesn't allow CNAME for "@",
-                          change your domain to "www.{customDomain}" or use domain forwarding
-                        </li>
-                      )}
-                      {customDomain.startsWith('www.') && (
-                        <li>
-                          <strong>Delete any existing CNAME</strong> record for "www" that points elsewhere
-                        </li>
-                      )}
-                      <li>Add both DNS records shown above</li>
+                      <li><strong>Delete any existing A, AAAA, or CNAME records</strong> for "@" and "www" that point elsewhere</li>
+                      <li>Add all DNS records shown above</li>
                       <li>Wait 5-10 minutes for DNS propagation (can take up to 48 hours)</li>
                       <li>Click "Verify Domain" below to check if your domain is configured correctly</li>
                     </ol>
@@ -494,25 +567,30 @@ export default function DomainSettings() {
               <p className="font-semibold text-dark mb-2">GoDaddy Specific Instructions:</p>
               <ol className="list-decimal list-inside space-y-1 ml-2">
                 <li>Log into GoDaddy and go to your Domain Portfolio</li>
-                <li>Click on your domain → <strong>DNS</strong> or <strong>Manage DNS</strong></li>
-                <li><strong>Delete the existing CNAME</strong> record where Name="www" and Value="creatorappu.com"</li>
+                <li>Click on your domain, then <strong>DNS</strong> or <strong>Manage DNS</strong></li>
+                <li><strong>Delete any existing A, AAAA, or CNAME records</strong> for @ and www</li>
                 <li>Click <strong>Add New Record</strong></li>
-                <li>Select <strong>CNAME</strong> from the Type dropdown</li>
-                <li>Enter <strong>www</strong> in the Name field</li>
-                <li>Enter your CreatorApp subdomain (shown above) in the Value field</li>
-                <li>Click <strong>Add New Record</strong> again for the TXT record</li>
-                <li>Select <strong>TXT</strong> from Type, enter <strong>_creatorapp-verification</strong> as Name</li>
-                <li>Paste the verification token (shown above) in the Value field</li>
-                <li>Save both records and wait 5-10 minutes</li>
+                <li>For root domains: Select <strong>A</strong>, Name: <strong>@</strong>, Value: <strong>76.76.21.21</strong></li>
+                <li>Add another record: <strong>CNAME</strong>, Name: <strong>www</strong>, Value: <strong>cname.vercel-dns.com</strong></li>
+                <li>Add the TXT record: Name: <strong>_creatorapp-verification</strong>, Value: (your token)</li>
+                <li>Save all records and wait 5-10 minutes</li>
               </ol>
+            </div>
+
+            <div className="pt-3 border-t border-gray-300">
+              <p className="font-semibold text-dark mb-2">Quick Reference - DNS Values:</p>
+              <div className="bg-white rounded-lg p-3 border border-gray-200 font-mono text-xs space-y-1">
+                <p><strong>A Record (root):</strong> 76.76.21.21</p>
+                <p><strong>CNAME (www):</strong> cname.vercel-dns.com</p>
+              </div>
             </div>
 
             <div className="pt-3 border-t border-gray-300">
               <p className="font-semibold text-dark mb-2">Other domain providers:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
-                <li><strong>Namecheap:</strong> Domain List → Manage → Advanced DNS</li>
-                <li><strong>Cloudflare:</strong> Select Domain → DNS</li>
-                <li><strong>Google Domains:</strong> My Domains → DNS</li>
+                <li><strong>Namecheap:</strong> Domain List, Manage, Advanced DNS</li>
+                <li><strong>Cloudflare:</strong> Select Domain, DNS</li>
+                <li><strong>Google Domains:</strong> My Domains, DNS</li>
               </ul>
             </div>
 
