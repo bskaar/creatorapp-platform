@@ -308,7 +308,7 @@ export default function DomainSettings() {
                   onChange={(e) => setCustomDomain(e.target.value)}
                   disabled={domainStatus === 'verified'}
                   className="flex-1 px-4 py-3 border-2 border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium disabled:bg-gray-50 disabled:cursor-not-allowed"
-                  placeholder="www.yourdomain.com or yourdomain.com"
+                  placeholder="www.yourdomain.com (recommended)"
                 />
                 {domainStatus === 'verified' ? (
                   <button
@@ -329,7 +329,7 @@ export default function DomainSettings() {
                 )}
               </div>
               <p className="text-xs text-text-secondary mt-2 font-medium">
-                Enter your custom domain (e.g., www.mysite.com or mysite.com)
+                We recommend using www.yourdomain.com format for best compatibility with all domain registrars.
               </p>
             </div>
 
@@ -438,11 +438,24 @@ export default function DomainSettings() {
                     </div>
 
                     {!customDomain.startsWith('www.') && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
-                        <p className="text-sm font-semibold text-blue-800 mb-1">Root Domain Setup</p>
-                        <p className="text-xs text-blue-700">
-                          Since you're using a root domain ({customDomain}), you need both an <strong>A record</strong> for the root
-                          and a <strong>CNAME</strong> for www. This ensures both {customDomain} and www.{customDomain} work correctly.
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
+                        <p className="text-sm font-semibold text-red-800 mb-1">Root Domain May Have Limitations</p>
+                        <p className="text-xs text-red-700 mb-2">
+                          Many domain registrars (like GoDaddy) have locked A records that cannot be deleted, which may prevent
+                          root domain ({customDomain}) from working correctly with our hosting.
+                        </p>
+                        <p className="text-xs text-red-700 font-semibold">
+                          Recommended: Use www.{customDomain} instead, then set up domain forwarding from {customDomain} to www.{customDomain} in your registrar.
+                        </p>
+                      </div>
+                    )}
+
+                    {customDomain.startsWith('www.') && (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
+                        <p className="text-sm font-semibold text-green-800 mb-1">Good Choice!</p>
+                        <p className="text-xs text-green-700">
+                          Using www subdomain works reliably with all domain registrars. After setup, configure your registrar
+                          to redirect {customDomain.replace('www.', '')} to {customDomain} so both addresses work.
                         </p>
                       </div>
                     )}
@@ -468,8 +481,19 @@ export default function DomainSettings() {
                     <ol className="list-decimal list-inside space-y-2 text-sm text-text-secondary font-medium">
                       <li>Log in to your domain provider (GoDaddy, Namecheap, Cloudflare, etc.)</li>
                       <li>Navigate to your DNS settings or DNS management page</li>
-                      <li><strong>Delete any existing A, AAAA, or CNAME records</strong> for "@" and "www" that point elsewhere</li>
-                      <li>Add all DNS records shown above</li>
+                      {customDomain.startsWith('www.') ? (
+                        <>
+                          <li>Add a <strong>CNAME record</strong> for "www" pointing to cname.vercel-dns.com</li>
+                          <li>Add the <strong>TXT record</strong> for verification as shown above</li>
+                          <li><strong>Optional but recommended:</strong> Set up domain forwarding from {customDomain.replace('www.', '')} to {customDomain} in your registrar's forwarding settings</li>
+                        </>
+                      ) : (
+                        <>
+                          <li>Delete any existing A, AAAA, or CNAME records for "@" and "www" that point elsewhere (if possible)</li>
+                          <li>Add all DNS records shown above</li>
+                          <li>If you cannot delete existing A records, consider using www.{customDomain} instead</li>
+                        </>
+                      )}
                       <li>Wait 5-10 minutes for DNS propagation (can take up to 48 hours)</li>
                       <li>Click "Verify Domain" below to check if your domain is configured correctly</li>
                     </ol>
