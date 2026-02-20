@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SiteProvider, useSite } from './contexts/SiteContext';
 import { PlatformAdminProvider } from './contexts/PlatformAdminContext';
+import { supabase } from './lib/supabase';
 import Layout from './components/Layout';
 import PlatformAdminLayout from './components/PlatformAdminLayout';
 import PlatformAdminGuard from './components/PlatformAdminGuard';
@@ -137,6 +139,8 @@ const MAIN_APP_DOMAINS = [
   'www.creatorapp.site',
   'creatorapp.us',
   'www.creatorapp.us',
+  'creatorappu.com',
+  'www.creatorappu.com',
   'creatorapp.vercel.app',
   'localhost',
   '127.0.0.1',
@@ -150,17 +154,72 @@ function isCreatorSiteSubdomain(): string | null {
   return null;
 }
 
+function useCustomDomainCheck(): { isCustomDomain: boolean; loading: boolean } {
+  const [state, setState] = useState({ isCustomDomain: false, loading: true });
+
+  useEffect(() => {
+    async function checkCustomDomain() {
+      const hostname = window.location.hostname.toLowerCase().replace(/^www\./, '');
+
+      if (MAIN_APP_DOMAINS.some(d => d.replace(/^www\./, '') === hostname)) {
+        setState({ isCustomDomain: false, loading: false });
+        return;
+      }
+
+      if (hostname.endsWith('.creatorapp.site')) {
+        setState({ isCustomDomain: false, loading: false });
+        return;
+      }
+
+      const { data } = await supabase
+        .from('sites')
+        .select('id')
+        .eq('custom_domain', hostname)
+        .eq('domain_verification_status', 'verified')
+        .eq('status', 'active')
+        .maybeSingle();
+
+      setState({ isCustomDomain: !!data, loading: false });
+    }
+
+    checkCustomDomain();
+  }, []);
+
+  return state;
+}
+
+function CustomDomainSiteWrapper() {
+  return <PublicSitePreview />;
+}
+
 function SubdomainSiteWrapper() {
   return <PublicSitePreview />;
 }
 
 function AppRoutes() {
   const subdomainSlug = isCreatorSiteSubdomain();
+  const { isCustomDomain, loading: customDomainLoading } = useCustomDomainCheck();
+
+  if (customDomainLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   if (subdomainSlug) {
     return (
       <Routes>
         <Route path="*" element={<SubdomainSiteWrapper />} />
+      </Routes>
+    );
+  }
+
+  if (isCustomDomain) {
+    return (
+      <Routes>
+        <Route path="*" element={<CustomDomainSiteWrapper />} />
       </Routes>
     );
   }

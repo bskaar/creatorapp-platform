@@ -6,6 +6,18 @@ import { BlockRenderer } from '../components/publicSite/BlockRenderer';
 import { ProductCard } from '../components/publicSite/ProductCard';
 import type { SiteData, PageData, ProductData, Block } from '../components/publicSite/types';
 
+const MAIN_APP_DOMAINS = [
+  'creatorapp.site',
+  'www.creatorapp.site',
+  'creatorapp.us',
+  'www.creatorapp.us',
+  'creatorappu.com',
+  'www.creatorappu.com',
+  'creatorapp.vercel.app',
+  'localhost',
+  '127.0.0.1',
+];
+
 function getSubdomainSlug(): string {
   const hostname = window.location.hostname;
   if (hostname.endsWith('.creatorapp.site') && hostname !== 'creatorapp.site' && hostname !== 'www.creatorapp.site') {
@@ -14,16 +26,29 @@ function getSubdomainSlug(): string {
   return '';
 }
 
+function getCustomDomain(): string {
+  const hostname = window.location.hostname.toLowerCase().replace(/^www\./, '');
+  if (MAIN_APP_DOMAINS.some(d => d.replace(/^www\./, '') === hostname)) {
+    return '';
+  }
+  if (hostname.endsWith('.creatorapp.site')) {
+    return '';
+  }
+  return hostname;
+}
+
 export default function PublicSitePreview() {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const subdomainSlug = getSubdomainSlug();
+  const customDomain = getCustomDomain();
   const siteSlug = params.slug || subdomainSlug;
-  const pageSlug = params['*'] || '';
+  const pageSlug = params['*'] || window.location.pathname.replace(/^\//, '');
   const legacyDomain = searchParams.get('domain') || '';
   const legacyPath = searchParams.get('path') || '';
+  const isCustomDomainMode = !!customDomain;
 
   const [site, setSite] = useState<SiteData | null>(null);
   const [pages, setPages] = useState<PageData[]>([]);
@@ -33,11 +58,11 @@ export default function PublicSitePreview() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isSubdomainMode = !!subdomainSlug;
-  const isLegacyMode = !siteSlug && !!legacyDomain;
+  const isLegacyMode = !siteSlug && !customDomain && !!legacyDomain;
 
   useEffect(() => {
     loadSiteData();
-  }, [siteSlug, pageSlug, legacyDomain, legacyPath]);
+  }, [siteSlug, pageSlug, legacyDomain, legacyPath, customDomain]);
 
   async function loadSiteData() {
     setLoading(true);
@@ -46,7 +71,9 @@ export default function PublicSitePreview() {
     try {
       let siteData: SiteData | null = null;
 
-      if (siteSlug) {
+      if (customDomain) {
+        siteData = await findSiteByDomain(customDomain);
+      } else if (siteSlug) {
         siteData = await findSiteBySlug(siteSlug);
       } else if (legacyDomain) {
         siteData = await findSiteByDomain(legacyDomain);
@@ -121,7 +148,7 @@ export default function PublicSitePreview() {
     if (isLegacyMode) {
       return `/site-preview?domain=${legacyDomain}&path=${isHome ? '/' : `/${targetPageSlug}`}`;
     }
-    if (isSubdomainMode) {
+    if (isCustomDomainMode || isSubdomainMode) {
       const homeSlug = pages[0]?.slug || 'home';
       return isHome ? `/${homeSlug}` : `/${targetPageSlug}`;
     }
@@ -158,14 +185,14 @@ export default function PublicSitePreview() {
   const homePage = pages.find(p => p.page_type === 'landing') || pages[0];
 
   if (!isLegacyMode && !pageSlug && homePage && site) {
-    const homeTarget = isSubdomainMode ? `/${homePage.slug}` : `/s/${site.slug}/${homePage.slug}`;
+    const homeTarget = (isCustomDomainMode || isSubdomainMode) ? `/${homePage.slug}` : `/s/${site.slug}/${homePage.slug}`;
     navigate(homeTarget, { replace: true });
     return null;
   }
 
   const requestPath = isLegacyMode
     ? legacyPath
-    : isSubdomainMode
+    : (isCustomDomainMode || isSubdomainMode)
       ? window.location.pathname
       : (pageSlug ? `/${pageSlug}` : '/');
   const isHome = requestPath === '/' || requestPath === '' || (homePage && pageSlug === homePage.slug);
