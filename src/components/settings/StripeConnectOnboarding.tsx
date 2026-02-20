@@ -79,8 +79,7 @@ export default function StripeConnectOnboarding() {
       }
 
       const data = await response.json();
-      console.log('Success, redirecting to:', data.onboardingUrl);
-      window.location.href = data.onboardingUrl;
+      window.open(data.onboardingUrl, '_blank', 'noopener,noreferrer');
     } catch (err: any) {
       console.error('Stripe Connect error:', err);
       setError(err.message || 'Failed to connect to Stripe. Please check console for details.');
@@ -117,7 +116,7 @@ export default function StripeConnectOnboarding() {
       }
 
       const data = await response.json();
-      window.location.href = data.onboardingUrl;
+      window.open(data.onboardingUrl, '_blank', 'noopener,noreferrer');
     } catch (err: any) {
       setError(err.message || 'Failed to resume onboarding. Please try again.');
     } finally {

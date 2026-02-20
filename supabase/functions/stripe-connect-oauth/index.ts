@@ -56,12 +56,38 @@ Deno.serve(async (req: Request) => {
 
       const { data: site } = await supabaseClient
         .from("sites")
-        .select("id")
+        .select("id, stripe_connect_account_id")
         .eq("id", siteId)
         .maybeSingle();
 
       if (!site) {
         throw new Error("Site not found");
+      }
+
+      if (site.stripe_connect_account_id) {
+        const appUrl = Deno.env.get("APP_URL") || "http://localhost:5173";
+        const linkResponse = await fetch("https://api.stripe.com/v1/account_links", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${stripeKey}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            "account": site.stripe_connect_account_id,
+            "refresh_url": `${appUrl}/settings?stripe_refresh=true`,
+            "return_url": `${appUrl}/settings?stripe_success=true`,
+            "type": "account_onboarding",
+          }).toString(),
+        });
+        if (!linkResponse.ok) {
+          const errorBody = await linkResponse.json().catch(() => null);
+          throw new Error(errorBody?.error?.message || 'Failed to create onboarding link');
+        }
+        const accountLink = await linkResponse.json();
+        return new Response(
+          JSON.stringify({ accountId: site.stripe_connect_account_id, onboardingUrl: accountLink.url }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
 
       const accountResponse = await fetch("https://api.stripe.com/v1/accounts", {
