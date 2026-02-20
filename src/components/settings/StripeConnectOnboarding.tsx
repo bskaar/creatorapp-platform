@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, Loader, ExternalLink } from 'lucide-react';
+import { CheckCircle, XCircle, Loader, ExternalLink, AlertTriangle } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { supabase } from '../../lib/supabase';
 
@@ -7,6 +7,8 @@ export default function StripeConnectOnboarding() {
   const { currentSite, refreshSites } = useSite();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
+  const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isConnected = currentSite?.stripe_connect_account_id;
@@ -121,6 +123,32 @@ export default function StripeConnectOnboarding() {
       setError(err.message || 'Failed to resume onboarding. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!currentSite) return;
+    setDisconnecting(true);
+    setError(null);
+    try {
+      const { error: dbError } = await supabase
+        .from('sites')
+        .update({
+          stripe_connect_account_id: null,
+          stripe_connect_onboarding_complete: false,
+          stripe_connect_charges_enabled: false,
+          stripe_connect_payouts_enabled: false,
+          stripe_connect_created_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', currentSite.id);
+      if (dbError) throw dbError;
+      await refreshSites();
+      setShowDisconnectConfirm(false);
+    } catch (err: any) {
+      setError(err.message || 'Failed to disconnect Stripe account.');
+    } finally {
+      setDisconnecting(false);
     }
   };
 
@@ -297,6 +325,44 @@ export default function StripeConnectOnboarding() {
               </div>
             </div>
           )}
+
+          <div className="border border-red-200 rounded-lg p-4 bg-red-50">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h4 className="font-medium text-red-900 text-sm mb-1">Disconnect Stripe Account</h4>
+                <p className="text-xs text-red-700">
+                  Removes the connection from this site. Your Stripe account itself will not be deleted.
+                  You can reconnect a different account at any time.
+                </p>
+              </div>
+              {!showDisconnectConfirm ? (
+                <button
+                  onClick={() => setShowDisconnectConfirm(true)}
+                  className="flex-shrink-0 px-3 py-1.5 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-100 transition-colors"
+                >
+                  Disconnect
+                </button>
+              ) : (
+                <div className="flex-shrink-0 flex items-center gap-2">
+                  <span className="text-xs text-red-800 font-medium">Are you sure?</span>
+                  <button
+                    onClick={handleDisconnect}
+                    disabled={disconnecting}
+                    className="flex items-center gap-1 px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+                  >
+                    {disconnecting ? <Loader className="h-3 w-3 animate-spin" /> : <AlertTriangle className="h-3 w-3" />}
+                    {disconnecting ? 'Disconnecting...' : 'Yes, Disconnect'}
+                  </button>
+                  <button
+                    onClick={() => setShowDisconnectConfirm(false)}
+                    className="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
