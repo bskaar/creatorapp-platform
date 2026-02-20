@@ -447,6 +447,14 @@ export default function DomainSettings() {
                       </div>
                     )}
 
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3">
+                      <p className="text-sm font-semibold text-amber-800 mb-1">Important: Check Vercel Dashboard</p>
+                      <p className="text-xs text-amber-700">
+                        Vercel may show different IP addresses in their dashboard. If you see "Invalid Configuration",
+                        click "Learn more" in Vercel to see the exact DNS values they require and use those instead.
+                      </p>
+                    </div>
+
                     {copied && (
                       <p className="text-xs text-green-600 font-semibold mt-2 flex items-center gap-1">
                         <Check className="h-3.5 w-3.5" />
