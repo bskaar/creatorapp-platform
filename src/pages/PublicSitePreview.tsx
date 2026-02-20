@@ -69,13 +69,20 @@ export default function PublicSitePreview() {
       document.title = seoTitle;
 
       if (site.favicon_url) {
-        let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-        if (!link) {
-          link = document.createElement('link');
-          link.rel = 'icon';
-          document.head.appendChild(link);
-        }
+        const existingLinks = document.querySelectorAll("link[rel*='icon']");
+        existingLinks.forEach(link => link.remove());
+
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = site.favicon_url.endsWith('.svg') ? 'image/svg+xml' :
+                    site.favicon_url.endsWith('.ico') ? 'image/x-icon' : 'image/png';
         link.href = site.favicon_url;
+        document.head.appendChild(link);
+
+        const shortcutLink = document.createElement('link');
+        shortcutLink.rel = 'shortcut icon';
+        shortcutLink.href = site.favicon_url;
+        document.head.appendChild(shortcutLink);
       }
     }
   }, [site, pages]);
