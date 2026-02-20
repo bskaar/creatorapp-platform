@@ -11,8 +11,6 @@ const MAIN_APP_DOMAINS = [
   'www.creatorapp.site',
   'creatorapp.us',
   'www.creatorapp.us',
-  'creatorappu.com',
-  'www.creatorappu.com',
   'creatorapp.vercel.app',
   'localhost',
   '127.0.0.1',
