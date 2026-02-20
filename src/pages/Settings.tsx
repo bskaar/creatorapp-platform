@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Settings as SettingsIcon, Palette, Users, Mail, CreditCard, Zap, Globe } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Palette, Users, Mail, CreditCard, Zap, Globe } from 'lucide-react';
 import GeneralSettings from '../components/settings/GeneralSettings';
 import DomainSettings from '../components/settings/DomainSettings';
 import TeamSettings from '../components/settings/TeamSettings';
@@ -9,8 +9,16 @@ import SubscriptionSettings from '../components/settings/SubscriptionSettings';
 
 type SettingsTab = 'general' | 'domain' | 'subscription' | 'team' | 'email' | 'payment';
 
+const VALID_TABS: SettingsTab[] = ['general', 'domain', 'subscription', 'team', 'email', 'payment'];
+
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState<SettingsTab>('general');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab') as SettingsTab | null;
+  const activeTab: SettingsTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'general';
+
+  const setActiveTab = (tab: SettingsTab) => {
+    setSearchParams({ tab });
+  };
 
   const tabs = [
     { id: 'general' as SettingsTab, label: 'General', icon: Palette },
