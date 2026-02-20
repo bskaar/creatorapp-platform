@@ -13,7 +13,8 @@ interface DomainVerificationRequest {
 
 async function verifyDNSRecord(domain: string, expectedToken: string): Promise<boolean> {
   try {
-    const txtRecordName = `_creatorapp-verification.${domain}`;
+    const rootDomain = domain.replace(/^www\./, '');
+    const txtRecordName = `_creatorapp-verification.${rootDomain}`;
 
     const response = await fetch(`https://dns.google/resolve?name=${txtRecordName}&type=TXT`);
     const data = await response.json();
