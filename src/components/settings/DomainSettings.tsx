@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Globe, Check, X, AlertCircle, ExternalLink, Copy, RefreshCw } from 'lucide-react';
+import { Globe, Check, X, AlertCircle, ExternalLink, Copy, RefreshCw, Server } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { supabase } from '../../lib/supabase';
 
@@ -7,9 +7,11 @@ export default function DomainSettings() {
   const { currentSite, refreshSites } = useSite();
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [addingToVercel, setAddingToVercel] = useState(false);
   const [customDomain, setCustomDomain] = useState('');
   const [verificationToken, setVerificationToken] = useState('');
   const [domainStatus, setDomainStatus] = useState<'not_verified' | 'pending' | 'verified' | 'failed'>('not_verified');
+  const [vercelStatus, setVercelStatus] = useState<{ added: boolean; verified: boolean }>({ added: false, verified: false });
   const [showInstructions, setShowInstructions] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -19,6 +21,10 @@ export default function DomainSettings() {
       setDomainStatus(currentSite.domain_verification_status || 'not_verified');
       setVerificationToken(currentSite.domain_verification_token || '');
       setShowInstructions(!!currentSite.custom_domain && currentSite.domain_verification_status !== 'verified');
+      setVercelStatus({
+        added: currentSite.vercel_domain_added || false,
+        verified: currentSite.vercel_domain_verified || false,
+      });
     }
   }, [currentSite]);
 
@@ -135,6 +141,44 @@ export default function DomainSettings() {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleAddToVercel = async () => {
+    if (!currentSite || !customDomain) return;
+
+    setAddingToVercel(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-vercel-domain`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'add',
+            domain: customDomain,
+            site_id: currentSite.id,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        setVercelStatus({ added: true, verified: result.verified || false });
+        await refreshSites();
+        alert('Domain added to hosting successfully! It may take a few minutes for SSL to be provisioned.');
+      } else {
+        alert(result.message || 'Failed to add domain to hosting. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error adding to Vercel:', error);
+      alert('Failed to add domain to hosting. Please try again.');
+    } finally {
+      setAddingToVercel(false);
+    }
   };
 
   const getStatusBadge = () => {
@@ -382,7 +426,7 @@ export default function DomainSettings() {
                   <div className="flex-1">
                     <h5 className="font-bold text-dark mb-2">Domain Verified</h5>
                     <p className="text-sm text-text-secondary font-medium mb-3">
-                      Your custom domain is successfully configured and verified. Your site is now accessible at:
+                      Your custom domain DNS is successfully configured and verified. Your site is now accessible at:
                     </p>
                     <a
                       href={`https://${customDomain}`}
@@ -393,6 +437,49 @@ export default function DomainSettings() {
                       {customDomain}
                       <ExternalLink className="h-4 w-4" />
                     </a>
+
+                    <div className="mt-4 pt-4 border-t border-green-200">
+                      <div className="flex items-center gap-3">
+                        <Server className="h-5 w-5 text-gray-500" />
+                        <span className="text-sm font-semibold text-dark">Hosting Status:</span>
+                        {vercelStatus.added ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                            <Check className="h-3.5 w-3.5" />
+                            {vercelStatus.verified ? 'Active' : 'Provisioning SSL...'}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">
+                            <AlertCircle className="h-3.5 w-3.5" />
+                            Pending Setup
+                          </span>
+                        )}
+                      </div>
+
+                      {!vercelStatus.added && (
+                        <div className="mt-3">
+                          <p className="text-sm text-text-secondary mb-2">
+                            Your domain needs to be added to hosting for it to work. Click below to complete setup:
+                          </p>
+                          <button
+                            onClick={handleAddToVercel}
+                            disabled={addingToVercel}
+                            className="flex items-center gap-2 px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-accent transition-colors disabled:opacity-50"
+                          >
+                            {addingToVercel ? (
+                              <>
+                                <RefreshCw className="h-4 w-4 animate-spin" />
+                                Adding to Hosting...
+                              </>
+                            ) : (
+                              <>
+                                <Server className="h-4 w-4" />
+                                Add to Hosting
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

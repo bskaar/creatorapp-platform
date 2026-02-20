@@ -11,6 +11,48 @@ interface DomainVerificationRequest {
   domain: string;
 }
 
+async function addDomainToVercel(domain: string): Promise<{ success: boolean; verified?: boolean; error?: string }> {
+  try {
+    const vercelToken = Deno.env.get('VERCEL_TOKEN');
+    const vercelProjectId = Deno.env.get('VERCEL_PROJECT_ID');
+    const vercelTeamId = Deno.env.get('VERCEL_TEAM_ID');
+
+    if (!vercelToken || !vercelProjectId) {
+      console.log('Vercel configuration not set, skipping Vercel domain addition');
+      return { success: false, error: 'Vercel not configured' };
+    }
+
+    let url = `https://api.vercel.com/v10/projects/${vercelProjectId}/domains`;
+    if (vercelTeamId) {
+      url += `?teamId=${vercelTeamId}`;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${vercelToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: domain }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      if (data.error?.code === 'domain_already_added') {
+        return { success: true, verified: true };
+      }
+      console.error('Vercel API error:', data);
+      return { success: false, error: data.error?.message || 'Failed to add domain' };
+    }
+
+    return { success: true, verified: data.verified || false };
+  } catch (error) {
+    console.error('Error adding domain to Vercel:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 async function verifyDNSRecord(domain: string, expectedToken: string): Promise<boolean> {
   try {
     const rootDomain = domain.replace(/^www\./, '');
@@ -127,6 +169,8 @@ Deno.serve(async (req: Request) => {
     ]);
 
     if (txtVerified && cnameVerified) {
+      const vercelResult = await addDomainToVercel(domain);
+
       await supabase
         .from('sites')
         .update({
@@ -137,6 +181,8 @@ Deno.serve(async (req: Request) => {
             cname_verified: true,
             last_checked: new Date().toISOString(),
           },
+          vercel_domain_added: vercelResult.success,
+          vercel_domain_verified: vercelResult.verified || false,
           updated_at: new Date().toISOString(),
         })
         .eq('id', site_id);
@@ -144,7 +190,10 @@ Deno.serve(async (req: Request) => {
       return new Response(
         JSON.stringify({
           verified: true,
-          message: 'Domain verified successfully!',
+          message: vercelResult.success
+            ? 'Domain verified and added to hosting successfully!'
+            : 'Domain DNS verified! Note: Automatic hosting setup pending - contact support if domain does not work within 24 hours.',
+          vercel_added: vercelResult.success,
         }),
         {
           status: 200,
