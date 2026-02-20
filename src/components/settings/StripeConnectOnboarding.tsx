@@ -89,6 +89,42 @@ export default function StripeConnectOnboarding() {
     }
   };
 
+  const handleResumeOnboarding = async () => {
+    if (!currentSite) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-connect-oauth?action=onboarding_link`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ siteId: currentSite.id }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorJson = await response.json().catch(() => ({}));
+        throw new Error(errorJson.error || 'Failed to get onboarding link');
+      }
+
+      const data = await response.json();
+      window.location.href = data.onboardingUrl;
+    } catch (err: any) {
+      setError(err.message || 'Failed to resume onboarding. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleRefreshStatus = async () => {
     if (!currentSite) return;
 
@@ -229,7 +265,7 @@ export default function StripeConnectOnboarding() {
                   Complete your Stripe onboarding to start accepting payments.
                 </p>
                 <button
-                  onClick={handleConnectStripe}
+                  onClick={handleResumeOnboarding}
                   disabled={loading}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm"
                 >

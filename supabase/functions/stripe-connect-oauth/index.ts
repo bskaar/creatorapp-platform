@@ -136,6 +136,64 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    if (action === "onboarding_link") {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) {
+        throw new Error("Missing authorization header");
+      }
+
+      const supabaseClient = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+        { global: { headers: { Authorization: authHeader } } }
+      );
+
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
+      const { siteId } = await req.json();
+      if (!siteId) throw new Error("Site ID is required");
+
+      const { data: site } = await supabaseClient
+        .from("sites")
+        .select("stripe_connect_account_id")
+        .eq("id", siteId)
+        .maybeSingle();
+
+      if (!site?.stripe_connect_account_id) {
+        throw new Error("No connected Stripe account found for this site");
+      }
+
+      const appUrl = Deno.env.get("APP_URL") || "http://localhost:5173";
+
+      const linkResponse = await fetch("https://api.stripe.com/v1/account_links", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${stripeKey}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          "account": site.stripe_connect_account_id,
+          "refresh_url": `${appUrl}/settings?stripe_refresh=true`,
+          "return_url": `${appUrl}/settings?stripe_success=true`,
+          "type": "account_onboarding",
+        }).toString(),
+      });
+
+      if (!linkResponse.ok) {
+        const errorBody = await linkResponse.json().catch(() => null);
+        const stripeMessage = errorBody?.error?.message || 'Failed to create onboarding link';
+        throw new Error(`STRIPE_ERROR::${stripeMessage}`);
+      }
+
+      const accountLink = await linkResponse.json();
+
+      return new Response(
+        JSON.stringify({ onboardingUrl: accountLink.url }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     if (action === "refresh") {
       const { siteId } = await req.json();
 
