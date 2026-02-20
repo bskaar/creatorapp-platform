@@ -62,6 +62,24 @@ export default function PublicSitePreview() {
     loadSiteData();
   }, [siteSlug, pageSlug, legacyDomain, legacyPath, customDomain]);
 
+  useEffect(() => {
+    if (site) {
+      const currentPage = pages.find(p => p.page_type === 'landing') || pages[0];
+      const seoTitle = currentPage?.seo_title || currentPage?.title || site.name;
+      document.title = seoTitle;
+
+      if (site.favicon_url) {
+        let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = site.favicon_url;
+      }
+    }
+  }, [site, pages]);
+
   async function loadSiteData() {
     setLoading(true);
     setError(null);
@@ -212,22 +230,7 @@ export default function PublicSitePreview() {
   }
 
   const blocks: Block[] = currentPage.content?.blocks || [];
-  const seoTitle = currentPage.seo_title || currentPage.title || site.name;
   const seoDesc = currentPage.seo_description || site.settings?.description || '';
-
-  useEffect(() => {
-    document.title = seoTitle;
-
-    if (site?.favicon_url) {
-      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
-      }
-      link.href = site.favicon_url;
-    }
-  }, [seoTitle, site?.favicon_url]);
 
   return (
     <>
