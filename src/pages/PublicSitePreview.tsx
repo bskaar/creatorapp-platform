@@ -115,7 +115,7 @@ export default function PublicSitePreview() {
   async function findSiteBySlug(slug: string): Promise<SiteData | null> {
     const { data } = await supabase
       .from('sites')
-      .select('id, name, slug, primary_color, settings, logo_url')
+      .select('id, name, slug, primary_color, settings, logo_url, favicon_url')
       .eq('slug', slug)
       .eq('status', 'active')
       .maybeSingle();
@@ -127,7 +127,7 @@ export default function PublicSitePreview() {
 
     const { data: byCustom } = await supabase
       .from('sites')
-      .select('id, name, slug, primary_color, settings, logo_url')
+      .select('id, name, slug, primary_color, settings, logo_url, favicon_url')
       .eq('custom_domain', clean)
       .eq('domain_verification_status', 'verified')
       .eq('status', 'active')
@@ -215,7 +215,19 @@ export default function PublicSitePreview() {
   const seoTitle = currentPage.seo_title || currentPage.title || site.name;
   const seoDesc = currentPage.seo_description || site.settings?.description || '';
 
-  document.title = seoTitle;
+  useEffect(() => {
+    document.title = seoTitle;
+
+    if (site?.favicon_url) {
+      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = site.favicon_url;
+    }
+  }, [seoTitle, site?.favicon_url]);
 
   return (
     <>

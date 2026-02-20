@@ -5,6 +5,7 @@ export interface SiteData {
   primary_color: string;
   settings: any;
   logo_url?: string | null;
+  favicon_url?: string | null;
 }
 
 export interface PageData {

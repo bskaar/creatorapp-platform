@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Upload, Save, Palette } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Upload, Save, Palette, Image, X } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { supabase } from '../../lib/supabase';
 
@@ -11,6 +11,8 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
   const { currentSite, refreshSites } = useSite();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
+  const faviconInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -18,6 +20,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
     description: '',
     keywords: '',
     timezone: 'America/New_York',
+    favicon_url: '',
   });
 
   useEffect(() => {
@@ -29,12 +32,58 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
         description: (currentSite.settings as any)?.description || '',
         keywords: (currentSite.settings as any)?.keywords || '',
         timezone: (currentSite.settings as any)?.timezone || 'America/New_York',
+        favicon_url: (currentSite as any).favicon_url || '',
       });
     }
   }, [currentSite]);
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    setSaved(false);
+  };
+
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !currentSite) return;
+
+    const validTypes = ['image/png', 'image/x-icon', 'image/ico', 'image/vnd.microsoft.icon', 'image/jpeg', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a PNG, ICO, JPG, or SVG file');
+      return;
+    }
+
+    if (file.size > 512000) {
+      alert('Favicon must be less than 500KB');
+      return;
+    }
+
+    setUploadingFavicon(true);
+    try {
+      const ext = file.name.split('.').pop() || 'png';
+      const fileName = `${currentSite.id}/favicon-${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('site-assets')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('site-assets')
+        .getPublicUrl(fileName);
+
+      setFormData(prev => ({ ...prev, favicon_url: publicUrl }));
+      setSaved(false);
+    } catch (error) {
+      console.error('Error uploading favicon:', error);
+      alert('Failed to upload favicon. Please try again.');
+    } finally {
+      setUploadingFavicon(false);
+    }
+  };
+
+  const handleRemoveFavicon = () => {
+    setFormData(prev => ({ ...prev, favicon_url: '' }));
     setSaved(false);
   };
 
@@ -56,6 +105,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
           name: formData.name,
           slug: formData.slug,
           primary_color: formData.primary_color,
+          favicon_url: formData.favicon_url || null,
           settings,
           updated_at: new Date().toISOString(),
         })
@@ -181,6 +231,60 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
             <Palette className="h-5 w-5 text-gray-400" />
           </div>
           <p className="text-xs text-text-secondary mt-1">Used for buttons, links, and accents</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-text-primary mb-1">
+            Favicon
+          </label>
+          <div className="flex items-center gap-4">
+            {formData.favicon_url ? (
+              <div className="relative">
+                <img
+                  src={formData.favicon_url}
+                  alt="Favicon"
+                  className="w-12 h-12 rounded border border-border object-contain bg-white"
+                />
+                <button
+                  onClick={handleRemoveFavicon}
+                  className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ) : (
+              <div className="w-12 h-12 rounded border-2 border-dashed border-border flex items-center justify-center bg-gray-50">
+                <Image className="w-5 h-5 text-gray-400" />
+              </div>
+            )}
+            <div>
+              <input
+                ref={faviconInputRef}
+                type="file"
+                accept=".png,.ico,.jpg,.jpeg,.svg"
+                onChange={handleFaviconUpload}
+                className="hidden"
+              />
+              <button
+                onClick={() => faviconInputRef.current?.click()}
+                disabled={uploadingFavicon}
+                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium disabled:opacity-50"
+              >
+                {uploadingFavicon ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    Upload Favicon
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+          <p className="text-xs text-text-secondary mt-1">32x32 or 64x64 PNG, ICO, or SVG recommended. Max 500KB.</p>
         </div>
 
         <div>
