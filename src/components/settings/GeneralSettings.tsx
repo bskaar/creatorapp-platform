@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Upload, Save, Palette, Image, X } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
 interface GeneralSettingsProps {
@@ -9,6 +10,7 @@ interface GeneralSettingsProps {
 
 export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
   const { currentSite, refreshSites } = useSite();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
@@ -44,7 +46,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
 
   const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !currentSite) return;
+    if (!file || !currentSite || !user) return;
 
     const validTypes = ['image/png', 'image/x-icon', 'image/ico', 'image/vnd.microsoft.icon', 'image/jpeg', 'image/svg+xml'];
     if (!validTypes.includes(file.type)) {
@@ -60,7 +62,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
     setUploadingFavicon(true);
     try {
       const ext = file.name.split('.').pop() || 'png';
-      const fileName = `${currentSite.id}/favicon-${Date.now()}.${ext}`;
+      const fileName = `${user.id}/${currentSite.id}-favicon-${Date.now()}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
         .from('site-assets')
