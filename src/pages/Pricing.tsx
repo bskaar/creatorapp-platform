@@ -238,7 +238,7 @@ export default function Pricing() {
             Plans for Every Stage
           </h1>
           <p className="text-xl text-gray-600 font-medium mb-8">
-            Start with a 14-day free trial. No credit card required. Scale as you grow.
+            Start with a 14-day free trial. Cancel anytime before your trial ends.
           </p>
 
           <div className="inline-flex items-center bg-gray-100 p-1 rounded-xl">
@@ -418,7 +418,7 @@ export default function Pricing() {
             {[
               {
                 q: 'How does the free trial work?',
-                a: 'Start with full access to all features for 14 days. No credit card required to start. At the end of your trial, choose a plan to continue.',
+                a: 'Start with full access to all features for 14 days. A credit card is required to start, but you won\'t be charged until your trial ends. Cancel anytime before the trial ends to avoid charges.',
               },
               {
                 q: 'Can I change plans later?',
