@@ -59,24 +59,59 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { goal, siteId, userId, conversationId } = await req.json();
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing authorization header" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    if (!goal || !siteId || !userId) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
+      throw new Error("Supabase credentials not configured");
+    }
+
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const { data: { user }, error: authError } = await userClient.auth.getUser();
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { goal, siteId, conversationId } = await req.json();
+
+    if (!goal || !siteId) {
       throw new Error("Missing required fields");
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { data: siteOwnership } = await supabase
+      .from('sites')
+      .select('id')
+      .eq('id', siteId)
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (!siteOwnership) {
+      return new Response(JSON.stringify({ error: "Forbidden: site not found or access denied" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!anthropicApiKey) {
       throw new Error("Anthropic API key not configured");
     }
-
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error("Supabase credentials not configured");
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { data: siteData } = await supabase
       .from('sites')
@@ -143,7 +178,7 @@ Deno.serve(async (req: Request) => {
       .from('ai_gameplans')
       .insert({
         site_id: siteId,
-        user_id: userId,
+        user_id: user.id,
         conversation_id: conversationId || null,
         title: gameplanData.title,
         description: gameplanData.description,
@@ -175,7 +210,7 @@ Deno.serve(async (req: Request) => {
       .from('ai_usage_tracking')
       .insert({
         site_id: siteId,
-        user_id: userId,
+        user_id: user.id,
         request_type: 'gameplan',
         model_used: 'sonnet',
         tokens_used: data.usage?.total_tokens || 0,

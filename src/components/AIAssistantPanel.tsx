@@ -27,7 +27,7 @@ interface AIAssistantPanelProps {
 
 export default function AIAssistantPanel({ isOpen, onClose, onMinimize, initialMessage }: AIAssistantPanelProps) {
   const { currentSite } = useSite();
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { limits, refreshUsage } = useAIUsage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -115,14 +115,13 @@ export default function AIAssistantPanel({ isOpen, onClose, onMinimize, initialM
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Authorization': `Bearer ${session?.access_token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             message: userMessage,
             conversationId: currentConversationId,
             siteId: currentSite.id,
-            userId: user.id,
           }),
         }
       );
@@ -183,13 +182,12 @@ export default function AIAssistantPanel({ isOpen, onClose, onMinimize, initialM
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            'Authorization': `Bearer ${session?.access_token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             goal,
             siteId: currentSite.id,
-            userId: user.id,
             conversationId: currentConversationId,
           }),
         }
