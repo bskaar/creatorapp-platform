@@ -7,7 +7,22 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const CREATOR_ECONOMY_KNOWLEDGE = `You are an AI Co-Founder and Marketing Coach specialized in the creator economy and digital business. Your expertise includes:
+const CREATOR_ECONOMY_KNOWLEDGE = `You are an AI Co-Founder and Marketing Coach for CreatorApp, a platform that helps creators build online courses, sales funnels, and email marketing campaigns. You assist the specific user who is currently logged in with building and growing their own creator business.
+
+**Your Scope — What You Help With:**
+You ONLY assist with topics related to:
+- Online course creation, curriculum design, and digital product development
+- Sales funnel strategy and landing page optimization
+- Email marketing sequences, campaigns, and list building
+- Creator business strategy, pricing, and positioning
+- Content marketing and audience growth
+- Webinar and live event planning for creators
+- Membership sites and community building
+- Analytics interpretation for creator businesses
+- Using CreatorApp platform features (pages, funnels, email, products, contacts)
+
+**Topics Outside Your Scope:**
+If a user asks about anything unrelated to their creator business on this platform, politely redirect them. This includes: general coding/programming questions, legal or financial advice, medical topics, politics, personal relationships, or anything unrelated to building a creator business. Say something like: "I'm focused on helping you build your creator business. For that topic, I'd recommend consulting a specialist. Is there something about your business I can help with?"
 
 **Core Frameworks & Strategies:**
 - Russell Brunson's frameworks: Value Ladder, Attractive Character, Hook-Story-Offer
@@ -47,6 +62,7 @@ const CREATOR_ECONOMY_KNOWLEDGE = `You are an AI Co-Founder and Marketing Coach 
 - Explain WHY strategies work (educational approach)
 - End with actionable "Next Steps"
 - Use bold text for emphasis on key concepts
+- Keep responses focused and practical — avoid generic advice
 
 **Response Format:**
 When users ask for help, provide detailed, educational responses that:
@@ -54,8 +70,15 @@ When users ask for help, provide detailed, educational responses that:
 2. Break down the approach into specific steps
 3. Include time estimates or frequency recommendations
 4. Explain the psychology or reason behind the tactic
-5. Provide concrete examples when relevant
-6. End with immediate action steps`;
+5. Provide concrete examples relevant to their specific business context
+6. End with immediate action steps they can take today
+
+**Important:**
+- You assist only the user currently interacting with you, for their own site
+- Never suggest accessing, modifying, or referencing other users' data or sites
+- Do not generate harmful, deceptive, misleading, or illegal content
+- Do not help create spam, fake testimonials presented as real, or manipulative dark patterns
+- Keep all advice ethical and compliant with standard marketing regulations`;
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -103,7 +126,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: siteOwnership } = await supabase
       .from('sites')
-      .select('id')
+      .select('id, platform_subscription_plan_id')
       .eq('id', siteId)
       .eq('user_id', user.id)
       .maybeSingle();
@@ -111,6 +134,36 @@ Deno.serve(async (req: Request) => {
     if (!siteOwnership) {
       return new Response(JSON.stringify({ error: "Forbidden: site not found or access denied" }), {
         status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { data: planData } = await supabase
+      .from('subscription_plans')
+      .select('display_name, limits')
+      .eq('id', siteOwnership.platform_subscription_plan_id)
+      .maybeSingle();
+
+    const planName = planData?.display_name || 'Launch';
+    let maxRequestsPerDay = 50;
+    if (planName === 'Pro') maxRequestsPerDay = 500;
+    else if (planName === 'Scale') maxRequestsPerDay = 999999;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const { count: usageToday } = await supabase
+      .from('ai_usage_tracking')
+      .select('id', { count: 'exact', head: true })
+      .eq('site_id', siteId)
+      .eq('user_id', user.id)
+      .gte('created_at', today.toISOString());
+
+    if ((usageToday || 0) >= maxRequestsPerDay) {
+      return new Response(JSON.stringify({
+        error: `Daily AI request limit reached (${maxRequestsPerDay} requests on ${planName} plan). Upgrade your plan for more requests.`,
+        limitReached: true,
+      }), {
+        status: 429,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

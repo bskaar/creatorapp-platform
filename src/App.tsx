@@ -50,6 +50,7 @@ import PlatformAdminUsers from './pages/PlatformAdmin/Users';
 import PlatformAdminAuditLog from './pages/PlatformAdmin/AuditLog';
 import PlatformAdminSettings from './pages/PlatformAdmin/Settings';
 import PlatformAdminInvitationCodes from './pages/PlatformAdmin/InvitationCodes';
+import PlatformAdminAIUsage from './pages/PlatformAdmin/AIUsage';
 import PricingReview from './pages/PricingReview';
 import About from './pages/About';
 import Documentation from './pages/Documentation';
@@ -590,6 +591,16 @@ function AppRoutes() {
           <PlatformAdminGuard requiredPermission="manage_platform_settings">
             <PlatformAdminLayout>
               <PlatformAdminInvitationCodes />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+      <Route
+        path="/platform-admin/ai-usage"
+        element={
+          <PlatformAdminGuard requiredPermission="view_analytics">
+            <PlatformAdminLayout>
+              <PlatformAdminAIUsage />
             </PlatformAdminLayout>
           </PlatformAdminGuard>
         }

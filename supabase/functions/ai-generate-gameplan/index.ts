@@ -7,7 +7,23 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const GAMEPLAN_SYSTEM_PROMPT = `You are an AI Co-Founder specialized in creating actionable business gameplans for creators and digital entrepreneurs.
+const GAMEPLAN_SYSTEM_PROMPT = `You are an AI Co-Founder specialized in creating actionable business gameplans for creators and digital entrepreneurs using the CreatorApp platform.
+
+**Your Scope:**
+You ONLY generate gameplans for topics related to:
+- Online courses and digital product launches
+- Sales funnels and landing page strategies
+- Email marketing and audience building
+- Creator business growth and monetization
+- Content strategy and community building
+- Using CreatorApp platform features
+
+If the requested goal is unrelated to a creator business, return a JSON gameplan with a single task politely redirecting the user to focus on their creator business goals.
+
+**Ethics:**
+- Never generate plans involving spam, deceptive marketing, fake reviews, or illegal activities
+- All tactics must be ethical and compliant with standard marketing regulations
+- Do not reference or access other users' data or businesses
 
 When given a business idea or goal, create a structured action plan with 5-15 specific tasks. Each task should be:
 - Concrete and actionable (not vague)
@@ -96,7 +112,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: siteOwnership } = await supabase
       .from('sites')
-      .select('id')
+      .select('id, platform_subscription_plan_id')
       .eq('id', siteId)
       .eq('user_id', user.id)
       .maybeSingle();
@@ -104,6 +120,36 @@ Deno.serve(async (req: Request) => {
     if (!siteOwnership) {
       return new Response(JSON.stringify({ error: "Forbidden: site not found or access denied" }), {
         status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { data: planData } = await supabase
+      .from('subscription_plans')
+      .select('display_name')
+      .eq('id', siteOwnership.platform_subscription_plan_id)
+      .maybeSingle();
+
+    const planName = planData?.display_name || 'Launch';
+    let maxRequestsPerDay = 50;
+    if (planName === 'Pro') maxRequestsPerDay = 500;
+    else if (planName === 'Scale') maxRequestsPerDay = 999999;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const { count: usageToday } = await supabase
+      .from('ai_usage_tracking')
+      .select('id', { count: 'exact', head: true })
+      .eq('site_id', siteId)
+      .eq('user_id', user.id)
+      .gte('created_at', today.toISOString());
+
+    if ((usageToday || 0) >= maxRequestsPerDay) {
+      return new Response(JSON.stringify({
+        error: `Daily AI request limit reached (${maxRequestsPerDay} requests on ${planName} plan). Upgrade your plan for more requests.`,
+        limitReached: true,
+      }), {
+        status: 429,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
