@@ -12,7 +12,9 @@ interface PlanData {
   display_name: string;
   description: string;
   price_monthly: string;
+  price_yearly: string | null;
   stripe_price_id: string | null;
+  stripe_price_id_yearly: string | null;
   limits: {
     max_products: number | null;
     max_funnels: number | null;
@@ -113,14 +115,20 @@ export default function Pricing() {
     navigate('/pricing');
   };
 
-  const handleSubscribe = async (plan: PlanData) => {
+  const handleSubscribe = async (plan: PlanData, yearly: boolean = false) => {
     if (plan.name === 'enterprise') {
       window.location.href = 'mailto:sales@creatorapp.us?subject=Enterprise%20Plan%20Inquiry';
       return;
     }
 
-    if (!plan.stripe_price_id) {
-      setCheckoutError('This plan is not available for purchase yet.');
+    const priceId = yearly ? plan.stripe_price_id_yearly : plan.stripe_price_id;
+
+    if (!priceId) {
+      if (yearly && !plan.stripe_price_id_yearly) {
+        setCheckoutError('Annual billing is not yet available for this plan. Please contact support or select monthly billing.');
+      } else {
+        setCheckoutError('This plan is not available for purchase yet.');
+      }
       return;
     }
 
@@ -131,7 +139,7 @@ export default function Pricing() {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session?.access_token) {
-        navigate('/signup?plan=' + plan.name);
+        navigate('/signup?plan=' + plan.name + (yearly ? '&billing=yearly' : ''));
         return;
       }
 
@@ -144,7 +152,7 @@ export default function Pricing() {
             'Authorization': `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
-            priceId: plan.stripe_price_id,
+            priceId,
             successUrl: `${window.location.origin}/dashboard?subscription=success`,
             cancelUrl: `${window.location.origin}/pricing`,
           }),
@@ -262,7 +270,7 @@ export default function Pricing() {
             >
               Yearly
               <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                Save 20%
+                2 months free
               </span>
             </button>
           </div>
@@ -285,8 +293,10 @@ export default function Pricing() {
               const isPopular = plan.name === 'growth';
               const isEnterprise = plan.name === 'enterprise';
               const monthlyPrice = parseFloat(plan.price_monthly);
+              const yearlyTotal = monthlyPrice * 10;
+              const yearlyMonthlyEquivalent = Math.round((yearlyTotal / 12) * 100) / 100;
               const displayPrice = billingCycle === 'yearly'
-                ? Math.round(monthlyPrice * 0.8)
+                ? yearlyMonthlyEquivalent
                 : monthlyPrice;
 
               return (
@@ -341,7 +351,7 @@ export default function Pricing() {
                           </div>
                           {billingCycle === 'yearly' && (
                             <p className="text-xs text-gray-500 mt-1">
-                              Billed annually (${displayPrice * 12}/year)
+                              Billed annually (${yearlyTotal}/year)
                             </p>
                           )}
                           {plan.trial_days > 0 && (
@@ -367,7 +377,7 @@ export default function Pricing() {
 
                   <div className="p-6 pt-0">
                     <button
-                      onClick={() => handleSubscribe(plan)}
+                      onClick={() => handleSubscribe(plan, billingCycle === 'yearly')}
                       disabled={loadingPlanId !== null}
                       className={`w-full py-3 px-4 rounded-xl font-semibold text-center transition-all duration-300 flex items-center justify-center group disabled:opacity-60 disabled:cursor-not-allowed ${
                         isPopular
@@ -430,7 +440,7 @@ export default function Pricing() {
               },
               {
                 q: 'Is there a contract or commitment?',
-                a: 'No long-term contracts. Monthly plans can be cancelled anytime. Yearly plans offer 20% savings and can be cancelled with prorated refunds.',
+                a: 'No long-term contracts. Monthly plans can be cancelled anytime. Yearly plans include 2 months free and can be cancelled with prorated refunds.',
               },
               {
                 q: 'What happens to my data if I cancel?',
