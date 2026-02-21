@@ -270,7 +270,7 @@ export default function Pricing() {
             >
               Yearly
               <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                2 months free
+                Save 15%+
               </span>
             </button>
           </div>
@@ -293,8 +293,9 @@ export default function Pricing() {
               const isPopular = plan.name === 'growth';
               const isEnterprise = plan.name === 'enterprise';
               const monthlyPrice = parseFloat(plan.price_monthly);
-              const yearlyTotal = monthlyPrice * 10;
+              const yearlyTotal = plan.price_yearly ? parseFloat(plan.price_yearly) : monthlyPrice * 12;
               const yearlyMonthlyEquivalent = Math.round((yearlyTotal / 12) * 100) / 100;
+              const annualSavingsPercent = Math.round((1 - yearlyTotal / (monthlyPrice * 12)) * 100);
               const displayPrice = billingCycle === 'yearly'
                 ? yearlyMonthlyEquivalent
                 : monthlyPrice;
@@ -351,7 +352,7 @@ export default function Pricing() {
                           </div>
                           {billingCycle === 'yearly' && (
                             <p className="text-xs text-gray-500 mt-1">
-                              Billed annually (${yearlyTotal}/year)
+                              Billed annually (${yearlyTotal}/year) - Save {annualSavingsPercent}%
                             </p>
                           )}
                           {plan.trial_days > 0 && (
@@ -440,7 +441,7 @@ export default function Pricing() {
               },
               {
                 q: 'Is there a contract or commitment?',
-                a: 'No long-term contracts. Monthly plans can be cancelled anytime. Yearly plans include 2 months free and can be cancelled with prorated refunds.',
+                a: 'No long-term contracts. Monthly plans can be cancelled anytime. Yearly plans save you over 15% and can be cancelled with prorated refunds.',
               },
               {
                 q: 'What happens to my data if I cancel?',
