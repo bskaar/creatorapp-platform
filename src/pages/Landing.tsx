@@ -159,8 +159,6 @@ export default function Landing() {
         </div>
       </section>
 
-      <HowItWorksSection onWatchDemo={() => setIsDemoOpen(true)} />
-
       <section id="features" className="py-32 px-8 bg-gradient-to-b from-white to-light-bg" aria-labelledby="features-heading">
         <div className="max-w-[1400px] mx-auto">
           <div className="text-center mb-20">
@@ -441,6 +439,8 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      <HowItWorksSection onWatchDemo={() => setIsDemoOpen(true)} />
 
       <section className="py-24 px-8 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-5xl mx-auto">
