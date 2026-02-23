@@ -458,7 +458,7 @@ export default function Pricing() {
               },
               {
                 q: 'Do you offer refunds?',
-                a: 'Yes, we offer a 30-day money-back guarantee on all plans. If you\'re not satisfied, contact support for a full refund.',
+                a: 'With a 14-day free trial, you can fully explore the platform before committing. If you\'re not satisfied after subscribing, contact support within 7 days for a prorated refund.',
               },
             ].map((faq, idx) => (
               <div key={idx} className="bg-white rounded-xl p-6 border border-gray-200">
