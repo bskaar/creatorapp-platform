@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Target, Heart, Zap, Shield, Users, Globe } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
+import Logo from '../components/Logo';
 
 export default function About() {
   return (

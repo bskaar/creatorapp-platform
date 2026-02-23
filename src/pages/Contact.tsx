@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, MapPin, MessageCircle, Send, HelpCircle, FileText, CheckCircle2, Loader2 } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
+import Logo from '../components/Logo';
 
 export default function Contact() {
   const navigate = useNavigate();
