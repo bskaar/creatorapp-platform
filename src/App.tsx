@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SiteProvider, useSite } from './contexts/SiteContext';
 import { PlatformAdminProvider } from './contexts/PlatformAdminContext';
@@ -58,6 +58,16 @@ import Documentation from './pages/Documentation';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import PublicSitePreview from './pages/PublicSitePreview';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
@@ -626,6 +636,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+        <ScrollToTop />
         <AuthProvider>
           <PlatformAdminProvider>
             <SiteProvider>
