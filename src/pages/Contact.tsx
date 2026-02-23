@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, MapPin, MessageCircle, Send, HelpCircle, FileText, CheckCircle2, Loader2 } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 
