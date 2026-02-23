@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle, Sparkles, Brain } from 'lucide-react';
+import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle, Sparkles, Brain, Shield, Lock, CreditCard } from 'lucide-react';
 import Logo from '../components/Logo';
 import DemoModal from '../components/DemoModal';
+import HowItWorksSection from '../components/HowItWorksSection';
+import ProductDemoVideo from '../components/ProductDemoVideo';
 import StructuredData, { organizationSchema, softwareApplicationSchema } from '../components/StructuredData';
 
 export default function Landing() {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   useEffect(() => {
     document.title = 'CreatorApp - All-in-One Platform for Creator Businesses';
@@ -95,6 +98,15 @@ export default function Landing() {
                 Start Your Free Trial
                 <ArrowRight className="h-5 w-5" />
               </Link>
+              <button
+                onClick={() => setIsDemoOpen(true)}
+                className="inline-flex items-center gap-2 bg-white border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 group"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Play className="h-4 w-4 text-white ml-0.5" />
+                </div>
+                See How It Works
+              </button>
             </div>
           </div>
 
@@ -146,6 +158,8 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      <HowItWorksSection onWatchDemo={() => setIsDemoOpen(true)} />
 
       <section id="features" className="py-32 px-8 bg-gradient-to-b from-white to-light-bg" aria-labelledby="features-heading">
         <div className="max-w-[1400px] mx-auto">
@@ -428,32 +442,69 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="py-32 px-8 bg-gradient-to-br from-light-bg via-white to-blue-50">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-[30px] p-16 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/30 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-            <div className="relative z-10">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-                Ready to Build Your Creator Business?
-              </h2>
-              <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-                Join thousands of creators using CreatorApp to build, grow, and monetize their online businesses. Start your free trial today.
+      <section className="py-24 px-8 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Built for Creators Who Mean Business
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Everything you need to launch your online business. Professional tools, no technical skills required.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
+                <Shield className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="font-bold text-gray-900 mb-2">Secure Platform</h3>
+              <p className="text-sm text-gray-600">SSL encryption on all sites. Your data and your customers' data is protected.</p>
+            </div>
+            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center mb-4">
+                <Lock className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="font-bold text-gray-900 mb-2">You Own Your Data</h3>
+              <p className="text-sm text-gray-600">Export your contacts, content, and data anytime. No lock-in, no restrictions.</p>
+            </div>
+            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center mb-4">
+                <CreditCard className="h-6 w-6 text-cyan-600" />
+              </div>
+              <h3 className="font-bold text-gray-900 mb-2">Transparent Pricing</h3>
+              <p className="text-sm text-gray-600">No hidden fees. Know exactly what you'll pay. Cancel anytime during your trial.</p>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl p-10 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="relative z-10 text-center">
+              <h3 className="text-3xl font-bold mb-4">
+                Start Building Today
+              </h3>
+              <p className="text-lg text-white/90 mb-8 max-w-xl mx-auto">
+                Get started with a 14-day free trial. Credit card required, but you won't be charged until after your trial ends.
               </p>
               <Link
                 to="/signup"
-                className="inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-heavy"
+                className="inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 Start Your Free Trial
                 <ArrowRight className="h-5 w-5" />
               </Link>
-              <div className="mt-8 flex items-center justify-center gap-8 text-sm text-white/80">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm text-white/80">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5" />
+                  <CheckCircle2 className="h-4 w-4" />
                   14-Day Free Trial
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5" />
+                  <CheckCircle2 className="h-4 w-4" />
+                  Credit Card Required
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" />
                   Cancel Anytime
                 </div>
               </div>
@@ -513,6 +564,7 @@ export default function Landing() {
       </footer>
 
       <DemoModal isOpen={isDemoOpen} onClose={() => setIsDemoOpen(false)} />
+      <ProductDemoVideo isOpen={isVideoOpen} onClose={() => setIsVideoOpen(false)} />
 
       <style>{`
         @keyframes fill-bar {

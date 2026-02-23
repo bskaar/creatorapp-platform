@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, ChevronLeft, ChevronRight, User, Globe, Layout, Package, Sparkles, CheckCircle2, Pause, Play, Brain, MessageCircle } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, User, Globe, Layout, Package, Sparkles, CheckCircle2, Pause, Play, Brain, MessageCircle, Image, Palette, Clock, Info } from 'lucide-react';
 
 interface DemoModalProps {
   isOpen: boolean;
@@ -10,25 +10,62 @@ interface DemoStep {
   id: number;
   title: string;
   description: string;
+  time: string;
   icon: React.ReactNode;
   visual: React.ReactNode;
+  illustratedVisual: React.ReactNode;
 }
+
+type ViewMode = 'screenshots' | 'illustrated';
 
 export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>('screenshots');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const progressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const AUTO_ADVANCE_DELAY = 5000; // 5 seconds
+  const AUTO_ADVANCE_DELAY = 5000;
+
+  const stepTimes = ['~2 min', '~2 min', '~3 min', '~5 min', '~5 min', '~2 min'];
+  const totalTime = '~20-30 min';
 
   const steps: DemoStep[] = [
     {
       id: 1,
       title: 'Sign Up in Seconds',
       description: 'Create your account with just an email and password. Start your 14-day free trial. Credit card required, charged after trial ends.',
+      time: stepTimes[0],
       icon: <User className="h-8 w-8" />,
+      illustratedVisual: (
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 w-full max-w-md mx-auto">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-6 shadow-xl">
+              <User className="w-12 h-12 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">Create Your Account</h3>
+            <p className="text-gray-600 mb-6">Quick and simple registration</p>
+            <div className="w-full space-y-3">
+              <div className="h-12 bg-white rounded-xl border-2 border-blue-200 flex items-center px-4 gap-3">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 text-sm">@</span>
+                </div>
+                <span className="text-gray-400">Your email</span>
+              </div>
+              <div className="h-12 bg-white rounded-xl border-2 border-gray-200 flex items-center px-4 gap-3">
+                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                  <span className="text-gray-400 text-sm">***</span>
+                </div>
+                <span className="text-gray-400">Password</span>
+              </div>
+              <div className="h-12 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-semibold shadow-lg">
+                Start Free Trial
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
       visual: (
         <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-white rounded-2xl p-8 border-2 border-blue-200 w-full max-w-md mx-auto shadow-xl">
           <div className="bg-white rounded-xl shadow-2xl p-6 border border-gray-100">
@@ -65,7 +102,29 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
       id: 2,
       title: 'Name Your Site',
       description: 'Choose a unique name for your creator site. This will be your brand identity and subdomain.',
+      time: stepTimes[1],
       icon: <Globe className="h-8 w-8" />,
+      illustratedVisual: (
+        <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-8 w-full max-w-md mx-auto">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center mb-6 shadow-xl">
+              <Globe className="w-12 h-12 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">Brand Your Space</h3>
+            <p className="text-gray-600 mb-6">Your unique identity online</p>
+            <div className="w-full bg-white rounded-xl p-6 shadow-lg border border-teal-100">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="h-3 w-3 rounded-full bg-teal-500" />
+                <div className="h-3 w-3 rounded-full bg-cyan-500" />
+                <div className="h-3 w-3 rounded-full bg-blue-500" />
+              </div>
+              <div className="text-lg font-bold text-gray-900 mb-2">yoursite</div>
+              <div className="text-sm text-gray-500">.creatorapp.site</div>
+              <div className="mt-4 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full" />
+            </div>
+          </div>
+        </div>
+      ),
       visual: (
         <div className="bg-gradient-to-br from-green-50 via-teal-50 to-white rounded-2xl p-8 border-2 border-green-200 w-full max-w-md mx-auto shadow-xl">
           <div className="bg-white rounded-xl shadow-2xl p-6 border border-gray-100">
@@ -109,9 +168,42 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
       id: 3,
       title: 'Choose Your Template',
       description: 'Select from beautiful, professionally-designed templates. All fully customizable to match your brand.',
+      time: stepTimes[2],
       icon: <Layout className="h-8 w-8" />,
+      illustratedVisual: (
+        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-8 w-full max-w-lg mx-auto">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center mb-6 shadow-xl">
+              <Layout className="w-12 h-12 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">Pick Your Style</h3>
+            <p className="text-gray-600 mb-6">Beautiful templates, ready to customize</p>
+            <div className="grid grid-cols-2 gap-4 w-full">
+              <div className="bg-white rounded-xl p-3 shadow-lg border-2 border-blue-500 relative">
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                </div>
+                <div className="h-16 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-lg mb-2" />
+                <div className="text-sm font-medium text-gray-900">Modern</div>
+              </div>
+              <div className="bg-white rounded-xl p-3 shadow border border-gray-200">
+                <div className="h-16 bg-gradient-to-br from-teal-400 to-green-400 rounded-lg mb-2" />
+                <div className="text-sm font-medium text-gray-900">Coaching</div>
+              </div>
+              <div className="bg-white rounded-xl p-3 shadow border border-gray-200">
+                <div className="h-16 bg-gradient-to-br from-orange-400 to-amber-400 rounded-lg mb-2" />
+                <div className="text-sm font-medium text-gray-900">Membership</div>
+              </div>
+              <div className="bg-white rounded-xl p-3 shadow border border-gray-200">
+                <div className="h-16 bg-gradient-to-br from-rose-400 to-pink-400 rounded-lg mb-2" />
+                <div className="text-sm font-medium text-gray-900">Products</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
       visual: (
-        <div className="bg-gradient-to-br from-orange-50 via-pink-50 to-white rounded-2xl p-8 border-2 border-orange-200 w-full max-w-2xl mx-auto shadow-xl">
+        <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-white rounded-2xl p-8 border-2 border-cyan-200 w-full max-w-2xl mx-auto shadow-xl">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Layout className="h-6 w-6 text-orange-600" />
@@ -197,9 +289,40 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
       id: 4,
       title: 'Meet Your AI Co-Founder',
       description: 'Get strategic guidance from your AI business coach. Ask questions, generate content, and create custom gameplans powered by Claude AI.',
+      time: stepTimes[3],
       icon: <Brain className="h-8 w-8" />,
+      illustratedVisual: (
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 w-full max-w-md mx-auto">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center mb-6 shadow-xl relative">
+              <Brain className="w-12 h-12 text-white" />
+              <div className="absolute -top-1 -right-1 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">Your AI Partner</h3>
+            <p className="text-gray-600 mb-6">Strategic guidance at your fingertips</p>
+            <div className="w-full space-y-3">
+              <div className="bg-white rounded-xl p-4 shadow-lg border border-blue-100 text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <MessageCircle className="w-4 h-4 text-blue-500" />
+                  <span className="text-sm font-medium text-gray-700">Ask anything</span>
+                </div>
+                <div className="text-xs text-gray-500">"How should I price my course?"</div>
+              </div>
+              <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl p-4 shadow-lg text-left">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="w-4 h-4 text-white" />
+                  <span className="text-sm font-medium text-white">AI Response</span>
+                </div>
+                <div className="text-xs text-white/90">Personalized strategy and step-by-step guidance...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
       visual: (
-        <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl p-8 border-2 border-blue-300 w-full max-w-3xl mx-auto shadow-xl">
+        <div className="bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 rounded-2xl p-8 border-2 border-blue-300 w-full max-w-3xl mx-auto shadow-xl">
           <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl shadow-2xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
@@ -285,9 +408,44 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
       id: 5,
       title: 'Add Your First Product',
       description: 'Create your first course, membership, or digital product in minutes with our intuitive builder.',
+      time: stepTimes[4],
       icon: <Package className="h-8 w-8" />,
+      illustratedVisual: (
+        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-8 w-full max-w-md mx-auto">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-6 shadow-xl">
+              <Package className="w-12 h-12 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">Create Products</h3>
+            <p className="text-gray-600 mb-6">Courses, memberships, and more</p>
+            <div className="w-full grid grid-cols-2 gap-3">
+              <div className="bg-white rounded-xl p-4 shadow-lg border-2 border-emerald-500 relative">
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-4 h-4 text-white" />
+                </div>
+                <div className="w-10 h-10 mx-auto bg-emerald-100 rounded-lg flex items-center justify-center mb-2">
+                  <Package className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div className="text-sm font-medium text-gray-900">Course</div>
+              </div>
+              <div className="bg-white rounded-xl p-4 shadow border border-gray-200">
+                <div className="w-10 h-10 mx-auto bg-gray-100 rounded-lg flex items-center justify-center mb-2">
+                  <User className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="text-sm font-medium text-gray-500">Membership</div>
+              </div>
+            </div>
+            <div className="w-full mt-4 bg-white rounded-xl p-4 shadow-lg border border-emerald-100">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Your Price</span>
+                <span className="text-lg font-bold text-emerald-600">$99</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
       visual: (
-        <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-white rounded-2xl p-8 border-2 border-purple-200 w-full max-w-md mx-auto shadow-xl">
+        <div className="bg-gradient-to-br from-emerald-50 via-teal-50 to-white rounded-2xl p-8 border-2 border-emerald-200 w-full max-w-md mx-auto shadow-xl">
           <div className="bg-white rounded-xl shadow-2xl p-6 border border-gray-100">
             <div className="flex items-center gap-3 mb-6">
               <Package className="h-8 w-8 text-purple-600" />
@@ -337,11 +495,46 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
       id: 6,
       title: 'Customize & Launch',
       description: 'Customize your site with our drag-and-drop editor, then publish with one click. Your site goes live instantly!',
+      time: stepTimes[5],
       icon: <Sparkles className="h-8 w-8" />,
+      illustratedVisual: (
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8 w-full max-w-md mx-auto">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-6 shadow-xl relative">
+              <Sparkles className="w-12 h-12 text-white" />
+              <div className="absolute -bottom-1 -right-1 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
+                <CheckCircle2 className="w-6 h-6 text-green-500" />
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">You're Live!</h3>
+            <p className="text-gray-600 mb-6">Your site is ready for the world</p>
+            <div className="w-full bg-white rounded-xl p-6 shadow-lg border-2 border-green-200">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-sm font-medium text-green-600">Site Published</span>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                <span className="text-blue-600 font-medium text-sm">yoursite.creatorapp.site</span>
+              </div>
+              <div className="flex justify-center gap-4 text-xs text-gray-500">
+                <span className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" /> SSL
+                </span>
+                <span className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" /> CDN
+                </span>
+                <span className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" /> Fast
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
       visual: (
-        <div className="bg-gradient-to-br from-emerald-50 via-teal-50 to-white rounded-2xl p-8 border-2 border-emerald-200 w-full max-w-2xl mx-auto shadow-xl">
+        <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-white rounded-2xl p-8 border-2 border-green-200 w-full max-w-2xl mx-auto shadow-xl">
           <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100">
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-[length:200%_100%] animate-gradient p-4 text-white flex items-center justify-between shadow-lg">
+            <div className="bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-white flex items-center justify-between shadow-lg">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5" />
                 <span className="font-bold">Page Editor</span>
@@ -479,8 +672,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
           <X className="h-6 w-6 text-gray-700" />
         </button>
 
-        <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-[length:200%_100%] animate-gradient px-8 py-8 text-white flex-shrink-0">
-          {/* Progress bar */}
+        <div className="relative bg-gradient-to-r from-blue-600 to-cyan-500 px-8 py-6 text-white flex-shrink-0">
           <div className="absolute bottom-0 left-0 h-1 bg-white/20 w-full">
             <div
               className="h-full bg-white/90 transition-all duration-100 ease-linear"
@@ -490,49 +682,78 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
 
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 animate-float shadow-lg">
+              <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
                 {step.icon}
               </div>
               <div>
-                <div className="text-sm font-medium text-white/80 flex items-center gap-2">
-                  Step {currentStep + 1} of {steps.length}
+                <div className="text-sm font-medium text-white/80 flex items-center gap-3">
+                  <span>Step {currentStep + 1} of {steps.length}</span>
+                  <span className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full text-xs">
+                    <Clock className="h-3 w-3" />
+                    {step.time}
+                  </span>
                   <button
                     onClick={togglePause}
-                    className="ml-2 bg-white/20 hover:bg-white/30 rounded-full p-1.5 transition-all hover:scale-110"
+                    className="bg-white/20 hover:bg-white/30 rounded-full p-1.5 transition-all hover:scale-110"
                     title={isPaused ? "Resume auto-play" : "Pause auto-play"}
                   >
                     {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
                   </button>
                 </div>
-                <h2 className="text-3xl font-bold drop-shadow-lg">{step.title}</h2>
+                <h2 className="text-2xl font-bold drop-shadow-lg">{step.title}</h2>
               </div>
             </div>
+
+            <div className="flex items-center gap-2 bg-white/10 rounded-xl p-1">
+              <button
+                onClick={() => setViewMode('screenshots')}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  viewMode === 'screenshots'
+                    ? 'bg-white text-blue-600 shadow-md'
+                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Image className="h-4 w-4" />
+                <span className="hidden sm:inline">Screenshots</span>
+              </button>
+              <button
+                onClick={() => setViewMode('illustrated')}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  viewMode === 'illustrated'
+                    ? 'bg-white text-blue-600 shadow-md'
+                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Palette className="h-4 w-4" />
+                <span className="hidden sm:inline">Illustrated</span>
+              </button>
+            </div>
           </div>
-          <p className="text-lg text-white/95 max-w-2xl drop-shadow">{step.description}</p>
+          <p className="text-base text-white/90 max-w-2xl">{step.description}</p>
         </div>
 
-        <div className="p-8 flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-y-auto flex-1">
-          <div key={currentStep} className="animate-slide-in w-full">
-            {step.visual}
+        <div className="p-6 flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-y-auto flex-1">
+          <div key={`${currentStep}-${viewMode}`} className="animate-slide-in w-full">
+            {viewMode === 'illustrated' ? step.illustratedVisual : step.visual}
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-gray-50 to-white border-t-2 border-gray-200 px-8 py-6 flex-shrink-0 shadow-lg">
-          <div className="flex items-center justify-between">
+        <div className="bg-gradient-to-r from-gray-50 to-white border-t border-gray-200 px-6 py-4 flex-shrink-0">
+          <div className="flex items-center justify-between mb-3">
             <button
               onClick={prevStep}
               disabled={currentStep === 0}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all shadow-md ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
                 currentStep === 0
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 hover:-translate-x-1 hover:shadow-lg'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
               }`}
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4" />
               Previous
             </button>
 
-            <div className="flex gap-3 items-center">
+            <div className="flex gap-2 items-center">
               {steps.map((_, index) => (
                 <button
                   key={index}
@@ -540,12 +761,12 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                     setCurrentStep(index);
                     setProgress(0);
                   }}
-                  className={`h-2.5 rounded-full transition-all ${
+                  className={`h-2 rounded-full transition-all ${
                     index === currentStep
-                      ? 'w-10 bg-gradient-to-r from-blue-600 to-purple-600 shadow-md'
+                      ? 'w-8 bg-gradient-to-r from-blue-600 to-cyan-500'
                       : index < currentStep
-                      ? 'w-2.5 bg-blue-400 hover:bg-blue-500 cursor-pointer'
-                      : 'w-2.5 bg-gray-300 hover:bg-gray-400 cursor-pointer'
+                      ? 'w-2 bg-blue-400 hover:bg-blue-500 cursor-pointer'
+                      : 'w-2 bg-gray-300 hover:bg-gray-400 cursor-pointer'
                   }`}
                   title={`Go to step ${index + 1}`}
                 />
@@ -555,20 +776,36 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
             {currentStep < steps.length - 1 ? (
               <button
                 onClick={nextStep}
-                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all hover:translate-x-1 shadow-md"
+                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all"
               >
                 Next
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-4 w-4" />
               </button>
             ) : (
               <a
                 href="/signup"
-                className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all hover:scale-105 shadow-md animate-pulse-subtle"
+                className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transition-all"
               >
-                <CheckCircle2 className="h-5 w-5" />
-                Get Started Free
+                <CheckCircle2 className="h-4 w-4" />
+                Start Free Trial
               </a>
             )}
+          </div>
+
+          <div className="flex items-center justify-between text-xs text-gray-500 border-t border-gray-100 pt-3">
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                Total: {totalTime}
+              </span>
+              <span className="flex items-center gap-1">
+                <Info className="h-3 w-3" />
+                Step {currentStep + 1}: {step.time}
+              </span>
+            </div>
+            <p className="text-gray-400 max-w-xs text-right">
+              Setup time varies. External integrations require separate configuration.
+            </p>
           </div>
         </div>
       </div>
