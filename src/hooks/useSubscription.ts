@@ -24,7 +24,7 @@ export function useSubscription() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const subscribeToPlan = async (planName: string) => {
+  const subscribeToPlan = async (planName: string, billingCycle: 'monthly' | 'yearly' = 'monthly') => {
     if (!currentSite) {
       throw new Error('No site selected');
     }
@@ -43,6 +43,7 @@ export function useSubscription() {
         action: 'create',
         planName,
         siteId: currentSite.id,
+        billingCycle,
         url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-platform-subscription`
       });
 
@@ -58,6 +59,7 @@ export function useSubscription() {
             action: 'create',
             planName,
             siteId: currentSite.id,
+            billingCycle,
           }),
         }
       );

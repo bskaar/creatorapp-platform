@@ -143,8 +143,21 @@ export default function Pricing() {
         return;
       }
 
+      const { data: sites } = await supabase
+        .from('sites')
+        .select('id')
+        .eq('owner_id', session.user.id)
+        .limit(1);
+
+      if (!sites || sites.length === 0) {
+        navigate('/signup?plan=' + plan.name + (yearly ? '&billing=yearly' : ''));
+        return;
+      }
+
+      const siteId = sites[0].id;
+
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-platform-subscription`,
         {
           method: 'POST',
           headers: {
@@ -152,9 +165,10 @@ export default function Pricing() {
             'Authorization': `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
-            priceId,
-            successUrl: `${window.location.origin}/dashboard?subscription=success`,
-            cancelUrl: `${window.location.origin}/pricing`,
+            action: 'create',
+            planName: plan.name,
+            siteId,
+            billingCycle: yearly ? 'yearly' : 'monthly',
           }),
         }
       );

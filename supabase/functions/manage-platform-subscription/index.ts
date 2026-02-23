@@ -11,6 +11,7 @@ interface SubscriptionRequest {
   action: "create" | "upgrade" | "downgrade" | "cancel" | "reactivate";
   planName?: string;
   siteId?: string;
+  billingCycle?: "monthly" | "yearly";
 }
 
 Deno.serve(async (req: Request) => {
@@ -63,7 +64,7 @@ Deno.serve(async (req: Request) => {
       throw new Error("User not authenticated");
     }
 
-    const { action, planName, siteId }: SubscriptionRequest = await req.json();
+    const { action, planName, siteId, billingCycle = "monthly" }: SubscriptionRequest = await req.json();
 
     if (!siteId) {
       throw new Error("Site ID is required");
@@ -152,18 +153,27 @@ Deno.serve(async (req: Request) => {
           .eq("id", siteId);
       }
 
+      const priceId = billingCycle === "yearly" && plan.stripe_price_id_yearly
+        ? plan.stripe_price_id_yearly
+        : plan.stripe_price_id;
+
+      if (!priceId) {
+        throw new Error("Price ID not configured for this plan");
+      }
+
       const params = new URLSearchParams({
         "mode": "subscription",
         "customer": customerId,
         "success_url": `${req.headers.get("origin")}/dashboard?subscription=success`,
         "cancel_url": `${req.headers.get("origin")}/pricing?subscription=canceled`,
-        "line_items[0][price]": plan.stripe_price_id || "",
+        "line_items[0][price]": priceId,
         "line_items[0][quantity]": "1",
         "payment_method_collection": "always",
         "allow_promotion_codes": "true",
         "subscription_data[trial_period_days]": plan.trial_days?.toString() || "14",
         "subscription_data[metadata][site_id]": siteId,
         "subscription_data[metadata][plan_name]": planName,
+        "subscription_data[metadata][billing_cycle]": billingCycle,
       });
 
       if (site.platform_coupon_code) {
