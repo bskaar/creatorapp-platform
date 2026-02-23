@@ -72,7 +72,7 @@ export default function Contact() {
               </Link>
               <Link
                 to="/signup"
-                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-7 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-7 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
               >
                 Get Started
               </Link>
@@ -89,7 +89,7 @@ export default function Contact() {
               Get In Touch
             </div>
             <h1 className="text-6xl font-bold text-gray-900 mb-6">
-              Contact <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">CreatorApp</span>
+              Contact <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">CreatorApp</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Have questions? Need help? We're here to support your creator journey.
@@ -196,7 +196,7 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="Your name"
                       />
                     </div>
@@ -212,7 +212,7 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -228,7 +228,7 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="How can we help?"
                       />
                     </div>
@@ -244,7 +244,7 @@ export default function Contact() {
                         required
                         disabled={isSubmitting}
                         rows={6}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="Tell us more about your question or issue..."
                       />
                     </div>
@@ -258,7 +258,7 @@ export default function Contact() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                      className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
                       {isSubmitting ? (
                         <>
@@ -282,14 +282,14 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white text-center">
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-12 text-white text-center">
             <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
               Don't wait to start building your creator business. Sign up for a free trial today!
             </p>
             <Link
               to="/signup"
-              className="inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 shadow-lg"
+              className="inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-xl font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 shadow-lg"
             >
               Start Free Trial
             </Link>

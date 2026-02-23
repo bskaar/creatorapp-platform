@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Check, Rocket, TrendingUp, Crown, Building2, ArrowRight, LogOut, Loader2 } from 'lucide-react';
+import { Check, Rocket, TrendingUp, Crown, Building2, ArrowRight, LogOut, Loader2, Zap, Users, Shield } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from '../components/Logo';
@@ -29,9 +29,16 @@ interface PlanData {
 
 const PLAN_ICONS: Record<string, typeof Rocket> = {
   starter: Rocket,
-  growth: TrendingUp,
+  growth: Zap,
   pro: Crown,
   enterprise: Building2,
+};
+
+const PLAN_TAGLINES: Record<string, string> = {
+  starter: 'Perfect for getting started',
+  growth: 'Scale your business faster',
+  pro: 'Maximum power & flexibility',
+  enterprise: 'For large organizations',
 };
 
 const PLAN_FEATURES: Record<string, string[]> = {
@@ -51,7 +58,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
     '10,000 contacts',
     'AI content & page generation',
     'Unlimited workflow automations',
-    'Analytics dashboard',
+    'Advanced analytics',
     '3 team members',
     'Priority support',
   ],
@@ -61,7 +68,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
     '50,000 contacts',
     'AI content & page generation',
     'Unlimited workflow automations',
-    'Analytics dashboard',
+    'Advanced analytics',
     '10 team members',
     'Dedicated support',
   ],
@@ -70,9 +77,40 @@ const PLAN_FEATURES: Record<string, string[]> = {
     'Unlimited contacts',
     'Unlimited team members',
     'Dedicated success manager',
-    'SLA support',
+    'SLA guarantee',
     'Custom onboarding & training',
   ],
+};
+
+const PLAN_COLORS: Record<string, { bg: string; icon: string; border: string; button: string; check: string }> = {
+  starter: {
+    bg: 'from-teal-500 to-emerald-600',
+    icon: 'bg-gradient-to-br from-teal-500 to-emerald-600',
+    border: 'border-teal-200 hover:border-teal-400',
+    button: 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:shadow-lg hover:shadow-teal-500/25',
+    check: 'text-teal-500',
+  },
+  growth: {
+    bg: 'from-blue-500 to-cyan-500',
+    icon: 'bg-gradient-to-br from-blue-500 to-cyan-500',
+    border: 'border-blue-500 ring-4 ring-blue-500/10',
+    button: 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-lg hover:shadow-blue-500/25',
+    check: 'text-blue-500',
+  },
+  pro: {
+    bg: 'from-amber-500 to-orange-600',
+    icon: 'bg-gradient-to-br from-amber-500 to-orange-600',
+    border: 'border-amber-200 hover:border-amber-400',
+    button: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/25',
+    check: 'text-amber-500',
+  },
+  enterprise: {
+    bg: 'from-slate-700 to-slate-900',
+    icon: 'bg-gradient-to-br from-slate-700 to-slate-900',
+    border: 'border-slate-300 hover:border-slate-400',
+    button: 'bg-gradient-to-r from-slate-700 to-slate-900 text-white hover:shadow-lg hover:shadow-slate-500/25',
+    check: 'text-slate-600',
+  },
 };
 
 export default function Pricing() {
@@ -249,21 +287,29 @@ export default function Pricing() {
         </div>
       </header>
 
-      <section className="py-20 px-6 text-center">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-            Plans for Every Stage
+      <section className="py-24 px-6 text-center relative overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -z-10"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -z-10"></div>
+
+        <div className="max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-blue-200">
+            <Zap className="w-4 h-4" />
+            Simple, Transparent Pricing
+          </div>
+
+          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
+            Choose Your <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Growth Plan</span>
           </h1>
-          <p className="text-xl text-gray-600 font-medium mb-8">
-            Start with a 14-day free trial. Cancel anytime before your trial ends.
+          <p className="text-xl md:text-2xl text-gray-600 font-medium mb-10 max-w-2xl mx-auto">
+            Start with a 14-day free trial. No commitment. Cancel anytime.
           </p>
 
-          <div className="inline-flex items-center bg-gray-100 p-1 rounded-xl">
+          <div className="inline-flex items-center bg-white p-1.5 rounded-2xl shadow-lg border border-gray-200">
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-6 py-2.5 text-sm font-semibold rounded-lg transition-all ${
+              className={`px-8 py-3 text-base font-semibold rounded-xl transition-all ${
                 billingCycle === 'monthly'
-                  ? 'bg-white text-gray-900 shadow-sm'
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-md'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -271,14 +317,18 @@ export default function Pricing() {
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
-              className={`px-6 py-2.5 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 ${
+              className={`px-8 py-3 text-base font-semibold rounded-xl transition-all flex items-center gap-2 ${
                 billingCycle === 'yearly'
-                  ? 'bg-white text-gray-900 shadow-sm'
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-md'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               Yearly
-              <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-0.5 rounded-full">
+              <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                billingCycle === 'yearly'
+                  ? 'bg-white/20 text-white'
+                  : 'bg-emerald-100 text-emerald-700'
+              }`}>
                 Save 15%+
               </span>
             </button>
@@ -286,18 +336,20 @@ export default function Pricing() {
         </div>
       </section>
 
-      <section className="pb-24 px-6">
-        <div className="max-w-6xl mx-auto">
+      <section className="pb-28 px-6">
+        <div className="max-w-7xl mx-auto">
           {checkoutError && (
             <div className="mb-8 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl text-sm font-medium max-w-2xl mx-auto text-center">
               {checkoutError}
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
             {plans.map((plan) => {
               const Icon = PLAN_ICONS[plan.name] || Rocket;
               const features = PLAN_FEATURES[plan.name] || [];
+              const tagline = PLAN_TAGLINES[plan.name] || '';
+              const colors = PLAN_COLORS[plan.name] || PLAN_COLORS.starter;
               const isLoading = loadingPlanId === plan.id;
               const isPopular = plan.name === 'growth';
               const isEnterprise = plan.name === 'enterprise';
@@ -312,102 +364,94 @@ export default function Pricing() {
               return (
                 <div
                   key={plan.id}
-                  className={`relative flex flex-col bg-white rounded-2xl transition-all duration-300 hover:-translate-y-1 ${
+                  className={`relative flex flex-col bg-white rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${
                     isPopular
-                      ? 'border-2 border-blue-500 shadow-xl ring-4 ring-blue-500/10'
-                      : 'border border-gray-200 shadow-sm hover:shadow-lg'
+                      ? `border-2 ${colors.border} shadow-xl`
+                      : `border-2 ${colors.border} shadow-lg`
                   }`}
                 >
                   {isPopular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <span className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+                    <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+                      <span className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold px-6 py-2 rounded-full shadow-lg flex items-center gap-2">
+                        <Zap className="w-4 h-4" />
                         MOST POPULAR
                       </span>
                     </div>
                   )}
 
-                  <div className="p-6 flex-grow">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                      isPopular
-                        ? 'bg-gradient-to-br from-blue-500 to-cyan-500'
-                        : isEnterprise
-                        ? 'bg-gradient-to-br from-gray-700 to-gray-900'
-                        : 'bg-gradient-to-br from-gray-100 to-gray-200'
-                    }`}>
-                      <Icon className={`w-6 h-6 ${
-                        isPopular || isEnterprise ? 'text-white' : 'text-gray-700'
-                      }`} />
+                  <div className="p-8 flex-grow">
+                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${colors.icon} shadow-lg`}>
+                      <Icon className="w-8 h-8 text-white" />
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    <h3 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">
                       {plan.display_name}
                     </h3>
-                    <p className="text-sm text-gray-500 mb-4">
-                      {plan.description}
+                    <p className="text-base font-medium text-gray-500 mb-6">
+                      {tagline}
                     </p>
 
-                    <div className="mb-6">
+                    <div className="mb-8">
                       {isEnterprise ? (
                         <div className="flex items-baseline">
-                          <span className="text-3xl font-bold text-gray-900">Custom</span>
+                          <span className="text-4xl md:text-5xl font-extrabold text-gray-900">Custom</span>
                         </div>
                       ) : (
                         <>
-                          <div className="flex items-baseline">
-                            <span className="text-4xl font-bold text-gray-900">
-                              ${displayPrice}
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-lg font-semibold text-gray-500">$</span>
+                            <span className={`text-5xl md:text-6xl font-extrabold bg-gradient-to-r ${colors.bg} bg-clip-text text-transparent`}>
+                              {displayPrice}
                             </span>
-                            <span className="text-gray-500 ml-1">/month</span>
+                            <span className="text-lg text-gray-500 font-medium">/mo</span>
                           </div>
                           {billingCycle === 'yearly' && (
-                            <p className="text-xs text-gray-500 mt-1">
-                              Billed annually (${yearlyTotal}/year) - Save {annualSavingsPercent}%
+                            <p className="text-sm text-gray-500 mt-2">
+                              ${yearlyTotal}/year <span className="text-emerald-600 font-semibold">(Save {annualSavingsPercent}%)</span>
                             </p>
                           )}
                           {plan.trial_days > 0 && (
-                            <p className="text-sm text-emerald-600 font-medium mt-2">
+                            <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-semibold mt-3 border border-emerald-200">
+                              <Shield className="w-4 h-4" />
                               {plan.trial_days}-day free trial
-                            </p>
+                            </div>
                           )}
                         </>
                       )}
                     </div>
 
-                    <ul className="space-y-3 mb-6">
+                    <ul className="space-y-4 mb-8">
                       {features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start text-sm">
-                          <Check className={`w-4 h-4 mr-2.5 flex-shrink-0 mt-0.5 ${
-                            isPopular ? 'text-blue-500' : 'text-emerald-500'
-                          }`} />
-                          <span className="text-gray-700">{feature}</span>
+                        <li key={idx} className="flex items-start">
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mr-3 ${colors.icon}`}>
+                            <Check className="w-3.5 h-3.5 text-white" />
+                          </div>
+                          <span className="text-base text-gray-700">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="p-6 pt-0">
+                  <div className="p-8 pt-0">
                     <button
                       onClick={() => handleSubscribe(plan, billingCycle === 'yearly')}
                       disabled={loadingPlanId !== null}
-                      className={`w-full py-3 px-4 rounded-xl font-semibold text-center transition-all duration-300 flex items-center justify-center group disabled:opacity-60 disabled:cursor-not-allowed ${
-                        isPopular
-                          ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-lg hover:-translate-y-0.5'
-                          : isEnterprise
-                          ? 'bg-gray-900 text-white hover:bg-gray-800'
-                          : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                      }`}
+                      className={`w-full py-4 px-6 rounded-xl font-bold text-lg text-center transition-all duration-300 flex items-center justify-center group disabled:opacity-60 disabled:cursor-not-allowed hover:-translate-y-0.5 ${colors.button}`}
                     >
                       {isLoading ? (
                         <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                           Processing...
                         </>
                       ) : isEnterprise ? (
-                        'Contact Sales'
+                        <>
+                          Contact Sales
+                          <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </>
                       ) : (
                         <>
                           Start Free Trial
-                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                          <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                         </>
                       )}
                     </button>
@@ -417,11 +461,24 @@ export default function Pricing() {
             })}
           </div>
 
-          <div className="mt-12 text-center">
-            <p className="text-gray-500 text-sm">
-              All plans include SSL, daily backups, and 99.9% uptime SLA.
-              Need help choosing?{' '}
-              <Link to="/contact" className="text-blue-600 font-semibold hover:underline">
+          <div className="mt-16 text-center">
+            <div className="inline-flex items-center gap-8 flex-wrap justify-center">
+              <div className="flex items-center gap-2 text-gray-600">
+                <Shield className="w-5 h-5 text-emerald-500" />
+                <span className="font-medium">SSL Included</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <Shield className="w-5 h-5 text-emerald-500" />
+                <span className="font-medium">Daily Backups</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-600">
+                <Shield className="w-5 h-5 text-emerald-500" />
+                <span className="font-medium">99.9% Uptime SLA</span>
+              </div>
+            </div>
+            <p className="text-gray-500 mt-6">
+              Need help choosing the right plan?{' '}
+              <Link to="/pages/contact" className="text-blue-600 font-semibold hover:underline">
                 Talk to our team
               </Link>
             </p>
@@ -429,12 +486,15 @@ export default function Pricing() {
         </div>
       </section>
 
-      <section className="py-20 px-6 bg-gray-50 border-t border-gray-200">
+      <section className="py-24 px-6 bg-gradient-to-b from-gray-50 to-white border-t border-gray-200">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Frequently Asked Questions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="text-center mb-14">
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-lg text-gray-600">Everything you need to know about our plans</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               {
                 q: 'How does the free trial work?',
@@ -461,9 +521,9 @@ export default function Pricing() {
                 a: 'With a 14-day free trial, you can fully explore the platform before committing. If you\'re not satisfied after subscribing, contact support within 7 days for a prorated refund.',
               },
             ].map((faq, idx) => (
-              <div key={idx} className="bg-white rounded-xl p-6 border border-gray-200">
-                <h3 className="font-bold text-gray-900 mb-2">{faq.q}</h3>
-                <p className="text-gray-600 text-sm">{faq.a}</p>
+              <div key={idx} className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                <h3 className="font-bold text-lg text-gray-900 mb-3">{faq.q}</h3>
+                <p className="text-gray-600 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
