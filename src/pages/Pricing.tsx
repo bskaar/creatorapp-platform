@@ -491,9 +491,9 @@ export default function Pricing() {
             &copy; {new Date().getFullYear()} CreatorApp. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm">
-            <Link to="/privacy" className="text-gray-500 hover:text-gray-900">Privacy</Link>
-            <Link to="/terms" className="text-gray-500 hover:text-gray-900">Terms</Link>
-            <Link to="/contact" className="text-gray-500 hover:text-gray-900">Contact</Link>
+            <Link to="/privacy-policy" className="text-gray-500 hover:text-gray-900">Privacy</Link>
+            <Link to="/terms-of-service" className="text-gray-500 hover:text-gray-900">Terms</Link>
+            <Link to="/pages/contact" className="text-gray-500 hover:text-gray-900">Contact</Link>
           </div>
         </div>
       </footer>
