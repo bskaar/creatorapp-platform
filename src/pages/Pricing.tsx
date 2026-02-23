@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Check, Rocket, TrendingUp, Crown, Building2, ArrowRight, LogOut, Loader2, Zap, Users, Shield } from 'lucide-react';
+import { Check, Rocket, TrendingUp, Crown, Building2, ArrowRight, Loader2, Zap, Users, Shield } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Logo from '../components/Logo';
+import PublicHeader from '../components/PublicHeader';
 import StructuredData, { faqSchema } from '../components/StructuredData';
 import { supabase } from '../lib/supabase';
 
@@ -114,7 +114,7 @@ const PLAN_COLORS: Record<string, { bg: string; icon: string; border: string; bu
 };
 
 export default function Pricing() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [plans, setPlans] = useState<PlanData[]>([]);
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
@@ -142,11 +142,6 @@ export default function Pricing() {
       setPlans(data);
     }
   }
-
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/pricing');
-  };
 
   const handleSubscribe = async (plan: PlanData, yearly: boolean = false) => {
     if (plan.name === 'enterprise') {
@@ -245,49 +240,9 @@ export default function Pricing() {
       <StructuredData data={pricingSchema} id="pricing-schema" />
       <StructuredData data={faqSchema} id="faq-schema" />
 
-      <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <Logo />
-          </Link>
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  className="text-text-secondary hover:text-text-primary font-semibold transition"
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 px-4 py-2 text-text-secondary hover:text-text-primary font-semibold rounded-xl hover:bg-slate-100 transition"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Log Out</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="text-text-secondary hover:text-text-primary font-semibold transition"
-                >
-                  Log In
-                </Link>
-                <Link
-                  to="/signup"
-                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      <PublicHeader />
 
-      <section className="py-24 px-6 text-center relative overflow-hidden">
+      <section className="pt-28 pb-24 px-6 text-center relative overflow-hidden">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -z-10"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -z-10"></div>
 

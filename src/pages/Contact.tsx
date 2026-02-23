@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Mail, MapPin, MessageCircle, Send, HelpCircle, FileText, CheckCircle2, Loader2 } from 'lucide-react';
-import Logo from '../components/Logo';
+import PublicHeader from '../components/PublicHeader';
 
 export default function Contact() {
   const navigate = useNavigate();
@@ -60,28 +60,9 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
-        <div className="max-w-[1400px] mx-auto px-8">
-          <div className="flex justify-between items-center h-20">
-            <Link to="/" className="flex items-center">
-              <Logo variant="light" className="scale-125" />
-            </Link>
-            <div className="flex items-center space-x-8">
-              <Link to="/" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
-                Home
-              </Link>
-              <Link
-                to="/signup"
-                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-7 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <PublicHeader />
 
-      <section className="pt-32 pb-20 px-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <section className="pt-28 pb-20 px-8 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">

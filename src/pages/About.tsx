@@ -1,32 +1,13 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Target, Heart, Zap, Shield, Users, Globe } from 'lucide-react';
-import Logo from '../components/Logo';
+import PublicHeader from '../components/PublicHeader';
 
 export default function About() {
   return (
     <div className="min-h-screen bg-white">
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
-        <div className="max-w-[1400px] mx-auto px-8">
-          <div className="flex justify-between items-center h-20">
-            <Link to="/" className="flex items-center">
-              <Logo variant="light" className="scale-125" />
-            </Link>
-            <div className="flex items-center space-x-8">
-              <Link to="/" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
-                Home
-              </Link>
-              <Link
-                to="/signup"
-                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-7 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <PublicHeader />
 
-      <section className="pt-32 pb-20 px-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <section className="pt-28 pb-20 px-8 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-16">
             <h1 className="text-6xl font-bold text-gray-900 mb-6">

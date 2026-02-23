@@ -1,19 +1,17 @@
-import { Link } from 'react-router-dom';
-import { Shield, ArrowLeft, Mail } from 'lucide-react';
+import { Shield, Mail } from 'lucide-react';
+import PublicHeader from '../components/PublicHeader';
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-8">
-        <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
-          <ArrowLeft className="w-4 h-4" />
-          Back to Home
-        </Link>
+    <div className="min-h-screen bg-gray-50">
+      <PublicHeader />
 
-        <div className="flex items-center gap-3 mb-6">
-          <Shield className="w-8 h-8 text-blue-600" />
-          <h1 className="text-3xl font-bold">Privacy Policy</h1>
-        </div>
+      <div className="pt-24 pb-12 px-4">
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <Shield className="w-8 h-8 text-blue-600" />
+            <h1 className="text-3xl font-bold">Privacy Policy</h1>
+          </div>
 
         <div className="prose max-w-none">
           <p className="text-gray-600 mb-8">Last updated: February 5, 2026</p>
@@ -115,6 +113,7 @@ export default function PrivacyPolicy() {
               </a>
             </div>
           </section>
+        </div>
         </div>
       </div>
     </div>
