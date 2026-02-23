@@ -51,6 +51,7 @@ import PlatformAdminAuditLog from './pages/PlatformAdmin/AuditLog';
 import PlatformAdminSettings from './pages/PlatformAdmin/Settings';
 import PlatformAdminInvitationCodes from './pages/PlatformAdmin/InvitationCodes';
 import PlatformAdminAIUsage from './pages/PlatformAdmin/AIUsage';
+import PlatformAdminBackups from './pages/PlatformAdmin/Backups';
 import PricingReview from './pages/PricingReview';
 import About from './pages/About';
 import Documentation from './pages/Documentation';
@@ -601,6 +602,16 @@ function AppRoutes() {
           <PlatformAdminGuard requiredPermission="view_analytics">
             <PlatformAdminLayout>
               <PlatformAdminAIUsage />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+      <Route
+        path="/platform-admin/backups"
+        element={
+          <PlatformAdminGuard requiredPermission="manage_platform_settings">
+            <PlatformAdminLayout>
+              <PlatformAdminBackups />
             </PlatformAdminLayout>
           </PlatformAdminGuard>
         }
