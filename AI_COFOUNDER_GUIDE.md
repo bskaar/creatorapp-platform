@@ -27,7 +27,7 @@ The AI Co-Founder is your 24/7 marketing coach inspired by ClickFunnels' "Ask To
 - **Persistent State**: Maintains conversation across page navigation
 
 ### 4. Rate Limiting & Usage Tracking
-- **Tiered Limits**: Launch (50/day), Pro (500/day), Scale (unlimited)
+- **Tiered Limits**: Starter (50/day), Growth (200/day), Pro (500/day), Enterprise (unlimited)
 - **Visual Feedback**: Shows remaining requests in panel header
 - **Automatic Tracking**: Logs every request with model, tokens, and cost
 - **Upgrade Prompts**: Clear messaging when limits are reached
@@ -197,19 +197,24 @@ The AI Co-Founder is trained on:
 
 ## Rate Limits by Plan
 
-### Launch Plan
+### Starter Plan ($49/mo)
 - 50 AI requests per day
 - Resets at midnight UTC
 - Upgrade prompt shown at limit
 
-### Pro Plan
-- 500 AI requests per day
-- Suitable for active creators
+### Growth Plan ($99/mo)
+- 200 AI requests per day
+- Suitable for growing creators
 - Costs tracked for analytics
 
-### Scale Plan
+### Pro Plan ($199/mo)
+- 500 AI requests per day
+- For power users and agencies
+- Priority processing
+
+### Enterprise Plan (Custom)
 - Unlimited AI requests
-- For power users
+- Dedicated support
 - Still tracks usage for insights
 
 ## Cost Optimization
@@ -312,7 +317,7 @@ Potential additions (not yet implemented):
 **Rate limit reached?**
 - Check Settings → Subscription to view current plan
 - Usage resets at midnight UTC
-- Upgrade to Pro for 500/day
+- Upgrade to Growth for 200/day or Pro for 500/day
 
 **AI not responding?**
 - Check ANTHROPIC_API_KEY is configured
