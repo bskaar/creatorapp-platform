@@ -2,7 +2,9 @@
 
 ## Overview
 
-CreatorApp operates on a transparent, creator-friendly pricing model. We don't take a cut of your success.
+**We don't tax your success.**
+
+CreatorApp operates on a transparent, creator-friendly pricing model. You pay a simple monthly subscription fee - that's it. We never take a percentage of your sales, revenue, or transactions. Your success is yours to keep.
 
 ---
 
@@ -32,12 +34,13 @@ When you sell products to your customers, Stripe (the payment processor) charges
 
 ## What You DON'T Pay
 
-### ❌ No Platform Fees
+### We Don't Tax Your Success
 
-- **No transaction fees to CreatorApp**: We don't take a percentage of your sales
-- **No revenue sharing**: You keep 100% of your revenue (minus Stripe's fees)
-- **No additional processing fees**: Only standard Stripe fees apply
+- **$0 platform transaction fees**: We never take a percentage of your sales
+- **No revenue sharing**: You keep 100% of your revenue (minus Stripe's standard fees)
+- **No additional processing fees**: Only standard Stripe fees apply (2.9% + $0.30)
 - **No hidden charges**: What you see is what you pay
+- **No success penalties**: Sell more, keep more - your monthly subscription stays the same
 
 ### ❌ No Usage Limits
 
@@ -185,9 +188,10 @@ That's it.
 ### 1. Landing Page
 
 ```
-"$0 Platform Fees*"
-*We don't take a cut of your success.
-Standard Stripe transaction fees apply.
+"$0 Platform Fees"
+We don't tax your success.
+You pay a simple monthly subscription - we never take a cut of your sales.
+Standard Stripe transaction fees (2.9% + $0.30) apply.
 ```
 
 ### 2. Documentation
@@ -211,13 +215,13 @@ Stripe's standard transaction fees."
 
 ## Summary
 
-✅ **You Pay CreatorApp:** Fixed monthly subscription ($19-$99)
+**We Don't Tax Your Success**
 
-✅ **You Pay Stripe:** 2.9% + $0.30 per transaction
+- **You Pay CreatorApp:** Fixed monthly subscription ($49-$99)
+- **You Pay Stripe:** 2.9% + $0.30 per transaction (standard processing fees)
+- **You DON'T Pay:** Platform fees, revenue sharing, hidden charges, success penalties
 
-❌ **You DON'T Pay:** Platform fees, revenue sharing, hidden charges
-
-🎯 **Result:** Transparent, predictable pricing that doesn't punish your success
+**Result:** Transparent, predictable pricing. Sell $1,000 or $100,000 - your CreatorApp subscription stays the same. We never take a cut of your revenue.
 
 ---
 

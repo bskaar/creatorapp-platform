@@ -417,6 +417,13 @@ export default function Pricing() {
           </div>
 
           <div className="mt-16 text-center">
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-6 max-w-2xl mx-auto mb-8">
+              <h3 className="text-xl font-bold text-emerald-900 mb-2">We Don't Tax Your Success</h3>
+              <p className="text-emerald-700">
+                $0 platform transaction fees. You pay a simple monthly subscription - we never take a percentage of your sales.
+                Only standard Stripe processing fees (2.9% + $0.30) apply, and those go directly to Stripe, not us.
+              </p>
+            </div>
             <div className="inline-flex items-center gap-8 flex-wrap justify-center">
               <div className="flex items-center gap-2 text-gray-600">
                 <Shield className="w-5 h-5 text-emerald-500" />

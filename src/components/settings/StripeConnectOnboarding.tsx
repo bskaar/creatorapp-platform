@@ -190,8 +190,11 @@ export default function StripeConnectOnboarding() {
     <div className="space-y-6">
       <div>
         <h3 className="text-xl font-bold text-dark mb-2">Stripe Connect</h3>
-        <p className="text-sm text-text-secondary font-medium">
-          Connect your Stripe account to receive payments directly. You keep 100% of your revenue minus Stripe's standard transaction fees.
+        <p className="text-sm text-text-secondary font-medium mb-2">
+          Connect your Stripe account to receive payments directly.
+        </p>
+        <p className="text-sm text-emerald-700 font-semibold bg-emerald-50 px-3 py-2 rounded-lg inline-block">
+          We don't tax your success - $0 platform fees. You keep 100% of your revenue minus Stripe's standard processing fees (2.9% + $0.30).
         </p>
       </div>
 

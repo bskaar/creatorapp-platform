@@ -472,8 +472,8 @@ export default function Landing() {
               <div className="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center mb-4">
                 <CreditCard className="h-6 w-6 text-cyan-600" />
               </div>
-              <h3 className="font-bold text-gray-900 mb-2">Transparent Pricing</h3>
-              <p className="text-sm text-gray-600">No hidden fees. Know exactly what you'll pay. Cancel anytime during your trial.</p>
+              <h3 className="font-bold text-gray-900 mb-2">We Don't Tax Your Success</h3>
+              <p className="text-sm text-gray-600">$0 platform fees on your sales. Simple monthly subscription - we never take a cut of your revenue.</p>
             </div>
           </div>
 
