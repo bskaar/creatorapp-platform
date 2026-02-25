@@ -18,7 +18,7 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { siteId, items, customerEmail, customerName, successUrl, cancelUrl } = await req.json();
+    const { siteId, items, customerEmail, customerName, successUrl, cancelUrl, usePaymentPlan } = await req.json();
 
     if (!siteId || !items || !successUrl || !cancelUrl) {
       return new Response(
@@ -81,42 +81,64 @@ Deno.serve(async (req: Request) => {
 
     const lineItems = [];
     let mode: 'payment' | 'subscription' = 'payment';
+    let paymentPlanProduct: any = null;
 
     for (const item of items) {
       const product = products.find((p: any) => p.id === item.productId);
       if (!product) continue;
 
-      if (product.billing_type === 'recurring') {
+      const isPaymentPlanCheckout = usePaymentPlan &&
+        product.payment_plan_enabled &&
+        product.stripe_payment_plan_price_id;
+
+      if (isPaymentPlanCheckout) {
         mode = 'subscription';
-      }
+        paymentPlanProduct = product;
+        lineItems.push({
+          price: product.stripe_payment_plan_price_id,
+          quantity: item.quantity || 1,
+        });
+      } else if (product.stripe_price_id) {
+        if (product.billing_type === 'recurring') {
+          mode = 'subscription';
+        }
+        lineItems.push({
+          price: product.stripe_price_id,
+          quantity: item.quantity || 1,
+        });
+      } else {
+        if (product.billing_type === 'recurring') {
+          mode = 'subscription';
+        }
 
-      const priceData: any = {
-        currency: (product.price_currency || 'USD').toLowerCase(),
-        product_data: {
-          name: product.title,
-          description: product.description || undefined,
-          images: product.thumbnail_url ? [product.thumbnail_url] : undefined,
-        },
-        unit_amount: Math.round(product.price_amount * 100),
-      };
-
-      if (product.billing_type === 'recurring' && product.billing_interval) {
-        const intervalMap: Record<string, string> = {
-          monthly: 'month',
-          quarterly: 'month',
-          yearly: 'year',
+        const priceData: any = {
+          currency: (product.price_currency || 'USD').toLowerCase(),
+          product_data: {
+            name: product.title,
+            description: product.description || undefined,
+            images: product.thumbnail_url ? [product.thumbnail_url] : undefined,
+          },
+          unit_amount: Math.round(product.price_amount * 100),
         };
 
-        priceData.recurring = {
-          interval: intervalMap[product.billing_interval] || 'month',
-          interval_count: product.billing_interval === 'quarterly' ? 3 : 1,
-        };
-      }
+        if (product.billing_type === 'recurring' && product.billing_interval) {
+          const intervalMap: Record<string, string> = {
+            monthly: 'month',
+            quarterly: 'month',
+            yearly: 'year',
+          };
 
-      lineItems.push({
-        price_data: priceData,
-        quantity: item.quantity || 1,
-      });
+          priceData.recurring = {
+            interval: intervalMap[product.billing_interval] || 'month',
+            interval_count: product.billing_interval === 'quarterly' ? 3 : 1,
+          };
+        }
+
+        lineItems.push({
+          price_data: priceData,
+          quantity: item.quantity || 1,
+        });
+      }
     }
 
     const sessionParams: any = {
@@ -127,6 +149,9 @@ Deno.serve(async (req: Request) => {
       metadata: {
         site_id: siteId,
         customer_name: customerName || '',
+        is_payment_plan: usePaymentPlan && paymentPlanProduct ? 'true' : 'false',
+        payment_plan_installments: paymentPlanProduct?.payment_plan_installments?.toString() || '',
+        payment_plan_product_id: paymentPlanProduct?.id || '',
       },
     };
 
@@ -136,7 +161,12 @@ Deno.serve(async (req: Request) => {
 
     if (mode === 'subscription') {
       sessionParams.subscription_data = {
-        metadata: { site_id: siteId },
+        metadata: {
+          site_id: siteId,
+          is_payment_plan: usePaymentPlan && paymentPlanProduct ? 'true' : 'false',
+          payment_plan_installments: paymentPlanProduct?.payment_plan_installments?.toString() || '',
+          payment_plan_product_id: paymentPlanProduct?.id || '',
+        },
       };
     } else {
       sessionParams.payment_intent_data = {
@@ -155,6 +185,10 @@ Deno.serve(async (req: Request) => {
       const product = products.find((p: any) => p.id === item.productId);
       if (!product) continue;
 
+      const isPaymentPlanOrder = usePaymentPlan &&
+        product.payment_plan_enabled &&
+        product.stripe_payment_plan_price_id;
+
       await supabase.from('orders').insert({
         site_id: siteId,
         product_id: product.id,
@@ -167,6 +201,8 @@ Deno.serve(async (req: Request) => {
         metadata: {
           customer_name: customerName || '',
           session_id: session.id,
+          is_payment_plan: isPaymentPlanOrder,
+          payment_plan_installments: isPaymentPlanOrder ? product.payment_plan_installments : null,
         },
       });
     }

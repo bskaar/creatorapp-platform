@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { ShoppingCart, Check, Loader2, Clock, Infinity } from 'lucide-react';
+import { ShoppingCart, Check, Loader2, Clock, Infinity, CreditCard, Calendar } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -17,6 +17,10 @@ interface Product {
   status: string;
   settings: any;
   site_id: string;
+  stripe_price_id: string | null;
+  stripe_payment_plan_price_id: string | null;
+  payment_plan_installments: number | null;
+  payment_plan_enabled: boolean;
 }
 
 export default function ProductPublic() {
@@ -25,6 +29,7 @@ export default function ProductPublic() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState<'full' | 'plan'>('full');
 
   useEffect(() => {
     if (siteId && productId) {
@@ -80,6 +85,10 @@ export default function ProductPublic() {
     return intervals[product.billing_interval || ''] || 'recurring';
   };
 
+  const hasPaymentPlan = product?.payment_plan_enabled &&
+    product?.stripe_payment_plan_price_id &&
+    product?.payment_plan_installments;
+
   const handleAddToCart = () => {
     setAddingToCart(true);
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -94,8 +103,22 @@ export default function ProductPublic() {
         currency: product?.price_currency,
         billingType: product?.billing_type,
         billingInterval: product?.billing_interval,
+        usePaymentPlan: selectedPaymentOption === 'plan',
+        paymentPlanInstallments: product?.payment_plan_installments,
       });
       localStorage.setItem('cart', JSON.stringify(cart));
+    } else {
+      const updatedCart = cart.map((item: any) => {
+        if (item.productId === productId) {
+          return {
+            ...item,
+            usePaymentPlan: selectedPaymentOption === 'plan',
+            paymentPlanInstallments: product?.payment_plan_installments,
+          };
+        }
+        return item;
+      });
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
     }
 
     setTimeout(() => {
@@ -168,19 +191,88 @@ export default function ProductPublic() {
                 {product.title}
               </h1>
 
-              <div className="mb-6">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-bold text-gray-900">
-                    {formatPrice(product.price_amount, product.price_currency)}
-                  </span>
-                  {product.billing_type === 'recurring' && (
-                    <span className="text-xl text-gray-600">
-                      /{product.billing_interval === 'monthly' ? 'mo' : product.billing_interval === 'yearly' ? 'yr' : 'qtr'}
-                    </span>
-                  )}
+              {hasPaymentPlan ? (
+                <div className="mb-6 space-y-3">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Choose your payment option:</p>
+
+                  <label
+                    className={`block p-4 border-2 rounded-lg cursor-pointer transition ${
+                      selectedPaymentOption === 'full'
+                        ? 'border-blue-600 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentOption"
+                      value="full"
+                      checked={selectedPaymentOption === 'full'}
+                      onChange={() => setSelectedPaymentOption('full')}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <CreditCard className={`h-5 w-5 ${selectedPaymentOption === 'full' ? 'text-blue-600' : 'text-gray-400'}`} />
+                        <div>
+                          <p className="font-semibold text-gray-900">Pay in Full</p>
+                          <p className="text-sm text-gray-600">One-time payment</p>
+                        </div>
+                      </div>
+                      <span className="text-2xl font-bold text-gray-900">
+                        {formatPrice(product.price_amount, product.price_currency)}
+                      </span>
+                    </div>
+                  </label>
+
+                  <label
+                    className={`block p-4 border-2 rounded-lg cursor-pointer transition ${
+                      selectedPaymentOption === 'plan'
+                        ? 'border-blue-600 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentOption"
+                      value="plan"
+                      checked={selectedPaymentOption === 'plan'}
+                      onChange={() => setSelectedPaymentOption('plan')}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Calendar className={`h-5 w-5 ${selectedPaymentOption === 'plan' ? 'text-blue-600' : 'text-gray-400'}`} />
+                        <div>
+                          <p className="font-semibold text-gray-900">Payment Plan</p>
+                          <p className="text-sm text-gray-600">
+                            {product.payment_plan_installments} monthly payments
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-2xl font-bold text-gray-900">
+                          {formatPrice(product.price_amount / (product.payment_plan_installments || 1), product.price_currency)}
+                        </span>
+                        <span className="text-gray-600">/mo</span>
+                      </div>
+                    </div>
+                  </label>
                 </div>
-                <p className="text-sm text-gray-600 mt-1">{getBillingText()}</p>
-              </div>
+              ) : (
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-5xl font-bold text-gray-900">
+                      {formatPrice(product.price_amount, product.price_currency)}
+                    </span>
+                    {product.billing_type === 'recurring' && (
+                      <span className="text-xl text-gray-600">
+                        /{product.billing_interval === 'monthly' ? 'mo' : product.billing_interval === 'yearly' ? 'yr' : 'qtr'}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1">{getBillingText()}</p>
+                </div>
+              )}
 
               {product.description && (
                 <div className="prose prose-sm max-w-none mb-8 text-gray-700 flex-grow">
@@ -241,6 +333,13 @@ export default function ProductPublic() {
                     </div>
                   </>
                 )}
+
+                {selectedPaymentOption === 'plan' && hasPaymentPlan && (
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <Check className="h-5 w-5 text-green-600" />
+                    <span>Get instant access with your first payment</span>
+                  </div>
+                )}
               </div>
 
               <button
@@ -256,7 +355,10 @@ export default function ProductPublic() {
                 ) : (
                   <>
                     <ShoppingCart className="h-5 w-5" />
-                    Buy Now
+                    {selectedPaymentOption === 'plan' && hasPaymentPlan
+                      ? `Start Payment Plan - ${formatPrice(product.price_amount / (product.payment_plan_installments || 1), product.price_currency)}/mo`
+                      : 'Buy Now'
+                    }
                   </>
                 )}
               </button>

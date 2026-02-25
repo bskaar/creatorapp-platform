@@ -11,6 +11,8 @@ interface CartItem {
   currency: string;
   billingType: string;
   billingInterval: string | null;
+  usePaymentPlan?: boolean;
+  paymentPlanInstallments?: number;
 }
 
 export default function Checkout() {
@@ -78,6 +80,8 @@ export default function Checkout() {
 
       const checkoutUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-commerce-checkout`;
 
+      const hasPaymentPlan = cart.some(item => item.usePaymentPlan);
+
       const response = await fetch(checkoutUrl, {
         method: 'POST',
         headers: {
@@ -94,6 +98,7 @@ export default function Checkout() {
           customerName: formData.name,
           successUrl: `${window.location.origin}/site/${siteId}/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: `${window.location.origin}/site/${siteId}/checkout`,
+          usePaymentPlan: hasPaymentPlan,
         }),
       });
 
@@ -255,11 +260,16 @@ export default function Checkout() {
                     <div className="flex-grow">
                       <h3 className="font-medium text-gray-900">{item.title}</h3>
                       <p className="text-sm text-gray-600">
-                        {item.billingType === 'recurring'
-                          ? `${formatPrice(item.price, item.currency)}/${item.billingInterval}`
-                          : formatPrice(item.price, item.currency)
+                        {item.usePaymentPlan && item.paymentPlanInstallments
+                          ? `${formatPrice(item.price / item.paymentPlanInstallments, item.currency)}/mo x ${item.paymentPlanInstallments}`
+                          : item.billingType === 'recurring'
+                            ? `${formatPrice(item.price, item.currency)}/${item.billingInterval}`
+                            : formatPrice(item.price, item.currency)
                         }
                       </p>
+                      {item.usePaymentPlan && (
+                        <p className="text-xs text-blue-600 mt-1">Payment Plan</p>
+                      )}
                     </div>
                     <button
                       onClick={() => removeFromCart(item.productId)}
@@ -280,6 +290,11 @@ export default function Checkout() {
                 {cart.some(item => item.billingType === 'recurring') && (
                   <p className="text-sm text-gray-600 mt-2">
                     Subscription items will be charged on a recurring basis
+                  </p>
+                )}
+                {cart.some(item => item.usePaymentPlan) && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    Payment plan: You'll be charged monthly until all payments are complete
                   </p>
                 )}
               </div>

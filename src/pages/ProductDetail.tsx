@@ -34,6 +34,10 @@ export default function ProductDetail() {
     access_duration_days: '',
     status: 'draft',
     sku: '',
+    stripe_price_id: '',
+    stripe_payment_plan_price_id: '',
+    payment_plan_installments: '3',
+    payment_plan_enabled: false,
   });
 
   useEffect(() => {
@@ -70,6 +74,10 @@ export default function ProductDetail() {
       access_duration_days: data.access_duration_days?.toString() || '',
       status: data.status || 'draft',
       sku: data.settings?.sku || '',
+      stripe_price_id: data.stripe_price_id || '',
+      stripe_payment_plan_price_id: data.stripe_payment_plan_price_id || '',
+      payment_plan_installments: data.payment_plan_installments?.toString() || '3',
+      payment_plan_enabled: data.payment_plan_enabled || false,
     });
     setImages(data.settings?.images || []);
     setDownloadableFiles(data.settings?.downloadable_files || []);
@@ -105,6 +113,10 @@ export default function ProductDetail() {
         access_duration_days: formData.access_duration_days ? parseInt(formData.access_duration_days) : null,
         status: formData.status as 'draft' | 'published' | 'archived',
         settings: productSettings,
+        stripe_price_id: formData.stripe_price_id || null,
+        stripe_payment_plan_price_id: formData.stripe_payment_plan_price_id || null,
+        payment_plan_installments: formData.payment_plan_installments ? parseInt(formData.payment_plan_installments) : 3,
+        payment_plan_enabled: formData.payment_plan_enabled,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id);
@@ -472,6 +484,90 @@ export default function ProductDetail() {
               />
             </div>
           )}
+
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Stripe Pricing (Optional)</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Create prices in your Stripe Dashboard and enter the Price IDs here. This enables payment plans where customers can pay in installments.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="stripe_price_id" className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Price ID (One-time)
+                </label>
+                <input
+                  type="text"
+                  id="stripe_price_id"
+                  name="stripe_price_id"
+                  value={formData.stripe_price_id}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  placeholder="price_1ABC..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  The Stripe Price ID for one-time full payment
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="stripe_payment_plan_price_id" className="block text-sm font-medium text-gray-700 mb-2">
+                  Payment Plan Price ID (Subscription)
+                </label>
+                <input
+                  type="text"
+                  id="stripe_payment_plan_price_id"
+                  name="stripe_payment_plan_price_id"
+                  value={formData.stripe_payment_plan_price_id}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  placeholder="price_1XYZ..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  The Stripe Price ID for monthly installment payments
+                </p>
+              </div>
+            </div>
+
+            {formData.stripe_payment_plan_price_id && (
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-between mb-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.payment_plan_enabled}
+                      onChange={(e) => setFormData(prev => ({ ...prev, payment_plan_enabled: e.target.checked }))}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="font-medium text-gray-900">Enable Payment Plan Option</span>
+                  </label>
+                </div>
+
+                <div>
+                  <label htmlFor="payment_plan_installments" className="block text-sm font-medium text-gray-700 mb-2">
+                    Number of Payments
+                  </label>
+                  <select
+                    id="payment_plan_installments"
+                    name="payment_plan_installments"
+                    value={formData.payment_plan_installments}
+                    onChange={handleChange}
+                    className="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="2">2 payments</option>
+                    <option value="3">3 payments</option>
+                    <option value="4">4 payments</option>
+                    <option value="5">5 payments</option>
+                    <option value="6">6 payments</option>
+                    <option value="12">12 payments</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Subscription will auto-cancel after this many successful payments
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
 
           {showAIGenerator && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

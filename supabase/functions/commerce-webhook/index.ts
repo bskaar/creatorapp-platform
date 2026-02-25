@@ -119,6 +119,10 @@ Deno.serve(async (req) => {
         await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
 
+      case 'invoice.payment_succeeded':
+        await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
+        break;
+
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
@@ -174,14 +178,27 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  const isPaymentPlan = session.metadata?.is_payment_plan === 'true';
+  const paymentPlanInstallments = parseInt(session.metadata?.payment_plan_installments || '0', 10);
+  const subscriptionId = session.subscription as string | null;
+
   for (const order of orders) {
     if (session.payment_status === 'paid' && order.payment_status !== 'paid') {
+      const updateData: any = {
+        payment_status: 'paid',
+        updated_at: new Date().toISOString(),
+      };
+
+      if (subscriptionId) {
+        updateData.metadata = {
+          ...order.metadata,
+          subscription_id: subscriptionId,
+        };
+      }
+
       const { error: updateError } = await supabase
         .from('orders')
-        .update({
-          payment_status: 'paid',
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', order.id);
 
       if (updateError) {
@@ -191,9 +208,123 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
       console.log(`Order ${order.id} marked as paid`);
 
+      if (isPaymentPlan && subscriptionId && paymentPlanInstallments > 0) {
+        await createPaymentPlanTracking(
+          order,
+          subscriptionId,
+          paymentPlanInstallments,
+          siteId
+        );
+      }
+
       await grantProductAccess(order);
       await sendOrderConfirmationEmail(order);
     }
+  }
+}
+
+async function createPaymentPlanTracking(
+  order: any,
+  subscriptionId: string,
+  totalInstallments: number,
+  siteId: string
+) {
+  console.log(`Creating payment plan tracking for subscription ${subscriptionId}`);
+
+  const { error } = await supabase
+    .from('payment_plan_tracking')
+    .insert({
+      order_id: order.id,
+      product_id: order.product_id,
+      subscription_id: subscriptionId,
+      customer_email: order.billing_email,
+      site_id: siteId,
+      total_installments: totalInstallments,
+      payments_completed: 1,
+      is_completed: totalInstallments === 1,
+      completed_at: totalInstallments === 1 ? new Date().toISOString() : null,
+    });
+
+  if (error) {
+    console.error('Error creating payment plan tracking:', error);
+    throw error;
+  }
+
+  console.log(`Payment plan tracking created: ${totalInstallments} installments`);
+
+  if (totalInstallments === 1) {
+    await cancelSubscriptionAfterCompletion(subscriptionId);
+  }
+}
+
+async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
+  console.log(`Processing invoice.payment_succeeded: ${invoice.id}`);
+
+  const subscriptionId = invoice.subscription as string | null;
+  if (!subscriptionId) {
+    console.log('Invoice not associated with a subscription');
+    return;
+  }
+
+  if (invoice.billing_reason === 'subscription_create') {
+    console.log('Initial subscription invoice, already handled by checkout.session.completed');
+    return;
+  }
+
+  const { data: tracking, error: findError } = await supabase
+    .from('payment_plan_tracking')
+    .select('*')
+    .eq('subscription_id', subscriptionId)
+    .eq('is_completed', false)
+    .maybeSingle();
+
+  if (findError) {
+    console.error('Error finding payment plan tracking:', findError);
+    return;
+  }
+
+  if (!tracking) {
+    console.log(`No active payment plan tracking for subscription ${subscriptionId}`);
+    return;
+  }
+
+  const newPaymentsCompleted = tracking.payments_completed + 1;
+  const isCompleted = newPaymentsCompleted >= tracking.total_installments;
+
+  const { error: updateError } = await supabase
+    .from('payment_plan_tracking')
+    .update({
+      payments_completed: newPaymentsCompleted,
+      is_completed: isCompleted,
+      completed_at: isCompleted ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', tracking.id);
+
+  if (updateError) {
+    console.error('Error updating payment plan tracking:', updateError);
+    throw updateError;
+  }
+
+  console.log(`Payment ${newPaymentsCompleted}/${tracking.total_installments} recorded for subscription ${subscriptionId}`);
+
+  if (isCompleted) {
+    console.log(`Payment plan completed for subscription ${subscriptionId}, cancelling subscription`);
+    await cancelSubscriptionAfterCompletion(subscriptionId);
+  }
+}
+
+async function cancelSubscriptionAfterCompletion(subscriptionId: string) {
+  try {
+    console.log(`Cancelling subscription ${subscriptionId} after payment plan completion`);
+
+    await stripe.subscriptions.cancel(subscriptionId, {
+      prorate: false,
+    });
+
+    console.log(`Subscription ${subscriptionId} cancelled successfully`);
+  } catch (error: any) {
+    console.error(`Error cancelling subscription ${subscriptionId}:`, error.message);
   }
 }
 
@@ -402,6 +533,35 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   console.log(`Processing subscription deleted: ${subscription.id}`);
 
   const siteId = subscription.metadata?.site_id;
+
+  const { data: tracking } = await supabase
+    .from('payment_plan_tracking')
+    .select('*')
+    .eq('subscription_id', subscription.id)
+    .maybeSingle();
+
+  if (tracking && tracking.is_completed) {
+    console.log(`Subscription ${subscription.id} was a completed payment plan, keeping access active`);
+
+    if (siteId) {
+      await supabase.rpc('log_subscription_change', {
+        p_site_id: siteId,
+        p_stripe_subscription_id: subscription.id,
+        p_change_type: 'payment_plan_completed',
+        p_previous_status: subscription.status,
+        p_new_status: 'completed',
+        p_previous_plan: subscription.items.data[0]?.price?.id || null,
+        p_new_plan: null,
+        p_change_reason: 'Payment plan completed successfully',
+        p_metadata: {
+          total_installments: tracking.total_installments,
+          payments_completed: tracking.payments_completed,
+        },
+      });
+    }
+    return;
+  }
+
   if (siteId) {
     await supabase.rpc('log_subscription_change', {
       p_site_id: siteId,
@@ -416,6 +576,16 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     });
   }
 
+  if (tracking && !tracking.is_completed) {
+    await supabase
+      .from('payment_plan_tracking')
+      .update({
+        cancelled_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', tracking.id);
+  }
+
   const { data: orders } = await supabase
     .from('orders')
     .select('*')
@@ -423,12 +593,14 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
   if (orders) {
     for (const order of orders) {
-      await revokeProductAccess(order);
+      if (!tracking?.is_completed) {
+        await revokeProductAccess(order);
+      }
 
       await supabase
         .from('orders')
         .update({
-          payment_status: 'cancelled',
+          payment_status: tracking?.is_completed ? 'paid' : 'cancelled',
           updated_at: new Date().toISOString(),
         })
         .eq('id', order.id);
