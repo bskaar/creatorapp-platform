@@ -681,14 +681,14 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
           </div>
 
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-2 sm:p-3 shadow-lg flex-shrink-0">
                 {step.icon}
               </div>
-              <div>
-                <div className="text-sm font-medium text-white/80 flex items-center gap-3">
-                  <span>Step {currentStep + 1} of {steps.length}</span>
-                  <span className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full text-xs">
+              <div className="min-w-0">
+                <div className="text-sm font-medium text-white/80 flex items-center gap-2 sm:gap-3 flex-wrap sm:flex-nowrap">
+                  <span className="whitespace-nowrap">{currentStep + 1}/{steps.length}</span>
+                  <span className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full text-xs whitespace-nowrap">
                     <Clock className="h-3 w-3" />
                     {step.time}
                   </span>
@@ -700,7 +700,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                     {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
                   </button>
                 </div>
-                <h2 className="text-2xl font-bold drop-shadow-lg">{step.title}</h2>
+                <h2 className="text-xl sm:text-2xl font-bold drop-shadow-lg">{step.title}</h2>
               </div>
             </div>
 
