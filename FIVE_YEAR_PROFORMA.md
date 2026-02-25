@@ -25,6 +25,28 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 
 ---
 
+## Cost Structure Reference
+
+### Infrastructure Costs (COGS) by Scale
+
+From platform proforma analysis:
+
+| ARR | Users | Infra Cost | % of Revenue |
+|-----|-------|------------|--------------|
+| $1M | 1,000 | $100,000 | 10% |
+| $2.5M | 2,700 | $200,000 | 8% |
+| $7M | 7,600 | $490,000 | 7% |
+| $15M | 16,300 | $900,000 | 6% |
+| $25M | 27,200 | $1,375,000 | 5.5% |
+
+*Infrastructure includes: Supabase, Anthropic AI, Resend Email, Vercel, monitoring*
+
+### Payment Processing
+
+Stripe fees: ~3% of gross revenue (2.9% + $0.30 per transaction)
+
+---
+
 ## Year 1: Launch to $1M ARR
 
 ### Acquisition Targets
@@ -39,41 +61,34 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 
 *Note: Cumulative paid accounts for ~10% churn applied monthly*
 
-### Year 1 Financials
+### Year 1 Team: Ultra-Lean (1-2 FTE)
 
-| Metric | Amount |
-|--------|--------|
-| Trial Signups | 2,200 |
-| Conversions | 1,100 (50%) |
-| Active Paid Users (EOY) | ~900 |
-| ARR (End of Year) | $830,000 - $1,000,000 |
-| Monthly Signups Needed | ~185/month |
-
-### Year 1 Operating Costs
-
-| Category | Annual Cost |
-|----------|-------------|
-| Founder Salary | $0 - $100,000 |
-| PT Support (offshore) | $30,000 |
-| Infrastructure (Supabase/Vercel) | $12,000 |
-| AI (Anthropic) | $18,000 |
-| Email (Resend) | $6,000 |
-| Marketing/Paid | $24,000 |
-| Software/Tools | $6,000 |
-| **Total OpEx** | **$96,000 - $196,000** |
+| Role | Location | Annual Cost |
+|------|----------|-------------|
+| Founder/CEO | US | $0 - $100,000 |
+| PT Support | Offshore | $30,000 |
+| **Total People** | | **$30,000 - $130,000** |
 
 ### Year 1 P&L
 
-| Line Item | Conservative | Optimistic |
-|-----------|--------------|------------|
-| Gross Revenue | $700,000 | $1,000,000 |
-| Stripe Fees (3%) | ($21,000) | ($30,000) |
-| Net Revenue | $679,000 | $970,000 |
-| Infrastructure COGS | ($36,000) | ($36,000) |
-| **Gross Profit** | **$643,000** | **$934,000** |
-| Operating Expenses | ($196,000) | ($96,000) |
-| **Net Income** | **$447,000** | **$838,000** |
-| **Net Margin** | **64%** | **84%** |
+| Line Item | Amount | % Revenue |
+|-----------|--------|-----------|
+| **Gross Revenue** | $830,000 | 100% |
+| Stripe Fees (3%) | ($25,000) | (3%) |
+| **Net Revenue** | **$805,000** | **97%** |
+| | | |
+| Infrastructure COGS | ($83,000) | (10%) |
+| **Gross Profit** | **$722,000** | **87%** |
+| | | |
+| **Operating Expenses** | | |
+| People | ($130,000) | (16%) |
+| Marketing/Paid | ($24,000) | (3%) |
+| Software/Tools | ($6,000) | (0.7%) |
+| Legal/Accounting | ($12,000) | (1.4%) |
+| Contingency | ($10,000) | (1.2%) |
+| **Total OpEx** | **($182,000)** | **(22%)** |
+| | | |
+| **Operating Income** | **$540,000** | **65%** |
 
 ---
 
@@ -85,10 +100,8 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 |--------|-------|
 | Trial Signups | 4,500 |
 | Conversions (50%) | 2,250 |
-| Cumulative Paid | ~3,100 |
 | Churn (3%/month) | ~700 |
 | Active Paid Users (EOY) | ~2,700 |
-| MRR (End of Year) | $207,000 |
 | ARR (End of Year) | $2,500,000 |
 
 ### Year 2 Team (3-4 FTE)
@@ -99,23 +112,28 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 | Senior Engineer | Nearshore | $100,000 |
 | Support Lead | Offshore | $40,000 |
 | Growth/Marketing | Contract | $60,000 |
-| **Total** | | **$350,000** |
+| **Total People** | | **$350,000** |
 
 ### Year 2 P&L
 
 | Line Item | Amount | % Revenue |
 |-----------|--------|-----------|
-| Gross Revenue | $2,500,000 | 100% |
+| **Gross Revenue** | $2,500,000 | 100% |
 | Stripe Fees (3%) | ($75,000) | (3%) |
-| Net Revenue | $2,425,000 | 97% |
-| Infrastructure COGS | ($150,000) | (6%) |
-| **Gross Profit** | **$2,275,000** | **91%** |
+| **Net Revenue** | **$2,425,000** | **97%** |
+| | | |
+| Infrastructure COGS | ($200,000) | (8%) |
+| **Gross Profit** | **$2,225,000** | **89%** |
+| | | |
+| **Operating Expenses** | | |
 | People | ($350,000) | (14%) |
 | Marketing/Paid | ($150,000) | (6%) |
 | Software/Tools | ($24,000) | (1%) |
 | Legal/Accounting | ($30,000) | (1.2%) |
-| **Total OpEx** | **($554,000)** | **(22%)** |
-| **Operating Income** | **$1,721,000** | **69%** |
+| Contingency | ($25,000) | (1%) |
+| **Total OpEx** | **($579,000)** | **(23%)** |
+| | | |
+| **Operating Income** | **$1,646,000** | **66%** |
 
 ---
 
@@ -136,31 +154,37 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 
 ### Year 3 Team (8-10 FTE)
 
-| Role | Count | Annual Cost |
-|------|-------|-------------|
-| Founder/CEO | 1 | $200,000 |
-| Senior Engineer (US) | 1 | $250,000 |
-| Senior Engineers (Nearshore) | 2 | $200,000 |
-| Support Manager | 1 | $60,000 |
-| Support Specialists (Offshore) | 3 | $75,000 |
-| Growth Lead | 1 | $150,000 |
-| **Total** | **9** | **$935,000** |
+| Role | Location | Count | Annual Cost |
+|------|----------|-------|-------------|
+| Founder/CEO | US | 1 | $200,000 |
+| Senior Engineer | US | 1 | $250,000 |
+| Senior Engineers | Nearshore | 2 | $200,000 |
+| Support Manager | Nearshore | 1 | $60,000 |
+| Support Specialists | Offshore | 3 | $75,000 |
+| Growth Lead | US | 1 | $150,000 |
+| **Total** | | **9** | **$935,000** |
 
 ### Year 3 P&L
 
 | Line Item | Amount | % Revenue |
 |-----------|--------|-----------|
-| Gross Revenue | $7,000,000 | 100% |
+| **Gross Revenue** | $7,000,000 | 100% |
 | Stripe Fees (3%) | ($210,000) | (3%) |
-| Net Revenue | $6,790,000 | 97% |
-| Infrastructure COGS | ($420,000) | (6%) |
-| **Gross Profit** | **$6,370,000** | **91%** |
+| **Net Revenue** | **$6,790,000** | **97%** |
+| | | |
+| Infrastructure COGS | ($490,000) | (7%) |
+| **Gross Profit** | **$6,300,000** | **90%** |
+| | | |
+| **Operating Expenses** | | |
 | People | ($935,000) | (13%) |
 | Marketing/Paid | ($500,000) | (7%) |
 | Software/Tools | ($48,000) | (0.7%) |
 | Legal/Accounting | ($60,000) | (0.9%) |
-| **Total OpEx** | **($1,543,000)** | **(22%)** |
-| **Operating Income** | **$4,827,000** | **69%** |
+| Travel/Offsites | ($50,000) | (0.7%) |
+| Contingency | ($70,000) | (1%) |
+| **Total OpEx** | **($1,663,000)** | **(24%)** |
+| | | |
+| **Operating Income** | **$4,637,000** | **66%** |
 
 ---
 
@@ -192,18 +216,24 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 
 | Line Item | Amount | % Revenue |
 |-----------|--------|-----------|
-| Gross Revenue | $15,000,000 | 100% |
+| **Gross Revenue** | $15,000,000 | 100% |
 | Stripe Fees (3%) | ($450,000) | (3%) |
-| Net Revenue | $14,550,000 | 97% |
+| **Net Revenue** | **$14,550,000** | **97%** |
+| | | |
 | Infrastructure COGS | ($900,000) | (6%) |
 | **Gross Profit** | **$13,650,000** | **91%** |
+| | | |
+| **Operating Expenses** | | |
 | People | ($1,510,000) | (10%) |
 | Marketing/Paid | ($1,000,000) | (6.7%) |
 | Software/Tools | ($72,000) | (0.5%) |
 | Legal/Accounting | ($100,000) | (0.7%) |
+| Travel/Offsites | ($100,000) | (0.7%) |
+| Insurance | ($50,000) | (0.3%) |
 | Contingency | ($150,000) | (1%) |
-| **Total OpEx** | **($2,832,000)** | **(19%)** |
-| **Operating Income** | **$10,818,000** | **72%** |
+| **Total OpEx** | **($2,982,000)** | **(20%)** |
+| | | |
+| **Operating Income** | **$10,668,000** | **71%** |
 
 ---
 
@@ -238,18 +268,24 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 
 | Line Item | Amount | % Revenue |
 |-----------|--------|-----------|
-| Gross Revenue | $25,000,000 | 100% |
+| **Gross Revenue** | $25,000,000 | 100% |
 | Stripe Fees (3%) | ($750,000) | (3%) |
-| Net Revenue | $24,250,000 | 97% |
+| **Net Revenue** | **$24,250,000** | **97%** |
+| | | |
 | Infrastructure COGS | ($1,375,000) | (5.5%) |
 | **Gross Profit** | **$22,875,000** | **91.5%** |
+| | | |
+| **Operating Expenses** | | |
 | People | ($2,490,000) | (10%) |
 | Marketing/Paid | ($1,500,000) | (6%) |
 | Software/Tools | ($96,000) | (0.4%) |
 | Legal/Accounting | ($150,000) | (0.6%) |
+| Travel/Offsites | ($150,000) | (0.6%) |
+| Insurance | ($80,000) | (0.3%) |
 | Contingency | ($200,000) | (0.8%) |
-| **Total OpEx** | **($4,436,000)** | **(18%)** |
-| **Operating Income** | **$18,439,000** | **74%** |
+| **Total OpEx** | **($4,666,000)** | **(19%)** |
+| | | |
+| **Operating Income** | **$18,209,000** | **73%** |
 
 ---
 
@@ -262,10 +298,17 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 | **New Paid Users** | 1,100 | 2,250 | 4,950 | 7,700 | 10,800 |
 | **Active Paid (EOY)** | 900 | 2,700 | 7,600 | 16,300 | 27,200 |
 | **ARR** | $1M | $2.5M | $7M | $15M | $25M |
+| | | | | | |
+| **Gross Revenue** | $830K | $2.5M | $7M | $15M | $25M |
+| **Gross Profit** | $722K | $2.2M | $6.3M | $13.7M | $22.9M |
+| **Gross Margin** | 87% | 89% | 90% | 91% | 91.5% |
+| | | | | | |
 | **Team Size** | 1-2 | 3-4 | 9 | 13.5 | 20 |
-| **Revenue/Employee** | $500K+ | $625K | $778K | $1.1M | $1.25M |
-| **Operating Margin** | 64-84% | 69% | 69% | 72% | 74% |
-| **Operating Income** | $447K-$838K | $1.7M | $4.8M | $10.8M | $18.4M |
+| **People Cost** | $130K | $350K | $935K | $1.5M | $2.5M |
+| **Revenue/Employee** | $415K | $625K | $778K | $1.1M | $1.25M |
+| | | | | | |
+| **Operating Income** | $540K | $1.6M | $4.6M | $10.7M | $18.2M |
+| **Operating Margin** | 65% | 66% | 66% | 71% | 73% |
 
 ---
 
@@ -276,9 +319,14 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 | **Total Trial Signups** | 47,700 |
 | **Total Conversions** | ~26,800 |
 | **Lifetime Conversion Rate** | 56% |
-| **Total Revenue** | ~$50,500,000 |
-| **Total Operating Income** | ~$36,500,000 |
-| **5-Year Operating Margin** | ~72% |
+| **Total Gross Revenue** | $50,330,000 |
+| **Total Stripe Fees** | ($1,510,000) |
+| **Total Infrastructure COGS** | ($3,148,000) |
+| **Total Gross Profit** | $45,672,000 |
+| **5-Year Gross Margin** | 91% |
+| **Total Operating Expenses** | ($10,072,000) |
+| **Total Operating Income** | $35,700,000 |
+| **5-Year Operating Margin** | ~71% |
 
 ---
 
@@ -293,6 +341,20 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 | Month 1 Retention | 90% |
 | Month 2-3 Retention | 95% |
 | Annual Retention | 70-75% |
+
+### Infrastructure Cost Breakdown (at scale)
+
+| Category | Year 1 | Year 5 |
+|----------|--------|--------|
+| Supabase | $12,000 | $150,000 |
+| Anthropic AI | $18,000 | $550,000 |
+| Resend Email | $6,000 | $500,000 |
+| Vercel/CDN | $3,000 | $75,000 |
+| Monitoring | $2,000 | $50,000 |
+| Other | $2,000 | $50,000 |
+| **Total** | **$43,000** | **$1,375,000** |
+
+*Note: Year 1 actual may be lower as usage ramps up*
 
 ### Growth Drivers
 
@@ -338,5 +400,22 @@ Based on tier distribution: 45% Starter, 40% Growth, 15% Pro
 
 ---
 
+## Alignment with Platform Cost Models
+
+This proforma aligns with:
+- **PLATFORM_PROFORMA_ANALYSIS.md**: Infrastructure cost ratios and gross margin targets
+- **OPERATIONAL_PROFORMA_MODEL.md**: Team structure and compensation benchmarks
+- **ULTRA_LEAN_PROFORMA.md**: AI-native operations philosophy
+
+Key validated assumptions:
+- Gross margin 87-92% (matches platform analysis)
+- Infrastructure 5.5-10% of revenue (scales down with volume)
+- Stripe fees ~3% of revenue
+- Operating margin 65-75% (matches ultra-lean model)
+- Revenue per employee $400K-$1.25M (within benchmark range)
+
+---
+
 *Updated: February 2026*
 *Model based on trial-first acquisition with no free tier*
+*Aligned with platform infrastructure and operational cost models*
