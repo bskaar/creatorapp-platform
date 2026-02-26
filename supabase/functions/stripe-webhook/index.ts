@@ -112,6 +112,20 @@ async function handleEvent(event: Stripe.Event) {
   if (event.type === 'payment_intent.succeeded' && stripeData.invoice === null) {
     return;
   }
+
+  // Handle payment failures for dunning system
+  if (event.type === 'invoice.payment_failed') {
+    const invoice = stripeData as Stripe.Invoice;
+    await handlePaymentFailed(invoice);
+    return;
+  }
+
+  // Handle successful payment (clears dunning)
+  if (event.type === 'invoice.payment_succeeded') {
+    const invoice = stripeData as Stripe.Invoice;
+    await handlePaymentSucceeded(invoice);
+    return;
+  }
 }
 
 async function handleOneTimePayment(session: Stripe.Checkout.Session) {
@@ -202,6 +216,146 @@ async function syncPlatformSubscription(customerId: string, siteId: string) {
   } catch (error) {
     console.error(`Failed to sync platform subscription:`, error);
     throw error;
+  }
+}
+
+async function handlePaymentFailed(invoice: Stripe.Invoice) {
+  try {
+    const subscriptionId = invoice.subscription as string;
+    const customerId = invoice.customer as string;
+
+    if (!subscriptionId) {
+      console.info('Invoice not associated with a subscription, skipping dunning');
+      return;
+    }
+
+    console.info(`Payment failed for subscription: ${subscriptionId}`);
+
+    // Find the site associated with this subscription
+    const { data: site } = await supabase
+      .from('sites')
+      .select('id, owner_id, name')
+      .eq('platform_stripe_subscription_id', subscriptionId)
+      .maybeSingle();
+
+    if (!site) {
+      console.info('No site found for subscription, may be a creator subscription');
+      return;
+    }
+
+    // Check existing dunning attempts
+    const { data: existingAttempts } = await supabase
+      .from('dunning_attempts')
+      .select('attempt_number')
+      .eq('stripe_subscription_id', subscriptionId)
+      .eq('status', 'pending')
+      .order('attempt_number', { ascending: false })
+      .limit(1);
+
+    const lastAttempt = existingAttempts?.[0]?.attempt_number || 0;
+    const nextAttempt = lastAttempt + 1;
+
+    if (nextAttempt > 3) {
+      console.info('Max dunning attempts reached, subscription will be cancelled');
+      // Update subscription status
+      await supabase
+        .from('sites')
+        .update({
+          platform_subscription_status: 'past_due',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', site.id);
+      return;
+    }
+
+    // Calculate next retry date based on 1-3-7 schedule
+    const daysToAdd = nextAttempt === 1 ? 1 : nextAttempt === 2 ? 3 : 7;
+    const scheduledFor = new Date();
+    scheduledFor.setDate(scheduledFor.getDate() + daysToAdd);
+
+    // Create dunning attempt record
+    const { error: dunningError } = await supabase.from('dunning_attempts').insert({
+      site_id: site.id,
+      stripe_subscription_id: subscriptionId,
+      stripe_invoice_id: invoice.id,
+      attempt_number: nextAttempt,
+      scheduled_for: scheduledFor.toISOString(),
+      status: 'pending',
+    });
+
+    if (dunningError) {
+      console.error('Error creating dunning attempt:', dunningError);
+    }
+
+    // Update subscription with dunning info
+    if (nextAttempt === 1) {
+      const gracePeriodEnd = new Date();
+      gracePeriodEnd.setDate(gracePeriodEnd.getDate() + 8);
+
+      await supabase
+        .from('sites')
+        .update({
+          platform_subscription_status: 'past_due',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', site.id);
+    }
+
+    // Create in-app notification
+    await supabase.from('in_app_notifications').insert({
+      user_id: site.owner_id,
+      site_id: site.id,
+      type: 'payment_failed',
+      title: 'Payment Failed',
+      message: `We couldn't process your payment for ${site.name}. Please update your payment method to avoid service interruption.`,
+      action_url: '/settings?tab=subscription',
+      action_label: 'Update Payment',
+      severity: 'error',
+    });
+
+    console.info(`Created dunning attempt ${nextAttempt} for site: ${site.id}`);
+  } catch (error) {
+    console.error('Error handling payment failure:', error);
+  }
+}
+
+async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
+  try {
+    const subscriptionId = invoice.subscription as string;
+
+    if (!subscriptionId) {
+      return;
+    }
+
+    console.info(`Payment succeeded for subscription: ${subscriptionId}`);
+
+    // Cancel any pending dunning attempts
+    await supabase
+      .from('dunning_attempts')
+      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+      .eq('stripe_subscription_id', subscriptionId)
+      .eq('status', 'pending');
+
+    // Find the site and clear dunning state
+    const { data: site } = await supabase
+      .from('sites')
+      .select('id, owner_id')
+      .eq('platform_stripe_subscription_id', subscriptionId)
+      .maybeSingle();
+
+    if (site) {
+      // Dismiss payment failed notifications
+      await supabase
+        .from('in_app_notifications')
+        .update({ dismissed_at: new Date().toISOString() })
+        .eq('site_id', site.id)
+        .eq('type', 'payment_failed')
+        .is('dismissed_at', null);
+
+      console.info(`Cleared dunning state for site: ${site.id}`);
+    }
+  } catch (error) {
+    console.error('Error handling payment success:', error);
   }
 }
 

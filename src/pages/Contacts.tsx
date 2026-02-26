@@ -50,11 +50,15 @@ export default function Contacts() {
   const [error, setError] = useState('');
   const [showImportModal, setShowImportModal] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [importResults, setImportResults] = useState<{
     success: number;
     failed: number;
     errors: string[];
   } | null>(null);
+  const [selectedContacts, setSelectedContacts] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState('');
+  const [processingBulk, setProcessingBulk] = useState(false);
 
   useEffect(() => {
     if (!currentSite) return;
@@ -195,6 +199,147 @@ export default function Contacts() {
     setError('');
   };
 
+  const handleExport = async () => {
+    if (!currentSite) return;
+
+    setExporting(true);
+
+    try {
+      let query = supabase
+        .from('contacts')
+        .select('email, first_name, last_name, phone, status, source, created_at')
+        .eq('site_id', currentSite.id)
+        .order('created_at', { ascending: false });
+
+      if (filterStatus !== 'all') {
+        query = query.eq('status', filterStatus);
+      }
+
+      if (searchTerm) {
+        query = query.or(
+          `email.ilike.%${searchTerm}%,first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`
+        );
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        alert('No contacts to export');
+        return;
+      }
+
+      const headers = ['email', 'first_name', 'last_name', 'phone', 'status', 'source', 'created_at'];
+      const csvRows = [headers.join(',')];
+
+      data.forEach((contact) => {
+        const row = headers.map((header) => {
+          const value = contact[header as keyof typeof contact];
+          if (value === null || value === undefined) return '';
+          const stringValue = String(value);
+          if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+            return `"${stringValue.replace(/"/g, '""')}"`;
+          }
+          return stringValue;
+        });
+        csvRows.push(row.join(','));
+      });
+
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      const filename = `contacts-${currentSite.name?.replace(/\s+/g, '-') || 'export'}-${new Date().toISOString().split('T')[0]}.csv`;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      alert('Error exporting contacts: ' + err.message);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedContacts.size === contacts.length) {
+      setSelectedContacts(new Set());
+    } else {
+      setSelectedContacts(new Set(contacts.map((c) => c.id)));
+    }
+  };
+
+  const toggleSelectContact = (id: string) => {
+    const newSelected = new Set(selectedContacts);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedContacts(newSelected);
+  };
+
+  const handleBulkAction = async () => {
+    if (!bulkAction || selectedContacts.size === 0) return;
+
+    setProcessingBulk(true);
+
+    try {
+      const ids = Array.from(selectedContacts);
+
+      if (bulkAction === 'delete') {
+        if (!confirm(`Delete ${ids.length} contacts? This action cannot be undone.`)) {
+          setProcessingBulk(false);
+          return;
+        }
+        await supabase.from('contacts').delete().in('id', ids);
+      } else if (bulkAction === 'set-active') {
+        await supabase.from('contacts').update({ status: 'active' }).in('id', ids);
+      } else if (bulkAction === 'set-unsubscribed') {
+        await supabase.from('contacts').update({ status: 'unsubscribed' }).in('id', ids);
+      } else if (bulkAction === 'export-selected') {
+        const selectedData = contacts.filter((c) => selectedContacts.has(c.id));
+        const headers = ['email', 'first_name', 'last_name', 'phone', 'status', 'source', 'created_at'];
+        const csvRows = [headers.join(',')];
+
+        selectedData.forEach((contact) => {
+          const row = headers.map((header) => {
+            const value = contact[header as keyof typeof contact];
+            if (value === null || value === undefined) return '';
+            const stringValue = String(value);
+            if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+              return `"${stringValue.replace(/"/g, '""')}"`;
+            }
+            return stringValue;
+          });
+          csvRows.push(row.join(','));
+        });
+
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `selected-contacts-${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      setSelectedContacts(new Set());
+      setBulkAction('');
+      loadData();
+    } catch (err: any) {
+      alert('Error performing bulk action: ' + err.message);
+    } finally {
+      setProcessingBulk(false);
+    }
+  };
+
   const handleFileImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !currentSite) return;
@@ -302,6 +447,14 @@ export default function Contacts() {
         </div>
         <div className="flex items-center space-x-3">
           <button
+            onClick={handleExport}
+            disabled={exporting || contacts.length === 0}
+            className="flex items-center space-x-2 px-4 py-2 border border-border text-gray-700 rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Download className="h-5 w-5" />
+            <span>{exporting ? 'Exporting...' : 'Export'}</span>
+          </button>
+          <button
             onClick={() => setShowImportModal(true)}
             className="flex items-center space-x-2 px-4 py-2 border border-border text-gray-700 rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition"
           >
@@ -361,6 +514,42 @@ export default function Contacts() {
           </select>
         </div>
 
+        {selectedContacts.size > 0 && (
+          <div className="p-4 bg-blue-50 border-b border-blue-200 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-blue-900">
+                {selectedContacts.size} contact{selectedContacts.size > 1 ? 's' : ''} selected
+              </span>
+              <button
+                onClick={() => setSelectedContacts(new Set())}
+                className="text-sm text-blue-700 hover:text-blue-800 underline"
+              >
+                Clear selection
+              </button>
+            </div>
+            <div className="flex items-center gap-3">
+              <select
+                value={bulkAction}
+                onChange={(e) => setBulkAction(e.target.value)}
+                className="px-3 py-1.5 border border-blue-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Choose action...</option>
+                <option value="export-selected">Export Selected</option>
+                <option value="set-active">Set as Active</option>
+                <option value="set-unsubscribed">Set as Unsubscribed</option>
+                <option value="delete">Delete Selected</option>
+              </select>
+              <button
+                onClick={handleBulkAction}
+                disabled={!bulkAction || processingBulk}
+                className="px-4 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {processingBulk ? 'Processing...' : 'Apply'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {contacts.length === 0 ? (
           <div className="p-12 text-center">
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -380,6 +569,14 @@ export default function Contacts() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
+                  <th className="px-4 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      checked={selectedContacts.size === contacts.length && contacts.length > 0}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Contact
                   </th>
@@ -402,7 +599,15 @@ export default function Contacts() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {contacts.map((contact) => (
-                  <tr key={contact.id} className="hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition">
+                  <tr key={contact.id} className={`hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition ${selectedContacts.has(contact.id) ? 'bg-blue-50' : ''}`}>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedContacts.has(contact.id)}
+                        onChange={() => toggleSelectContact(contact.id)}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center">

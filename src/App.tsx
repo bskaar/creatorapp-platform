@@ -52,12 +52,18 @@ import PlatformAdminSettings from './pages/PlatformAdmin/Settings';
 import PlatformAdminInvitationCodes from './pages/PlatformAdmin/InvitationCodes';
 import PlatformAdminAIUsage from './pages/PlatformAdmin/AIUsage';
 import PlatformAdminBackups from './pages/PlatformAdmin/Backups';
+import PlatformAdminErrorMonitoring from './pages/PlatformAdmin/ErrorMonitoring';
 import PricingReview from './pages/PricingReview';
 import About from './pages/About';
 import Documentation from './pages/Documentation';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import PublicSitePreview from './pages/PublicSitePreview';
+import Unsubscribe from './pages/Unsubscribe';
+import WebinarRegister from './pages/WebinarRegister';
+import WebinarReplay from './pages/WebinarReplay';
+import StudentCourse from './pages/StudentCourse';
+import Certificate from './pages/Certificate';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -536,6 +542,9 @@ function AppRoutes() {
       <Route path="/pages/contact" element={<Contact />} />
       <Route path="/pages/:slug" element={<MarketingPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/unsubscribe" element={<Unsubscribe />} />
+      <Route path="/webinar/:webinarId/register" element={<WebinarRegister />} />
+      <Route path="/webinar/:webinarId/replay" element={<WebinarReplay />} />
       <Route path="/terms-of-service" element={<TermsOfService />} />
       <Route path="/cookie-policy" element={<CookiePolicy />} />
       <Route path="/pricing-review" element={<PricingReview />} />
@@ -545,6 +554,22 @@ function AppRoutes() {
       <Route path="/site/:siteId/product/:productId" element={<ProductPublic />} />
       <Route path="/site/:siteId/checkout" element={<Checkout />} />
       <Route path="/site/:siteId/success" element={<CheckoutSuccess />} />
+      <Route
+        path="/learn/:productId"
+        element={
+          <AuthenticatedRoute>
+            <StudentCourse />
+          </AuthenticatedRoute>
+        }
+      />
+      <Route
+        path="/certificate/:productId"
+        element={
+          <AuthenticatedRoute>
+            <Certificate />
+          </AuthenticatedRoute>
+        }
+      />
 
       <Route
         path="/platform-admin"
@@ -622,6 +647,16 @@ function AppRoutes() {
           <PlatformAdminGuard requiredPermission="manage_platform_settings">
             <PlatformAdminLayout>
               <PlatformAdminBackups />
+            </PlatformAdminLayout>
+          </PlatformAdminGuard>
+        }
+      />
+      <Route
+        path="/platform-admin/errors"
+        element={
+          <PlatformAdminGuard requiredPermission="view_analytics">
+            <PlatformAdminLayout>
+              <PlatformAdminErrorMonitoring />
             </PlatformAdminLayout>
           </PlatformAdminGuard>
         }

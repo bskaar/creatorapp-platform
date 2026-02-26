@@ -35,6 +35,9 @@ export default function Webinars() {
     timezone: 'UTC',
     stream_url: '',
     max_attendees: null as number | null,
+    replay_enabled: true,
+    replay_delay_hours: 0,
+    replay_url: '',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -87,6 +90,9 @@ export default function Webinars() {
         stream_url: formData.stream_url,
         max_attendees: formData.max_attendees,
         status: 'scheduled',
+        replay_enabled: formData.replay_enabled,
+        replay_delay_hours: formData.replay_delay_hours,
+        replay_url: formData.replay_url || null,
       });
 
       if (insertError) throw insertError;
@@ -101,6 +107,9 @@ export default function Webinars() {
         timezone: 'UTC',
         stream_url: '',
         max_attendees: null,
+        replay_enabled: true,
+        replay_delay_hours: 0,
+        replay_url: '',
       });
       loadWebinars();
     } catch (err: any) {
@@ -118,7 +127,7 @@ export default function Webinars() {
   };
 
   const copyRegistrationLink = (webinarId: string) => {
-    const link = `${window.location.origin}/register/${webinarId}`;
+    const link = `${window.location.origin}/webinar/${webinarId}/register`;
     navigator.clipboard.writeText(link);
     alert('Registration link copied to clipboard!');
   };
@@ -432,6 +441,54 @@ export default function Webinars() {
                   placeholder="Leave blank for unlimited"
                   min="1"
                 />
+              </div>
+
+              <div className="border-t pt-4 mt-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Replay Settings</h3>
+                <div className="space-y-4">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={formData.replay_enabled}
+                      onChange={(e) => setFormData({ ...formData, replay_enabled: e.target.checked })}
+                      className="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary"
+                    />
+                    <span className="text-sm text-gray-700">Enable replay after webinar ends</span>
+                  </label>
+
+                  {formData.replay_enabled && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Replay Delay (hours)
+                        </label>
+                        <input
+                          type="number"
+                          value={formData.replay_delay_hours}
+                          onChange={(e) => setFormData({ ...formData, replay_delay_hours: parseInt(e.target.value) || 0 })}
+                          className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                          min="0"
+                          placeholder="0 = immediate"
+                        />
+                        <p className="mt-1 text-xs text-gray-500">0 means replay is available immediately after the webinar ends</p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Replay URL (Optional)
+                        </label>
+                        <input
+                          type="url"
+                          value={formData.replay_url}
+                          onChange={(e) => setFormData({ ...formData, replay_url: e.target.value })}
+                          className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                          placeholder="https://youtube.com/watch?v=..."
+                        />
+                        <p className="mt-1 text-xs text-gray-500">Can be added later after recording the webinar</p>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="flex space-x-3 pt-4">

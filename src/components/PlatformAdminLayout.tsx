@@ -16,6 +16,7 @@ import {
   Key,
   Brain,
   Database,
+  AlertCircle,
 } from 'lucide-react';
 
 export default function PlatformAdminLayout({ children }: { children: React.ReactNode }) {
@@ -36,6 +37,7 @@ export default function PlatformAdminLayout({ children }: { children: React.Reac
     { name: 'Users', href: '/platform-admin/users', icon: Users, permission: 'view_users' },
     { name: 'Invitation Codes', href: '/platform-admin/invitation-codes', icon: Key, permission: 'manage_platform_settings' },
     { name: 'AI Usage', href: '/platform-admin/ai-usage', icon: Brain, permission: 'view_analytics' },
+    { name: 'Error Monitoring', href: '/platform-admin/errors', icon: AlertCircle, permission: 'view_analytics' },
     { name: 'Activity Log', href: '/platform-admin/audit-log', icon: Activity, permission: 'view_analytics' },
     { name: 'Backups', href: '/platform-admin/backups', icon: Database, permission: 'manage_platform_settings' },
     { name: 'Settings', href: '/platform-admin/settings', icon: Settings, permission: 'manage_platform_settings' },

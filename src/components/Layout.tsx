@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSite } from '../contexts/SiteContext';
 import Logo from './Logo';
 import AIFloatingButton from './AIFloatingButton';
+import InAppNotificationBanner from './InAppNotificationBanner';
 import {
   LayoutDashboard,
   FolderOpen,
@@ -219,6 +220,7 @@ export default function Layout({ children }: LayoutProps) {
 
       <div className="lg:pl-72 pt-16 lg:pt-0">
         <main className="p-6">
+          <InAppNotificationBanner />
           {children}
         </main>
       </div>
