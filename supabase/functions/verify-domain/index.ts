@@ -15,17 +15,13 @@ async function addDomainToVercel(domain: string): Promise<{ success: boolean; ve
   try {
     const vercelToken = Deno.env.get('VERCEL_TOKEN');
     const vercelProjectId = Deno.env.get('VERCEL_PROJECT_ID');
-    const vercelTeamId = Deno.env.get('VERCEL_TEAM_ID');
 
     if (!vercelToken || !vercelProjectId) {
       console.log('Vercel configuration not set, skipping Vercel domain addition');
       return { success: false, error: 'Vercel not configured' };
     }
 
-    let url = `https://api.vercel.com/v10/projects/${vercelProjectId}/domains`;
-    if (vercelTeamId) {
-      url += `?teamId=${vercelTeamId}`;
-    }
+    const url = `https://api.vercel.com/v10/projects/${vercelProjectId}/domains`;
 
     const response = await fetch(url, {
       method: 'POST',
