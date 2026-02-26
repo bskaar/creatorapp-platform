@@ -34,16 +34,12 @@ async function addDomainToVercel(domain: string): Promise<{ success: boolean; da
   try {
     const vercelToken = Deno.env.get('VERCEL_TOKEN');
     const vercelProjectId = Deno.env.get('VERCEL_PROJECT_ID');
-    const vercelTeamId = Deno.env.get('VERCEL_TEAM_ID');
 
     if (!vercelToken || !vercelProjectId) {
       return { success: false, error: 'Vercel configuration missing' };
     }
 
-    let url = `https://api.vercel.com/v10/projects/${vercelProjectId}/domains`;
-    if (vercelTeamId) {
-      url += `?teamId=${vercelTeamId}`;
-    }
+    const url = `https://api.vercel.com/v10/projects/${vercelProjectId}/domains`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -77,16 +73,12 @@ async function removeDomainFromVercel(domain: string): Promise<{ success: boolea
   try {
     const vercelToken = Deno.env.get('VERCEL_TOKEN');
     const vercelProjectId = Deno.env.get('VERCEL_PROJECT_ID');
-    const vercelTeamId = Deno.env.get('VERCEL_TEAM_ID');
 
     if (!vercelToken || !vercelProjectId) {
       return { success: false, error: 'Vercel configuration missing' };
     }
 
-    let url = `https://api.vercel.com/v9/projects/${vercelProjectId}/domains/${domain}`;
-    if (vercelTeamId) {
-      url += `?teamId=${vercelTeamId}`;
-    }
+    const url = `https://api.vercel.com/v9/projects/${vercelProjectId}/domains/${domain}`;
 
     const response = await fetch(url, {
       method: 'DELETE',
@@ -111,16 +103,12 @@ async function checkDomainInVercel(domain: string): Promise<{ exists: boolean; v
   try {
     const vercelToken = Deno.env.get('VERCEL_TOKEN');
     const vercelProjectId = Deno.env.get('VERCEL_PROJECT_ID');
-    const vercelTeamId = Deno.env.get('VERCEL_TEAM_ID');
 
     if (!vercelToken || !vercelProjectId) {
       return { exists: false, verified: false, error: 'Vercel configuration missing' };
     }
 
-    let url = `https://api.vercel.com/v9/projects/${vercelProjectId}/domains/${domain}`;
-    if (vercelTeamId) {
-      url += `?teamId=${vercelTeamId}`;
-    }
+    const url = `https://api.vercel.com/v9/projects/${vercelProjectId}/domains/${domain}`;
 
     const response = await fetch(url, {
       method: 'GET',
@@ -154,16 +142,12 @@ async function verifyDomainInVercel(domain: string): Promise<{ verified: boolean
   try {
     const vercelToken = Deno.env.get('VERCEL_TOKEN');
     const vercelProjectId = Deno.env.get('VERCEL_PROJECT_ID');
-    const vercelTeamId = Deno.env.get('VERCEL_TEAM_ID');
 
     if (!vercelToken || !vercelProjectId) {
       return { verified: false, error: 'Vercel configuration missing' };
     }
 
-    let url = `https://api.vercel.com/v9/projects/${vercelProjectId}/domains/${domain}/verify`;
-    if (vercelTeamId) {
-      url += `?teamId=${vercelTeamId}`;
-    }
+    const url = `https://api.vercel.com/v9/projects/${vercelProjectId}/domains/${domain}/verify`;
 
     const response = await fetch(url, {
       method: 'POST',
