@@ -19,7 +19,8 @@ export default function LaunchSuccessBanner({
   const [copied, setCopied] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
 
-  const siteUrl = customDomain ? `https://${customDomain}` : `https://${subdomain}.creatorapp.site`;
+  const displayDomain = customDomain && !customDomain.startsWith('www.') ? `www.${customDomain}` : (customDomain || `${subdomain}.creatorapp.site`);
+  const siteUrl = `https://${displayDomain}`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(siteUrl);

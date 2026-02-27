@@ -14,7 +14,8 @@ export default function SiteStatusIndicator({
   customDomain,
   lastUpdated
 }: SiteStatusIndicatorProps) {
-  const displayDomain = customDomain || `${subdomain}.creatorapp.site`;
+  const baseDomain = customDomain || `${subdomain}.creatorapp.site`;
+  const displayDomain = customDomain && !customDomain.startsWith('www.') ? `www.${customDomain}` : baseDomain;
   const siteUrl = `https://${displayDomain}`;
 
   const formatDate = (dateString: string) => {
