@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Save } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Save, ArrowLeft } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { supabase } from '../../lib/supabase';
 import StripeConnectOnboarding from './StripeConnectOnboarding';
@@ -187,7 +188,7 @@ export default function PaymentSettings() {
       {activeTab === 'stripe' && <StripeConnectOnboarding />}
 
 
-      <div className="pt-4 border-t border-border">
+      <div className="pt-4 border-t border-border flex items-center gap-4">
         <button
           onClick={handleSave}
           disabled={loading}
@@ -210,6 +211,15 @@ export default function PaymentSettings() {
             </>
           )}
         </button>
+        {saved && (
+          <Link
+            to="/"
+            className="flex items-center gap-2 px-6 py-3 text-gray-700 font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Upload, Save, Palette, Image, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Upload, Save, Palette, Image, X, ArrowLeft } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -335,7 +336,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
           <p className="text-xs text-text-secondary mt-1">Comma-separated keywords for SEO</p>
         </div>
 
-        <div className="pt-4 border-t border-border">
+        <div className="pt-4 border-t border-border flex items-center gap-4">
           <button
             onClick={handleSave}
             disabled={loading}
@@ -358,6 +359,15 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
               </>
             )}
           </button>
+          {saved && (
+            <Link
+              to="/"
+              className="flex items-center gap-2 px-6 py-3 text-gray-700 font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Link>
+          )}
         </div>
       </div>
     </div>

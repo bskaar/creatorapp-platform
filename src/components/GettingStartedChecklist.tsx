@@ -49,6 +49,7 @@ export default function GettingStartedChecklist() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [copied, setCopied] = useState(false);
   const [onboardingData, setOnboardingData] = useState<OnboardingData | null>(null);
+  const [siteIsPublished, setSiteIsPublished] = useState(false);
 
   useEffect(() => {
     const isDismissed = localStorage.getItem(`checklist-dismissed-${currentSite?.id}`);
@@ -69,7 +70,7 @@ export default function GettingStartedChecklist() {
       const onboarding = currentSite.onboarding_data as OnboardingData | null;
       setOnboardingData(onboarding);
 
-      const [pagesResult, productsResult, stripeResult, domainsResult, funnelsResult] = await Promise.all([
+      const [pagesResult, productsResult, siteResult, domainsResult, funnelsResult] = await Promise.all([
         supabase
           .from('pages')
           .select('id, ai_content_generated')
@@ -80,7 +81,7 @@ export default function GettingStartedChecklist() {
           .eq('site_id', currentSite.id),
         supabase
           .from('sites')
-          .select('stripe_account_id')
+          .select('stripe_account_id, is_published')
           .eq('id', currentSite.id)
           .maybeSingle(),
         supabase
@@ -97,10 +98,11 @@ export default function GettingStartedChecklist() {
       const hasPages = (pagesResult.data?.length || 0) > 0;
       const hasAiGeneratedPages = pagesResult.data?.some(p => p.ai_content_generated) || false;
       const hasProducts = (productsResult.count || 0) > 0;
-      const hasStripe = !!stripeResult.data?.stripe_account_id;
+      const hasStripe = !!(siteResult.data?.stripe_account_id);
       const hasDomain = (domainsResult.count || 0) > 0;
       const hasFunnel = (funnelsResult.data?.length || 0) > 0;
-      const isPublished = currentSite.is_published;
+      const isPublished = siteResult.data?.is_published ?? currentSite.is_published;
+      setSiteIsPublished(isPublished);
 
       const templateCategory = onboarding?.template_name?.toLowerCase() || '';
       const isCourseTemplate = templateCategory.includes('course') || templateCategory.includes('sales');
@@ -223,7 +225,7 @@ export default function GettingStartedChecklist() {
 
   if (dismissed || loading) return null;
 
-  if (allRequiredCompleted && currentSite?.is_published) {
+  if (allRequiredCompleted && siteIsPublished) {
     return (
       <div className="bg-gradient-to-r from-emerald-50 to-cyan-50 rounded-2xl border border-emerald-200 p-6 relative overflow-hidden">
         <button

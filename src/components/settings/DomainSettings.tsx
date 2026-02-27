@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Globe, Check, X, AlertCircle, ExternalLink, Copy, RefreshCw, Server } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Globe, Check, X, AlertCircle, ExternalLink, Copy, RefreshCw, Server, ArrowLeft } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { supabase } from '../../lib/supabase';
 
@@ -631,6 +632,16 @@ export default function DomainSettings() {
               Most changes are visible within 10-15 minutes.
             </p>
           </div>
+        </div>
+
+        <div className="pt-4 border-t border-border">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-6 py-3 text-gray-700 font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Link>
         </div>
       </div>
     </div>
