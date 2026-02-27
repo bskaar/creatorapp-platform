@@ -12,6 +12,7 @@ interface SiteData {
   slug: string;
   primary_color: string;
   settings: any;
+  logo_url?: string;
 }
 
 interface Block {
@@ -26,7 +27,7 @@ async function getSiteByDomain(supabase: any, domain: string): Promise<SiteData 
 
   const { data: siteByCustomDomain } = await supabase
     .from('sites')
-    .select('id, name, slug, primary_color, settings')
+    .select('id, name, slug, primary_color, settings, logo_url')
     .eq('custom_domain', cleanDomain)
     .eq('domain_verification_status', 'verified')
     .eq('status', 'active')
@@ -36,7 +37,7 @@ async function getSiteByDomain(supabase: any, domain: string): Promise<SiteData 
 
   const { data: siteByCustomDomainWWW } = await supabase
     .from('sites')
-    .select('id, name, slug, primary_color, settings')
+    .select('id, name, slug, primary_color, settings, logo_url')
     .eq('custom_domain', `www.${cleanDomain}`)
     .eq('domain_verification_status', 'verified')
     .eq('status', 'active')
@@ -48,7 +49,7 @@ async function getSiteByDomain(supabase: any, domain: string): Promise<SiteData 
     const slug = domain.replace('.creatorapp.site', '');
     const { data: siteBySlug } = await supabase
       .from('sites')
-      .select('id, name, slug, primary_color, settings')
+      .select('id, name, slug, primary_color, settings, logo_url')
       .eq('slug', slug)
       .eq('status', 'active')
       .maybeSingle();
@@ -395,7 +396,10 @@ function generateSiteHTML(site: SiteData, pages: any[], products: any[], request
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <a href="/" class="site-logo">Creator<span>AppU</span></a>
+      ${site.logo_url
+        ? `<a href="/" class="site-logo" style="display:flex;align-items:center;"><img src="${escapeHtml(site.logo_url)}" alt="${escapeHtml(site.name)}" style="height:40px;max-width:180px;object-fit:contain;" /></a>`
+        : `<a href="/" class="site-logo">Creator<span>AppU</span></a>`
+      }
       <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>

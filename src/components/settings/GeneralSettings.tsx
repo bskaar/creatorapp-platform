@@ -15,7 +15,9 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const faviconInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -24,6 +26,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
     keywords: '',
     timezone: 'America/New_York',
     favicon_url: '',
+    logo_url: '',
   });
 
   useEffect(() => {
@@ -36,6 +39,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
         keywords: (currentSite.settings as any)?.keywords || '',
         timezone: (currentSite.settings as any)?.timezone || 'America/New_York',
         favicon_url: (currentSite as any).favicon_url || '',
+        logo_url: (currentSite as any).logo_url || '',
       });
     }
   }, [currentSite]);
@@ -90,6 +94,51 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
     setSaved(false);
   };
 
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !currentSite || !user) return;
+
+    const validTypes = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a PNG, JPG, SVG, or WebP file');
+      return;
+    }
+
+    if (file.size > 2097152) {
+      alert('Logo must be less than 2MB');
+      return;
+    }
+
+    setUploadingLogo(true);
+    try {
+      const ext = file.name.split('.').pop() || 'png';
+      const fileName = `${user.id}/${currentSite.id}-logo-${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('site-assets')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('site-assets')
+        .getPublicUrl(fileName);
+
+      setFormData(prev => ({ ...prev, logo_url: publicUrl }));
+      setSaved(false);
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      alert('Failed to upload logo. Please try again.');
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    setFormData(prev => ({ ...prev, logo_url: '' }));
+    setSaved(false);
+  };
+
   const handleSave = async () => {
     if (!currentSite) return;
 
@@ -109,6 +158,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
           slug: formData.slug,
           primary_color: formData.primary_color,
           favicon_url: formData.favicon_url || null,
+          logo_url: formData.logo_url || null,
           settings,
           updated_at: new Date().toISOString(),
         })
@@ -234,6 +284,60 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
             <Palette className="h-5 w-5 text-gray-400" />
           </div>
           <p className="text-xs text-text-secondary mt-1">Used for buttons, links, and accents</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-text-primary mb-1">
+            Site Logo
+          </label>
+          <div className="flex items-center gap-4">
+            {formData.logo_url ? (
+              <div className="relative">
+                <img
+                  src={formData.logo_url}
+                  alt="Site Logo"
+                  className="h-16 max-w-[200px] rounded border border-border object-contain bg-white p-2"
+                />
+                <button
+                  onClick={handleRemoveLogo}
+                  className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ) : (
+              <div className="h-16 w-32 rounded border-2 border-dashed border-border flex items-center justify-center bg-gray-50">
+                <Image className="w-6 h-6 text-gray-400" />
+              </div>
+            )}
+            <div className="flex-1">
+              <input
+                ref={logoInputRef}
+                type="file"
+                accept=".png,.jpg,.jpeg,.svg,.webp"
+                onChange={handleLogoUpload}
+                className="hidden"
+              />
+              <button
+                onClick={() => logoInputRef.current?.click()}
+                disabled={uploadingLogo}
+                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium disabled:opacity-50"
+              >
+                {uploadingLogo ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    Upload Logo
+                  </>
+                )}
+              </button>
+              <p className="text-xs text-text-secondary mt-2">Displayed in your site header. PNG, SVG, or WebP recommended. Max 2MB.</p>
+            </div>
+          </div>
         </div>
 
         <div>
