@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import { DollarSign, Users, Mail, TrendingUp, FolderOpen, GitBranch, Video, ShoppingCart, Home, Zap, ArrowRight, HelpCircle, MessageCircle } from 'lucide-react';
+import { DollarSign, Users, Mail, FolderOpen, GitBranch, Video, Zap, ArrowRight, HelpCircle, MessageCircle, AlertTriangle } from 'lucide-react';
 import OnboardingWizard from '../components/OnboardingWizard';
 import GettingStartedChecklist from '../components/GettingStartedChecklist';
 import OnboardingTour, { dashboardTourSteps } from '../components/OnboardingTour';
 import AICoFounderCard from '../components/AICoFounderCard';
 import GameplanManager from '../components/GameplanManager';
+import LaunchSuccessBanner from '../components/LaunchSuccessBanner';
+import SiteStatusIndicator from '../components/SiteStatusIndicator';
+import ContextualRecommendations from '../components/ContextualRecommendations';
 
 interface Stats {
   revenue: number;
@@ -24,6 +27,17 @@ interface PlanLimits {
   max_funnels: number | null;
   max_emails_per_month: number | null;
 }
+
+interface OnboardingData {
+  template_id?: string;
+  template_name?: string;
+  business_description?: string;
+  industry?: string;
+  completed_at?: string;
+}
+
+type UserStage = 'new' | 'launched' | 'growing' | 'established';
+type FunnelType = 'course' | 'webinar' | 'lead_magnet' | 'general';
 
 export default function Dashboard() {
   const { currentSite, loading: siteLoading } = useSite();
@@ -45,6 +59,42 @@ export default function Dashboard() {
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [showLaunchBanner, setShowLaunchBanner] = useState(false);
+  const [hasStripe, setHasStripe] = useState(false);
+  const [hasEmailSequence, setHasEmailSequence] = useState(false);
+
+  const onboardingData = currentSite?.onboarding_data as OnboardingData | null;
+
+  const userStage: UserStage = useMemo(() => {
+    if (!currentSite?.onboarding_completed) return 'new';
+    if (!currentSite.is_published) return 'new';
+    if (stats.revenue > 1000) return 'established';
+    if (stats.contacts > 50 || stats.revenue > 0) return 'growing';
+    return 'launched';
+  }, [currentSite, stats]);
+
+  const funnelType: FunnelType = useMemo(() => {
+    const templateName = onboardingData?.template_name?.toLowerCase() || '';
+    if (templateName.includes('course') || templateName.includes('sales')) return 'course';
+    if (templateName.includes('webinar')) return 'webinar';
+    if (templateName.includes('lead') || templateName.includes('opt')) return 'lead_magnet';
+    return 'general';
+  }, [onboardingData]);
+
+  const welcomeMessage = useMemo(() => {
+    switch (userStage) {
+      case 'new':
+        return "Let's get your first funnel live";
+      case 'launched':
+        return "Your site is live - here's what to do next";
+      case 'growing':
+        return "Your business is growing - keep the momentum";
+      case 'established':
+        return "Great progress! Here's your business at a glance";
+      default:
+        return "Welcome back";
+    }
+  }, [userStage]);
 
   useEffect(() => {
     if (!currentSite) return;
@@ -58,70 +108,97 @@ export default function Dashboard() {
       }
     }
 
+    const launchBannerDismissed = localStorage.getItem(`launch-banner-dismissed-${currentSite.id}`);
+    const launchBannerShownAt = localStorage.getItem(`launch-banner-shown-${currentSite.id}`);
+
+    if (currentSite.is_published && currentSite.onboarding_completed) {
+      if (!launchBannerDismissed) {
+        if (!launchBannerShownAt) {
+          localStorage.setItem(`launch-banner-shown-${currentSite.id}`, new Date().toISOString());
+          setShowLaunchBanner(true);
+        } else {
+          const shownDate = new Date(launchBannerShownAt);
+          const daysSinceShown = (Date.now() - shownDate.getTime()) / (1000 * 60 * 60 * 24);
+          if (daysSinceShown < 7) {
+            setShowLaunchBanner(true);
+          }
+        }
+      }
+    }
+
     loadStats();
   }, [currentSite]);
 
   const loadStats = async () => {
     if (!currentSite) return;
-      const [ordersResult, contactsResult, productsResult, funnelsResult, webinarsResult, planResult] = await Promise.all([
-        supabase
-          .from('orders')
-          .select('amount')
-          .eq('site_id', currentSite.id)
-          .eq('payment_status', 'completed'),
-        supabase
-          .from('contacts')
-          .select('id', { count: 'exact', head: true })
-          .eq('site_id', currentSite.id)
-          .eq('status', 'active'),
-        supabase
-          .from('products')
-          .select('id', { count: 'exact', head: true })
-          .eq('site_id', currentSite.id)
-          .eq('status', 'published'),
-        supabase
-          .from('funnels')
-          .select('id', { count: 'exact', head: true })
-          .eq('site_id', currentSite.id)
-          .eq('status', 'active'),
-        supabase
-          .from('webinars')
-          .select('id', { count: 'exact', head: true })
-          .eq('site_id', currentSite.id)
-          .in('status', ['scheduled', 'live']),
-        supabase
-          .from('subscription_plans')
-          .select('display_name, limits')
-          .eq('id', currentSite.platform_subscription_plan_id)
-          .maybeSingle(),
-      ]);
 
-      const totalRevenue = ordersResult.data?.reduce((sum, order) => sum + Number(order.amount), 0) || 0;
+    const [ordersResult, contactsResult, productsResult, funnelsResult, webinarsResult, planResult, sequencesResult] = await Promise.all([
+      supabase
+        .from('orders')
+        .select('amount')
+        .eq('site_id', currentSite.id)
+        .eq('payment_status', 'completed'),
+      supabase
+        .from('contacts')
+        .select('id', { count: 'exact', head: true })
+        .eq('site_id', currentSite.id)
+        .eq('status', 'active'),
+      supabase
+        .from('products')
+        .select('id', { count: 'exact', head: true })
+        .eq('site_id', currentSite.id)
+        .eq('status', 'published'),
+      supabase
+        .from('funnels')
+        .select('id', { count: 'exact', head: true })
+        .eq('site_id', currentSite.id)
+        .eq('status', 'active'),
+      supabase
+        .from('webinars')
+        .select('id', { count: 'exact', head: true })
+        .eq('site_id', currentSite.id)
+        .in('status', ['scheduled', 'live']),
+      supabase
+        .from('subscription_plans')
+        .select('display_name, limits')
+        .eq('id', currentSite.platform_subscription_plan_id)
+        .maybeSingle(),
+      supabase
+        .from('email_sequences')
+        .select('id', { count: 'exact', head: true })
+        .eq('site_id', currentSite.id)
+        .eq('status', 'active'),
+    ]);
 
-      if (planResult.data?.display_name) {
-        setSubscriptionPlan(planResult.data.display_name);
-      }
+    const totalRevenue = ordersResult.data?.reduce((sum, order) => sum + Number(order.amount), 0) || 0;
 
-      if (planResult.data?.limits) {
-        setPlanLimits({
-          max_products: planResult.data.limits.max_products ?? null,
-          max_contacts: planResult.data.limits.max_contacts ?? null,
-          max_funnels: planResult.data.limits.max_funnels ?? null,
-          max_emails_per_month: planResult.data.limits.max_emails_per_month ?? null,
-        });
-      }
+    if (planResult.data?.display_name) {
+      setSubscriptionPlan(planResult.data.display_name);
+    }
 
-      setStats({
-        revenue: totalRevenue,
-        contacts: contactsResult.count || 0,
-        products: productsResult.count || 0,
-        emailsSent: currentSite.emails_sent_month,
-        activeFunnels: funnelsResult.count || 0,
-        upcomingWebinars: webinarsResult.count || 0,
+    if (planResult.data?.limits) {
+      setPlanLimits({
+        max_products: planResult.data.limits.max_products ?? null,
+        max_contacts: planResult.data.limits.max_contacts ?? null,
+        max_funnels: planResult.data.limits.max_funnels ?? null,
+        max_emails_per_month: planResult.data.limits.max_emails_per_month ?? null,
       });
+    }
 
-      setLoading(false);
-    };
+    setHasStripe(!!currentSite.stripe_account_id);
+    setHasEmailSequence((sequencesResult.count || 0) > 0);
+
+    setStats({
+      revenue: totalRevenue,
+      contacts: contactsResult.count || 0,
+      products: productsResult.count || 0,
+      emailsSent: currentSite.emails_sent_month,
+      activeFunnels: funnelsResult.count || 0,
+      upcomingWebinars: webinarsResult.count || 0,
+    });
+
+    setLoading(false);
+  };
 
   const handleOnboardingComplete = async () => {
     setShowOnboarding(false);
@@ -146,44 +223,78 @@ export default function Dashboard() {
     }
   };
 
-  const statCards = [
-    {
-      name: 'Total Revenue',
-      value: `$${stats.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      icon: DollarSign,
-      gradient: 'from-emerald-500 to-green-600',
-    },
-    {
-      name: 'Active Contacts',
-      value: stats.contacts.toLocaleString(),
-      icon: Users,
-      gradient: 'from-primary to-primary-dark',
-    },
-    {
-      name: 'Published Products',
-      value: stats.products.toLocaleString(),
-      icon: FolderOpen,
-      gradient: 'from-orange-500 to-red-500',
-    },
-    {
-      name: 'Emails Sent (This Month)',
-      value: stats.emailsSent.toLocaleString(),
-      icon: Mail,
-      gradient: 'from-primary to-accent',
-    },
-    {
-      name: 'Active Funnels',
-      value: stats.activeFunnels.toLocaleString(),
-      icon: GitBranch,
-      gradient: 'from-teal-500 to-cyan-600',
-    },
-    {
-      name: 'Upcoming Webinars',
-      value: stats.upcomingWebinars.toLocaleString(),
-      icon: Video,
-      gradient: 'from-accent to-pink-600',
-    },
-  ];
+  const handleDismissLaunchBanner = () => {
+    setShowLaunchBanner(false);
+    if (currentSite) {
+      localStorage.setItem(`launch-banner-dismissed-${currentSite.id}`, 'true');
+    }
+  };
+
+  const showStats = userStage !== 'new';
+  const hasNonZeroStats = stats.revenue > 0 || stats.contacts > 0 || stats.products > 0;
+
+  const visibleStatCards = useMemo(() => {
+    const allCards = [
+      {
+        name: 'Total Revenue',
+        value: `$${stats.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        icon: DollarSign,
+        gradient: 'from-emerald-500 to-green-600',
+        show: stats.revenue > 0 || userStage === 'established',
+      },
+      {
+        name: 'Active Contacts',
+        value: stats.contacts.toLocaleString(),
+        icon: Users,
+        gradient: 'from-primary to-primary-dark',
+        show: stats.contacts > 0 || userStage !== 'new',
+      },
+      {
+        name: 'Published Products',
+        value: stats.products.toLocaleString(),
+        icon: FolderOpen,
+        gradient: 'from-orange-500 to-red-500',
+        show: stats.products > 0 || userStage !== 'new',
+      },
+      {
+        name: 'Emails Sent (This Month)',
+        value: stats.emailsSent.toLocaleString(),
+        icon: Mail,
+        gradient: 'from-primary to-accent',
+        show: stats.emailsSent > 0 || userStage === 'established',
+      },
+      {
+        name: 'Active Funnels',
+        value: stats.activeFunnels.toLocaleString(),
+        icon: GitBranch,
+        gradient: 'from-teal-500 to-cyan-600',
+        show: stats.activeFunnels > 0 || userStage !== 'new',
+      },
+      {
+        name: 'Upcoming Webinars',
+        value: stats.upcomingWebinars.toLocaleString(),
+        icon: Video,
+        gradient: 'from-accent to-pink-600',
+        show: stats.upcomingWebinars > 0 || funnelType === 'webinar',
+      },
+    ];
+
+    return allCards.filter(card => card.show);
+  }, [stats, userStage, funnelType]);
+
+  const showPlanUsage = useMemo(() => {
+    const contactsPercent = planLimits.max_contacts ? (stats.contacts / planLimits.max_contacts) * 100 : 0;
+    const productsPercent = planLimits.max_products ? (stats.products / planLimits.max_products) * 100 : 0;
+    const emailsPercent = planLimits.max_emails_per_month ? (stats.emailsSent / planLimits.max_emails_per_month) * 100 : 0;
+
+    return contactsPercent > 50 || productsPercent > 50 || emailsPercent > 50 || userStage === 'established';
+  }, [stats, planLimits, userStage]);
+
+  const getUsageColor = (percent: number) => {
+    if (percent >= 90) return 'from-red-500 to-red-600';
+    if (percent >= 75) return 'from-amber-500 to-orange-500';
+    return 'from-primary to-primary-dark';
+  };
 
   if (siteLoading) {
     return (
@@ -221,211 +332,204 @@ export default function Dashboard() {
         />
       )}
 
-      <div className="space-y-8">
-        <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-bold text-dark">Dashboard</h1>
-          <p className="text-text-secondary mt-2 text-lg">Welcome back to {currentSite.name}</p>
+      <div className="space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-dark">Dashboard</h1>
+            <p className="text-text-secondary mt-1">{welcomeMessage}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary rounded-button text-sm font-semibold border border-primary/20">
+              {subscriptionPlan} Plan
+            </span>
+            <Link
+              to="/settings"
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 group"
+            >
+              <Zap className="w-4 h-4" />
+              <span>Upgrade</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
-        <div className="flex items-center space-x-3">
-          <span className="px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary rounded-button text-sm font-semibold border border-primary/20">
-            {subscriptionPlan} Plan
-          </span>
-          <Link
-            to="/settings"
-            className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 group"
-          >
-            <Zap className="w-4 h-4" />
-            <span>Upgrade Plan</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-      </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-card shadow-light p-6 animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {statCards.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.name}
-                className="bg-white rounded-card shadow-light p-6 hover:shadow-medium transition-all duration-300 hover:-translate-y-1 border border-border"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-text-secondary mb-2">{stat.name}</p>
-                    <p className="text-3xl font-bold text-dark">{stat.value}</p>
-                  </div>
-                  <div className={`bg-gradient-to-br ${stat.gradient} p-4 rounded-xl shadow-light`}>
-                    <Icon className="h-7 w-7 text-white" />
+        <SiteStatusIndicator
+          isPublished={currentSite.is_published}
+          subdomain={currentSite.subdomain || currentSite.name.toLowerCase().replace(/\s+/g, '-')}
+          lastUpdated={currentSite.updated_at}
+        />
+
+        {showLaunchBanner && currentSite.is_published && (
+          <LaunchSuccessBanner
+            siteName={currentSite.name}
+            subdomain={currentSite.subdomain || currentSite.name.toLowerCase().replace(/\s+/g, '-')}
+            templateName={onboardingData?.template_name}
+            onDismiss={handleDismissLaunchBanner}
+          />
+        )}
+
+        {userStage === 'new' && <GettingStartedChecklist />}
+
+        {showStats && !loading && visibleStatCards.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {visibleStatCards.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.name}
+                  className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-all duration-300 border border-gray-100"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-text-secondary mb-1">{stat.name}</p>
+                      <p className="text-2xl font-bold text-dark">{stat.value}</p>
+                    </div>
+                    <div className={`bg-gradient-to-br ${stat.gradient} p-3 rounded-xl`}>
+                      <Icon className="h-5 w-5 text-white" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <AICoFounderCard />
-
-      <GameplanManager />
-
-      <GettingStartedChecklist />
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-card shadow-light p-8 border border-border">
-          <h2 className="text-xl font-bold text-dark mb-6">Quick Actions</h2>
-          <div className="space-y-2">
-            <a
-              href="/funnels"
-              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
-            >
-              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
-                <Home className="h-5 w-5 text-primary" />
-              </div>
-              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Edit Site Homepage</span>
-            </a>
-            <a
-              href="/content/new"
-              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
-            >
-              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
-                <FolderOpen className="h-5 w-5 text-primary" />
-              </div>
-              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Create New Product</span>
-            </a>
-            <a
-              href="/funnels"
-              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
-            >
-              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
-                <GitBranch className="h-5 w-5 text-primary" />
-              </div>
-              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Build a Funnel</span>
-            </a>
-            <a
-              href="/email"
-              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
-            >
-              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
-                <Mail className="h-5 w-5 text-primary" />
-              </div>
-              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Send Email Campaign</span>
-            </a>
-            <a
-              href="/webinars"
-              className="flex items-center space-x-3 p-4 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 rounded-xl transition-all duration-200 group"
-            >
-              <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg group-hover:from-primary/20 group-hover:to-accent/20 transition-all">
-                <Video className="h-5 w-5 text-primary" />
-              </div>
-              <span className="font-semibold text-text-primary group-hover:text-primary transition-colors">Schedule Webinar</span>
-            </a>
+              );
+            })}
           </div>
-        </div>
+        )}
 
-        <div className="bg-white rounded-card shadow-light p-8 border border-border">
-          <h2 className="text-xl font-bold text-dark mb-6">Plan Usage</h2>
-          <div className="space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-semibold text-text-secondary">Contacts</span>
-                <span className="text-sm font-bold text-dark">
-                  {stats.contacts.toLocaleString()} / {planLimits.max_contacts ? planLimits.max_contacts.toLocaleString() : 'Unlimited'}
-                </span>
+        {loading && showStats && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm p-5 animate-pulse border border-gray-100">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+                <div className="h-7 bg-gray-200 rounded w-3/4"></div>
               </div>
-              <div className="w-full bg-border rounded-full h-3 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-primary to-primary-dark h-3 rounded-full transition-all duration-500"
-                  style={{
-                    width: planLimits.max_contacts
-                      ? `${Math.min((stats.contacts / planLimits.max_contacts) * 100, 100)}%`
-                      : '5%'
-                  }}
-                />
-              </div>
-            </div>
+            ))}
+          </div>
+        )}
 
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-semibold text-text-secondary">Products</span>
-                <span className="text-sm font-bold text-dark">
-                  {stats.products} / {planLimits.max_products ?? 'Unlimited'}
-                </span>
-              </div>
-              <div className="w-full bg-border rounded-full h-3 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-orange-500 to-red-500 h-3 rounded-full transition-all duration-500"
-                  style={{
-                    width: planLimits.max_products
-                      ? `${Math.min((stats.products / planLimits.max_products) * 100, 100)}%`
-                      : '5%'
-                  }}
-                />
-              </div>
-            </div>
+        {userStage !== 'new' && <GettingStartedChecklist />}
 
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-semibold text-text-secondary">Emails This Month</span>
-                <span className="text-sm font-bold text-dark">
-                  {stats.emailsSent.toLocaleString()} / {planLimits.max_emails_per_month ? planLimits.max_emails_per_month.toLocaleString() : 'Unlimited'}
-                </span>
-              </div>
-              <div className="w-full bg-border rounded-full h-3 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-primary to-accent h-3 rounded-full transition-all duration-500"
-                  style={{
-                    width: planLimits.max_emails_per_month
-                      ? `${Math.min((stats.emailsSent / planLimits.max_emails_per_month) * 100, 100)}%`
-                      : '5%'
-                  }}
-                />
-              </div>
+        {userStage !== 'new' && (
+          <ContextualRecommendations
+            userStage={userStage}
+            funnelType={funnelType}
+            hasProducts={stats.products > 0}
+            hasContacts={stats.contacts > 0}
+            hasStripe={hasStripe}
+            hasEmailSequence={hasEmailSequence}
+          />
+        )}
+
+        {(userStage === 'growing' || userStage === 'established') && (
+          <AICoFounderCard />
+        )}
+
+        <GameplanManager />
+
+        {showPlanUsage && (
+          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h2 className="text-lg font-bold text-dark mb-5">Plan Usage</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {planLimits.max_contacts && (
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-text-secondary">Contacts</span>
+                    <span className="text-sm font-bold text-dark">
+                      {stats.contacts.toLocaleString()} / {planLimits.max_contacts.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                    <div
+                      className={`bg-gradient-to-r ${getUsageColor((stats.contacts / planLimits.max_contacts) * 100)} h-2.5 rounded-full transition-all duration-500`}
+                      style={{ width: `${Math.min((stats.contacts / planLimits.max_contacts) * 100, 100)}%` }}
+                    />
+                  </div>
+                  {(stats.contacts / planLimits.max_contacts) >= 0.9 && (
+                    <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      Approaching limit
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {planLimits.max_products && (
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-text-secondary">Products</span>
+                    <span className="text-sm font-bold text-dark">
+                      {stats.products} / {planLimits.max_products}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                    <div
+                      className={`bg-gradient-to-r ${getUsageColor((stats.products / planLimits.max_products) * 100)} h-2.5 rounded-full transition-all duration-500`}
+                      style={{ width: `${Math.min((stats.products / planLimits.max_products) * 100, 100)}%` }}
+                    />
+                  </div>
+                  {(stats.products / planLimits.max_products) >= 0.9 && (
+                    <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      Approaching limit
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {planLimits.max_emails_per_month && (
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-text-secondary">Emails This Month</span>
+                    <span className="text-sm font-bold text-dark">
+                      {stats.emailsSent.toLocaleString()} / {planLimits.max_emails_per_month.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                    <div
+                      className={`bg-gradient-to-r ${getUsageColor((stats.emailsSent / planLimits.max_emails_per_month) * 100)} h-2.5 rounded-full transition-all duration-500`}
+                      style={{ width: `${Math.min((stats.emailsSent / planLimits.max_emails_per_month) * 100, 100)}%` }}
+                    />
+                  </div>
+                  {(stats.emailsSent / planLimits.max_emails_per_month) >= 0.9 && (
+                    <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      Approaching limit
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-card shadow-light p-8 border border-primary/20">
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-gradient-to-br from-primary to-accent rounded-xl">
-            <HelpCircle className="h-6 w-6 text-white" />
-          </div>
-          <div className="flex-1">
-            <h2 className="text-xl font-bold text-dark mb-2">Need Help?</h2>
-            <p className="text-text-secondary mb-4">
-              Our support team is here to help you succeed. Get in touch with us for any questions or assistance.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <a
-                href="mailto:support@creatorapp.us"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary font-semibold rounded-button hover:shadow-medium transition-all duration-300 hover:-translate-y-0.5 border-2 border-primary/20"
-              >
-                <MessageCircle className="w-4 h-4" />
-                support@creatorapp.us
-              </a>
-              <Link
-                to="/pages/documentation"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5"
-              >
-                View Documentation
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border border-gray-200">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-white rounded-xl shadow-sm">
+              <HelpCircle className="h-5 w-5 text-gray-600" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-bold text-dark mb-1">Need Help?</h2>
+              <p className="text-text-secondary text-sm mb-4">
+                Our support team is here to help you succeed.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="mailto:support@creatorapp.us"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 font-medium rounded-lg hover:shadow-sm transition-all border border-gray-200"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Contact Support
+                </a>
+                <Link
+                  to="/pages/documentation"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900 transition-colors"
+                >
+                  View Documentation
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
