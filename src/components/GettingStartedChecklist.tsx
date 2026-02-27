@@ -81,7 +81,7 @@ export default function GettingStartedChecklist() {
           .eq('site_id', currentSite.id),
         supabase
           .from('sites')
-          .select('stripe_account_id, is_published')
+          .select('stripe_connect_account_id, stripe_connect_charges_enabled, status')
           .eq('id', currentSite.id)
           .maybeSingle(),
         supabase
@@ -98,10 +98,10 @@ export default function GettingStartedChecklist() {
       const hasPages = (pagesResult.data?.length || 0) > 0;
       const hasAiGeneratedPages = pagesResult.data?.some(p => p.ai_content_generated) || false;
       const hasProducts = (productsResult.count || 0) > 0;
-      const hasStripe = !!(siteResult.data?.stripe_account_id);
+      const hasStripe = !!(siteResult.data?.stripe_connect_account_id && siteResult.data?.stripe_connect_charges_enabled);
       const hasDomain = (domainsResult.count || 0) > 0;
       const hasFunnel = (funnelsResult.data?.length || 0) > 0;
-      const isPublished = siteResult.data?.is_published ?? currentSite.is_published;
+      const isPublished = siteResult.data?.status === 'active';
       setSiteIsPublished(isPublished);
 
       const templateCategory = onboarding?.template_name?.toLowerCase() || '';
@@ -137,10 +137,10 @@ export default function GettingStartedChecklist() {
           id: 'publish',
           title: isPublished ? 'Site is live!' : 'Publish your site',
           description: isPublished
-            ? `Your site is live on ${currentSite.subdomain}.creatorapp.us`
+            ? `Your site is live at ${currentSite.slug}.creatorapp.site`
             : 'Make your site visible to the world',
           completed: isPublished,
-          link: '/settings',
+          link: '/settings?tab=domain',
           icon: Rocket,
           priority: 'required',
         },
@@ -206,7 +206,7 @@ export default function GettingStartedChecklist() {
 
   const copyLink = () => {
     if (!currentSite) return;
-    const url = `https://${currentSite.subdomain || currentSite.name.toLowerCase().replace(/\s+/g, '-')}.creatorapp.us`;
+    const url = `https://${currentSite.slug || currentSite.name.toLowerCase().replace(/\s+/g, '-')}.creatorapp.site`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -247,7 +247,7 @@ export default function GettingStartedChecklist() {
 
             <div className="flex flex-wrap gap-3">
               <a
-                href={`https://${currentSite?.subdomain || currentSite?.name.toLowerCase().replace(/\s+/g, '-')}.creatorapp.us`}
+                href={`https://${currentSite?.slug || currentSite?.name.toLowerCase().replace(/\s+/g, '-')}.creatorapp.site`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-white text-emerald-700 font-medium rounded-lg border border-emerald-200 hover:bg-emerald-50 transition-colors"
