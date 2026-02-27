@@ -38,6 +38,8 @@ export default function ProductDetail() {
     stripe_payment_plan_price_id: '',
     payment_plan_installments: '3',
     payment_plan_enabled: false,
+    features: [] as string[],
+    is_highlighted: false,
   });
 
   useEffect(() => {
@@ -78,6 +80,8 @@ export default function ProductDetail() {
       stripe_payment_plan_price_id: data.stripe_payment_plan_price_id || '',
       payment_plan_installments: data.payment_plan_installments?.toString() || '3',
       payment_plan_enabled: data.payment_plan_enabled || false,
+      features: data.features || [],
+      is_highlighted: data.is_highlighted || false,
     });
     setImages(data.settings?.images || []);
     setDownloadableFiles(data.settings?.downloadable_files || []);
@@ -117,6 +121,8 @@ export default function ProductDetail() {
         stripe_payment_plan_price_id: formData.stripe_payment_plan_price_id || null,
         payment_plan_installments: formData.payment_plan_installments ? parseInt(formData.payment_plan_installments) : 3,
         payment_plan_enabled: formData.payment_plan_enabled,
+        features: formData.features,
+        is_highlighted: formData.is_highlighted,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id);
@@ -567,6 +573,74 @@ export default function ProductDetail() {
                 </div>
               </div>
             )}
+          </div>
+
+          <div className="border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Pricing Page Display</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              These settings control how your product appears in pricing tables on your site.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_highlighted}
+                    onChange={(e) => setFormData(prev => ({ ...prev, is_highlighted: e.target.checked }))}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="font-medium text-gray-900">Highlight as "Popular" in pricing tables</span>
+                </label>
+                <p className="text-xs text-gray-500 mt-1 ml-6">
+                  Highlighted products are visually emphasized and shown as the recommended option
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Features (for pricing table display)
+                </label>
+                <p className="text-xs text-gray-500 mb-3">
+                  Add features that will be shown as checkmarks in pricing cards
+                </p>
+                <div className="space-y-2">
+                  {formData.features.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <span className="text-green-500">✓</span>
+                      <input
+                        type="text"
+                        value={feature}
+                        onChange={(e) => {
+                          const newFeatures = [...formData.features];
+                          newFeatures[index] = e.target.value;
+                          setFormData(prev => ({ ...prev, features: newFeatures }));
+                        }}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        placeholder="e.g., Lifetime access"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newFeatures = formData.features.filter((_, i) => i !== index);
+                          setFormData(prev => ({ ...prev, features: newFeatures }));
+                        }}
+                        className="p-2 text-gray-400 hover:text-red-500"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, features: [...prev.features, ''] }))}
+                    className="w-full py-2 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-500 hover:text-blue-500 transition"
+                  >
+                    + Add Feature
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {showAIGenerator && (

@@ -6,6 +6,7 @@ interface BlockRendererProps {
   primaryColor: string;
   onNavigate?: (url: string) => void;
   buildPageUrl?: (slug: string, isHome: boolean) => string;
+  siteId?: string;
 }
 
 function resolveUrl(url: string | undefined, buildPageUrl?: (slug: string, isHome: boolean) => string): string {
@@ -18,7 +19,7 @@ function resolveUrl(url: string | undefined, buildPageUrl?: (slug: string, isHom
   return url;
 }
 
-export function BlockRenderer({ block, primaryColor, onNavigate, buildPageUrl }: BlockRendererProps) {
+export function BlockRenderer({ block, primaryColor, onNavigate, buildPageUrl, siteId }: BlockRendererProps) {
   const c = block.content || {};
   const s = block.styles || {};
   const nav = { onNavigate, buildPageUrl };
@@ -47,7 +48,7 @@ export function BlockRenderer({ block, primaryColor, onNavigate, buildPageUrl }:
     case 'form':
       return <FormBlock content={c} primaryColor={primaryColor} />;
     case 'pricing':
-      return <PricingBlock content={c} primaryColor={primaryColor} />;
+      return <PricingBlock content={c} primaryColor={primaryColor} siteId={siteId} />;
     case 'video':
       return <VideoBlock content={c} />;
     case 'gallery':
@@ -278,7 +279,26 @@ function FormBlock({ content: c, primaryColor }: { content: any; primaryColor: s
   );
 }
 
-function PricingBlock({ content: c, primaryColor }: { content: any; primaryColor: string }) {
+function PricingBlock({ content: c, primaryColor, siteId }: { content: any; primaryColor: string; siteId?: string }) {
+  const handleBuyClick = (plan: any) => {
+    if (!plan.productId || !siteId) {
+      return;
+    }
+
+    const cartItem = {
+      productId: plan.productId,
+      siteId: siteId,
+      title: plan.name,
+      price: parseFloat(plan.price.replace(/[^0-9.]/g, '')) || 0,
+      currency: 'USD',
+      billingType: plan.period === 'one-time' ? 'one_time' : 'recurring',
+      billingInterval: plan.period !== 'one-time' ? plan.period.replace('/', '') : null,
+    };
+
+    localStorage.setItem('cart', JSON.stringify([cartItem]));
+    window.location.href = `/site/${siteId}/checkout`;
+  };
+
   return (
     <section style={{ padding: '4rem 1.5rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -318,16 +338,29 @@ function PricingBlock({ content: c, primaryColor }: { content: any; primaryColor
                   </li>
                 ))}
               </ul>
-              <a
-                href="#enroll"
-                style={{
-                  display: 'block', textAlign: 'center', padding: '0.85rem', borderRadius: 8, fontWeight: 600, textDecoration: 'none',
-                  background: plan.highlighted ? primaryColor : '#f1f5f9',
-                  color: plan.highlighted ? '#fff' : '#0f172a',
-                }}
-              >
-                {plan.buttonText || 'Get Started'}
-              </a>
+              {plan.productId && siteId ? (
+                <button
+                  onClick={() => handleBuyClick(plan)}
+                  style={{
+                    display: 'block', width: '100%', textAlign: 'center', padding: '0.85rem', borderRadius: 8, fontWeight: 600, border: 'none', cursor: 'pointer',
+                    background: plan.highlighted ? primaryColor : '#f1f5f9',
+                    color: plan.highlighted ? '#fff' : '#0f172a',
+                  }}
+                >
+                  {plan.buttonText || 'Get Started'}
+                </button>
+              ) : (
+                <a
+                  href={plan.buttonUrl || '#enroll'}
+                  style={{
+                    display: 'block', textAlign: 'center', padding: '0.85rem', borderRadius: 8, fontWeight: 600, textDecoration: 'none',
+                    background: plan.highlighted ? primaryColor : '#f1f5f9',
+                    color: plan.highlighted ? '#fff' : '#0f172a',
+                  }}
+                >
+                  {plan.buttonText || 'Get Started'}
+                </a>
+              )}
             </div>
           ))}
         </div>

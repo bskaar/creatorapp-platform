@@ -91,7 +91,7 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
-function renderBlock(block: Block, primaryColor: string): string {
+function renderBlock(block: Block, primaryColor: string, siteId?: string): string {
   const c = block.content || {};
   const s = block.styles || {};
 
@@ -239,7 +239,12 @@ function renderBlock(block: Block, primaryColor: string): string {
                 ${c.subheadline ? `<p style="font-size:1.1rem;color:#64748b;margin-top:0.5rem;">${escapeHtml(c.subheadline)}</p>` : ''}
               </div>` : ''}
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;align-items:start;">
-              ${(c.plans || []).map((plan: any) => `
+              ${(c.plans || []).map((plan: any) => {
+                const hasProduct = plan.productId && siteId;
+                const buttonAction = hasProduct
+                  ? `onclick="(function(){var c={productId:'${escapeHtml(plan.productId)}',siteId:'${escapeHtml(siteId || '')}',title:'${escapeHtml(plan.name)}',price:parseFloat('${escapeHtml(plan.price)}'.replace(/[^0-9.]/g,''))||0,currency:'USD',billingType:'${plan.period === 'one-time' ? 'one_time' : 'recurring'}',billingInterval:${plan.period !== 'one-time' ? `'${escapeHtml((plan.period || '').replace('/', ''))}'` : 'null'}};localStorage.setItem('cart',JSON.stringify([c]));window.location.href='/site/${escapeHtml(siteId || '')}/checkout';})();return false;"`
+                  : '';
+                return `
                 <div style="background:#fff;border-radius:16px;padding:2.5rem 2rem;box-shadow:0 4px 20px rgba(0,0,0,${plan.highlighted ? '0.12' : '0.06'});border:${plan.highlighted ? `2px solid ${primaryColor}` : '1px solid #e2e8f0'};${plan.highlighted ? 'transform:scale(1.03);' : ''}position:relative;">
                   ${plan.highlighted ? `<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:${primaryColor};color:#fff;padding:0.25rem 1rem;border-radius:20px;font-size:0.8rem;font-weight:600;">Most Popular</div>` : ''}
                   <h3 style="font-size:1.35rem;font-weight:700;color:#0f172a;">${escapeHtml(plan.name)}</h3>
@@ -255,9 +260,9 @@ function renderBlock(block: Block, primaryColor: string): string {
                       </li>
                     `).join('')}
                   </ul>
-                  <a href="#enroll" style="display:block;text-align:center;padding:0.85rem;border-radius:8px;font-weight:600;text-decoration:none;transition:all 0.2s;${plan.highlighted ? `background:${primaryColor};color:#fff;` : 'background:#f1f5f9;color:#0f172a;'}">${escapeHtml(plan.buttonText || 'Get Started')}</a>
+                  <a href="${hasProduct ? '#' : (plan.buttonUrl || '#enroll')}" ${buttonAction} style="display:block;text-align:center;padding:0.85rem;border-radius:8px;font-weight:600;text-decoration:none;cursor:pointer;transition:all 0.2s;${plan.highlighted ? `background:${primaryColor};color:#fff;` : 'background:#f1f5f9;color:#0f172a;'}">${escapeHtml(plan.buttonText || 'Get Started')}</a>
                 </div>
-              `).join('')}
+              `}).join('')}
             </div>
           </div>
         </section>`;
@@ -326,7 +331,7 @@ function generateSiteHTML(site: SiteData, pages: any[], products: any[], request
   }
 
   const blocks: Block[] = currentPage.content?.blocks || [];
-  const renderedBlocks = blocks.map(b => renderBlock(b, primaryColor)).join('\n');
+  const renderedBlocks = blocks.map(b => renderBlock(b, primaryColor, site.id)).join('\n');
   const seoTitle = currentPage.seo_title || currentPage.title || site.name;
   const seoDesc = currentPage.seo_description || site.settings?.description || '';
 

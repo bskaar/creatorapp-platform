@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Type, Image, Palette } from 'lucide-react';
 import AITextGenerator from './AITextGenerator';
 import ImageSearchModal from './ImageSearchModal';
+import PricingBlockEditor from './PricingBlockEditor';
 
 interface BlockEditorProps {
   block: any;
@@ -77,7 +78,15 @@ export default function BlockEditor({ block, onUpdate, onStyleUpdate }: BlockEdi
 
       {activeTab === 'content' ? (
         <div className="space-y-4">
-          {block.type === 'feature-cards' && content.cards ? (
+          {block.type === 'pricing' ? (
+            <PricingBlockEditor
+              content={content}
+              onUpdate={(newContent) => {
+                setContent(newContent);
+                onUpdate(newContent);
+              }}
+            />
+          ) : block.type === 'feature-cards' && content.cards ? (
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
