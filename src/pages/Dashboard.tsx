@@ -185,7 +185,7 @@ export default function Dashboard() {
       });
     }
 
-    setHasStripe(!!currentSite.stripe_account_id);
+    setHasStripe(!!currentSite.stripe_connect_account_id);
     setHasEmailSequence((sequencesResult.count || 0) > 0);
 
     setStats({
