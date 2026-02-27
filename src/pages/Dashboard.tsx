@@ -356,6 +356,7 @@ export default function Dashboard() {
         <SiteStatusIndicator
           isPublished={currentSite.status === 'active'}
           subdomain={currentSite.slug || currentSite.name.toLowerCase().replace(/\s+/g, '-')}
+          customDomain={currentSite.domain_verification_status === 'verified' ? currentSite.custom_domain : null}
           lastUpdated={currentSite.updated_at}
         />
 
@@ -363,6 +364,7 @@ export default function Dashboard() {
           <LaunchSuccessBanner
             siteName={currentSite.name}
             subdomain={currentSite.slug || currentSite.name.toLowerCase().replace(/\s+/g, '-')}
+            customDomain={currentSite.domain_verification_status === 'verified' ? currentSite.custom_domain : null}
             templateName={onboardingData?.template_name}
             onDismiss={handleDismissLaunchBanner}
           />

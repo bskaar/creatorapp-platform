@@ -4,15 +4,18 @@ import { Globe, Eye, EyeOff, ExternalLink, Settings } from 'lucide-react';
 interface SiteStatusIndicatorProps {
   isPublished: boolean;
   subdomain: string;
+  customDomain?: string | null;
   lastUpdated?: string;
 }
 
 export default function SiteStatusIndicator({
   isPublished,
   subdomain,
+  customDomain,
   lastUpdated
 }: SiteStatusIndicatorProps) {
-  const siteUrl = `https://${subdomain}.creatorapp.site`;
+  const displayDomain = customDomain || `${subdomain}.creatorapp.site`;
+  const siteUrl = `https://${displayDomain}`;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -57,7 +60,7 @@ export default function SiteStatusIndicator({
           className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
         >
           <Globe className="w-4 h-4" />
-          <span className="truncate max-w-[200px]">{subdomain}.creatorapp.site</span>
+          <span className="truncate max-w-[200px]">{displayDomain}</span>
           <ExternalLink className="w-3 h-3" />
         </a>
       ) : (

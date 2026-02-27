@@ -4,6 +4,7 @@ import { CheckCircle, ExternalLink, Copy, Check, X, Share2, Twitter, Linkedin } 
 interface LaunchSuccessBannerProps {
   siteName: string;
   subdomain: string;
+  customDomain?: string | null;
   templateName?: string;
   onDismiss: () => void;
 }
@@ -11,13 +12,14 @@ interface LaunchSuccessBannerProps {
 export default function LaunchSuccessBanner({
   siteName,
   subdomain,
+  customDomain,
   templateName,
   onDismiss
 }: LaunchSuccessBannerProps) {
   const [copied, setCopied] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
 
-  const siteUrl = `https://${subdomain}.creatorapp.us`;
+  const siteUrl = customDomain ? `https://${customDomain}` : `https://${subdomain}.creatorapp.site`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(siteUrl);
