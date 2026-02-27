@@ -91,39 +91,43 @@ export default function ProductPublic() {
 
   const handleAddToCart = () => {
     setAddingToCart(true);
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    try {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    const existingItem = cart.find((item: any) => item.productId === productId);
-    if (!existingItem) {
-      cart.push({
-        productId,
-        siteId,
-        title: product?.title,
-        price: product?.price_amount,
-        currency: product?.price_currency,
-        billingType: product?.billing_type,
-        billingInterval: product?.billing_interval,
-        usePaymentPlan: selectedPaymentOption === 'plan',
-        paymentPlanInstallments: product?.payment_plan_installments,
-      });
-      localStorage.setItem('cart', JSON.stringify(cart));
-    } else {
-      const updatedCart = cart.map((item: any) => {
-        if (item.productId === productId) {
-          return {
-            ...item,
-            usePaymentPlan: selectedPaymentOption === 'plan',
-            paymentPlanInstallments: product?.payment_plan_installments,
-          };
-        }
-        return item;
-      });
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      const existingItem = cart.find((item: any) => item.productId === productId);
+      if (!existingItem) {
+        cart.push({
+          productId,
+          siteId,
+          title: product?.title,
+          price: product?.price_amount,
+          currency: product?.price_currency,
+          billingType: product?.billing_type,
+          billingInterval: product?.billing_interval,
+          usePaymentPlan: selectedPaymentOption === 'plan',
+          paymentPlanInstallments: product?.payment_plan_installments,
+        });
+        localStorage.setItem('cart', JSON.stringify(cart));
+      } else {
+        const updatedCart = cart.map((item: any) => {
+          if (item.productId === productId) {
+            return {
+              ...item,
+              usePaymentPlan: selectedPaymentOption === 'plan',
+              paymentPlanInstallments: product?.payment_plan_installments,
+            };
+          }
+          return item;
+        });
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+      }
+
+      setTimeout(() => {
+        navigate(`/site/${siteId}/checkout`);
+      }, 300);
+    } catch {
+      setAddingToCart(false);
     }
-
-    setTimeout(() => {
-      navigate(`/site/${siteId}/checkout`);
-    }, 300);
   };
 
   if (loading) {

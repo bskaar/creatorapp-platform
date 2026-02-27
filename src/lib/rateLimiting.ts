@@ -45,8 +45,8 @@ export async function checkRateLimit(
     if (error) {
       console.error('Rate limit check error:', error);
       return {
-        allowed: true,
-        message: 'Rate limit check failed, allowing request',
+        allowed: false,
+        message: 'Rate limit check unavailable, please try again',
       };
     }
 
@@ -60,8 +60,8 @@ export async function checkRateLimit(
   } catch (error) {
     console.error('Rate limit error:', error);
     return {
-      allowed: true,
-      message: 'Rate limit system error, allowing request',
+      allowed: false,
+      message: 'Rate limit system error, please try again',
     };
   }
 }

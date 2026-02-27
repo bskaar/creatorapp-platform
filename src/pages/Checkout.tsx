@@ -29,9 +29,13 @@ export default function Checkout() {
   });
 
   useEffect(() => {
-    const cartData = JSON.parse(localStorage.getItem('cart') || '[]');
-    const siteCart = cartData.filter((item: CartItem) => item.siteId === siteId);
-    setCart(siteCart);
+    try {
+      const cartData = JSON.parse(localStorage.getItem('cart') || '[]');
+      const siteCart = cartData.filter((item: CartItem) => item.siteId === siteId);
+      setCart(siteCart);
+    } catch {
+      setCart([]);
+    }
   }, [siteId]);
 
   const formatPrice = (amount: number, currency: string) => {

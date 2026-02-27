@@ -42,6 +42,12 @@ export function useAIUsage() {
       .eq('user_id', user.id)
       .gte('created_at', today.toISOString());
 
+    if (usageError) {
+      console.error('Error checking AI usage:', usageError);
+      setLoading(false);
+      return;
+    }
+
     const requestsToday = usageData?.length || 0;
 
     const { data: planData } = await supabase

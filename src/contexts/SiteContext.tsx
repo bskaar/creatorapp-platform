@@ -82,7 +82,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
         index === self.findIndex((s) => s.id === site.id)
       ) as Site[];
 
-      const allSites: SiteWithPlan[] = await Promise.all(
+      const siteResults = await Promise.allSettled(
         allSitesRaw.map(async (site) => {
           if (site.platform_subscription_plan_id) {
             const { data: plan, error: planError } = await supabase
@@ -99,6 +99,10 @@ export function SiteProvider({ children }: { children: ReactNode }) {
           return { ...site, subscription_plan_name: 'Launch' };
         })
       );
+
+      const allSites: SiteWithPlan[] = siteResults
+        .filter((r): r is PromiseFulfilledResult<SiteWithPlan> => r.status === 'fulfilled')
+        .map((r) => r.value);
 
       setSites(allSites);
 

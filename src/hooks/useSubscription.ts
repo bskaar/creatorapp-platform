@@ -39,14 +39,6 @@ export function useSubscription() {
         throw new Error('Not authenticated');
       }
 
-      console.log('Creating subscription request:', {
-        action: 'create',
-        planName,
-        siteId: currentSite.id,
-        billingCycle,
-        url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-platform-subscription`
-      });
-
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-platform-subscription`,
         {
@@ -64,19 +56,14 @@ export function useSubscription() {
         }
       );
 
-      console.log('Response status:', response.status, response.statusText);
-
       let data;
       try {
         const responseText = await response.text();
-        console.log('Raw response:', responseText);
         data = JSON.parse(responseText);
       } catch (e) {
         console.error('Failed to parse response as JSON:', e);
         throw new Error('Invalid response from server');
       }
-
-      console.log('Subscription response:', { status: response.status, data });
 
       if (!response.ok) {
         console.error('Error response from server:', data);
@@ -88,27 +75,19 @@ export function useSubscription() {
       }
 
       if (data.url) {
-        console.log('Redirecting to Stripe Checkout:', data.url);
-
         // Validate URL before redirecting
         try {
           new URL(data.url);
         } catch (e) {
-          console.error('Invalid URL:', data.url, e);
+          console.error('Invalid URL received from server:', e);
           throw new Error('Invalid checkout URL received from server');
         }
 
-        // Immediate redirect - no setTimeout to ensure it's synchronous with user action
-        console.log('Redirecting to Stripe Checkout immediately');
-        console.log('Target URL:', data.url);
-
-        // Direct assignment - most reliable method
         window.location.href = data.url;
 
         // Keep loading true and return a never-resolving promise
         return new Promise(() => {});
       } else if (data.success) {
-        console.log('No redirect URL - free plan activated');
         setLoading(false);
         return data;
       } else {

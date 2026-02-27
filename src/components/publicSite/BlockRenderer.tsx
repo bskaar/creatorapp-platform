@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import type { Block } from './types';
 
 interface BlockRendererProps {
@@ -110,7 +111,7 @@ function HeroBlock({ content: c, styles: s, primaryColor, nav }: { content: any;
 function TextBlock({ content: c }: { content: any }) {
   return (
     <section style={{ padding: '3rem 1.5rem' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto', fontSize: '1.05rem', lineHeight: 1.8, color: '#334155' }} dangerouslySetInnerHTML={{ __html: c.text || '' }} />
+      <div style={{ maxWidth: 900, margin: '0 auto', fontSize: '1.05rem', lineHeight: 1.8, color: '#334155' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(c.text || '') }} />
     </section>
   );
 }
