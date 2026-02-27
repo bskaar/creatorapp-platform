@@ -41,53 +41,40 @@ export default function FunnelVisualization() {
 
       const { data: funnelsList, error: funnelsError } = await supabase
         .from('funnels')
-        .select('id, name, steps')
+        .select('id, name')
         .eq('site_id', currentSite.id)
+        .eq('status', 'active')
         .order('created_at', { ascending: false });
 
       if (funnelsError) throw funnelsError;
 
       const funnelsWithStats = await Promise.all(
         (funnelsList || []).map(async (funnel) => {
-          const steps = (funnel.steps as any[]) || [];
+          const { data: pages } = await supabase
+            .from('pages')
+            .select('id, title, slug, views_count, conversions_count')
+            .eq('funnel_id', funnel.id)
+            .eq('status', 'published')
+            .order('created_at', { ascending: true });
 
-          const stepsWithMetrics = await Promise.all(
-            steps.map(async (step: any, index: number) => {
-              const { count: visitors } = await supabase
-                .from('analytics_page_views')
-                .select('*', { count: 'exact', head: true })
-                .eq('site_id', currentSite.id)
-                .eq('page_url', step.url || '')
-                .gte('viewed_at', startDate.toISOString());
+          const steps = pages || [];
 
-              const nextStep = steps[index + 1];
-              let conversions = 0;
+          const stepsWithMetrics = steps.map((page, index) => {
+            const visitors = page.views_count || 0;
+            const nextPage = steps[index + 1];
+            const conversions = nextPage ? (nextPage.views_count || 0) : (page.conversions_count || 0);
+            const conversionRate = visitors > 0 ? (conversions / visitors) * 100 : 0;
+            const dropOffRate = Math.max(0, 100 - conversionRate);
 
-              if (nextStep) {
-                const { count } = await supabase
-                  .from('analytics_page_views')
-                  .select('*', { count: 'exact', head: true })
-                  .eq('site_id', currentSite.id)
-                  .eq('page_url', nextStep.url || '')
-                  .gte('viewed_at', startDate.toISOString());
-
-                conversions = count || 0;
-              }
-
-              const visitorCount = visitors || 0;
-              const conversionRate = visitorCount > 0 ? (conversions / visitorCount) * 100 : 0;
-              const dropOffRate = 100 - conversionRate;
-
-              return {
-                step_name: step.name || `Step ${index + 1}`,
-                step_order: index,
-                visitors: visitorCount,
-                conversions,
-                conversion_rate: conversionRate,
-                drop_off_rate: dropOffRate,
-              };
-            })
-          );
+            return {
+              step_name: page.title || `Step ${index + 1}`,
+              step_order: index,
+              visitors,
+              conversions,
+              conversion_rate: conversionRate,
+              drop_off_rate: dropOffRate,
+            };
+          });
 
           return {
             id: funnel.id,
