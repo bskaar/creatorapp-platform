@@ -417,6 +417,10 @@ export default function Dashboard() {
             hasContacts={stats.contacts > 0}
             hasStripe={hasStripe}
             hasEmailSequence={hasEmailSequence}
+            siteUrl={`https://${currentSite.domain_verification_status === 'verified' && currentSite.custom_domain
+              ? (currentSite.custom_domain.startsWith('www.') ? currentSite.custom_domain : `www.${currentSite.custom_domain}`)
+              : `${currentSite.slug || currentSite.name.toLowerCase().replace(/\s+/g, '-')}.creatorapp.site`}`}
+            siteName={currentSite.name}
           />
         )}
 

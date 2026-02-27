@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -9,7 +10,13 @@ import {
   TrendingUp,
   Megaphone,
   CreditCard,
-  BarChart3
+  BarChart3,
+  Share2,
+  Copy,
+  Check,
+  Twitter,
+  Linkedin,
+  X
 } from 'lucide-react';
 
 type UserStage = 'new' | 'launched' | 'growing' | 'established';
@@ -19,9 +26,10 @@ interface Recommendation {
   id: string;
   title: string;
   description: string;
-  link: string;
+  link?: string;
   icon: typeof FileText;
   priority: number;
+  action?: 'share';
 }
 
 interface ContextualRecommendationsProps {
@@ -31,6 +39,8 @@ interface ContextualRecommendationsProps {
   hasContacts: boolean;
   hasStripe: boolean;
   hasEmailSequence: boolean;
+  siteUrl?: string;
+  siteName?: string;
 }
 
 export default function ContextualRecommendations({
@@ -39,8 +49,34 @@ export default function ContextualRecommendations({
   hasProducts,
   hasContacts,
   hasStripe,
-  hasEmailSequence
+  hasEmailSequence,
+  siteUrl,
+  siteName
 }: ContextualRecommendationsProps) {
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyLink = () => {
+    if (siteUrl) {
+      navigator.clipboard.writeText(siteUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const shareOnTwitter = () => {
+    if (siteUrl) {
+      const text = encodeURIComponent(`Check out my site ${siteName || ''}!`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(siteUrl)}`, '_blank');
+    }
+  };
+
+  const shareOnLinkedIn = () => {
+    if (siteUrl) {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(siteUrl)}`, '_blank');
+    }
+  };
+
   const getRecommendations = (): Recommendation[] => {
     const recommendations: Recommendation[] = [];
 
@@ -82,24 +118,24 @@ export default function ContextualRecommendations({
         });
       }
 
-      if (funnelType === 'lead_magnet' && !hasEmailSequence) {
+      if (!hasEmailSequence) {
         recommendations.push({
           id: 'create-email-sequence',
-          title: 'Create welcome email sequence',
-          description: 'Nurture new leads with automated emails',
+          title: 'Set up email automation',
+          description: 'Nurture leads with automated email sequences',
           link: '/email',
           icon: Mail,
-          priority: 1
+          priority: 2
         });
       }
 
       recommendations.push({
         id: 'share-site',
         title: 'Share your site',
-        description: 'Let people know about your new funnel',
-        link: '/analytics',
-        icon: Megaphone,
-        priority: 3
+        description: 'Spread the word on social media',
+        icon: Share2,
+        priority: 3,
+        action: 'share'
       });
     }
 
@@ -174,32 +210,119 @@ export default function ContextualRecommendations({
     return null;
   }
 
+  const renderRecommendation = (rec: Recommendation) => {
+    const Icon = rec.icon;
+    const content = (
+      <>
+        <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm group-hover:bg-blue-100 transition-colors">
+          <Icon className="w-5 h-5 text-gray-500 group-hover:text-blue-600" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
+            {rec.title}
+          </h4>
+          <p className="text-sm text-gray-500">{rec.description}</p>
+        </div>
+        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+      </>
+    );
+
+    if (rec.action === 'share') {
+      return (
+        <button
+          key={rec.id}
+          onClick={() => setShowShareModal(true)}
+          className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all group w-full text-left"
+        >
+          {content}
+        </button>
+      );
+    }
+
+    return (
+      <Link
+        key={rec.id}
+        to={rec.link || '/'}
+        className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all group"
+      >
+        {content}
+      </Link>
+    );
+  };
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">Recommended Next Steps</h3>
-      <div className="space-y-3">
-        {recommendations.map((rec) => {
-          const Icon = rec.icon;
-          return (
-            <Link
-              key={rec.id}
-              to={rec.link}
-              className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm group-hover:bg-blue-100 transition-colors">
-                <Icon className="w-5 h-5 text-gray-500 group-hover:text-blue-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
-                  {rec.title}
-                </h4>
-                <p className="text-sm text-gray-500">{rec.description}</p>
-              </div>
-              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
-            </Link>
-          );
-        })}
+    <>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">Recommended Next Steps</h3>
+        <div className="space-y-3">
+          {recommendations.map(renderRecommendation)}
+        </div>
       </div>
-    </div>
+
+      {showShareModal && siteUrl && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative">
+            <button
+              onClick={() => setShowShareModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Share2 className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Share Your Site</h3>
+              <p className="text-gray-500 text-sm mt-1">Let people know about your new site</p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <p className="text-xs text-gray-500 mb-2">Your site URL</p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 text-sm font-medium text-gray-800 truncate">
+                  {siteUrl}
+                </code>
+                <button
+                  onClick={copyLink}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                  {copied ? 'Copied' : 'Copy'}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={shareOnTwitter}
+                className="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:bg-sky-50 hover:border-sky-200 transition-colors"
+              >
+                <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center">
+                  <Twitter className="w-5 h-5 text-sky-500" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Share on Twitter</p>
+                  <p className="text-sm text-gray-500">Post to your followers</p>
+                </div>
+              </button>
+
+              <button
+                onClick={shareOnLinkedIn}
+                className="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition-colors"
+              >
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Linkedin className="w-5 h-5 text-blue-700" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-gray-900">Share on LinkedIn</p>
+                  <p className="text-sm text-gray-500">Share with your network</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
