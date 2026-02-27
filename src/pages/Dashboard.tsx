@@ -67,7 +67,7 @@ export default function Dashboard() {
 
   const userStage: UserStage = useMemo(() => {
     if (!currentSite?.onboarding_completed) return 'new';
-    if (!currentSite.is_published) return 'new';
+    if (currentSite.status !== 'active') return 'new';
     if (stats.revenue > 1000) return 'established';
     if (stats.contacts > 50 || stats.revenue > 0) return 'growing';
     return 'launched';
@@ -111,7 +111,7 @@ export default function Dashboard() {
     const launchBannerDismissed = localStorage.getItem(`launch-banner-dismissed-${currentSite.id}`);
     const launchBannerShownAt = localStorage.getItem(`launch-banner-shown-${currentSite.id}`);
 
-    if (currentSite.is_published && currentSite.onboarding_completed) {
+    if (currentSite.status === 'active' && currentSite.onboarding_completed) {
       if (!launchBannerDismissed) {
         if (!launchBannerShownAt) {
           localStorage.setItem(`launch-banner-shown-${currentSite.id}`, new Date().toISOString());
@@ -354,15 +354,15 @@ export default function Dashboard() {
         </div>
 
         <SiteStatusIndicator
-          isPublished={currentSite.is_published}
-          subdomain={currentSite.subdomain || currentSite.name.toLowerCase().replace(/\s+/g, '-')}
+          isPublished={currentSite.status === 'active'}
+          subdomain={currentSite.slug || currentSite.name.toLowerCase().replace(/\s+/g, '-')}
           lastUpdated={currentSite.updated_at}
         />
 
-        {showLaunchBanner && currentSite.is_published && (
+        {showLaunchBanner && currentSite.status === 'active' && (
           <LaunchSuccessBanner
             siteName={currentSite.name}
-            subdomain={currentSite.subdomain || currentSite.name.toLowerCase().replace(/\s+/g, '-')}
+            subdomain={currentSite.slug || currentSite.name.toLowerCase().replace(/\s+/g, '-')}
             templateName={onboardingData?.template_name}
             onDismiss={handleDismissLaunchBanner}
           />

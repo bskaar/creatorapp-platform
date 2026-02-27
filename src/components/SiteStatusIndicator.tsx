@@ -12,7 +12,7 @@ export default function SiteStatusIndicator({
   subdomain,
   lastUpdated
 }: SiteStatusIndicatorProps) {
-  const siteUrl = `https://${subdomain}.creatorapp.us`;
+  const siteUrl = `https://${subdomain}.creatorapp.site`;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -57,12 +57,12 @@ export default function SiteStatusIndicator({
           className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
         >
           <Globe className="w-4 h-4" />
-          <span className="truncate max-w-[200px]">{subdomain}.creatorapp.us</span>
+          <span className="truncate max-w-[200px]">{subdomain}.creatorapp.site</span>
           <ExternalLink className="w-3 h-3" />
         </a>
       ) : (
         <Link
-          to="/settings"
+          to="/settings?tab=domain"
           className="flex items-center gap-2 text-sm text-amber-600 hover:text-amber-700 font-medium transition-colors"
         >
           <Settings className="w-4 h-4" />
