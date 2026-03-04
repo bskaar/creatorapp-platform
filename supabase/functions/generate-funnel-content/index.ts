@@ -12,7 +12,42 @@ interface GenerateRequest {
   businessDescription: string;
   industry: string;
   siteName: string;
+  tone?: string;
+  targetAudience?: string;
+  painPoints?: string[];
+  desiredOutcomes?: string[];
+  uniqueValue?: string;
+  regenerateSection?: string;
+  preservePlaceholders?: boolean;
 }
+
+type ToneType = 'professional' | 'friendly' | 'authoritative' | 'conversational' | 'luxury' | 'energetic' | 'warm' | 'educational';
+
+const toneDescriptions: Record<ToneType, string> = {
+  professional: "Use formal, polished language that conveys expertise and credibility. Maintain a businesslike demeanor while being clear and direct.",
+  friendly: "Use warm, approachable language that feels like advice from a trusted friend. Be conversational but not too casual.",
+  authoritative: "Use confident, expert language that establishes you as a thought leader. Back claims with specifics and speak with certainty.",
+  conversational: "Use casual, relatable language as if speaking to a friend. Include contractions and natural speech patterns.",
+  luxury: "Use sophisticated, refined language that conveys exclusivity and premium quality. Emphasize craftsmanship and attention to detail.",
+  energetic: "Use dynamic, exciting language that creates momentum and enthusiasm. Include action words and create a sense of urgency.",
+  warm: "Use empathetic, caring language that creates emotional connection. Show understanding and support.",
+  educational: "Use clear, instructive language that teaches and guides. Break down complex topics into digestible pieces."
+};
+
+const industryContexts: Record<string, string> = {
+  coaching: "Focus on transformation, personal growth, and achieving potential. Emphasize the relationship between coach and client.",
+  consulting: "Highlight strategic value, ROI, and measurable outcomes. Speak to business challenges and solutions.",
+  fitness: "Emphasize results, health transformation, and sustainable lifestyle changes. Use motivating, action-oriented language.",
+  business: "Focus on growth, revenue, efficiency, and competitive advantage. Use metrics and success stories.",
+  creative: "Celebrate artistic vision, unique expression, and creative freedom. Use vivid, imaginative language.",
+  technology: "Highlight innovation, efficiency, and cutting-edge solutions. Balance technical credibility with accessibility.",
+  education: "Focus on learning outcomes, skill development, and knowledge acquisition. Use clear, instructive language.",
+  ecommerce: "Emphasize product quality, customer experience, and value. Create desire and urgency appropriately.",
+  agency: "Showcase expertise, results, and partnership approach. Emphasize strategic value and ROI.",
+  membership: "Focus on community, belonging, and ongoing value. Highlight connection and shared goals.",
+  health: "Emphasize wellbeing, transformation, and sustainable results. Use empowering, supportive language.",
+  general: "Use clear, benefit-focused language that adapts to the specific business context."
+};
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -26,7 +61,19 @@ Deno.serve(async (req: Request) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { templateId, businessDescription, industry, siteName }: GenerateRequest = await req.json();
+    const {
+      templateId,
+      businessDescription,
+      industry,
+      siteName,
+      tone = "professional",
+      targetAudience,
+      painPoints,
+      desiredOutcomes,
+      uniqueValue,
+      regenerateSection,
+      preservePlaceholders = false
+    }: GenerateRequest = await req.json();
 
     if (!templateId || !businessDescription) {
       return new Response(
@@ -66,21 +113,78 @@ Deno.serve(async (req: Request) => {
       creative: "Creative & Arts",
       technology: "Technology",
       education: "Education",
+      coaching: "Coaching & Personal Development",
+      consulting: "Consulting & Professional Services",
+      ecommerce: "E-commerce & Retail",
+      agency: "Digital Agency & Marketing Services",
+      membership: "Membership & Community",
+      health: "Health & Wellness",
       general: "General"
     };
 
-    const prompt = `You are helping a creator build their online business. Generate personalized marketing copy for their funnel.
+    const toneInstruction = toneDescriptions[tone as ToneType] || toneDescriptions.professional;
+    const industryContext = industryContexts[industry] || industryContexts.general;
+    const templateContext = template.ai_prompt_context || "";
+    const placeholderMap = template.placeholder_map || {};
 
-Business: ${siteName}
-Industry: ${industryLabels[industry] || industry}
-Description: ${businessDescription}
-Funnel Type: ${template.name}
+    let audienceSection = "";
+    if (targetAudience || painPoints?.length || desiredOutcomes?.length || uniqueValue) {
+      audienceSection = `
+TARGET AUDIENCE DETAILS:
+${targetAudience ? `- Target Audience: ${targetAudience}` : ""}
+${painPoints?.length ? `- Pain Points They Experience:\n  ${painPoints.map(p => `* ${p}`).join("\n  ")}` : ""}
+${desiredOutcomes?.length ? `- Outcomes They Desire:\n  ${desiredOutcomes.map(o => `* ${o}`).join("\n  ")}` : ""}
+${uniqueValue ? `- Unique Value Proposition: ${uniqueValue}` : ""}
+`;
+    }
 
-For each page in the funnel, replace the placeholder text with compelling, personalized copy that:
-1. Speaks directly to the target audience
-2. Highlights specific benefits relevant to their industry
-3. Uses persuasive language that drives action
-4. Maintains a professional but approachable tone
+    let sectionInstruction = "";
+    if (regenerateSection) {
+      sectionInstruction = `
+IMPORTANT: Only regenerate content for the section/block with type "${regenerateSection}". Keep all other content exactly as provided.
+`;
+    }
+
+    let placeholderInstruction = "";
+    if (preservePlaceholders) {
+      placeholderInstruction = `
+PLACEHOLDER MODE: Keep all placeholder text (text in [brackets]) intact. Only add suggested content as comments or alternative text that the user can choose to use.
+`;
+    } else {
+      placeholderInstruction = `
+PLACEHOLDER REPLACEMENT: Replace all placeholder text with specific, relevant content. Here are the placeholders used in this template and what they represent:
+${Object.entries(placeholderMap).map(([key, desc]) => `- ${key}: ${desc}`).join("\n")}
+`;
+    }
+
+    const prompt = `You are an expert copywriter helping a creator build their online business. Generate personalized marketing copy for their funnel.
+
+BUSINESS INFORMATION:
+- Business Name: ${siteName}
+- Industry: ${industryLabels[industry] || industry}
+- Description: ${businessDescription}
+- Funnel Type: ${template.name}
+${audienceSection}
+
+TONE & STYLE:
+${toneInstruction}
+
+INDUSTRY CONTEXT:
+${industryContext}
+
+${templateContext ? `TEMPLATE-SPECIFIC GUIDANCE:\n${templateContext}\n` : ""}
+
+${placeholderInstruction}
+${sectionInstruction}
+
+CONTENT GUIDELINES:
+1. Write copy that speaks directly to the target audience's pain points and desires
+2. Use specific, concrete language rather than generic marketing speak
+3. Include social proof elements where appropriate (results, testimonials structure)
+4. Create compelling calls-to-action that drive the desired action
+5. Maintain consistency in voice and messaging throughout
+6. Adapt industry-specific terminology appropriately
+7. Balance emotional appeal with practical benefits
 
 Current template pages:
 ${JSON.stringify(template.pages_config, null, 2)}
@@ -98,7 +202,7 @@ Return ONLY a valid JSON object with this exact structure:
   ]
 }
 
-Replace all placeholder text like [Product Name], [Your Name], [audience], [result], etc. with specific, relevant content based on the business description. Keep the block structure intact but update the content fields.`;
+Replace all placeholder text with specific, relevant content based on the business description. Keep the block structure intact but update the content fields with personalized copy.`;
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -109,7 +213,7 @@ Replace all placeholder text like [Product Name], [Your Name], [audience], [resu
       },
       body: JSON.stringify({
         model: "claude-3-haiku-20240307",
-        max_tokens: 4000,
+        max_tokens: 8000,
         messages: [
           {
             role: "user",
@@ -165,6 +269,8 @@ Replace all placeholder text like [Product Name], [Your Name], [audience], [resu
         pages: generatedPages,
         emailSequences: template.email_sequences_config,
         generated: true,
+        tone: tone,
+        industry: industry
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
