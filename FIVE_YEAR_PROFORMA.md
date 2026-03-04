@@ -359,9 +359,42 @@ Stripe fees: ~3% of gross revenue (2.9% + $0.30 per transaction)
 ### Growth Drivers
 
 1. **PLG/Organic**: 40% of trials from SEO, content, word-of-mouth
-2. **Paid Acquisition**: 35% from paid channels (CAC ~$50-100)
+2. **Paid Acquisition**: 35% from paid channels
 3. **Referrals**: 15% from user referrals
 4. **Partnerships**: 10% from integrations and affiliates
+
+### Paid Acquisition Channel Breakdown
+
+| Channel | % of Paid | CAC to Trial | Effective CAC (50% conv) | Best For |
+|---------|-----------|--------------|--------------------------|----------|
+| Facebook/Instagram | 55% | $230 | $460 | Broad creator audience |
+| Google Paid Search | 30% | $400 | $800 | High-intent searchers |
+| LinkedIn | 10% | $982 | $1,964 | B2B/professional creators |
+| Other (YouTube, TikTok) | 5% | $300 | $600 | Testing/emerging |
+
+**Blended Paid CAC**: $365 per trial, $730 per paid customer (at 50% conversion)
+
+### Paid Acquisition Budget by Year
+
+| Year | ARR | Marketing Budget | FB/IG (55%) | Google (30%) | LinkedIn (10%) | Other (5%) |
+|------|-----|------------------|-------------|--------------|----------------|------------|
+| 1 | $1M | $24,000 | $13,200 | $7,200 | $2,400 | $1,200 |
+| 2 | $2.5M | $150,000 | $82,500 | $45,000 | $15,000 | $7,500 |
+| 3 | $7M | $500,000 | $275,000 | $150,000 | $50,000 | $25,000 |
+| 4 | $15M | $1,000,000 | $550,000 | $300,000 | $100,000 | $50,000 |
+| 5 | $25M | $1,500,000 | $825,000 | $450,000 | $150,000 | $75,000 |
+
+### CAC Payback Analysis by Channel
+
+| Channel | Effective CAC | ARPU ($77/mo) | Payback Period | Within Target? |
+|---------|---------------|---------------|----------------|----------------|
+| Facebook/IG | $460 | $77 | 6.0 months | Yes |
+| Google Search | $800 | $77 | 10.4 months | Yes |
+| LinkedIn | $1,964 | $77 | 25.5 months | No - use selectively |
+| Organic/Referral | $0 | $77 | 0 months | Yes |
+
+**Target Payback**: Under 12 months
+**LinkedIn Strategy**: Use only for high-ticket targeting (Pro tier prospects with higher LTV)
 
 ### Risks to Model
 
@@ -369,9 +402,12 @@ Stripe fees: ~3% of gross revenue (2.9% + $0.30 per transaction)
 |------|------------|
 | Lower conversion (<40%) | Improve onboarding, trial reminders |
 | Higher churn (>5%/month) | Focus on early activation, value delivery |
-| CAC increase | Diversify channels, improve organic |
+| CAC increase (+40% industry trend) | Diversify channels, improve organic, referral program |
+| Facebook CPM inflation | Shift budget to Google, test emerging channels |
+| LinkedIn premium unsustainable | Reduce to 5% allocation, focus retargeting only |
 | Competition | Differentiate on AI, creator focus |
 | Infrastructure costs spike | Volume negotiations, optimization |
+| Privacy regulation impact | First-party data strategy, PLG investment |
 
 ---
 

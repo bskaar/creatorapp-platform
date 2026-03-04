@@ -71,6 +71,16 @@ Assuming 40% of users pay yearly (15% discount effective):
 
 ### 2.2 Anthropic AI (Claude API)
 
+**Current Model Pricing (March 2026):**
+
+| Model | Input (per 1M) | Output (per 1M) | Use Case |
+|-------|----------------|-----------------|----------|
+| Claude 3.5 Haiku | $0.80 | $4.00 | Text generation, color palettes |
+| Claude 3.5/3.7 Sonnet | $3.00 | $15.00 | AI Coach, gameplans |
+| Claude Opus 4 | $15.00 | $75.00 | Reserved for complex analysis |
+
+*Note: Pricing has decreased ~67% from earlier Claude 3 series. Expect continued price/performance improvements.*
+
 **Usage per User (estimated monthly averages):**
 
 | Tier | AI Content Gen | AI Page Gen | AI Coach | Total Tokens/User |
@@ -79,25 +89,68 @@ Assuming 40% of users pay yearly (15% discount effective):
 | Growth | 25 requests | 15 requests | 50 messages | ~400K tokens |
 | Pro | 50 requests | 30 requests | 100 messages | ~800K tokens |
 
-**Claude API Pricing (Claude 3.5 Sonnet):**
-- Input: $3.00 per million tokens
-- Output: $15.00 per million tokens
-- Blended average: ~$6-8 per million tokens
+**Task-Based Model Routing (Cost Optimization):**
 
-**Monthly Token Usage at Scale:**
+| Task Type | Model | % of Requests | Avg Cost/Request |
+|-----------|-------|---------------|------------------|
+| Text generation | Haiku | 45% | $0.002 |
+| Color/theme generation | Haiku | 15% | $0.003 |
+| AI Coach chat | Sonnet | 30% | $0.03 |
+| Gameplan generation | Sonnet | 10% | $0.05 |
 
-| Tier | Users | Tokens/User | Total Tokens | Cost @ $7/M |
-|------|-------|-------------|--------------|-------------|
-| Starter | 4,500 | 150K | 675M | $4,725 |
-| Growth | 4,000 | 400K | 1,600M | $11,200 |
-| Pro | 1,500 | 800K | 1,200M | $8,400 |
-| **Total** | **10,000** | | **3,475M** | **$24,325** |
+**Monthly Token Usage at Scale (with model routing):**
 
-**Annual AI Cost: $291,900**
+| Tier | Users | Haiku Tokens | Sonnet Tokens | Blended Cost |
+|------|-------|--------------|---------------|--------------|
+| Starter | 4,500 | 90M | 60M | $2,340 |
+| Growth | 4,000 | 160M | 240M | $5,840 |
+| Pro | 1,500 | 120M | 280M | $5,400 |
+| **Total** | **10,000** | **370M** | **580M** | **$13,580** |
 
-*Note: Using prompt caching and efficient prompts can reduce this by 30-50%.*
+**Annual AI Cost (Optimized with Model Routing): $162,960**
 
-**Optimized AI Cost Estimate: $175,000 - $290,000/year**
+**Cost Reduction Strategies:**
+1. **Prompt Caching**: 90% reduction on cached system prompts - saves ~$40,000/year
+2. **Model Routing**: Using Haiku for 60% of requests - saves ~$130,000/year vs all-Sonnet
+3. **Batch API**: 50% discount for async operations (bulk content generation)
+
+**Final Optimized AI Cost Estimate: $120,000 - $165,000/year**
+
+### 2.2.1 AI Cost Scaling Projections
+
+| ARR | Users | Annual AI Cost | % of Revenue | Cost/User/Month |
+|-----|-------|----------------|--------------|-----------------|
+| $1M | 1,000 | $16,000 | 1.6% | $1.33 |
+| $2.5M | 2,700 | $43,000 | 1.7% | $1.33 |
+| $10M | 10,000 | $165,000 | 1.65% | $1.38 |
+| $25M | 27,000 | $400,000 | 1.6% | $1.23 |
+| $50M | 54,000 | $750,000 | 1.5% | $1.16 |
+| $100M | 108,000 | $1,400,000 | 1.4% | $1.08 |
+
+*AI costs scale sub-linearly due to prompt caching efficiency and volume-based routing optimization.*
+
+### 2.2.2 Model Evolution Planning
+
+**Deprecation Timeline Assumptions:**
+- Claude 3.5 series: Expected support through Q4 2026
+- New model releases: Quarterly cadence
+- Migration window: Typically 6-12 months notice
+
+**Budget for Model Transitions:**
+- Engineering time: 2-4 weeks per major migration
+- Testing and validation: 1-2 weeks
+- Prompt refinement: Ongoing optimization
+
+**Year-over-Year Cost Expectations:**
+- Historical trend: 50-70% cost reduction per capability level
+- Budget conservatively at current rates
+- Actual costs likely 20-40% lower than projections
+
+**Enterprise Tier Note:**
+Enterprise customers receive unlimited AI requests but all usage is still tracked for:
+- Platform capacity planning
+- Cost allocation analysis
+- Model performance monitoring
 
 ### 2.3 Email Delivery (Resend)
 
@@ -384,5 +437,116 @@ Current pricing appears healthy, but consider:
 
 ---
 
-*Analysis prepared: February 2026*
-*Assumptions should be validated with actual usage data as the platform scales.*
+## 10. Customer Acquisition Cost (CAC) Analysis
+
+### Industry Benchmarks (2025-2026)
+
+Based on current SaaS and creator economy benchmarks:
+
+| Channel | Avg CAC (to Trial) | Trial-to-Paid (50%) | Effective CAC (to Paid) |
+|---------|--------------------|--------------------|-------------------------|
+| Referral/Word-of-Mouth | $0 | 60% | $0 |
+| Organic SEO/Content | $0 | 55% | $0 |
+| Facebook/Instagram | $230 | 50% | $460 |
+| Google Paid Search | $400 | 50% | $800 |
+| LinkedIn | $982 | 50% | $1,964 |
+
+*Source: Phoenix Strategy Group CAC Benchmarks 2025, Genesys Growth Customer Acquisition Cost Report 2026*
+
+### Channel-Specific Analysis
+
+#### Facebook/Instagram Ads
+- **Average CAC to trial**: $230
+- **Cost per lead (CPL)**: $18-25
+- **Effective CAC to paid customer**: $460 (at 50% trial conversion)
+- **Privacy impact**: iOS 14.5+ changes reduced efficiency by ~40% since 2021
+- **Strengths**: Brand awareness, retargeting, lookalike audiences
+- **Best for**: Broad creator audience, visual products, course creators
+- **Recommended allocation**: 50-60% of paid budget in early stages
+
+#### LinkedIn Ads
+- **Average CAC to trial**: $982
+- **Cost per lead (CPL)**: $110-150
+- **Effective CAC to paid customer**: $1,964 (at 50% trial conversion)
+- **Premium justified by**: Higher lead quality, professional targeting precision
+- **Strengths**: B2B creators, consultants, agency owners, professional course creators
+- **Best for**: High-ticket creators ($997+ products), business coaches
+- **Recommended allocation**: 10-15% of paid budget (quality over volume)
+
+#### Google Paid Search
+- **Average CAC to trial**: $400
+- **Cost per lead (CPL)**: $70-100
+- **Effective CAC to paid customer**: $800 (at 50% trial conversion)
+- **Strengths**: High intent, bottom-of-funnel capture
+- **Best for**: Users actively searching for solutions
+- **Recommended allocation**: 25-35% of paid budget
+
+### LTV:CAC Ratio Analysis
+
+**Target**: Minimum 3:1 LTV:CAC ratio for sustainable growth
+
+| Tier | Monthly Price | Avg Lifetime (months) | LTV | Max Sustainable CAC |
+|------|---------------|----------------------|-----|---------------------|
+| Starter | $49 | 18 | $882 | $294 |
+| Growth | $99 | 24 | $2,376 | $792 |
+| Pro | $199 | 30 | $5,970 | $1,990 |
+| **Blended** | **$77** | **22** | **$1,694** | **$565** |
+
+### CAC Payback Period
+
+Industry benchmark for B2B SaaS: 23 months (KeyBanc 2024 survey)
+**Target for CreatorApp**: Under 12 months
+
+| Channel | CAC (to Paid) | Monthly Contribution | Payback Period |
+|---------|---------------|---------------------|----------------|
+| Facebook/IG | $460 | $77 ARPU | 6 months |
+| Google Search | $800 | $77 ARPU | 10.4 months |
+| LinkedIn | $1,964 | $77 ARPU | 25.5 months |
+| Organic/Referral | $0 | $77 ARPU | 0 months |
+
+**Strategic Implication**: LinkedIn CAC exceeds target payback. Use only for:
+- High-ticket creator targeting (likely Pro tier converts at higher rate)
+- Brand building campaigns
+- Retargeting warm audiences
+
+### Blended CAC Targets by Growth Stage
+
+| Year | ARR | Paid % of Trials | Blended CAC | Annual Paid Spend | New Paid Customers |
+|------|-----|------------------|-------------|-------------------|-------------------|
+| 1 | $1M | 35% | $150 | $24,000 | 160 |
+| 2 | $2.5M | 35% | $180 | $150,000 | 833 |
+| 3 | $7M | 35% | $200 | $500,000 | 2,500 |
+| 4 | $15M | 35% | $230 | $1,000,000 | 4,350 |
+| 5 | $25M | 35% | $250 | $1,500,000 | 6,000 |
+
+*Blended CAC assumes 60% Facebook, 25% Google, 10% LinkedIn, 5% other paid channels*
+
+### CAC Efficiency Trends
+
+**Industry Context (2023-2026):**
+- CAC increased 40-60% across SaaS due to privacy changes and competition
+- iOS 14.5+ reduced Meta targeting precision significantly
+- Google removing third-party cookies (delayed to 2025)
+- First-party data and PLG increasingly important
+
+**Mitigation Strategies:**
+1. **Product-Led Growth**: 40%+ of trials from organic/PLG
+2. **Referral Program**: Target 15% of new trials from referrals
+3. **Content Marketing**: SEO investment compounds over time
+4. **Community Building**: Reduce reliance on paid acquisition
+5. **Conversion Optimization**: Improve trial-to-paid to reduce effective CAC
+
+### Risk Factors
+
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| Meta CPM increase | +30% CAC | Medium | Diversify channels, improve creative |
+| LinkedIn price increase | +50% CAC on channel | Low | Reduce allocation, focus on retargeting |
+| Privacy regulation | +25% CAC overall | Medium | First-party data strategy, PLG focus |
+| Competitor bidding wars | +40% CAC | Medium | Brand differentiation, organic growth |
+
+---
+
+*Analysis prepared: March 2026*
+*CAC benchmarks from: Phoenix Strategy Group, Genesys Growth, First Page Sage*
+*Assumptions should be validated with actual campaign data as the platform scales.*

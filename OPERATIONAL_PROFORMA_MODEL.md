@@ -243,6 +243,27 @@ Scaling from the previous infrastructure analysis:
 | Other SaaS tools | $300,000 |
 | **Total** | **$5,500,000** |
 
+### AI Platform Cost Detail by ARR
+
+| ARR | Users | AI Cost | % of Revenue | Cost/User/Mo | Notes |
+|-----|-------|---------|--------------|--------------|-------|
+| $10M | 10,000 | $165,000 | 1.65% | $1.38 | Model routing saves 40% |
+| $25M | 25,000 | $400,000 | 1.6% | $1.33 | Prompt caching at scale |
+| $50M | 50,000 | $800,000 | 1.6% | $1.33 | Volume optimizations |
+| $100M | 100,000 | $1,800,000 | 1.8% | $1.50 | Enterprise features, headroom |
+
+**AI Cost Optimization Strategies:**
+1. **Task-based model routing**: Haiku for 60% of requests (text gen, colors) saves ~$500K/year at $100M
+2. **Prompt caching**: 90% reduction on system prompts saves ~$200K/year at $100M
+3. **Batch API**: 50% discount for async operations (bulk content generation)
+
+**Model Evolution Budget:**
+- Engineering time for migrations: $50,000-100,000/year (2-4 weeks per major update)
+- A/B testing new models: Included in AI costs
+- Quality monitoring: $25,000/year for tooling
+
+**Enterprise Note**: Enterprise customers have unlimited AI requests but usage is still tracked for platform analytics and capacity planning
+
 ---
 
 ## 4. Full P&L Model
@@ -256,6 +277,7 @@ Scaling from the previous infrastructure analysis:
 | **Net Revenue** | **$9,947,000** | **96.8%** |
 | | | |
 | Infrastructure/COGS | ($970,000) | (9.4%) |
+| - *of which AI/Anthropic* | *($165,000)* | *(1.6%)* |
 | **Gross Profit** | **$8,977,000** | **87.4%** |
 | | | |
 | **Operating Expenses** | | |
@@ -266,6 +288,10 @@ Scaling from the previous infrastructure analysis:
 | Insurance | ($50,000) | (0.5%) |
 | Travel/Offsites | ($100,000) | (1.0%) |
 | Marketing Spend | ($500,000) | (4.9%) |
+| - *Facebook/Instagram (55%)* | *($275,000)* | |
+| - *Google Paid Search (30%)* | *($150,000)* | |
+| - *LinkedIn (10%)* | *($50,000)* | |
+| - *Other/Testing (5%)* | *($25,000)* | |
 | Contingency | ($100,000) | (1.0%) |
 | **Total OpEx** | **($3,336,000)** | **(32.5%)** |
 | | | |
@@ -334,6 +360,7 @@ Scaling from the previous infrastructure analysis:
 | **Net Revenue** | **$99,472,000** | **96.8%** |
 | | | |
 | Infrastructure/COGS | ($5,500,000) | (5.4%) |
+| - *of which AI/Anthropic* | *($1,800,000)* | *(1.8%)* |
 | **Gross Profit** | **$93,972,000** | **91.4%** |
 | | | |
 | **Operating Expenses** | | |
@@ -344,6 +371,10 @@ Scaling from the previous infrastructure analysis:
 | Insurance | ($250,000) | (0.2%) |
 | Travel/Offsites | ($500,000) | (0.5%) |
 | Marketing Spend | ($6,000,000) | (5.8%) |
+| - *Facebook/Instagram (50%)* | *($3,000,000)* | |
+| - *Google Paid Search (30%)* | *($1,800,000)* | |
+| - *LinkedIn (10%)* | *($600,000)* | |
+| - *Emerging Channels (10%)* | *($600,000)* | |
 | R&D Tax Credits | $500,000 | 0.5% |
 | Contingency | ($750,000) | (0.7%) |
 | **Total OpEx** | **($16,375,000)** | **(15.9%)** |

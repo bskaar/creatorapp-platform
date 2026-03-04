@@ -196,6 +196,32 @@
 - AI writes marketing content
 - AI analyzes user data and patterns
 
+### 2.1 AI Platform Costs (Detailed)
+
+AI is a core operational cost that scales with user activity:
+
+| ARR | Users | Annual AI Cost | % of Revenue | Cost/User/Month |
+|-----|-------|----------------|--------------|-----------------|
+| $1M | 1,100 | $18,000 | 1.8% | $1.36 |
+| $2.5M | 2,700 | $43,000 | 1.7% | $1.33 |
+| $10M | 10,000 | $165,000 | 1.65% | $1.38 |
+| $25M | 27,000 | $400,000 | 1.6% | $1.23 |
+| $50M | 54,000 | $800,000 | 1.6% | $1.23 |
+| $100M | 108,000 | $1,800,000 | 1.8% | $1.39 |
+
+**Cost Optimization Strategies:**
+1. **Task-based model routing**: Use Haiku ($0.80/1M input) for 60% of requests (text generation, colors)
+2. **Prompt caching**: 90% reduction on cached system prompts
+3. **Batch API**: 50% discount for non-real-time operations
+
+**Model Evolution Planning:**
+- Budget 2-4 weeks engineering time per major model migration
+- Models deprecated with 6-12 month notice
+- Newer models typically offer better price/performance
+- Historical trend: 50-70% cost reduction per capability level annually
+
+**Enterprise Note:** Unlimited AI requests for Enterprise tier, but all usage still tracked for platform analytics and capacity planning
+
 ### 3. Modern Infrastructure
 - Supabase = no DevOps team
 - Vercel = no infrastructure team
@@ -223,7 +249,13 @@
 | Payment Processing (2.9% avg) | ($2,900,000) | (2.9%) |
 | **Net Revenue** | **$97,100,000** | **97.1%** |
 | | | |
-| Infrastructure/COGS | ($5,500,000) | (5.5%) |
+| **Infrastructure/COGS** | **($5,500,000)** | **(5.5%)** |
+| - Supabase (Enterprise) | ($500,000) | (0.5%) |
+| - AI/Anthropic (with caching) | ($1,800,000) | (1.8%) |
+| - Email (hybrid, volume) | ($2,400,000) | (2.4%) |
+| - Hosting/CDN | ($200,000) | (0.2%) |
+| - Monitoring/Security | ($300,000) | (0.3%) |
+| - Other SaaS | ($300,000) | (0.3%) |
 | **Gross Profit** | **$91,600,000** | **91.6%** |
 | | | |
 | **Operating Expenses** | | |
@@ -233,6 +265,10 @@
 | Legal/Accounting | ($400,000) | (0.4%) |
 | Insurance | ($150,000) | (0.2%) |
 | Marketing Spend (Paid) | ($5,000,000) | (5.0%) |
+| - *Facebook/Instagram (50%)* | *($2,500,000)* | |
+| - *Google Paid Search (30%)* | *($1,500,000)* | |
+| - *LinkedIn (10%)* | *($500,000)* | |
+| - *Emerging/Other (10%)* | *($500,000)* | |
 | Office/Remote Stipends | ($150,000) | (0.2%) |
 | Travel/Events | ($300,000) | (0.3%) |
 | Contingency | ($500,000) | (0.5%) |
@@ -243,6 +279,20 @@
 **Effective Tax Rate (~25%):** ($20,295,000)
 
 **Net Income:** **$60,885,000** (60.9% net margin)
+
+### Marketing Channel CAC Economics
+
+| Channel | % Budget | Spend | CAC to Trial | Trials | Paid (50%) |
+|---------|----------|-------|--------------|--------|------------|
+| Facebook/IG | 50% | $2,500,000 | $230 | 10,870 | 5,435 |
+| Google Search | 30% | $1,500,000 | $400 | 3,750 | 1,875 |
+| LinkedIn | 10% | $500,000 | $982 | 509 | 255 |
+| Other | 10% | $500,000 | $300 | 1,667 | 833 |
+| **Total** | **100%** | **$5,000,000** | **$298 blended** | **16,796** | **8,398** |
+
+**Blended CAC to Paid Customer**: $595
+
+*Note: LinkedIn used selectively for high-ticket creator targeting (Pro tier prospects)*
 
 ---
 

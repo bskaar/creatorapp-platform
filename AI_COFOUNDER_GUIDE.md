@@ -234,6 +234,77 @@ The AI Co-Founder is trained on:
 - Conversation history truncated to last 20 messages
 - Site data fetched once per session
 
+---
+
+## AI Model Pricing and Cost Assumptions
+
+### Current Claude Model Pricing (as of March 2026)
+
+| Model | Input (per 1M tokens) | Output (per 1M tokens) | Best For |
+|-------|----------------------|------------------------|----------|
+| Claude 3.5 Haiku | $0.80 | $4.00 | Quick tasks, text generation |
+| Claude 3.5 Sonnet | $3.00 | $15.00 | Strategic advice, gameplans |
+| Claude 3.7 Sonnet | $3.00 | $15.00 | Latest capabilities, complex reasoning |
+| Claude Opus 4 | $15.00 | $75.00 | Most complex analysis (not currently used) |
+
+### Cost Per AI Session (Estimated)
+
+| Task Type | Model Used | Avg Tokens | Est. Cost/Session |
+|-----------|------------|------------|-------------------|
+| Chat message | Sonnet | 2,500 in / 800 out | $0.02-0.04 |
+| Gameplan generation | Sonnet | 3,000 in / 1,500 out | $0.03-0.05 |
+| Text generation (headline) | Haiku | 500 in / 100 out | $0.001-0.002 |
+| Color palette | Haiku | 800 in / 200 out | $0.002-0.003 |
+| Visual theme | Haiku | 1,000 in / 400 out | $0.003-0.005 |
+
+### Cost Optimization Features
+
+1. **Prompt Caching**: Up to 90% cost reduction on cached system prompts
+   - First request: Full price
+   - Subsequent requests: 10% of input cost for cached portions
+
+2. **Batch API**: 50% discount for async processing (not real-time)
+   - Useful for bulk content generation
+   - 24-hour processing window
+
+3. **Model Selection Strategy**: Task-based routing saves 70%+ on simple operations
+   - Route 70% of requests to Haiku (simple tasks)
+   - Route 30% to Sonnet (strategic/complex tasks)
+
+### Model Evolution Strategy
+
+Claude models are regularly updated, with older versions eventually deprecated. Plan for:
+
+1. **Quarterly Model Review**
+   - Evaluate new model releases for price/performance improvements
+   - Test new versions in staging before production deployment
+   - Document any prompt adjustments needed for new models
+
+2. **Migration Planning**
+   - Models typically have 6-12 month deprecation notice
+   - Budget 2-4 weeks of engineering time per major migration
+   - Maintain model version in edge function configuration for easy updates
+
+3. **Version Flexibility**
+   - Edge functions reference model by configuration, not hardcoded
+   - A/B test new models against production baseline
+   - Track quality metrics (user satisfaction, task completion) by model version
+
+4. **Cost Trend Expectations**
+   - AI costs have decreased 50-70% year-over-year historically
+   - Budget conservatively, but expect efficiency gains
+   - Newer models often deliver better results at same or lower cost
+
+### Enterprise Tier: No Usage Tracking Bypass
+
+**Important**: Enterprise customers have unlimited AI requests but usage is still tracked for:
+- Platform analytics and capacity planning
+- Cost allocation and margin analysis
+- Quality monitoring and model performance metrics
+- Identifying optimization opportunities
+
+The `ai_usage_tracking` table logs all requests regardless of tier, ensuring complete visibility into AI costs across the platform
+
 ## Usage Examples
 
 ### Example 1: First Funnel
