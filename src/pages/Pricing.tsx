@@ -46,6 +46,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
     'Up to 3 products',
     'Up to 3 funnels',
     '2,500 contacts',
+    '200 AI sessions/month',
     'AI content & page generation',
     'Stripe integration',
     'Analytics dashboard',
@@ -56,6 +57,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
     'Up to 50 products',
     'Up to 10 funnels',
     '10,000 contacts',
+    '400 AI sessions/month',
     'AI content & page generation',
     'Unlimited workflow automations',
     'Advanced analytics',
@@ -66,6 +68,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
     'Unlimited products',
     'Unlimited funnels',
     '50,000 contacts',
+    '800 AI sessions/month',
     'AI content & page generation',
     'Unlimited workflow automations',
     'Advanced analytics',
@@ -75,6 +78,7 @@ const PLAN_FEATURES: Record<string, string[]> = {
   enterprise: [
     'Everything in Pro',
     'Unlimited contacts',
+    'Unlimited AI sessions',
     'Unlimited team members',
     'Dedicated success manager',
     'SLA guarantee',
@@ -481,6 +485,10 @@ export default function Pricing() {
               {
                 q: 'Do you offer refunds?',
                 a: 'With a 14-day free trial, you can fully explore the platform before committing. If you\'re not satisfied after subscribing, contact support within 7 days for a prorated refund.',
+              },
+              {
+                q: 'What counts as an AI session?',
+                a: 'An AI session is a single interaction with our AI features, including AI Coach conversations, gameplan generation, text generation for headlines/copy, and visual theme generation. Each message to the AI Coach or generation request counts as one session. Your session limit resets monthly on your billing anniversary.',
               },
             ].map((faq, idx) => (
               <div key={idx} className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">

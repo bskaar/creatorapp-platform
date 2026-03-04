@@ -7,6 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+const SOFT_LIMIT_OVERAGE = 0.1;
+
 const GAMEPLAN_SYSTEM_PROMPT = `You are an AI Co-Founder specialized in creating actionable business gameplans for creators and digital entrepreneurs using the CreatorApp platform.
 
 **Your Scope:**
@@ -66,6 +68,97 @@ Make tasks specific enough that the user knows exactly what to do. For example:
 - Good: "Create a lead magnet PDF with 5 actionable tips for your audience"
 - Bad: "Build your email list"`;
 
+interface UsageCheckResult {
+  allowed: boolean;
+  isWarning: boolean;
+  isBlocked: boolean;
+  sessionsUsed: number;
+  maxSessions: number | null;
+  softMaxSessions: number | null;
+  isUnlimited: boolean;
+  message: string;
+}
+
+async function checkAIUsageLimits(
+  supabase: ReturnType<typeof createClient>,
+  siteId: string,
+  planId: string | null
+): Promise<UsageCheckResult> {
+  const { data: planData } = await supabase
+    .from('subscription_plans')
+    .select('display_name, limits')
+    .eq('id', planId)
+    .maybeSingle();
+
+  let maxSessions: number | null = 200;
+
+  if (planData) {
+    const limits = planData.limits as Record<string, unknown>;
+    if (limits && 'max_ai_sessions_per_month' in limits) {
+      maxSessions = limits.max_ai_sessions_per_month as number | null;
+    }
+  }
+
+  const isUnlimited = maxSessions === null;
+
+  if (isUnlimited) {
+    return {
+      allowed: true,
+      isWarning: false,
+      isBlocked: false,
+      sessionsUsed: 0,
+      maxSessions: null,
+      softMaxSessions: null,
+      isUnlimited: true,
+      message: '',
+    };
+  }
+
+  const { data: usageData } = await supabase.rpc('get_ai_usage_in_current_cycle', { site_uuid: siteId });
+  const sessionsUsed = usageData ?? 0;
+
+  const softMaxSessions = Math.ceil(maxSessions * (1 + SOFT_LIMIT_OVERAGE));
+  const isOverBase = sessionsUsed >= maxSessions;
+  const isOverSoftLimit = sessionsUsed >= softMaxSessions;
+
+  if (isOverSoftLimit) {
+    return {
+      allowed: false,
+      isWarning: false,
+      isBlocked: true,
+      sessionsUsed,
+      maxSessions,
+      softMaxSessions,
+      isUnlimited: false,
+      message: `You've exceeded your monthly AI session limit (${softMaxSessions} sessions). Upgrade your plan to continue using AI features.`,
+    };
+  }
+
+  if (isOverBase) {
+    return {
+      allowed: true,
+      isWarning: true,
+      isBlocked: false,
+      sessionsUsed,
+      maxSessions,
+      softMaxSessions,
+      isUnlimited: false,
+      message: `You've used ${sessionsUsed} of ${maxSessions} AI sessions this month. You have ${softMaxSessions - sessionsUsed} sessions remaining before AI features are paused.`,
+    };
+  }
+
+  return {
+    allowed: true,
+    isWarning: false,
+    isBlocked: false,
+    sessionsUsed,
+    maxSessions,
+    softMaxSessions,
+    isUnlimited: false,
+    message: '',
+  };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -124,30 +217,15 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const { data: planData } = await supabase
-      .from('subscription_plans')
-      .select('display_name')
-      .eq('id', siteOwnership.platform_subscription_plan_id)
-      .maybeSingle();
+    const usageCheck = await checkAIUsageLimits(supabase, siteId, siteOwnership.platform_subscription_plan_id);
 
-    const planName = planData?.display_name || 'Launch';
-    let maxRequestsPerDay = 50;
-    if (planName === 'Pro') maxRequestsPerDay = 500;
-    else if (planName === 'Scale') maxRequestsPerDay = 999999;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const { count: usageToday } = await supabase
-      .from('ai_usage_tracking')
-      .select('id', { count: 'exact', head: true })
-      .eq('site_id', siteId)
-      .eq('user_id', user.id)
-      .gte('created_at', today.toISOString());
-
-    if ((usageToday || 0) >= maxRequestsPerDay) {
+    if (!usageCheck.allowed) {
       return new Response(JSON.stringify({
-        error: `Daily AI request limit reached (${maxRequestsPerDay} requests on ${planName} plan). Upgrade your plan for more requests.`,
+        error: usageCheck.message,
         limitReached: true,
+        usageBlocked: true,
+        sessionsUsed: usageCheck.sessionsUsed,
+        maxSessions: usageCheck.maxSessions,
       }), {
         status: 429,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -172,7 +250,7 @@ Deno.serve(async (req: Request) => {
 - Industry: ${siteData.industry || 'General'}`;
 
       if (siteData.onboarding_data) {
-        const onboarding = siteData.onboarding_data as any;
+        const onboarding = siteData.onboarding_data as Record<string, unknown>;
         if (onboarding.targetAudience) {
           contextInfo += `\n- Target Audience: ${onboarding.targetAudience}`;
         }
@@ -236,7 +314,7 @@ Deno.serve(async (req: Request) => {
 
     if (gameplanError) throw gameplanError;
 
-    const tasksToInsert = gameplanData.tasks.map((task: any) => ({
+    const tasksToInsert = gameplanData.tasks.map((task: Record<string, unknown>) => ({
       gameplan_id: gameplan.id,
       description: task.description,
       phase: task.phase,
@@ -272,6 +350,10 @@ Deno.serve(async (req: Request) => {
           taskCount: tasksToInsert.length,
         },
         success: true,
+        usageWarning: usageCheck.isWarning,
+        usageMessage: usageCheck.isWarning ? usageCheck.message : null,
+        sessionsUsed: usageCheck.sessionsUsed + 1,
+        maxSessions: usageCheck.maxSessions,
       }),
       {
         headers: {

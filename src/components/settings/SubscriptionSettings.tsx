@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useSite } from '../../contexts/SiteContext';
 import { useSubscription } from '../../hooks/useSubscription';
 import { supabase } from '../../lib/supabase';
-import { Check, Zap, AlertCircle, Loader2, CreditCard } from 'lucide-react';
+import { Check, Zap, AlertCircle, Loader2, CreditCard, Brain } from 'lucide-react';
+import AIUsageMeter from '../AIUsageMeter';
 
 interface SubscriptionPlan {
   id: string;
@@ -147,6 +148,44 @@ export default function SubscriptionSettings() {
           </div>
         </div>
       )}
+
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+            <Brain className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">AI Usage</h3>
+            <p className="text-sm text-gray-500">Monthly AI session allocation</p>
+          </div>
+        </div>
+        <AIUsageMeter showUpgradeLink={false} />
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { plan: 'Starter', sessions: '200', current: currentPlanName === 'starter' },
+            { plan: 'Growth', sessions: '400', current: currentPlanName === 'growth' },
+            { plan: 'Pro', sessions: '800', current: currentPlanName === 'pro' },
+            { plan: 'Enterprise', sessions: 'Unlimited', current: currentPlanName === 'enterprise' },
+          ].map((tier) => (
+            <div
+              key={tier.plan}
+              className={`p-3 rounded-lg text-center ${
+                tier.current
+                  ? 'bg-blue-50 border-2 border-blue-300'
+                  : 'bg-gray-50 border border-gray-200'
+              }`}
+            >
+              <p className={`text-sm font-medium ${tier.current ? 'text-blue-700' : 'text-gray-600'}`}>
+                {tier.plan}
+              </p>
+              <p className={`text-lg font-bold ${tier.current ? 'text-blue-900' : 'text-gray-900'}`}>
+                {tier.sessions}
+              </p>
+              <p className="text-xs text-gray-500">sessions/mo</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {plans.map((plan) => {

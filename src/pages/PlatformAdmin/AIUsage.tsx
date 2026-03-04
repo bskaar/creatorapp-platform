@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Brain, TrendingUp, DollarSign, Zap, ChevronDown, ChevronUp, BarChart3, Clock } from 'lucide-react';
+import { Brain, TrendingUp, DollarSign, Zap, ChevronDown, ChevronUp, BarChart3, Clock, AlertTriangle, Calendar } from 'lucide-react';
 
 interface SiteUsageSummary {
   site_id: string;
@@ -15,6 +15,10 @@ interface SiteUsageSummary {
   sonnet_requests: number;
   haiku_requests: number;
   last_used: string;
+  plan_name: string;
+  max_sessions: number | null;
+  cycle_usage: number;
+  usage_percentage: number;
 }
 
 interface DailyUsage {
@@ -31,15 +35,12 @@ interface PlatformAIStats {
   active_sites: number;
   requests_today: number;
   cost_today_cents: number;
+  sites_approaching_limit: number;
+  sites_over_limit: number;
 }
 
-const MODEL_COSTS: Record<string, number> = {
-  sonnet: 0.003,
-  haiku: 0.00025,
-};
-
 function formatCost(cents: number): string {
-  if (cents < 100) return `${cents}¢`;
+  if (cents < 100) return `${cents}c`;
   return `$${(cents / 100).toFixed(2)}`;
 }
 
@@ -49,7 +50,7 @@ function formatTokens(tokens: number): string {
   return tokens.toString();
 }
 
-type SortKey = 'total_requests' | 'total_tokens' | 'total_cost_cents' | 'last_used';
+type SortKey = 'total_requests' | 'total_tokens' | 'total_cost_cents' | 'last_used' | 'usage_percentage';
 
 export default function AIUsage() {
   const [stats, setStats] = useState<PlatformAIStats | null>(null);
@@ -57,10 +58,11 @@ export default function AIUsage() {
   const [dailyUsage, setDailyUsage] = useState<DailyUsage[]>([]);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<'7d' | '30d' | '90d'>('30d');
-  const [sortKey, setSortKey] = useState<SortKey>('total_cost_cents');
+  const [sortKey, setSortKey] = useState<SortKey>('usage_percentage');
   const [sortAsc, setSortAsc] = useState(false);
   const [expandedSite, setExpandedSite] = useState<string | null>(null);
   const [siteBreakdown, setSiteBreakdown] = useState<Record<string, DailyUsage[]>>({});
+  const [filterStatus, setFilterStatus] = useState<'all' | 'warning' | 'over'>('all');
 
   useEffect(() => {
     loadData();
@@ -77,7 +79,7 @@ export default function AIUsage() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const [usageResult, sitesResult] = await Promise.all([
+    const [usageResult, sitesResult, plansResult] = await Promise.all([
       supabase
         .from('ai_usage_tracking')
         .select('site_id, request_type, model_used, tokens_used, cost_cents, created_at')
@@ -85,13 +87,34 @@ export default function AIUsage() {
         .order('created_at', { ascending: false }),
       supabase
         .from('sites')
-        .select('id, name, slug'),
+        .select('id, name, slug, platform_subscription_plan_id, ai_usage_cycle_start'),
+      supabase
+        .from('subscription_plans')
+        .select('id, display_name, limits'),
     ]);
 
     const rows = usageResult.data || [];
     const sites = sitesResult.data || [];
-    const siteMap: Record<string, { name: string; slug: string }> = {};
-    sites.forEach(s => { siteMap[s.id] = { name: s.name, slug: s.slug }; });
+    const plans = plansResult.data || [];
+
+    const planMap: Record<string, { name: string; maxSessions: number | null }> = {};
+    plans.forEach(p => {
+      const limits = p.limits as Record<string, unknown>;
+      planMap[p.id] = {
+        name: p.display_name,
+        maxSessions: limits?.max_ai_sessions_per_month as number | null ?? null,
+      };
+    });
+
+    const siteMap: Record<string, { name: string; slug: string; planId: string | null; cycleStart: string | null }> = {};
+    sites.forEach(s => {
+      siteMap[s.id] = {
+        name: s.name,
+        slug: s.slug,
+        planId: s.platform_subscription_plan_id,
+        cycleStart: s.ai_usage_cycle_start,
+      };
+    });
 
     const totalRequests = rows.length;
     const totalTokens = rows.reduce((s, r) => s + (r.tokens_used || 0), 0);
@@ -100,15 +123,6 @@ export default function AIUsage() {
     const todayRows = rows.filter(r => r.created_at >= today.toISOString());
     const requestsToday = todayRows.length;
     const costToday = todayRows.reduce((s, r) => s + (r.cost_cents || 0), 0);
-
-    setStats({
-      total_requests: totalRequests,
-      total_tokens: totalTokens,
-      total_cost_cents: totalCost,
-      active_sites: activeSiteIds,
-      requests_today: requestsToday,
-      cost_today_cents: costToday,
-    });
 
     const byDay: Record<string, DailyUsage> = {};
     rows.forEach(r => {
@@ -123,10 +137,13 @@ export default function AIUsage() {
     const bySite: Record<string, SiteUsageSummary> = {};
     rows.forEach(r => {
       if (!bySite[r.site_id]) {
+        const siteInfo = siteMap[r.site_id];
+        const planInfo = siteInfo?.planId ? planMap[siteInfo.planId] : null;
+
         bySite[r.site_id] = {
           site_id: r.site_id,
-          site_name: siteMap[r.site_id]?.name || 'Unknown Site',
-          site_slug: siteMap[r.site_id]?.slug || '',
+          site_name: siteInfo?.name || 'Unknown Site',
+          site_slug: siteInfo?.slug || '',
           total_requests: 0,
           total_tokens: 0,
           total_cost_cents: 0,
@@ -136,6 +153,10 @@ export default function AIUsage() {
           sonnet_requests: 0,
           haiku_requests: 0,
           last_used: r.created_at,
+          plan_name: planInfo?.name || 'Unknown',
+          max_sessions: planInfo?.maxSessions ?? null,
+          cycle_usage: 0,
+          usage_percentage: 0,
         };
       }
       const s = bySite[r.site_id];
@@ -149,8 +170,36 @@ export default function AIUsage() {
       else s.haiku_requests++;
       if (r.created_at > s.last_used) s.last_used = r.created_at;
     });
-    setSiteUsage(Object.values(bySite));
 
+    const siteUsageList = Object.values(bySite);
+
+    for (const site of siteUsageList) {
+      try {
+        const { data: cycleUsage } = await supabase.rpc('get_ai_usage_in_current_cycle', { site_uuid: site.site_id });
+        site.cycle_usage = cycleUsage ?? 0;
+        if (site.max_sessions !== null && site.max_sessions > 0) {
+          site.usage_percentage = Math.round((site.cycle_usage / site.max_sessions) * 100);
+        }
+      } catch {
+        site.cycle_usage = site.total_requests;
+      }
+    }
+
+    const sitesApproachingLimit = siteUsageList.filter(s => s.usage_percentage >= 80 && s.usage_percentage < 100).length;
+    const sitesOverLimit = siteUsageList.filter(s => s.usage_percentage >= 100).length;
+
+    setStats({
+      total_requests: totalRequests,
+      total_tokens: totalTokens,
+      total_cost_cents: totalCost,
+      active_sites: activeSiteIds,
+      requests_today: requestsToday,
+      cost_today_cents: costToday,
+      sites_approaching_limit: sitesApproachingLimit,
+      sites_over_limit: sitesOverLimit,
+    });
+
+    setSiteUsage(siteUsageList);
     setLoading(false);
   }
 
@@ -201,7 +250,13 @@ export default function AIUsage() {
     }
   }
 
-  const sortedSites = [...siteUsage].sort((a, b) => {
+  const filteredSites = siteUsage.filter(site => {
+    if (filterStatus === 'warning') return site.usage_percentage >= 80 && site.usage_percentage < 100;
+    if (filterStatus === 'over') return site.usage_percentage >= 100;
+    return true;
+  });
+
+  const sortedSites = [...filteredSites].sort((a, b) => {
     const av = a[sortKey];
     const bv = b[sortKey];
     if (typeof av === 'string' && typeof bv === 'string') {
@@ -225,7 +280,7 @@ export default function AIUsage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">AI Usage & Costs</h1>
-          <p className="mt-1 text-sm text-gray-500">Token consumption and cost tracking across all sites</p>
+          <p className="mt-1 text-sm text-gray-500">Token consumption, cost tracking, and monthly limit monitoring</p>
         </div>
         <div className="flex items-center gap-2">
           {(['7d', '30d', '90d'] as const).map(r => (
@@ -244,7 +299,7 @@ export default function AIUsage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
         {[
           { label: 'Total Requests', value: stats?.total_requests.toLocaleString() ?? '0', icon: <Zap className="w-5 h-5" />, color: 'bg-blue-100 text-blue-600' },
           { label: 'Total Tokens', value: formatTokens(stats?.total_tokens ?? 0), icon: <Brain className="w-5 h-5" />, color: 'bg-green-100 text-green-600' },
@@ -252,6 +307,8 @@ export default function AIUsage() {
           { label: 'Active Sites', value: stats?.active_sites ?? 0, icon: <BarChart3 className="w-5 h-5" />, color: 'bg-sky-100 text-sky-600' },
           { label: "Today's Requests", value: stats?.requests_today ?? 0, icon: <TrendingUp className="w-5 h-5" />, color: 'bg-teal-100 text-teal-600' },
           { label: "Today's Cost", value: formatCost(stats?.cost_today_cents ?? 0), icon: <Clock className="w-5 h-5" />, color: 'bg-rose-100 text-rose-600' },
+          { label: 'Approaching Limit', value: stats?.sites_approaching_limit ?? 0, icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-amber-100 text-amber-600' },
+          { label: 'Over Limit', value: stats?.sites_over_limit ?? 0, icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-red-100 text-red-600' },
         ].map(({ label, value, icon, color }) => (
           <div key={label} className="bg-white rounded-xl border border-gray-200 p-4">
             <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${color}`}>{icon}</div>
@@ -270,7 +327,7 @@ export default function AIUsage() {
               return (
                 <div key={day.date} className="flex-1 flex flex-col items-center gap-1 group relative min-w-0">
                   <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
-                    {day.date}<br />{day.requests} req · {formatCost(day.cost_cents)}
+                    {day.date}<br />{day.requests} req - {formatCost(day.cost_cents)}
                   </div>
                   <div
                     className="w-full bg-blue-500 rounded-t transition-all"
@@ -290,7 +347,28 @@ export default function AIUsage() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-base font-semibold text-gray-900">Usage by Site</h2>
-          <span className="text-sm text-gray-500">{siteUsage.length} sites with activity</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {(['all', 'warning', 'over'] as const).map(status => (
+                <button
+                  key={status}
+                  onClick={() => setFilterStatus(status)}
+                  className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                    filterStatus === status
+                      ? status === 'over'
+                        ? 'bg-red-100 text-red-700'
+                        : status === 'warning'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {status === 'all' ? 'All' : status === 'warning' ? 'Approaching' : 'Over Limit'}
+                </button>
+              ))}
+            </div>
+            <span className="text-sm text-gray-500">{filteredSites.length} sites</span>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -298,6 +376,18 @@ export default function AIUsage() {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
                 <th className="text-left px-6 py-3 font-medium text-gray-500">Site</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">Plan</th>
+                <th
+                  className="text-right px-4 py-3 font-medium text-gray-500 cursor-pointer hover:text-gray-700 select-none"
+                  onClick={() => handleSort('usage_percentage')}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    Monthly Usage
+                    {sortKey === 'usage_percentage' ? (
+                      sortAsc ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />
+                    ) : null}
+                  </span>
+                </th>
                 {([
                   ['total_requests', 'Requests'],
                   ['total_tokens', 'Tokens'],
@@ -332,16 +422,54 @@ export default function AIUsage() {
                       <div className="font-medium text-gray-900">{site.site_name}</div>
                       <div className="text-xs text-gray-400 mt-0.5">/{site.site_slug}</div>
                     </td>
+                    <td className="px-4 py-4">
+                      <span className="text-gray-600">{site.plan_name}</span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className={`font-medium ${
+                            site.usage_percentage >= 100
+                              ? 'text-red-600'
+                              : site.usage_percentage >= 80
+                                ? 'text-amber-600'
+                                : 'text-gray-900'
+                          }`}>
+                            {site.cycle_usage} / {site.max_sessions ?? 'Unlimited'}
+                          </span>
+                          {site.usage_percentage >= 100 && (
+                            <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded">Over</span>
+                          )}
+                          {site.usage_percentage >= 80 && site.usage_percentage < 100 && (
+                            <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded">80%+</span>
+                          )}
+                        </div>
+                        {site.max_sessions !== null && (
+                          <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                site.usage_percentage >= 100
+                                  ? 'bg-red-500'
+                                  : site.usage_percentage >= 80
+                                    ? 'bg-amber-500'
+                                    : 'bg-emerald-500'
+                              }`}
+                              style={{ width: `${Math.min(site.usage_percentage, 100)}%` }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-4 text-right">
                       <div className="font-medium text-gray-900">{site.total_requests.toLocaleString()}</div>
                       <div className="text-xs text-gray-400 mt-0.5">
-                        {site.chat_requests}c · {site.gameplan_requests}g · {site.text_gen_requests}t
+                        {site.chat_requests}c - {site.gameplan_requests}g - {site.text_gen_requests}t
                       </div>
                     </td>
                     <td className="px-4 py-4 text-right">
                       <div className="font-medium text-gray-900">{formatTokens(site.total_tokens)}</div>
                       <div className="text-xs text-gray-400 mt-0.5">
-                        {site.sonnet_requests} sonnet · {site.haiku_requests} haiku
+                        {site.sonnet_requests} sonnet - {site.haiku_requests} haiku
                       </div>
                     </td>
                     <td className="px-4 py-4 text-right">
@@ -351,7 +479,7 @@ export default function AIUsage() {
                       <div className="text-xs text-gray-400 mt-0.5">
                         {site.total_requests > 0
                           ? `${formatCost(Math.round(site.total_cost_cents / site.total_requests))}/req avg`
-                          : '—'}
+                          : '-'}
                       </div>
                     </td>
                     <td className="px-4 py-4 text-right text-gray-500">
@@ -365,7 +493,7 @@ export default function AIUsage() {
                   </tr>
                   {expandedSite === site.site_id && (
                     <tr key={`${site.site_id}-detail`} className="bg-gray-50">
-                      <td colSpan={6} className="px-6 py-4">
+                      <td colSpan={8} className="px-6 py-4">
                         <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Daily breakdown (recent)</div>
                         {siteBreakdown[site.site_id] ? (
                           <div className="overflow-x-auto">
@@ -422,7 +550,7 @@ export default function AIUsage() {
               ))}
               {sortedSites.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-400">
                     No AI usage recorded in this period
                   </td>
                 </tr>
@@ -430,6 +558,35 @@ export default function AIUsage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-base font-semibold text-gray-900 mb-4">Monthly AI Limits by Plan</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-teal-50 rounded-lg p-4">
+            <div className="text-sm font-semibold text-teal-700 mb-1">Starter</div>
+            <div className="text-2xl font-bold text-teal-900">200</div>
+            <div className="text-xs text-teal-600">sessions/month</div>
+          </div>
+          <div className="bg-blue-50 rounded-lg p-4">
+            <div className="text-sm font-semibold text-blue-700 mb-1">Growth</div>
+            <div className="text-2xl font-bold text-blue-900">400</div>
+            <div className="text-xs text-blue-600">sessions/month</div>
+          </div>
+          <div className="bg-amber-50 rounded-lg p-4">
+            <div className="text-sm font-semibold text-amber-700 mb-1">Pro</div>
+            <div className="text-2xl font-bold text-amber-900">800</div>
+            <div className="text-xs text-amber-600">sessions/month</div>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-4">
+            <div className="text-sm font-semibold text-slate-700 mb-1">Enterprise</div>
+            <div className="text-2xl font-bold text-slate-900">Unlimited</div>
+            <div className="text-xs text-slate-600">sessions/month</div>
+          </div>
+        </div>
+        <p className="mt-4 text-xs text-gray-500">
+          Each plan includes a 10% soft overage buffer. Users are warned at 100% and blocked at 110%.
+        </p>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-6">
