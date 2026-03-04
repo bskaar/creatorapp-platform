@@ -18,6 +18,7 @@ import Content from './pages/Content';
 import ProductNew from './pages/ProductNew';
 import ProductDetail from './pages/ProductDetail';
 import LessonNew from './pages/LessonNew';
+import SitePages from './pages/SitePages';
 import Funnels from './pages/Funnels';
 import FunnelDetail from './pages/FunnelDetail';
 import PageEditor from './pages/PageEditor';
@@ -336,6 +337,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <Layout>
               <LessonNew />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/site-pages"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <SitePages />
             </Layout>
           </ProtectedRoute>
         }

@@ -44,7 +44,8 @@ export default function Layout({ children }: LayoutProps) {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, dataTour: 'nav-dashboard' },
     { name: 'Content Library', href: '/content', icon: FolderOpen, dataTour: 'nav-products' },
-    { name: 'Funnels & Pages', href: '/funnels', icon: GitBranch, dataTour: 'nav-funnels' },
+    { name: 'Site Pages', href: '/site-pages', icon: FileText, dataTour: 'nav-pages' },
+    { name: 'Funnels', href: '/funnels', icon: GitBranch, dataTour: 'nav-funnels' },
     { name: 'Email Marketing', href: '/email', icon: Mail },
     { name: 'Automations', href: '/automations', icon: Zap },
     { name: 'Commerce', href: '/commerce', icon: ShoppingCart },
