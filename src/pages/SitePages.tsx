@@ -234,11 +234,9 @@ export default function SitePages() {
                   >
                     {homepage.status}
                   </span>
-                  {homepage.status === 'published' && (
+                  {homepage.status === 'published' && currentSite?.custom_domain && currentSite?.domain_verification_status === 'verified' && (
                     <a
-                      href={`https://${currentSite?.custom_domain || currentSite?.subdomain}.${
-                        currentSite?.custom_domain ? '' : 'creatorapp.site'
-                      }`}
+                      href={`https://${currentSite.custom_domain}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-primary hover:text-blue-700 flex items-center space-x-1"
@@ -258,7 +256,7 @@ export default function SitePages() {
                   </button>
                   {homepage.status === 'published' && (
                     <button
-                      onClick={() => window.open(`/s/${currentSite?.subdomain}`, '_blank')}
+                      onClick={() => window.open(`/s/${currentSite?.slug}/home`, '_blank')}
                       className="flex items-center space-x-2 px-4 py-2 border-2 border-primary/20 rounded-button hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 font-semibold text-text-primary hover:border-primary/40 transition"
                     >
                       <Eye className="h-4 w-4" />

@@ -11,7 +11,7 @@ export default function Logo({ className = '', iconOnly = false }: LogoProps) {
       <div className={`flex items-center ${className}`}>
         <img
           src="/creatorapp-c1-icon-gradient (2).svg"
-          alt="CreatorApp Icon"
+          alt="CreatorAppU Icon"
           className="h-10 w-auto"
         />
       </div>
@@ -22,7 +22,7 @@ export default function Logo({ className = '', iconOnly = false }: LogoProps) {
     <div className={`flex items-center ${className}`}>
       <img
         src="/creatorapp-c1-logo-gradient.svg"
-        alt="CreatorApp"
+        alt="CreatorAppU"
         className="h-12 w-auto"
       />
     </div>
