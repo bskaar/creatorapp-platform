@@ -2,18 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import {
-  GitBranch,
-  Plus,
-  Edit,
-  Trash2,
-  X,
-  Copy,
-  Target,
-  TrendingUp,
-  Users,
-  ShoppingCart,
-} from 'lucide-react';
+import { GitBranch, Plus, CreditCard as Edit, Trash2, X, Copy, Target, TrendingUp, Users, ShoppingCart } from 'lucide-react';
 import FunnelTemplatePicker from '../components/FunnelTemplatePicker';
 import type { Database } from '../lib/database.types';
 
