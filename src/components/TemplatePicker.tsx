@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { X, Sparkles, Search, ArrowRight, Wand2, Palette } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { MiniPagePreview } from './funnel/MiniPagePreview';
+import type { Block } from './publicSite/types';
 
 interface Template {
   id: string;
@@ -87,6 +89,16 @@ export default function TemplatePicker({ onSelect, onClose }: TemplatePickerProp
         {badge.label}
       </span>
     ) : null;
+  };
+
+  const extractBlocks = (blocks: any[]): Block[] => {
+    if (!Array.isArray(blocks)) return [];
+    return blocks.filter((b): b is Block =>
+      b !== null &&
+      typeof b === 'object' &&
+      'id' in b &&
+      'type' in b
+    );
   };
 
   return (
@@ -202,70 +214,82 @@ export default function TemplatePicker({ onSelect, onClose }: TemplatePickerProp
                   <p className="text-sm text-text-secondary font-medium">Build your own custom page with our drag & drop editor</p>
                 </button>
 
-                {filteredTemplates.map((template) => (
-                  <button
-                    key={template.id}
-                    onClick={() => onSelect(template)}
-                    className="group border-2 border-border rounded-card overflow-hidden hover:border-primary hover:shadow-2xl transition-all duration-300 text-left bg-white"
-                  >
-                    <div
-                      className="aspect-video relative overflow-hidden"
-                      style={{
-                        background: template.theme.gradient || `linear-gradient(135deg, ${template.theme.primaryColor} 0%, ${template.theme.secondaryColor || template.theme.primaryColor} 100%)`
-                      }}
+                {filteredTemplates.map((template) => {
+                  const blocks = extractBlocks(template.blocks);
+                  const hasBlocks = blocks.length > 0;
+
+                  return (
+                    <button
+                      key={template.id}
+                      onClick={() => onSelect(template)}
+                      className="group border-2 border-border rounded-card overflow-hidden hover:border-primary hover:shadow-2xl transition-all duration-300 text-left bg-white"
                     >
-                      {template.thumbnail_url ? (
-                        <img
-                          src={template.thumbnail_url}
-                          alt={template.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-white p-6">
-                          <Palette className="h-16 w-16 mb-4 opacity-80" />
-                          <div className="flex gap-2 mb-3">
-                            <div
-                              className="w-8 h-8 rounded-full shadow-lg border-2 border-white"
-                              style={{ backgroundColor: template.theme.primaryColor }}
+                      <div className="relative overflow-hidden bg-gray-50">
+                        {hasBlocks ? (
+                          <MiniPagePreview
+                            blocks={blocks}
+                            primaryColor={template.theme.primaryColor}
+                          />
+                        ) : template.thumbnail_url ? (
+                          <div className="aspect-video">
+                            <img
+                              src={template.thumbnail_url}
+                              alt={template.name}
+                              className="w-full h-full object-cover"
                             />
-                            {template.theme.secondaryColor && (
-                              <div
-                                className="w-8 h-8 rounded-full shadow-lg border-2 border-white"
-                                style={{ backgroundColor: template.theme.secondaryColor }}
-                              />
-                            )}
-                            {template.theme.accentColor && (
-                              <div
-                                className="w-8 h-8 rounded-full shadow-lg border-2 border-white"
-                                style={{ backgroundColor: template.theme.accentColor }}
-                              />
-                            )}
                           </div>
-                          <p className="text-sm font-semibold opacity-90">{template.theme.name || 'Custom Theme'}</p>
+                        ) : (
+                          <div
+                            className="aspect-video flex flex-col items-center justify-center text-white p-6"
+                            style={{
+                              background: template.theme.gradient || `linear-gradient(135deg, ${template.theme.primaryColor} 0%, ${template.theme.secondaryColor || template.theme.primaryColor} 100%)`
+                            }}
+                          >
+                            <Palette className="h-16 w-16 mb-4 opacity-80" />
+                            <div className="flex gap-2 mb-3">
+                              <div
+                                className="w-8 h-8 rounded-full shadow-lg border-2 border-white"
+                                style={{ backgroundColor: template.theme.primaryColor }}
+                              />
+                              {template.theme.secondaryColor && (
+                                <div
+                                  className="w-8 h-8 rounded-full shadow-lg border-2 border-white"
+                                  style={{ backgroundColor: template.theme.secondaryColor }}
+                                />
+                              )}
+                              {template.theme.accentColor && (
+                                <div
+                                  className="w-8 h-8 rounded-full shadow-lg border-2 border-white"
+                                  style={{ backgroundColor: template.theme.accentColor }}
+                                />
+                              )}
+                            </div>
+                            <p className="text-sm font-semibold opacity-90">{template.theme.name || 'Custom Theme'}</p>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <div className="bg-white rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform">
+                            <ArrowRight className="h-6 w-6 text-primary" />
+                          </div>
                         </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <div className="bg-white rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform">
-                          <ArrowRight className="h-6 w-6 text-primary" />
+                      </div>
+                      <div className="p-5">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="font-bold text-dark text-lg">{template.name}</h3>
+                          {getStyleBadge(template.theme.style)}
+                        </div>
+                        <p className="text-sm text-text-secondary line-clamp-2 font-medium mb-3">{template.description}</p>
+                        <div className="flex gap-2 items-center">
+                          <div
+                            className="w-4 h-4 rounded-full border border-gray-200"
+                            style={{ backgroundColor: template.theme.primaryColor }}
+                          />
+                          <span className="text-xs text-text-secondary font-medium">{template.theme.fontFamily?.split(',')[0] || 'System Font'}</span>
                         </div>
                       </div>
-                    </div>
-                    <div className="p-5">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-bold text-dark text-lg">{template.name}</h3>
-                        {getStyleBadge(template.theme.style)}
-                      </div>
-                      <p className="text-sm text-text-secondary line-clamp-2 font-medium mb-3">{template.description}</p>
-                      <div className="flex gap-2 items-center">
-                        <div
-                          className="w-4 h-4 rounded-full border border-gray-200"
-                          style={{ backgroundColor: template.theme.primaryColor }}
-                        />
-                        <span className="text-xs text-text-secondary font-medium">{template.theme.fontFamily?.split(',')[0] || 'System Font'}</span>
-                      </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
             )}
 

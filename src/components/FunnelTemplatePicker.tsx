@@ -14,7 +14,6 @@ import {
   Users,
   Briefcase,
   GraduationCap,
-  Palette,
   Eye,
   ChevronRight,
   Target,
@@ -24,7 +23,8 @@ import {
 import { supabase } from '../lib/supabase';
 import { useDeviceType } from '../hooks/useDeviceType';
 import { AdaptiveModal } from './responsive/AdaptiveModal';
-import { TouchButton } from './responsive/TouchButton';
+import { MiniPagePreview } from './funnel/MiniPagePreview';
+import type { Block } from './publicSite/types';
 
 interface FunnelTemplate {
   id: string;
@@ -133,6 +133,18 @@ const getDifficultyBadge = (level?: string) => {
     default:
       return null;
   }
+};
+
+const extractFirstPageBlocks = (pagesConfig: any[]): Block[] => {
+  if (!Array.isArray(pagesConfig) || pagesConfig.length === 0) return [];
+  const firstPage = pagesConfig[0];
+  if (!firstPage?.blocks || !Array.isArray(firstPage.blocks)) return [];
+  return firstPage.blocks.filter((b: any): b is Block =>
+    b !== null &&
+    typeof b === 'object' &&
+    'id' in b &&
+    'type' in b
+  );
 };
 
 export default function FunnelTemplatePicker({
@@ -615,9 +627,17 @@ function TemplateCard({ template, onPreview, onSelect, isMobile }: TemplateCardP
     0
   ) || 0;
 
+  const firstPageBlocks = extractFirstPageBlocks(template.pages_config);
+  const hasBlocks = firstPageBlocks.length > 0;
+
   if (isMobile) {
     return (
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {hasBlocks && (
+          <div className="border-b border-gray-100">
+            <MiniPagePreview blocks={firstPageBlocks} primaryColor="#3B82F6" />
+          </div>
+        )}
         <div className="p-4">
           <div className="flex items-start gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -666,22 +686,30 @@ function TemplateCard({ template, onPreview, onSelect, isMobile }: TemplateCardP
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:border-blue-200 transition-all duration-200 group">
       <div className="flex flex-col md:flex-row">
-        {template.thumbnail_url && (
-          <div
-            className="w-full md:w-56 h-40 md:h-auto bg-cover bg-center relative flex-shrink-0"
-            style={{ backgroundImage: `url(${template.thumbnail_url})` }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent" />
-            {badge && (
-              <div
-                className={`absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${badge.color}`}
-              >
-                <badge.icon className="h-3 w-3" />
-                {badge.label}
-              </div>
-            )}
-          </div>
-        )}
+        <div className="w-full md:w-64 flex-shrink-0 relative">
+          {hasBlocks ? (
+            <div className="border-r border-gray-100">
+              <MiniPagePreview blocks={firstPageBlocks} primaryColor="#3B82F6" />
+            </div>
+          ) : template.thumbnail_url ? (
+            <div
+              className="h-40 md:h-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${template.thumbnail_url})` }}
+            />
+          ) : (
+            <div className="h-40 md:h-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+              <Icon className="h-12 w-12 text-blue-300" />
+            </div>
+          )}
+          {badge && (
+            <div
+              className={`absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${badge.color}`}
+            >
+              <badge.icon className="h-3 w-3" />
+              {badge.label}
+            </div>
+          )}
+        </div>
 
         <div className="flex-1 p-5">
           <div className="flex items-start justify-between mb-3">
