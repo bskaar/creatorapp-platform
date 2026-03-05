@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut, FileText, Layout } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut, FileText, LayoutGrid as Layout } from 'lucide-react';
 import { useDeviceType } from '../../hooks/useDeviceType';
 import type { Database } from '../../lib/database.types';
 
