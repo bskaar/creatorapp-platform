@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle, Sparkles, Shield, Lock, CreditCard, Menu, X } from 'lucide-react';
+import { MessageCircle, Menu, X } from 'lucide-react';
 import Logo from '../components/Logo';
 import DemoModal from '../components/DemoModal';
 import HowItWorksSection from '../components/HowItWorksSection';
 import ProductDemoVideo from '../components/ProductDemoVideo';
 import StructuredData, { organizationSchema, softwareApplicationSchema } from '../components/StructuredData';
+import PremiumHero from '../components/PremiumHero';
+import FeatureShowcase from '../components/FeatureShowcase';
+import EnhancedFeaturesSection from '../components/EnhancedFeaturesSection';
+import PremiumTrustSection from '../components/PremiumTrustSection';
 
 export default function Landing() {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
@@ -39,7 +43,7 @@ export default function Landing() {
       >
         Skip to main content
       </a>
-      <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100" aria-label="Main navigation">
+      <nav className="fixed top-0 w-full bg-slate-900/80 backdrop-blur-xl z-50 border-b border-white/10" aria-label="Main navigation">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
             <Link to="/" className="flex items-center">
@@ -47,26 +51,26 @@ export default function Landing() {
             </Link>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
+              className="md:hidden p-2 rounded-lg hover:bg-white/10 transition text-white"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-text-primary hover:text-primary font-medium transition-colors relative group">
+              <a href="#features" className="text-gray-300 hover:text-white font-medium transition-colors relative group">
                 Features
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
               </a>
-              <Link to="/pricing" className="text-text-primary hover:text-primary font-medium transition-colors relative group">
+              <Link to="/pricing" className="text-gray-300 hover:text-white font-medium transition-colors relative group">
                 Pricing
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
               </Link>
-              <Link to="/login" className="text-text-primary hover:text-primary font-medium transition-colors">
+              <Link to="/login" className="text-gray-300 hover:text-white font-medium transition-colors">
                 Login
               </Link>
               <Link
                 to="/signup"
-                className="bg-gradient-to-r from-primary to-primary-dark text-white px-7 py-3 rounded-button font-semibold hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5"
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-7 py-3 rounded-xl font-semibold hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300 hover:-translate-y-0.5"
               >
                 Start Free Trial
               </Link>
@@ -74,32 +78,32 @@ export default function Landing() {
           </div>
         </div>
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-3">
+          <div className="md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-white/10 px-4 py-4 space-y-3">
             <a
               href="#features"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-4 py-3 text-text-primary hover:bg-gray-50 rounded-lg font-medium"
+              className="block px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-white rounded-lg font-medium"
             >
               Features
             </a>
             <Link
               to="/pricing"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-4 py-3 text-text-primary hover:bg-gray-50 rounded-lg font-medium"
+              className="block px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-white rounded-lg font-medium"
             >
               Pricing
             </Link>
             <Link
               to="/login"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-4 py-3 text-text-primary hover:bg-gray-50 rounded-lg font-medium"
+              className="block px-4 py-3 text-gray-300 hover:bg-white/5 hover:text-white rounded-lg font-medium"
             >
               Login
             </Link>
             <Link
               to="/signup"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-4 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-lg font-semibold text-center"
+              className="block px-4 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-semibold text-center"
             >
               Start Free Trial
             </Link>
@@ -108,450 +112,15 @@ export default function Landing() {
       </nav>
 
       <main id="main-content">
-      <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-8 relative overflow-hidden bg-gradient-to-br from-light-bg via-white to-pink-50" aria-labelledby="hero-heading">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px] -z-10"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/20 rounded-full blur-[150px] -z-10"></div>
+        <PremiumHero onWatchDemo={() => setIsDemoOpen(true)} />
 
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
-          <div className="space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-600 px-5 py-2 rounded-full text-sm font-semibold border border-blue-500/20 mb-2">
-              <Sparkles className="w-4 h-4" />
-              AI-Powered Creator Platform
-            </div>
-            <h1 id="hero-heading" className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight text-dark">
-              Build Your{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                Creator Business
-              </span>
-              {' '}All in One Place
-            </h1>
+        <FeatureShowcase />
 
-            <p className="text-base sm:text-xl text-text-secondary leading-relaxed max-w-xl">
-              Everything you need to create, launch, and scale your online business. Build websites, sell products, run email campaigns, and grow your audience with AI-powered tools.
-            </p>
+        <EnhancedFeaturesSection />
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Link
-                to="/signup"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-              >
-                Start Your Free Trial
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-              <button
-                onClick={() => setIsDemoOpen(true)}
-                className="inline-flex items-center justify-center gap-2 bg-white border-2 border-gray-200 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 group"
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Play className="h-4 w-4 text-white ml-0.5" />
-                </div>
-                See How It Works
-              </button>
-            </div>
-          </div>
+        <HowItWorksSection onWatchDemo={() => setIsDemoOpen(true)} />
 
-          <div className="relative">
-            <div className="bg-white rounded-[20px] p-8 shadow-heavy">
-              <div className="flex items-center gap-3 pb-6 border-b-2 border-border">
-                <Zap className="h-8 w-8 text-blue-600" />
-                <h3 className="text-2xl font-bold text-dark">Everything You Need</h3>
-              </div>
-              <div className="space-y-4 mt-6">
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:-translate-y-1 transition-all">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-dark mb-1">Websites & Funnels</div>
-                    <div className="text-sm text-text-secondary">Build professional sites and high-converting funnels</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:-translate-y-1 transition-all">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-dark mb-1">Email Marketing</div>
-                    <div className="text-sm text-text-secondary">Automated campaigns and sequences that convert</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:-translate-y-1 transition-all">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-dark mb-1">E-Commerce</div>
-                    <div className="text-sm text-text-secondary">Sell products, courses, and memberships seamlessly</div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:-translate-y-1 transition-all">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-dark mb-1">AI-Powered Tools</div>
-                    <div className="text-sm text-text-secondary">Generate content, designs, and strategies with AI</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="features" className="py-32 px-8 bg-gradient-to-b from-white to-light-bg" aria-labelledby="features-heading">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-600 px-5 py-2 rounded-full text-sm font-semibold border border-blue-500/20 mb-6">
-              <Zap className="w-4 h-4" />
-              All-In-One Creator Platform
-            </div>
-            <h2 id="features-heading" className="text-5xl lg:text-6xl font-bold text-dark mb-6">
-              Everything to Run<br/>
-              Your Creator Business
-            </h2>
-            <p className="text-xl text-text-secondary max-w-3xl mx-auto leading-relaxed">
-              Stop juggling multiple tools. CreatorApp gives you everything you need to build, market, and monetize your online business in one powerful platform.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 rounded-card p-12 border-2 border-blue-600 shadow-heavy hover:shadow-heavy transition-all duration-300 hover:-translate-y-3 group relative overflow-hidden md:col-span-2 lg:col-span-3">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/30 rounded-full blur-3xl"></div>
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-[70px] h-[70px] bg-white/20 backdrop-blur-sm rounded-[18px] flex items-center justify-center group-hover:scale-105 transition-all">
-                      <Sparkles className="h-8 w-8 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-3xl font-bold text-white mb-2">AI-Powered Platform</h3>
-                      <p className="text-white/90 text-lg">Work Smarter, Not Harder</p>
-                    </div>
-                  </div>
-                  <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white font-semibold text-sm flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    Powered by AI
-                  </div>
-                </div>
-                <p className="text-white/90 mb-6 leading-relaxed text-lg max-w-3xl">
-                  Generate content, design websites, create email campaigns, and analyze performance with AI. CreatorApp's intelligent features help you build and grow faster than ever before.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="flex items-start gap-3 text-white">
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="font-semibold mb-1">AI Content</div>
-                      <div className="text-sm text-white/80">Generate copy instantly</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 text-white">
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="font-semibold mb-1">AI Design</div>
-                      <div className="text-sm text-white/80">Beautiful themes</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 text-white">
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="font-semibold mb-1">AI Analytics</div>
-                      <div className="text-sm text-white/80">Smart insights</div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 text-white">
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="font-semibold mb-1">AI Coach</div>
-                      <div className="text-sm text-white/80">24/7 guidance</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-dark">Websites & Funnels</h3>
-              </div>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Build beautiful landing pages and high-converting sales funnels with our drag-and-drop page builder.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Drag-and-drop builder
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Professional templates
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Custom domain support
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <Mail className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-dark">Email Marketing</h3>
-              </div>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Create automated email campaigns and sequences that nurture leads and drive sales on autopilot.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Automated sequences
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Broadcast campaigns
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Segmentation & tags
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <DollarSign className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-dark">E-Commerce</h3>
-              </div>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Sell digital products, online courses, memberships, and physical goods with seamless checkout.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Product management
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Stripe integration
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Order management
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <Video className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-dark">Webinars & Events</h3>
-              </div>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Host live and automated webinars to engage your audience and sell at scale.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Live webinars
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Automated replays
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Registration pages
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <Users className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-dark">Contacts & CRM</h3>
-              </div>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Manage your audience, track engagement, and build deeper relationships with your customers.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Contact management
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Activity tracking
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Custom fields & tags
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-card p-12 border-2 border-border hover:border-blue-600 transition-all duration-300 hover:-translate-y-3 hover:shadow-medium group relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <BarChart3 className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-dark">Analytics & Insights</h3>
-              </div>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Track performance, understand your audience, and make data-driven decisions to grow faster.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Revenue tracking
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Conversion analytics
-                </li>
-                <li className="flex items-center gap-3 text-text-primary">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  Custom reports
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <HowItWorksSection onWatchDemo={() => setIsDemoOpen(true)} />
-
-      <section className="py-24 px-8 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Built for Creators Who Mean Business
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Everything you need to launch your online business. Professional tools, no technical skills required.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 text-blue-600" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">Secure Platform</h3>
-              <p className="text-sm text-gray-600">SSL encryption on all sites. Your data and your customers' data is protected.</p>
-            </div>
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center mb-4">
-                <Lock className="h-6 w-6 text-teal-600" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">You Own Your Data</h3>
-              <p className="text-sm text-gray-600">Export your contacts, content, and data anytime. No lock-in, no restrictions.</p>
-            </div>
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center mb-4">
-                <CreditCard className="h-6 w-6 text-cyan-600" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">We Don't Tax Your Success</h3>
-              <p className="text-sm text-gray-600">$0 platform fees on your sales. Simple monthly subscription - we never take a cut of your revenue.</p>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl p-10 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
-            <div className="relative z-10 text-center">
-              <h3 className="text-3xl font-bold mb-4">
-                Start Building Today
-              </h3>
-              <p className="text-lg text-white/90 mb-8 max-w-xl mx-auto">
-                Get started with a 14-day free trial. Credit card required, but you won't be charged until after your trial ends.
-              </p>
-              <Link
-                to="/signup"
-                className="inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
-                Start Your Free Trial
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm text-white/80">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4" />
-                  14-Day Free Trial
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Credit Card Required
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Cancel Anytime
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+        <PremiumTrustSection />
       </main>
 
       <footer className="bg-dark text-gray-400 py-16 px-8" role="contentinfo">
