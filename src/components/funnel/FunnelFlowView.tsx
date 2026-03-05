@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut } from 'lucide-react';
 import { useDeviceType } from '../../hooks/useDeviceType';
@@ -27,9 +27,21 @@ export function FunnelFlowView({
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const { isMobile, isTablet, isPortrait } = useDeviceType();
 
   const isVerticalLayout = isMobile || (isTablet && isPortrait);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeMenu && menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setActiveMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [activeMenu]);
 
   const handleZoomIn = () => setZoom((prev) => Math.min(prev + 10, 150));
   const handleZoomOut = () => setZoom((prev) => Math.max(prev - 10, 50));
@@ -132,7 +144,7 @@ export function FunnelFlowView({
             Edit
           </Link>
 
-          <div className="relative">
+          <div className="relative" ref={activeMenu === page.id ? menuRef : undefined}>
             <button
               onClick={() => setActiveMenu(activeMenu === page.id ? null : page.id)}
               className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition"
