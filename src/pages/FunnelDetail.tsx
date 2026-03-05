@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import { ArrowLeft, Plus, Eye, BarChart3, Settings, LayoutGrid, List } from 'lucide-react';
+import { ArrowLeft, Plus, Eye, BarChart3, Settings, LayoutGrid, List, GitBranch } from 'lucide-react';
 import { FunnelView } from '../components/funnel';
 import type { Database } from '../lib/database.types';
 
@@ -24,7 +24,7 @@ export default function FunnelDetail() {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [viewMode, setViewMode] = useState<'flow' | 'list'>('flow');
+  const [viewMode, setViewMode] = useState<'grid' | 'flow' | 'list'>('grid');
 
   useEffect(() => {
     if (!currentSite || !id) return;
@@ -204,7 +204,18 @@ export default function FunnelDetail() {
             <h2 className="text-xl font-bold text-gray-900">Funnel Flow</h2>
             <p className="text-sm text-gray-600 mt-1">Build your customer journey step by step</p>
           </div>
-          <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-md transition ${
+                viewMode === 'grid'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              title="Grid View"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
             <button
               onClick={() => setViewMode('flow')}
               className={`p-2 rounded-md transition ${
@@ -214,7 +225,7 @@ export default function FunnelDetail() {
               }`}
               title="Flow View"
             >
-              <LayoutGrid className="h-4 w-4" />
+              <GitBranch className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}

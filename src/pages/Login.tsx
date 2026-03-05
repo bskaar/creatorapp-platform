@@ -28,23 +28,23 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center px-4 py-6 sm:py-12 overflow-auto">
       <div className="w-full max-w-md">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary font-semibold transition mb-8"
+          className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary font-semibold transition mb-4 sm:mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Home
         </Link>
 
-        <div className="bg-white rounded-card shadow-light border border-border p-10">
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-6">
+        <div className="bg-white rounded-card shadow-light border border-border p-6 sm:p-10">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="flex justify-center mb-4 sm:mb-6">
               <Logo />
             </div>
-            <h2 className="text-4xl font-bold text-dark mb-3">Welcome Back</h2>
-            <p className="text-text-secondary text-lg font-medium">Sign in to your CreatorApp account</p>
+            <h2 className="text-2xl sm:text-4xl font-bold text-dark mb-2 sm:mb-3">Welcome Back</h2>
+            <p className="text-text-secondary text-base sm:text-lg font-medium">Sign in to your CreatorApp account</p>
           </div>
 
           {error && (
@@ -53,7 +53,7 @@ export default function Login() {
             </div>
           )}
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-4 sm:space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-text-primary mb-2">
                 Email Address
@@ -114,8 +114,8 @@ export default function Login() {
           </form>
         </div>
 
-        <div className="text-center mt-8">
-          <p className="text-text-secondary text-sm font-medium">
+        <div className="text-center mt-4 sm:mt-8">
+          <p className="text-text-secondary text-xs sm:text-sm font-medium">
             &copy; 2025 CreatorApp. All rights reserved.
           </p>
         </div>

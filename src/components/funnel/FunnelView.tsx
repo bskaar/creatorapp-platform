@@ -1,6 +1,7 @@
 import { useDeviceType } from '../../hooks/useDeviceType';
 import { FunnelFlowView } from './FunnelFlowView';
 import { FunnelListView } from './FunnelListView';
+import { FunnelGridView } from './FunnelGridView';
 import type { Database } from '../../lib/database.types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
@@ -13,7 +14,7 @@ interface FunnelViewProps {
   onToggleStatus?: (pageId: string, newStatus: 'published' | 'draft') => void;
   onReorderPages?: (pages: Page[]) => void;
   onAddPage: () => void;
-  forceView?: 'flow' | 'list';
+  forceView?: 'flow' | 'list' | 'grid';
 }
 
 export function FunnelView({
@@ -28,9 +29,21 @@ export function FunnelView({
 }: FunnelViewProps) {
   const { isMobile, isPortrait, isTablet } = useDeviceType();
 
-  const useListView = forceView === 'list' || (forceView !== 'flow' && (isMobile || (isTablet && isPortrait)));
+  const shouldUseMobileView = isMobile || (isTablet && isPortrait);
 
-  if (useListView) {
+  if (forceView === 'grid') {
+    return (
+      <FunnelGridView
+        funnelId={funnelId}
+        pages={pages}
+        onDeletePage={onDeletePage}
+        onDuplicatePage={onDuplicatePage}
+        onAddPage={onAddPage}
+      />
+    );
+  }
+
+  if (forceView === 'list' || (shouldUseMobileView && forceView !== 'flow')) {
     return (
       <FunnelListView
         funnelId={funnelId}
@@ -44,13 +57,25 @@ export function FunnelView({
     );
   }
 
+  if (forceView === 'flow') {
+    return (
+      <FunnelFlowView
+        funnelId={funnelId}
+        pages={pages}
+        onDeletePage={onDeletePage}
+        onDuplicatePage={onDuplicatePage}
+        onReorderPages={onReorderPages}
+        onAddPage={onAddPage}
+      />
+    );
+  }
+
   return (
-    <FunnelFlowView
+    <FunnelGridView
       funnelId={funnelId}
       pages={pages}
       onDeletePage={onDeletePage}
       onDuplicatePage={onDuplicatePage}
-      onReorderPages={onReorderPages}
       onAddPage={onAddPage}
     />
   );
