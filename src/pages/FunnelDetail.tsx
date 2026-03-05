@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import { ArrowLeft, Plus, Edit, Trash2, Eye, BarChart3, Settings } from 'lucide-react';
+import { ArrowLeft, Plus, Eye, BarChart3, Settings, LayoutGrid, List } from 'lucide-react';
+import { FunnelView } from '../components/funnel';
 import type { Database } from '../lib/database.types';
 
 type Funnel = Database['public']['Tables']['funnels']['Row'];
@@ -23,6 +24,7 @@ export default function FunnelDetail() {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [viewMode, setViewMode] = useState<'flow' | 'list'>('flow');
 
   useEffect(() => {
     if (!currentSite || !id) return;
@@ -115,6 +117,29 @@ export default function FunnelDetail() {
     loadFunnelAndPages();
   };
 
+  const handleDuplicatePage = async (pageId: string) => {
+    const page = pages.find((p) => p.id === pageId);
+    if (!page || !currentSite) return;
+
+    const newSlug = `${page.slug}-copy-${Date.now().toString(36)}`;
+
+    await supabase.from('pages').insert({
+      site_id: currentSite.id,
+      funnel_id: id,
+      title: `${page.title} (Copy)`,
+      slug: newSlug,
+      page_type: page.page_type,
+      content: page.content,
+      status: 'draft',
+    });
+
+    loadFunnelAndPages();
+  };
+
+  const handleReorderPages = async (reorderedPages: Page[]) => {
+    setPages(reorderedPages);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -174,79 +199,48 @@ export default function FunnelDetail() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-bold text-gray-900">Pages in Funnel</h2>
-          <p className="text-sm text-gray-600 mt-1">Build your customer journey step by step</p>
-        </div>
-
-        {pages.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Plus className="h-8 w-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Pages Yet</h3>
-            <p className="text-gray-600 mb-6">Add your first page to start building this funnel</p>
+        <div className="p-6 border-b flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Funnel Flow</h2>
+            <p className="text-sm text-gray-600 mt-1">Build your customer journey step by step</p>
+          </div>
+          <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
             <button
-              onClick={() => setShowNewPageModal(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              onClick={() => setViewMode('flow')}
+              className={`p-2 rounded-md transition ${
+                viewMode === 'flow'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              title="Flow View"
             >
-              Add First Page
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-md transition ${
+                viewMode === 'list'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              title="List View"
+            >
+              <List className="h-4 w-4" />
             </button>
           </div>
-        ) : (
-          <div className="divide-y">
-            {pages.map((page, index) => (
-              <div key={page.id} className="p-6 hover:bg-gray-50 transition">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-semibold text-blue-600">{index + 1}</span>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{page.title}</h3>
-                      <div className="flex items-center space-x-3 mt-1">
-                        <span className="text-sm text-gray-500">/{page.slug}</span>
-                        <span className={`text-xs px-2 py-1 rounded-full ${
-                          page.status === 'published'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-gray-100 text-gray-700'
-                        }`}>
-                          {page.status}
-                        </span>
-                        <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
-                          {page.page_type}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+        </div>
 
-                  <div className="flex items-center space-x-4">
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500">{page.views_count || 0} views</p>
-                      <p className="text-sm text-gray-500">
-                        {page.conversions_count || 0} conversions
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Link
-                        to={`/funnels/${id}/pages/${page.id}`}
-                        className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Link>
-                      <button
-                        onClick={() => handleDeletePage(page.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="p-4">
+          <FunnelView
+            funnelId={id!}
+            pages={pages}
+            onDeletePage={handleDeletePage}
+            onDuplicatePage={handleDuplicatePage}
+            onReorderPages={handleReorderPages}
+            onAddPage={() => setShowNewPageModal(true)}
+            forceView={viewMode}
+          />
+        </div>
       </div>
 
       {showNewPageModal && (
