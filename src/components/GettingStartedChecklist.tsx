@@ -70,7 +70,7 @@ export default function GettingStartedChecklist() {
       const onboarding = currentSite.onboarding_data as OnboardingData | null;
       setOnboardingData(onboarding);
 
-      const [pagesResult, productsResult, siteResult, domainsResult, funnelsResult] = await Promise.all([
+      const [pagesResult, productsResult, siteResult, funnelsResult] = await Promise.all([
         supabase
           .from('pages')
           .select('id, ai_content_generated')
@@ -81,14 +81,9 @@ export default function GettingStartedChecklist() {
           .eq('site_id', currentSite.id),
         supabase
           .from('sites')
-          .select('stripe_connect_account_id, stripe_connect_charges_enabled, status')
+          .select('stripe_connect_account_id, stripe_connect_charges_enabled, status, custom_domain, domain_verification_status')
           .eq('id', currentSite.id)
           .maybeSingle(),
-        supabase
-          .from('custom_domains')
-          .select('id', { count: 'exact', head: true })
-          .eq('site_id', currentSite.id)
-          .eq('verified', true),
         supabase
           .from('funnels')
           .select('id, template_source_id')
@@ -99,7 +94,7 @@ export default function GettingStartedChecklist() {
       const hasAiGeneratedPages = pagesResult.data?.some(p => p.ai_content_generated) || false;
       const hasProducts = (productsResult.count || 0) > 0;
       const hasStripe = !!(siteResult.data?.stripe_connect_account_id && siteResult.data?.stripe_connect_charges_enabled);
-      const hasDomain = (domainsResult.count || 0) > 0;
+      const hasDomain = !!(siteResult.data?.custom_domain && siteResult.data?.domain_verification_status === 'verified');
       const hasFunnel = (funnelsResult.data?.length || 0) > 0;
       const isPublished = siteResult.data?.status === 'active';
       setSiteIsPublished(isPublished);
