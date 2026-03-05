@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut, FileText, LayoutGrid as Layout } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut } from 'lucide-react';
 import { useDeviceType } from '../../hooks/useDeviceType';
+import { MiniPagePreview } from './MiniPagePreview';
 import type { Database } from '../../lib/database.types';
+import type { Block } from '../publicSite/types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
 
@@ -82,56 +84,22 @@ export function FunnelFlowView({
     return colors[type] || colors.landing;
   };
 
-  const extractPreviewContent = (content: unknown) => {
-    if (!content || typeof content !== 'object') return null;
-
-    const blocks = Array.isArray(content) ? content : (content as { blocks?: unknown[] }).blocks;
-    if (!Array.isArray(blocks)) return null;
-
-    let heroImage: string | null = null;
-    let headline: string | null = null;
-    let subheadline: string | null = null;
-
-    for (const block of blocks) {
-      if (!block || typeof block !== 'object') continue;
-      const b = block as Record<string, unknown>;
-
-      if (!heroImage && b.type === 'hero' && b.props) {
-        const props = b.props as Record<string, unknown>;
-        if (props.backgroundImage && typeof props.backgroundImage === 'string') {
-          heroImage = props.backgroundImage;
-        }
-        if (!headline && props.headline && typeof props.headline === 'string') {
-          headline = props.headline;
-        }
-        if (!subheadline && props.subheadline && typeof props.subheadline === 'string') {
-          subheadline = props.subheadline;
-        }
-      }
-
-      if (!heroImage && b.type === 'image' && b.props) {
-        const props = b.props as Record<string, unknown>;
-        if (props.src && typeof props.src === 'string') {
-          heroImage = props.src;
-        }
-      }
-
-      if (!headline && (b.type === 'heading' || b.type === 'text') && b.props) {
-        const props = b.props as Record<string, unknown>;
-        if (props.text && typeof props.text === 'string' && props.text.length > 0) {
-          headline = props.text;
-        }
-      }
-
-      if (heroImage && headline) break;
-    }
-
-    return { heroImage, headline, subheadline };
+  const extractBlocks = (content: unknown): Block[] => {
+    if (!content || typeof content !== 'object') return [];
+    const contentObj = content as { blocks?: unknown[] };
+    const blocks = Array.isArray(content) ? content : contentObj.blocks;
+    if (!Array.isArray(blocks)) return [];
+    return blocks.filter((b): b is Block =>
+      b !== null &&
+      typeof b === 'object' &&
+      'id' in b &&
+      'type' in b
+    );
   };
 
   const renderPageCard = (page: Page, index: number) => {
     const colors = getPageTypeColor(page.page_type);
-    const preview = useMemo(() => extractPreviewContent(page.content), [page.content]);
+    const blocks = useMemo(() => extractBlocks(page.content), [page.content]);
 
     return (
       <div
@@ -165,39 +133,13 @@ export function FunnelFlowView({
           </div>
         </div>
 
-        <div className="relative">
-          {preview?.heroImage ? (
-            <div className="h-32 overflow-hidden bg-gray-100">
-              <img
-                src={preview.heroImage}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              {preview.headline && (
-                <div className="absolute bottom-2 left-3 right-3">
-                  <p className="text-white text-xs font-medium line-clamp-2 drop-shadow-sm">
-                    {preview.headline}
-                  </p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className={`h-32 ${colors.bg} flex flex-col items-center justify-center p-4`}>
-              <div className={`w-10 h-10 rounded-lg ${colors.accent} bg-opacity-20 flex items-center justify-center mb-2`}>
-                <Layout className={`h-5 w-5 ${colors.text}`} />
-              </div>
-              {preview?.headline ? (
-                <p className="text-xs text-gray-600 text-center line-clamp-2">{preview.headline}</p>
-              ) : (
-                <p className="text-xs text-gray-500 text-center">
-                  {page.page_type.replace('_', ' ')} page
-                </p>
-              )}
-            </div>
-          )}
-
-          <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-medium ${colors.bg} ${colors.text} border ${colors.border}`}>
+        <div className="relative border-t border-b border-gray-100">
+          <MiniPagePreview
+            blocks={blocks}
+            primaryColor="#3B82F6"
+            pageType={page.page_type}
+          />
+          <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-medium ${colors.bg} ${colors.text} border ${colors.border} shadow-sm`}>
             {page.page_type.replace('_', ' ')}
           </div>
         </div>
