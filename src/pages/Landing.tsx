@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle, Sparkles, Brain, Shield, Lock, CreditCard } from 'lucide-react';
+import { Video, Mail, DollarSign, TrendingUp, Users, BarChart3, Zap, CheckCircle2, ArrowRight, Play, MessageCircle, Sparkles, Shield, Lock, CreditCard, Menu, X } from 'lucide-react';
 import Logo from '../components/Logo';
 import DemoModal from '../components/DemoModal';
 import HowItWorksSection from '../components/HowItWorksSection';
@@ -10,6 +10,7 @@ import StructuredData, { organizationSchema, softwareApplicationSchema } from '.
 export default function Landing() {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     document.title = 'CreatorApp - All-in-One Platform for Creator Businesses';
@@ -39,11 +40,18 @@ export default function Landing() {
         Skip to main content
       </a>
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 border-b border-gray-100" aria-label="Main navigation">
-        <div className="max-w-[1400px] mx-auto px-8">
-          <div className="flex justify-between items-center h-20">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
+          <div className="flex justify-between items-center h-16 sm:h-20">
             <Link to="/" className="flex items-center">
-              <Logo variant="light" className="scale-125" />
+              <Logo variant="light" className="scale-100 sm:scale-125" />
             </Link>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-text-primary hover:text-primary font-medium transition-colors relative group">
                 Features
@@ -65,10 +73,42 @@ export default function Landing() {
             </div>
           </div>
         </div>
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-3">
+            <a
+              href="#features"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-4 py-3 text-text-primary hover:bg-gray-50 rounded-lg font-medium"
+            >
+              Features
+            </a>
+            <Link
+              to="/pricing"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-4 py-3 text-text-primary hover:bg-gray-50 rounded-lg font-medium"
+            >
+              Pricing
+            </Link>
+            <Link
+              to="/login"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-4 py-3 text-text-primary hover:bg-gray-50 rounded-lg font-medium"
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-4 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-lg font-semibold text-center"
+            >
+              Start Free Trial
+            </Link>
+          </div>
+        )}
       </nav>
 
       <main id="main-content">
-      <section className="pt-32 pb-20 px-8 relative overflow-hidden bg-gradient-to-br from-light-bg via-white to-pink-50" aria-labelledby="hero-heading">
+      <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-8 relative overflow-hidden bg-gradient-to-br from-light-bg via-white to-pink-50" aria-labelledby="hero-heading">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px] -z-10"></div>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/20 rounded-full blur-[150px] -z-10"></div>
 
@@ -78,7 +118,7 @@ export default function Landing() {
               <Sparkles className="w-4 h-4" />
               AI-Powered Creator Platform
             </div>
-            <h1 id="hero-heading" className="text-6xl lg:text-7xl font-bold leading-tight text-dark">
+            <h1 id="hero-heading" className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight text-dark">
               Build Your{' '}
               <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
                 Creator Business
@@ -86,21 +126,21 @@ export default function Landing() {
               {' '}All in One Place
             </h1>
 
-            <p className="text-xl text-text-secondary leading-relaxed max-w-xl">
+            <p className="text-base sm:text-xl text-text-secondary leading-relaxed max-w-xl">
               Everything you need to create, launch, and scale your online business. Build websites, sell products, run email campaigns, and grow your audience with AI-powered tools.
             </p>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Link
                 to="/signup"
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
                 Start Your Free Trial
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <button
                 onClick={() => setIsDemoOpen(true)}
-                className="inline-flex items-center gap-2 bg-white border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-lg font-semibold text-lg hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 group"
+                className="inline-flex items-center justify-center gap-2 bg-white border-2 border-gray-200 text-gray-700 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 group"
               >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Play className="h-4 w-4 text-white ml-0.5" />
