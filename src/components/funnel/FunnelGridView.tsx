@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit, Trash2, Eye, MoreVertical, Copy, BarChart3, ExternalLink, FileText } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, Copy, BarChart3, ExternalLink, FileText } from 'lucide-react';
 import type { Database } from '../../lib/database.types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
