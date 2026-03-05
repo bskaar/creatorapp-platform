@@ -19,6 +19,7 @@ import {
   Target,
   Award,
   TrendingUp,
+  Palette,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useDeviceType } from '../hooks/useDeviceType';
