@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut, FileText, Layout } from 'lucide-react';
 import { useDeviceType } from '../../hooks/useDeviceType';
 import type { Database } from '../../lib/database.types';
 
@@ -69,21 +69,69 @@ export function FunnelFlowView({
   };
 
   const getPageTypeColor = (type: string) => {
-    const colors: Record<string, { bg: string; border: string; text: string }> = {
-      landing: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700' },
-      sales_page: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700' },
-      optin: { bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-700' },
-      checkout: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' },
-      thank_you: { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700' },
-      upsell: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700' },
-      content: { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700' },
-      webinar: { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-700' },
+    const colors: Record<string, { bg: string; border: string; text: string; accent: string }> = {
+      landing: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', accent: 'bg-blue-500' },
+      sales_page: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', accent: 'bg-green-500' },
+      optin: { bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-700', accent: 'bg-cyan-500' },
+      checkout: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', accent: 'bg-amber-500' },
+      thank_you: { bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700', accent: 'bg-teal-500' },
+      upsell: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', accent: 'bg-orange-500' },
+      content: { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700', accent: 'bg-gray-500' },
+      webinar: { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-700', accent: 'bg-pink-500' },
     };
     return colors[type] || colors.landing;
   };
 
+  const extractPreviewContent = (content: unknown) => {
+    if (!content || typeof content !== 'object') return null;
+
+    const blocks = Array.isArray(content) ? content : (content as { blocks?: unknown[] }).blocks;
+    if (!Array.isArray(blocks)) return null;
+
+    let heroImage: string | null = null;
+    let headline: string | null = null;
+    let subheadline: string | null = null;
+
+    for (const block of blocks) {
+      if (!block || typeof block !== 'object') continue;
+      const b = block as Record<string, unknown>;
+
+      if (!heroImage && b.type === 'hero' && b.props) {
+        const props = b.props as Record<string, unknown>;
+        if (props.backgroundImage && typeof props.backgroundImage === 'string') {
+          heroImage = props.backgroundImage;
+        }
+        if (!headline && props.headline && typeof props.headline === 'string') {
+          headline = props.headline;
+        }
+        if (!subheadline && props.subheadline && typeof props.subheadline === 'string') {
+          subheadline = props.subheadline;
+        }
+      }
+
+      if (!heroImage && b.type === 'image' && b.props) {
+        const props = b.props as Record<string, unknown>;
+        if (props.src && typeof props.src === 'string') {
+          heroImage = props.src;
+        }
+      }
+
+      if (!headline && (b.type === 'heading' || b.type === 'text') && b.props) {
+        const props = b.props as Record<string, unknown>;
+        if (props.text && typeof props.text === 'string' && props.text.length > 0) {
+          headline = props.text;
+        }
+      }
+
+      if (heroImage && headline) break;
+    }
+
+    return { heroImage, headline, subheadline };
+  };
+
   const renderPageCard = (page: Page, index: number) => {
     const colors = getPageTypeColor(page.page_type);
+    const preview = useMemo(() => extractPreviewContent(page.content), [page.content]);
 
     return (
       <div
@@ -93,7 +141,7 @@ export function FunnelFlowView({
         onDragOver={(e) => handleDragOver(e, index)}
         onDragEnd={handleDragEnd}
         className={`relative group bg-white rounded-xl border-2 shadow-sm hover:shadow-md transition-all ${
-          !isVerticalLayout ? 'cursor-move w-64' : 'w-full'
+          !isVerticalLayout ? 'cursor-move w-72' : 'w-full'
         } ${draggedIndex === index ? 'opacity-50' : ''} ${colors.border}`}
       >
         {!isVerticalLayout && (
@@ -102,13 +150,11 @@ export function FunnelFlowView({
           </div>
         )}
 
-        <div className={`px-4 py-2 ${colors.bg} rounded-t-xl border-b ${colors.border}`}>
-          <div className="flex items-center justify-between">
-            <span className={`text-xs font-medium ${colors.text} uppercase tracking-wide`}>
-              {page.page_type.replace('_', ' ')}
-            </span>
+        <div className={`px-3 py-2 ${colors.bg} rounded-t-xl border-b ${colors.border}`}>
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="font-semibold text-gray-900 truncate text-sm flex-1">{page.title}</h4>
             <span
-              className={`text-xs px-2 py-0.5 rounded-full ${
+              className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
                 page.status === 'published'
                   ? 'bg-green-100 text-green-700'
                   : 'bg-gray-100 text-gray-600'
@@ -119,23 +165,58 @@ export function FunnelFlowView({
           </div>
         </div>
 
-        <div className="p-4">
-          <h4 className="font-semibold text-gray-900 truncate mb-1">{page.title}</h4>
-          <p className="text-sm text-gray-500 truncate">/{page.slug}</p>
+        <div className="relative">
+          {preview?.heroImage ? (
+            <div className="h-32 overflow-hidden bg-gray-100">
+              <img
+                src={preview.heroImage}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              {preview.headline && (
+                <div className="absolute bottom-2 left-3 right-3">
+                  <p className="text-white text-xs font-medium line-clamp-2 drop-shadow-sm">
+                    {preview.headline}
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={`h-32 ${colors.bg} flex flex-col items-center justify-center p-4`}>
+              <div className={`w-10 h-10 rounded-lg ${colors.accent} bg-opacity-20 flex items-center justify-center mb-2`}>
+                <Layout className={`h-5 w-5 ${colors.text}`} />
+              </div>
+              {preview?.headline ? (
+                <p className="text-xs text-gray-600 text-center line-clamp-2">{preview.headline}</p>
+              ) : (
+                <p className="text-xs text-gray-500 text-center">
+                  {page.page_type.replace('_', ' ')} page
+                </p>
+              )}
+            </div>
+          )}
 
-          <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+          <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-medium ${colors.bg} ${colors.text} border ${colors.border}`}>
+            {page.page_type.replace('_', ' ')}
+          </div>
+        </div>
+
+        <div className="px-3 py-2 border-t">
+          <p className="text-xs text-gray-500 truncate mb-2">/{page.slug}</p>
+          <div className="flex items-center gap-4 text-xs text-gray-500">
             <div className="flex items-center gap-1">
-              <Eye className="h-3.5 w-3.5" />
+              <Eye className="h-3 w-3" />
               <span>{page.views_count || 0}</span>
             </div>
             <div className="flex items-center gap-1">
-              <BarChart3 className="h-3.5 w-3.5" />
+              <BarChart3 className="h-3 w-3" />
               <span>{page.conversions_count || 0}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-t rounded-b-xl">
+        <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t rounded-b-xl">
           <Link
             to={`/funnels/${funnelId}/pages/${page.id}`}
             className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
