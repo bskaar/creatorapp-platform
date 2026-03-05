@@ -2,25 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import {
-  CheckCircle,
-  Circle,
-  FileText,
-  Package,
-  CreditCard,
-  Globe,
-  ChevronRight,
-  ChevronDown,
-  X,
-  Rocket,
-  Edit3,
-  ExternalLink,
-  Copy,
-  Check,
-  ShoppingCart,
-  Mail,
-  Video,
-} from 'lucide-react';
+import { CheckCircle, Circle, FileText, Package, CreditCard, Globe, ChevronRight, ChevronDown, X, Rocket, CreditCard as Edit3, ExternalLink, Copy, Check, ShoppingCart, Mail, Video } from 'lucide-react';
 
 interface ChecklistItem {
   id: string;
