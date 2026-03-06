@@ -22,6 +22,7 @@ import {
   ChevronDown,
   Package,
   Zap,
+  HelpCircle,
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -54,6 +55,7 @@ export default function Layout({ children }: LayoutProps) {
     { name: 'Contacts & CRM', href: '/contacts', icon: Users, dataTour: 'nav-contacts' },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
+    { name: 'Help Center', href: '/help', icon: HelpCircle },
   ];
 
   const adminMenuItems = [

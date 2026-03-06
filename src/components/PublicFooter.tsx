@@ -20,7 +20,7 @@ export default function PublicFooter() {
             <ul className="space-y-3 text-sm">
               <li><Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
               <li><a href="/#features" className="hover:text-white transition-colors">Features</a></li>
-              <li><Link to="/pages/documentation" className="hover:text-white transition-colors">Documentation</Link></li>
+              <li><Link to="/pages/faq" className="hover:text-white transition-colors">FAQ</Link></li>
             </ul>
           </div>
           <div>

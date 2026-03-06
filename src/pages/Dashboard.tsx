@@ -525,10 +525,10 @@ export default function Dashboard() {
                   Contact Support
                 </a>
                 <Link
-                  to="/pages/documentation"
+                  to="/help"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900 transition-colors"
                 >
-                  View Documentation
+                  Help Center
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

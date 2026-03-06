@@ -56,7 +56,8 @@ import PlatformAdminBackups from './pages/PlatformAdmin/Backups';
 import PlatformAdminErrorMonitoring from './pages/PlatformAdmin/ErrorMonitoring';
 import PricingReview from './pages/PricingReview';
 import About from './pages/About';
-import Documentation from './pages/Documentation';
+import FAQ from './pages/FAQ';
+import HelpCenter from './pages/HelpCenter';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import PublicSitePreview from './pages/PublicSitePreview';
@@ -548,9 +549,19 @@ function AppRoutes() {
         }
       />
       <Route path="/pages/about" element={<About />} />
-      <Route path="/pages/documentation" element={<Documentation />} />
+      <Route path="/pages/faq" element={<FAQ />} />
       <Route path="/pages/blog" element={<Blog />} />
       <Route path="/pages/contact" element={<Contact />} />
+      <Route
+        path="/help"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <HelpCenter />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
       <Route path="/pages/:slug" element={<MarketingPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/unsubscribe" element={<Unsubscribe />} />
