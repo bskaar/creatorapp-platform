@@ -1,20 +1,25 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Target, Heart, Zap, Shield, Users, Globe } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
-import Logo from '../components/Logo';
+import PublicFooter from '../components/PublicFooter';
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-white">
-      <PublicHeader />
+    <div className="min-h-screen bg-slate-900">
+      <PublicHeader variant="dark" />
 
-      <section className="pt-28 pb-20 px-8 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-        <div className="max-w-[1200px] mx-auto">
+      <section className="pt-28 pb-20 px-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-cyan-500/20 rounded-full blur-[120px]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:24px_24px]"></div>
+
+        <div className="max-w-[1200px] mx-auto relative z-10">
           <div className="text-center mb-16">
-            <h1 className="text-6xl font-bold text-gray-900 mb-6">
-              About <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">CreatorApp</span>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              About <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">CreatorApp</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Empowering creators to build, grow, and monetize their businesses with an all-in-one platform designed for success.
             </p>
           </div>
@@ -36,14 +41,14 @@ export default function About() {
                 No more juggling multiple tools, paying for separate subscriptions, or dealing with complicated integrations. CreatorApp brings it all together seamlessly.
               </p>
             </div>
-            <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl p-12 flex items-center justify-center">
-              <Target className="h-64 w-64 text-blue-600 opacity-20" />
+            <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-3xl p-12 flex items-center justify-center">
+              <Target className="h-64 w-64 text-cyan-600 opacity-20" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             <div className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-2xl border-2 border-blue-200">
-              <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6">
                 <Heart className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Creator-First</h3>
@@ -52,8 +57,8 @@ export default function About() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-white p-8 rounded-2xl border-2 border-purple-200">
-              <div className="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mb-6">
+            <div className="bg-gradient-to-br from-cyan-50 to-white p-8 rounded-2xl border-2 border-cyan-200">
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-2xl flex items-center justify-center mb-6">
                 <Zap className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Simple & Powerful</h3>
@@ -62,8 +67,8 @@ export default function About() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-green-50 to-white p-8 rounded-2xl border-2 border-green-200">
-              <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mb-6">
+            <div className="bg-gradient-to-br from-teal-50 to-white p-8 rounded-2xl border-2 border-teal-200">
+              <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6">
                 <Shield className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Secure & Reliable</h3>
@@ -75,7 +80,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="py-20 px-8 bg-gradient-to-br from-gray-50 to-white">
+      <section className="py-20 px-8 bg-gradient-to-br from-slate-50 to-white">
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Why Creators Choose CreatorApp</h2>
@@ -86,44 +91,44 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-              <Users className="h-12 w-12 text-blue-600 mb-4" />
+              <Users className="h-12 w-12 text-blue-500 mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-4">All-in-One Platform</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
                 Course hosting, email marketing, payment processing, community building, and analytics—all in one place.
               </p>
               <ul className="space-y-2 text-gray-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-1">•</span>
+                  <span className="text-cyan-500 mt-1">•</span>
                   <span>No need for multiple tools or integrations</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-1">•</span>
+                  <span className="text-cyan-500 mt-1">•</span>
                   <span>Save money on subscriptions</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-600 mt-1">•</span>
+                  <span className="text-cyan-500 mt-1">•</span>
                   <span>Everything works together seamlessly</span>
                 </li>
               </ul>
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-              <Globe className="h-12 w-12 text-purple-600 mb-4" />
+              <Globe className="h-12 w-12 text-cyan-500 mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Built for Growth</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
                 Start small and scale big. Our platform grows with you, from your first student to thousands.
               </p>
               <ul className="space-y-2 text-gray-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-600 mt-1">•</span>
+                  <span className="text-blue-500 mt-1">•</span>
                   <span>Unlimited courses and products</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-600 mt-1">•</span>
+                  <span className="text-blue-500 mt-1">•</span>
                   <span>Advanced automation tools</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-purple-600 mt-1">•</span>
+                  <span className="text-blue-500 mt-1">•</span>
                   <span>Powerful analytics and insights</span>
                 </li>
               </ul>
@@ -132,15 +137,16 @@ export default function About() {
         </div>
       </section>
 
-      <section className="py-20 px-8 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">Ready to Build Your Creator Business?</h2>
-          <p className="text-xl text-gray-600 mb-10">
+      <section className="py-20 px-8 bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px]"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-4xl font-bold text-white mb-6">Ready to Build Your Creator Business?</h2>
+          <p className="text-xl text-gray-300 mb-10">
             Join CreatorApp today and get access to all the tools you need to succeed.
           </p>
           <Link
             to="/signup"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:shadow-xl hover:shadow-cyan-500/25 transition-all duration-300 hover:-translate-y-1"
           >
             Start Your Free Trial
             <ArrowRight className="h-5 w-5" />
@@ -148,20 +154,7 @@ export default function About() {
         </div>
       </section>
 
-      <footer className="bg-gray-900 text-gray-400 py-12 px-8">
-        <div className="max-w-[1400px] mx-auto text-center">
-          <Logo variant="light" className="mb-4 mx-auto" />
-          <p className="text-sm mb-4">The complete solution for modern creator businesses.</p>
-          <div className="flex justify-center gap-6 text-sm">
-            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link to="/pages/contact" className="hover:text-white transition-colors">Contact</Link>
-          </div>
-          <div className="mt-6 pt-6 border-t border-gray-800 text-sm text-gray-600">
-            © 2026 CreatorApp. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Check, Rocket, TrendingUp, Crown, Building2, ArrowRight, Loader2, Zap, Users, Shield } from 'lucide-react';
+import { Check, Rocket, Crown, Building2, ArrowRight, Loader2, Zap, Shield } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import PublicHeader from '../components/PublicHeader';
+import PublicFooter from '../components/PublicFooter';
 import StructuredData, { faqSchema } from '../components/StructuredData';
 import { supabase } from '../lib/supabase';
 
@@ -86,34 +87,30 @@ const PLAN_FEATURES: Record<string, string[]> = {
   ],
 };
 
-const PLAN_COLORS: Record<string, { bg: string; icon: string; border: string; button: string; check: string }> = {
+const PLAN_COLORS: Record<string, { bg: string; icon: string; border: string; button: string }> = {
   starter: {
-    bg: 'from-teal-500 to-emerald-600',
-    icon: 'bg-gradient-to-br from-teal-500 to-emerald-600',
+    bg: 'from-teal-500 to-cyan-500',
+    icon: 'bg-gradient-to-br from-teal-500 to-cyan-500',
     border: 'border-teal-200 hover:border-teal-400',
-    button: 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:shadow-lg hover:shadow-teal-500/25',
-    check: 'text-teal-500',
+    button: 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-teal-500/25',
   },
   growth: {
     bg: 'from-blue-500 to-cyan-500',
     icon: 'bg-gradient-to-br from-blue-500 to-cyan-500',
     border: 'border-blue-500 ring-4 ring-blue-500/10',
-    button: 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:shadow-lg hover:shadow-blue-500/25',
-    check: 'text-blue-500',
+    button: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-cyan-500/25',
   },
   pro: {
-    bg: 'from-amber-500 to-orange-600',
-    icon: 'bg-gradient-to-br from-amber-500 to-orange-600',
-    border: 'border-amber-200 hover:border-amber-400',
-    button: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/25',
-    check: 'text-amber-500',
+    bg: 'from-blue-600 to-teal-500',
+    icon: 'bg-gradient-to-br from-blue-600 to-teal-500',
+    border: 'border-blue-200 hover:border-blue-400',
+    button: 'bg-gradient-to-r from-blue-600 to-teal-500 text-white hover:shadow-lg hover:shadow-blue-500/25',
   },
   enterprise: {
     bg: 'from-slate-700 to-slate-900',
     icon: 'bg-gradient-to-br from-slate-700 to-slate-900',
     border: 'border-slate-300 hover:border-slate-400',
     button: 'bg-gradient-to-r from-slate-700 to-slate-900 text-white hover:shadow-lg hover:shadow-slate-500/25',
-    check: 'text-slate-600',
   },
 };
 
@@ -240,36 +237,38 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-slate-900">
       <StructuredData data={pricingSchema} id="pricing-schema" />
       <StructuredData data={faqSchema} id="faq-schema" />
 
-      <PublicHeader />
+      <PublicHeader variant="dark" />
 
       <section className="pt-28 pb-24 px-6 text-center relative overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] -z-10"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px] -z-0"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-cyan-500/20 rounded-full blur-[120px] -z-0"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:24px_24px]"></div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-blue-200">
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-cyan-300 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-white/20">
             <Zap className="w-4 h-4" />
             Simple, Transparent Pricing
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
-            Choose Your <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Growth Plan</span>
+          <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight">
+            Choose Your <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">Growth Plan</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 font-medium mb-10 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-gray-300 font-medium mb-10 max-w-2xl mx-auto">
             Start with a 14-day free trial. No commitment. Cancel anytime.
           </p>
 
-          <div className="inline-flex items-center bg-white p-1.5 rounded-2xl shadow-lg border border-gray-200">
+          <div className="inline-flex items-center bg-white/10 backdrop-blur-sm p-1.5 rounded-2xl border border-white/20">
             <button
               onClick={() => setBillingCycle('monthly')}
               className={`px-8 py-3 text-base font-semibold rounded-xl transition-all ${
                 billingCycle === 'monthly'
-                  ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-cyan-500/25'
+                  : 'text-gray-300 hover:text-white'
               }`}
             >
               Monthly
@@ -278,15 +277,15 @@ export default function Pricing() {
               onClick={() => setBillingCycle('yearly')}
               className={`px-8 py-3 text-base font-semibold rounded-xl transition-all flex items-center gap-2 ${
                 billingCycle === 'yearly'
-                  ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-cyan-500/25'
+                  : 'text-gray-300 hover:text-white'
               }`}
             >
               Yearly
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                 billingCycle === 'yearly'
                   ? 'bg-white/20 text-white'
-                  : 'bg-emerald-100 text-emerald-700'
+                  : 'bg-emerald-500/20 text-emerald-400'
               }`}>
                 Save 15%+
               </span>
@@ -295,10 +294,10 @@ export default function Pricing() {
         </div>
       </section>
 
-      <section className="pb-28 px-6">
+      <section className="pb-28 px-6 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
         <div className="max-w-7xl mx-auto">
           {checkoutError && (
-            <div className="mb-8 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl text-sm font-medium max-w-2xl mx-auto text-center">
+            <div className="mb-8 bg-red-500/10 border border-red-500/30 text-red-300 px-6 py-4 rounded-xl text-sm font-medium max-w-2xl mx-auto text-center">
               {checkoutError}
             </div>
           )}
@@ -331,7 +330,7 @@ export default function Pricing() {
                 >
                   {isPopular && (
                     <div className="absolute -top-5 left-1/2 -translate-x-1/2">
-                      <span className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold px-6 py-2 rounded-full shadow-lg flex items-center gap-2">
+                      <span className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-bold px-6 py-2 rounded-full shadow-lg shadow-cyan-500/25 flex items-center gap-2">
                         <Zap className="w-4 h-4" />
                         MOST POPULAR
                       </span>
@@ -421,30 +420,30 @@ export default function Pricing() {
           </div>
 
           <div className="mt-16 text-center">
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-6 max-w-2xl mx-auto mb-8">
-              <h3 className="text-xl font-bold text-emerald-900 mb-2">We Don't Tax Your Success</h3>
-              <p className="text-emerald-700">
+            <div className="bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border border-teal-500/30 rounded-2xl p-6 max-w-2xl mx-auto mb-8">
+              <h3 className="text-xl font-bold text-white mb-2">We Don't Tax Your Success</h3>
+              <p className="text-gray-300">
                 $0 platform transaction fees. You pay a simple monthly subscription - we never take a percentage of your sales.
                 Only standard Stripe processing fees (2.9% + $0.30) apply, and those go directly to Stripe, not us.
               </p>
             </div>
             <div className="inline-flex items-center gap-8 flex-wrap justify-center">
-              <div className="flex items-center gap-2 text-gray-600">
-                <Shield className="w-5 h-5 text-emerald-500" />
+              <div className="flex items-center gap-2 text-gray-300">
+                <Shield className="w-5 h-5 text-cyan-400" />
                 <span className="font-medium">SSL Included</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-600">
-                <Shield className="w-5 h-5 text-emerald-500" />
+              <div className="flex items-center gap-2 text-gray-300">
+                <Shield className="w-5 h-5 text-cyan-400" />
                 <span className="font-medium">Daily Backups</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-600">
-                <Shield className="w-5 h-5 text-emerald-500" />
+              <div className="flex items-center gap-2 text-gray-300">
+                <Shield className="w-5 h-5 text-cyan-400" />
                 <span className="font-medium">99.9% Uptime SLA</span>
               </div>
             </div>
-            <p className="text-gray-500 mt-6">
+            <p className="text-gray-400 mt-6">
               Need help choosing the right plan?{' '}
-              <Link to="/pages/contact" className="text-blue-600 font-semibold hover:underline">
+              <Link to="/pages/contact" className="text-cyan-400 font-semibold hover:underline">
                 Talk to our team
               </Link>
             </p>
@@ -452,13 +451,13 @@ export default function Pricing() {
         </div>
       </section>
 
-      <section className="py-24 px-6 bg-gradient-to-b from-gray-50 to-white border-t border-gray-200">
+      <section className="py-24 px-6 bg-slate-800/50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
+            <h2 className="text-4xl font-extrabold text-white mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-lg text-gray-600">Everything you need to know about our plans</p>
+            <p className="text-lg text-gray-400">Everything you need to know about our plans</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
@@ -491,27 +490,16 @@ export default function Pricing() {
                 a: 'An AI session is a single interaction with our AI features, including AI Coach conversations, gameplan generation, text generation for headlines/copy, and visual theme generation. Each message to the AI Coach or generation request counts as one session. Your session limit resets monthly on your billing anniversary.',
               },
             ].map((faq, idx) => (
-              <div key={idx} className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <h3 className="font-bold text-lg text-gray-900 mb-3">{faq.q}</h3>
-                <p className="text-gray-600 leading-relaxed">{faq.a}</p>
+              <div key={idx} className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-cyan-500/30 transition-colors">
+                <h3 className="font-bold text-lg text-white mb-3">{faq.q}</h3>
+                <p className="text-gray-400 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <footer className="py-8 px-6 border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} CreatorApp. All rights reserved.
-          </p>
-          <div className="flex items-center gap-6 text-sm">
-            <Link to="/privacy-policy" className="text-gray-500 hover:text-gray-900">Privacy</Link>
-            <Link to="/terms-of-service" className="text-gray-500 hover:text-gray-900">Terms</Link>
-            <Link to="/pages/contact" className="text-gray-500 hover:text-gray-900">Contact</Link>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Book, Video, Mail, DollarSign, Layout, Settings, HelpCircle, Sparkles } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
-import Logo from '../components/Logo';
+import PublicFooter from '../components/PublicFooter';
 
 interface FAQItem {
   question: string;
@@ -193,19 +193,24 @@ export default function Documentation() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <PublicHeader />
+    <div className="min-h-screen bg-slate-900">
+      <PublicHeader variant="dark" />
 
-      <section className="pt-28 pb-12 px-8 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-        <div className="max-w-[1200px] mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+      <section className="pt-28 pb-12 px-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-cyan-500/20 rounded-full blur-[120px]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:24px_24px]"></div>
+
+        <div className="max-w-[1200px] mx-auto text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-cyan-300 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-white/20">
             <HelpCircle className="h-4 w-4" />
             Documentation & FAQ
           </div>
-          <h1 className="text-6xl font-bold text-gray-900 mb-6">
-            How Can We <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Help You?</span>
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+            How Can We <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">Help You?</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Find answers to common questions and learn how to make the most of CreatorApp
           </p>
         </div>
@@ -220,11 +225,11 @@ export default function Documentation() {
                 onClick={() => scrollToCategory(category.name)}
                 className={`bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border-2 transition-all hover:shadow-lg text-center cursor-pointer transform hover:scale-105 ${
                   selectedCategory === category.name
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-blue-500'
+                    ? 'border-cyan-500 bg-cyan-50'
+                    : 'border-gray-200 hover:border-cyan-400'
                 }`}
               >
-                <category.icon className="h-8 w-8 text-blue-600 mx-auto mb-3" />
+                <category.icon className="h-8 w-8 text-cyan-600 mx-auto mb-3" />
                 <div className="text-sm font-semibold text-gray-700">{category.name}</div>
               </button>
             ))}
@@ -246,21 +251,21 @@ export default function Documentation() {
                         <>
                           {(() => {
                             const CategoryIcon = faqCategories.find(cat => cat.name === faq.category)!.icon;
-                            return <CategoryIcon className="h-7 w-7 text-blue-600" />;
+                            return <CategoryIcon className="h-7 w-7 text-cyan-600" />;
                           })()}
                         </>
                       )}
                       {faq.category}
                     </h2>
                   )}
-                  <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-blue-400 transition-all">
+                  <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-cyan-400 transition-all">
                     <button
                       onClick={() => toggleFAQ(index)}
                       className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                     >
                       <span className="font-semibold text-gray-900 text-lg pr-4">{faq.question}</span>
                       {isOpen ? (
-                        <ChevronUp className="h-6 w-6 text-blue-600 flex-shrink-0" />
+                        <ChevronUp className="h-6 w-6 text-cyan-600 flex-shrink-0" />
                       ) : (
                         <ChevronDown className="h-6 w-6 text-gray-400 flex-shrink-0" />
                       )}
@@ -278,23 +283,24 @@ export default function Documentation() {
         </div>
       </section>
 
-      <section className="py-20 px-8 bg-gradient-to-br from-blue-50 to-purple-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">Still Have Questions?</h2>
-          <p className="text-xl text-gray-600 mb-10">
+      <section className="py-20 px-8 bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px]"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-4xl font-bold text-white mb-6">Still Have Questions?</h2>
+          <p className="text-xl text-gray-300 mb-10">
             Our support team is here to help you succeed. Reach out anytime!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="mailto:support@creatorapp.us"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:shadow-xl hover:shadow-cyan-500/25 transition-all duration-300 hover:-translate-y-1"
             >
               <Mail className="h-5 w-5" />
               Email Support
             </a>
             <Link
               to="/pages/contact"
-              className="inline-flex items-center justify-center gap-2 bg-white text-blue-600 border-2 border-blue-600 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-all duration-300"
+              className="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm text-white border-2 border-white/20 px-10 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300"
             >
               Contact Us
             </Link>
@@ -302,20 +308,7 @@ export default function Documentation() {
         </div>
       </section>
 
-      <footer className="bg-gray-900 text-gray-400 py-12 px-8">
-        <div className="max-w-[1400px] mx-auto text-center">
-          <Logo variant="light" className="mb-4 mx-auto" />
-          <p className="text-sm mb-4">The complete solution for modern creator businesses.</p>
-          <div className="flex justify-center gap-6 text-sm">
-            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link to="/pages/about" className="hover:text-white transition-colors">About</Link>
-          </div>
-          <div className="mt-6 pt-6 border-t border-gray-800 text-sm text-gray-600">
-            © 2026 CreatorApp. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

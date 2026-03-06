@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, MapPin, MessageCircle, Send, HelpCircle, FileText, CheckCircle2, Loader2 } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
-import Logo from '../components/Logo';
+import PublicFooter from '../components/PublicFooter';
 
 export default function Contact() {
   const navigate = useNavigate();
@@ -41,7 +41,6 @@ export default function Contact() {
 
       setShowSuccess(true);
 
-      // Redirect to documentation after 4 seconds
       setTimeout(() => {
         navigate('/pages/documentation');
       }, 4000);
@@ -60,20 +59,25 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <PublicHeader />
+    <div className="min-h-screen bg-slate-900">
+      <PublicHeader variant="dark" />
 
-      <section className="pt-28 pb-20 px-8 bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-        <div className="max-w-[1200px] mx-auto">
+      <section className="pt-28 pb-20 px-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-cyan-500/20 rounded-full blur-[120px]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[length:24px_24px]"></div>
+
+        <div className="max-w-[1200px] mx-auto relative z-10">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-cyan-300 px-4 py-2 rounded-full text-sm font-semibold mb-6 border border-white/20">
               <MessageCircle className="h-4 w-4" />
               Get In Touch
             </div>
-            <h1 className="text-6xl font-bold text-gray-900 mb-6">
-              Contact <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">CreatorApp</span>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              Contact <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">CreatorApp</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Have questions? Need help? We're here to support your creator journey.
             </p>
           </div>
@@ -89,9 +93,9 @@ export default function Contact() {
               <div className="space-y-6">
                 <a
                   href="mailto:support@creatorapp.us"
-                  className="flex items-start gap-4 p-6 bg-gradient-to-br from-blue-50 to-white rounded-2xl border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all group"
+                  className="flex items-start gap-4 p-6 bg-gradient-to-br from-blue-50 to-white rounded-2xl border-2 border-blue-200 hover:border-cyan-400 hover:shadow-lg transition-all group"
                 >
-                  <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-lg">
                     <Mail className="h-7 w-7 text-white" />
                   </div>
                   <div className="flex-1">
@@ -99,14 +103,14 @@ export default function Contact() {
                     <p className="text-gray-600 mb-3">
                       Get help from our support team. We typically respond within 24 hours.
                     </p>
-                    <div className="text-blue-600 font-semibold">
+                    <div className="text-cyan-600 font-semibold">
                       support@creatorapp.us
                     </div>
                   </div>
                 </a>
 
-                <div className="flex items-start gap-4 p-6 bg-gradient-to-br from-purple-50 to-white rounded-2xl border-2 border-purple-200">
-                  <div className="w-14 h-14 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="flex items-start gap-4 p-6 bg-gradient-to-br from-slate-50 to-white rounded-2xl border-2 border-slate-200">
+                  <div className="w-14 h-14 bg-gradient-to-br from-slate-600 to-slate-800 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
                     <MapPin className="h-7 w-7 text-white" />
                   </div>
                   <div className="flex-1">
@@ -124,9 +128,9 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-gradient-to-br from-green-50 to-white rounded-2xl border-2 border-green-200">
+              <div className="mt-8 p-6 bg-gradient-to-br from-teal-50 to-white rounded-2xl border-2 border-teal-200">
                 <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <HelpCircle className="h-5 w-5 text-green-600" />
+                  <HelpCircle className="h-5 w-5 text-teal-600" />
                   Before You Reach Out
                 </h3>
                 <p className="text-gray-600 mb-4">
@@ -135,7 +139,7 @@ export default function Contact() {
                 <div className="space-y-2">
                   <Link
                     to="/pages/documentation"
-                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold"
+                    className="flex items-center gap-2 text-cyan-600 hover:text-cyan-700 font-semibold"
                   >
                     <FileText className="h-4 w-4" />
                     Browse Documentation & FAQ
@@ -149,8 +153,8 @@ export default function Contact() {
 
               {showSuccess ? (
                 <div className="py-12 text-center">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
-                    <CheckCircle2 className="h-10 w-10 text-green-600" />
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-teal-100 rounded-full mb-6">
+                    <CheckCircle2 className="h-10 w-10 text-teal-600" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-3">Message Sent Successfully!</h3>
                   <p className="text-gray-600 mb-2 text-lg">
@@ -159,7 +163,7 @@ export default function Contact() {
                   <p className="text-gray-700 font-semibold mb-6">
                     Our team will respond within 24 hours.
                   </p>
-                  <div className="flex items-center justify-center gap-2 text-blue-600 text-sm">
+                  <div className="flex items-center justify-center gap-2 text-cyan-600 text-sm">
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <span>Redirecting to documentation...</span>
                   </div>
@@ -178,7 +182,7 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="Your name"
                       />
                     </div>
@@ -194,7 +198,7 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -210,7 +214,7 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="How can we help?"
                       />
                     </div>
@@ -226,7 +230,7 @@ export default function Contact() {
                         required
                         disabled={isSubmitting}
                         rows={6}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                         placeholder="Tell us more about your question or issue..."
                       />
                     </div>
@@ -240,7 +244,7 @@ export default function Contact() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                      className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl hover:shadow-cyan-500/25 transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
                       {isSubmitting ? (
                         <>
@@ -264,35 +268,25 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-12 text-white text-center">
-            <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Don't wait to start building your creator business. Sign up for a free trial today!
-            </p>
-            <Link
-              to="/signup"
-              className="inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-xl font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 shadow-lg"
-            >
-              Start Free Trial
-            </Link>
+          <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl p-12 text-white text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-white/10 rounded-full blur-[80px]"></div>
+            <div className="relative z-10">
+              <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
+              <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                Don't wait to start building your creator business. Sign up for a free trial today!
+              </p>
+              <Link
+                to="/signup"
+                className="inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-xl font-semibold text-lg hover:bg-white/90 transition-all duration-300 hover:-translate-y-1 shadow-lg"
+              >
+                Start Free Trial
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      <footer className="bg-gray-900 text-gray-400 py-12 px-8">
-        <div className="max-w-[1400px] mx-auto text-center">
-          <Logo variant="light" className="mb-4 mx-auto" />
-          <p className="text-sm mb-4">The complete solution for modern creator businesses.</p>
-          <div className="flex justify-center gap-6 text-sm">
-            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link to="/pages/about" className="hover:text-white transition-colors">About</Link>
-          </div>
-          <div className="mt-6 pt-6 border-t border-gray-800 text-sm text-gray-600">
-            © 2026 CreatorApp. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }
