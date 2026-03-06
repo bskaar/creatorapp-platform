@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Heart, Zap, Shield, Users, Globe, BookOpen, Mail, CreditCard, BarChart3, Layout, Sparkles } from 'lucide-react';
+import { ArrowRight, Heart, Zap, Shield, Users, Globe, BookOpen, Mail, CreditCard, BarChart3, LayoutGrid as Layout, Sparkles } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 import PublicFooter from '../components/PublicFooter';
 
