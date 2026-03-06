@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, Book, Video, Mail, DollarSign, Layout, Settings, HelpCircle, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, Book, Video, Mail, DollarSign, LayoutGrid as Layout, Settings, HelpCircle, Sparkles } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 import PublicFooter from '../components/PublicFooter';
 
