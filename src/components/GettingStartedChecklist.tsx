@@ -314,7 +314,7 @@ export default function GettingStartedChecklist() {
           <span className="text-sm font-medium text-gray-500">
             {totalCompleted} of {totalCount} completed
           </span>
-          <span className="text-sm font-bold text-blue-600">
+          <span className="text-sm font-bold text-cyan-600">
             {Math.round(progress)}%
           </span>
         </div>
@@ -341,10 +341,10 @@ export default function GettingStartedChecklist() {
                   className={`flex items-center gap-4 p-4 rounded-xl transition-all group ${
                     item.completed
                       ? 'bg-emerald-50 border border-emerald-200'
-                      : 'bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-200'
+                      : 'bg-gray-50 hover:bg-cyan-50 border border-transparent hover:border-cyan-200'
                   }`}
                 >
-                  <div className={`flex-shrink-0 ${item.completed ? 'text-emerald-600' : 'text-gray-400 group-hover:text-blue-600'}`}>
+                  <div className={`flex-shrink-0 ${item.completed ? 'text-emerald-600' : 'text-gray-400 group-hover:text-cyan-600'}`}>
                     {item.completed ? (
                       <CheckCircle className="w-5 h-5" />
                     ) : (
@@ -355,14 +355,14 @@ export default function GettingStartedChecklist() {
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                     item.completed
                       ? 'bg-emerald-100'
-                      : 'bg-white group-hover:bg-blue-100'
+                      : 'bg-white group-hover:bg-cyan-100'
                   }`}>
-                    <Icon className={`w-5 h-5 ${item.completed ? 'text-emerald-600' : 'text-gray-500 group-hover:text-blue-600'}`} />
+                    <Icon className={`w-5 h-5 ${item.completed ? 'text-emerald-600' : 'text-gray-500 group-hover:text-cyan-600'}`} />
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <h4 className={`font-semibold text-sm ${
-                      item.completed ? 'text-emerald-800' : 'text-gray-900 group-hover:text-blue-700'
+                      item.completed ? 'text-emerald-800' : 'text-gray-900 group-hover:text-cyan-700'
                     }`}>
                       {item.title}
                     </h4>
@@ -376,7 +376,7 @@ export default function GettingStartedChecklist() {
                   )}
 
                   {!item.completed && (
-                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-600 flex-shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-cyan-600 flex-shrink-0" />
                   )}
                 </Link>
               );

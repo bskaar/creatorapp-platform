@@ -239,28 +239,28 @@ export default function Dashboard() {
         name: 'Total Revenue',
         value: `$${stats.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         icon: DollarSign,
-        gradient: 'from-emerald-500 to-green-600',
+        gradient: 'from-emerald-500 to-teal-600',
         show: stats.revenue > 0 || userStage === 'established',
       },
       {
         name: 'Active Contacts',
         value: stats.contacts.toLocaleString(),
         icon: Users,
-        gradient: 'from-primary to-primary-dark',
+        gradient: 'from-cyan-500 to-blue-600',
         show: stats.contacts > 0 || userStage !== 'new',
       },
       {
         name: 'Published Products',
         value: stats.products.toLocaleString(),
         icon: FolderOpen,
-        gradient: 'from-orange-500 to-red-500',
+        gradient: 'from-primary to-accent',
         show: stats.products > 0 || userStage !== 'new',
       },
       {
         name: 'Emails Sent (This Month)',
         value: stats.emailsSent.toLocaleString(),
         icon: Mail,
-        gradient: 'from-primary to-accent',
+        gradient: 'from-blue-500 to-cyan-500',
         show: stats.emailsSent > 0 || userStage === 'established',
       },
       {
@@ -274,7 +274,7 @@ export default function Dashboard() {
         name: 'Upcoming Webinars',
         value: stats.upcomingWebinars.toLocaleString(),
         icon: Video,
-        gradient: 'from-accent to-pink-600',
+        gradient: 'from-amber-500 to-orange-500',
         show: stats.upcomingWebinars > 0 || funnelType === 'webinar',
       },
     ];
@@ -293,14 +293,14 @@ export default function Dashboard() {
   const getUsageColor = (percent: number) => {
     if (percent >= 90) return 'from-red-500 to-red-600';
     if (percent >= 75) return 'from-amber-500 to-orange-500';
-    return 'from-primary to-primary-dark';
+    return 'from-cyan-500 to-teal-500';
   };
 
   if (siteLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading your site...</p>
         </div>
       </div>

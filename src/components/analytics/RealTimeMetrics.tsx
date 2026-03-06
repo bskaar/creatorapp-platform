@@ -172,16 +172,16 @@ export default function RealTimeMetrics() {
         <MetricCard
           title="Active Visitors"
           value={metrics.activeVisitors}
-          icon={<Users className="h-6 w-6 text-primary" />}
-          color="bg-gradient-to-br from-primary/10 to-primary/5"
+          icon={<Users className="h-6 w-6 text-cyan-600" />}
+          color="bg-gradient-to-br from-cyan-500/10 to-cyan-500/5"
         />
 
         <MetricCard
           title="Page Views Today"
           value={metrics.todayPageViews.toLocaleString()}
           change={calculateChange(metrics.todayPageViews, metrics.yesterdayPageViews)}
-          icon={<Eye className="h-6 w-6 text-accent" />}
-          color="bg-gradient-to-br from-accent/10 to-accent/5"
+          icon={<Eye className="h-6 w-6 text-blue-600" />}
+          color="bg-gradient-to-br from-blue-500/10 to-blue-500/5"
         />
 
         <MetricCard

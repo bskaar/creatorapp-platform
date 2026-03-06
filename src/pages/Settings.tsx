@@ -1,27 +1,29 @@
 import { useSearchParams } from 'react-router-dom';
-import { Palette, Users, Mail, CreditCard, Zap, Globe } from 'lucide-react';
+import { Palette, Users, Mail, CreditCard, Zap, Globe, User } from 'lucide-react';
 import GeneralSettings from '../components/settings/GeneralSettings';
 import DomainSettings from '../components/settings/DomainSettings';
 import TeamSettings from '../components/settings/TeamSettings';
 import EmailSettings from '../components/settings/EmailSettings';
 import PaymentSettings from '../components/settings/PaymentSettings';
 import SubscriptionSettings from '../components/settings/SubscriptionSettings';
+import ProfileSettings from '../components/settings/ProfileSettings';
 
-type SettingsTab = 'general' | 'domain' | 'subscription' | 'team' | 'email' | 'payment';
+type SettingsTab = 'profile' | 'general' | 'domain' | 'subscription' | 'team' | 'email' | 'payment';
 
-const VALID_TABS: SettingsTab[] = ['general', 'domain', 'subscription', 'team', 'email', 'payment'];
+const VALID_TABS: SettingsTab[] = ['profile', 'general', 'domain', 'subscription', 'team', 'email', 'payment'];
 
 export default function Settings() {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab') as SettingsTab | null;
-  const activeTab: SettingsTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'general';
+  const activeTab: SettingsTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'profile';
 
   const setActiveTab = (tab: SettingsTab) => {
     setSearchParams({ tab });
   };
 
   const tabs = [
-    { id: 'general' as SettingsTab, label: 'General', icon: Palette },
+    { id: 'profile' as SettingsTab, label: 'Profile', icon: User },
+    { id: 'general' as SettingsTab, label: 'Site', icon: Palette },
     { id: 'domain' as SettingsTab, label: 'Domain', icon: Globe },
     { id: 'subscription' as SettingsTab, label: 'Subscription', icon: Zap },
     { id: 'team' as SettingsTab, label: 'Team', icon: Users },
@@ -33,7 +35,7 @@ export default function Settings() {
     <div className="space-y-8">
       <div>
         <h1 className="text-4xl font-bold text-dark">Settings</h1>
-        <p className="text-text-secondary mt-2 text-lg">Manage your site settings and preferences</p>
+        <p className="text-text-secondary mt-2 text-lg">Manage your profile and site settings</p>
       </div>
 
       <div className="bg-white rounded-card shadow-light overflow-hidden border border-border">
@@ -47,8 +49,8 @@ export default function Settings() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-6 py-4 border-b-2 font-semibold text-sm whitespace-nowrap transition-all ${
                     activeTab === tab.id
-                      ? 'border-primary text-primary bg-gradient-to-b from-primary/5 to-transparent'
-                      : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-gradient-to-b hover:from-primary/5 hover:to-transparent'
+                      ? 'border-cyan-500 text-cyan-600 bg-gradient-to-b from-cyan-500/5 to-transparent'
+                      : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-gradient-to-b hover:from-cyan-500/5 hover:to-transparent'
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -60,6 +62,7 @@ export default function Settings() {
         </div>
 
         <div className="p-8">
+          {activeTab === 'profile' && <ProfileSettings />}
           {activeTab === 'general' && <GeneralSettings />}
           {activeTab === 'domain' && <DomainSettings />}
           {activeTab === 'subscription' && <SubscriptionSettings />}

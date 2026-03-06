@@ -214,16 +214,16 @@ export default function ContextualRecommendations({
     const Icon = rec.icon;
     const content = (
       <>
-        <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm group-hover:bg-blue-100 transition-colors">
-          <Icon className="w-5 h-5 text-gray-500 group-hover:text-blue-600" />
+        <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-sm group-hover:bg-cyan-100 transition-colors">
+          <Icon className="w-5 h-5 text-gray-500 group-hover:text-cyan-600" />
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
+          <h4 className="font-semibold text-gray-900 group-hover:text-cyan-700 transition-colors">
             {rec.title}
           </h4>
           <p className="text-sm text-gray-500">{rec.description}</p>
         </div>
-        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-cyan-600 group-hover:translate-x-1 transition-all" />
       </>
     );
 
@@ -232,7 +232,7 @@ export default function ContextualRecommendations({
         <button
           key={rec.id}
           onClick={() => setShowShareModal(true)}
-          className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all group w-full text-left"
+          className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-cyan-50 border border-transparent hover:border-cyan-200 transition-all group w-full text-left"
         >
           {content}
         </button>
@@ -243,7 +243,7 @@ export default function ContextualRecommendations({
       <Link
         key={rec.id}
         to={rec.link || '/'}
-        className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all group"
+        className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-cyan-50 border border-transparent hover:border-cyan-200 transition-all group"
       >
         {content}
       </Link>
@@ -270,8 +270,8 @@ export default function ContextualRecommendations({
             </button>
 
             <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Share2 className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Share2 className="w-6 h-6 text-cyan-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900">Share Your Site</h3>
               <p className="text-gray-500 text-sm mt-1">Let people know about your new site</p>

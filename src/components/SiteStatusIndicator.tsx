@@ -58,7 +58,7 @@ export default function SiteStatusIndicator({
           href={siteUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+          className="flex items-center gap-2 text-sm text-gray-600 hover:text-cyan-600 transition-colors"
         >
           <Globe className="w-4 h-4" />
           <span className="truncate max-w-[200px]">{displayDomain}</span>
