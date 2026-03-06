@@ -360,6 +360,7 @@ export interface Database {
           views_count: number
           conversions_count: number
           settings: Json
+          sort_order: number
           created_at: string
           updated_at: string
         }
@@ -381,6 +382,7 @@ export interface Database {
           views_count?: number
           conversions_count?: number
           settings?: Json
+          sort_order?: number
           created_at?: string
           updated_at?: string
         }
@@ -401,6 +403,7 @@ export interface Database {
           published_at?: string | null
           views_count?: number
           conversions_count?: number
+          sort_order?: number
           settings?: Json
           created_at?: string
           updated_at?: string

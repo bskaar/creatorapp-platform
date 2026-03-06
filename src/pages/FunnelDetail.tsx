@@ -41,7 +41,8 @@ export default function FunnelDetail() {
         .select('*')
         .eq('funnel_id', id)
         .eq('site_id', currentSite.id)
-        .order('created_at', { ascending: true}),
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: true }),
     ]);
 
     if (funnelResult.data) {
@@ -138,6 +139,15 @@ export default function FunnelDetail() {
 
   const handleReorderPages = async (reorderedPages: Page[]) => {
     setPages(reorderedPages);
+
+    const updates = reorderedPages.map((page, index) => ({
+      id: page.id,
+      sort_order: index,
+    }));
+
+    for (const update of updates) {
+      await supabase.from('pages').update({ sort_order: update.sort_order }).eq('id', update.id);
+    }
   };
 
   if (loading) {

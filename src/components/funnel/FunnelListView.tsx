@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, CreditCard as Edit, Trash2, Eye, GripVertical, Copy, BarChart3, ExternalLink, ChevronRight, ToggleLeft, ToggleRight } from 'lucide-react';
 import { BottomSheet, BottomSheetAction } from '../responsive/BottomSheet';
@@ -30,6 +30,59 @@ export function FunnelListView({
   const [showActions, setShowActions] = useState(false);
   const [expandedPage, setExpandedPage] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const dragNodeRef = useRef<HTMLDivElement | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    dragNodeRef.current = e.currentTarget as HTMLDivElement;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+    setTimeout(() => {
+      if (dragNodeRef.current) {
+        dragNodeRef.current.style.opacity = '0.5';
+      }
+    }, 0);
+  };
+
+  const handleDragEnd = () => {
+    if (dragNodeRef.current) {
+      dragNodeRef.current.style.opacity = '1';
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    dragNodeRef.current = null;
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDragOverIndex(null);
+      return;
+    }
+
+    const newPages = [...pages];
+    const [draggedPage] = newPages.splice(draggedIndex, 1);
+    newPages.splice(dropIndex, 0, draggedPage);
+
+    if (onReorderPages) {
+      onReorderPages(newPages);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
 
   const handleTouchStart = (index: number) => {
     setDraggedIndex(index);
@@ -93,22 +146,33 @@ export function FunnelListView({
           {pages.map((page, index) => {
             const colors = getPageTypeColor(page.page_type);
             const isExpanded = expandedPage === page.id;
+            const isDragOver = dragOverIndex === index && draggedIndex !== index;
 
             return (
               <div
                 key={page.id}
-                className={`bg-white rounded-xl border border-gray-200 overflow-hidden transition-all ${
-                  draggedIndex === index ? 'opacity-50 scale-[0.98]' : ''
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragEnd={handleDragEnd}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, index)}
+                className={`bg-white rounded-xl border overflow-hidden transition-all ${
+                  draggedIndex === index
+                    ? 'opacity-50 scale-[0.98] border-gray-200'
+                    : isDragOver
+                      ? 'border-blue-400 border-2 shadow-lg'
+                      : 'border-gray-200'
                 }`}
               >
                 <div className="flex items-center">
                   <div
-                    className="flex items-center justify-center w-10 h-full py-4 touch-none cursor-grab"
+                    className="flex items-center justify-center w-10 h-full py-4 touch-none cursor-grab active:cursor-grabbing select-none"
                     onTouchStart={() => handleTouchStart(index)}
                     onTouchMove={(e) => handleTouchMove(e, index)}
                     onTouchEnd={handleTouchEnd}
                   >
-                    <GripVertical className="h-5 w-5 text-gray-300" />
+                    <GripVertical className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   </div>
 
                   <button
