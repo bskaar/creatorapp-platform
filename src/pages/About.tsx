@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Target, Heart, Zap, Shield, Users, Globe } from 'lucide-react';
+import { ArrowRight, Heart, Zap, Shield, Users, Globe, BookOpen, Mail, CreditCard, BarChart3, Layout, Sparkles } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 import PublicFooter from '../components/PublicFooter';
 
@@ -42,7 +42,47 @@ export default function About() {
               </p>
             </div>
             <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-3xl p-12 flex items-center justify-center">
-              <Target className="h-64 w-64 text-cyan-600 opacity-20" />
+              <div className="relative w-72 h-72">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 shadow-xl shadow-cyan-500/30 flex items-center justify-center">
+                    <Sparkles className="h-10 w-10 text-white" />
+                  </div>
+                </div>
+
+                {[
+                  { Icon: BookOpen, label: 'Courses', angle: 0 },
+                  { Icon: Mail, label: 'Email', angle: 60 },
+                  { Icon: Users, label: 'Community', angle: 120 },
+                  { Icon: CreditCard, label: 'Payments', angle: 180 },
+                  { Icon: BarChart3, label: 'Analytics', angle: 240 },
+                  { Icon: Layout, label: 'Website', angle: 300 },
+                ].map(({ Icon, label, angle }, index) => {
+                  const radius = 110;
+                  const x = Math.cos((angle - 90) * Math.PI / 180) * radius;
+                  const y = Math.sin((angle - 90) * Math.PI / 180) * radius;
+                  return (
+                    <div
+                      key={index}
+                      className="absolute left-1/2 top-1/2"
+                      style={{ transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))` }}
+                    >
+                      <div className="absolute left-1/2 top-1/2 w-px bg-gradient-to-b from-cyan-400/60 to-blue-400/60"
+                        style={{
+                          height: `${radius - 48}px`,
+                          transformOrigin: 'top center',
+                          transform: `translate(-50%, 0) rotate(${angle + 180}deg)`,
+                        }}
+                      />
+                      <div className="relative flex flex-col items-center">
+                        <div className="w-14 h-14 rounded-full bg-white shadow-lg border-2 border-cyan-200 flex items-center justify-center transition-transform hover:scale-110">
+                          <Icon className="h-6 w-6 text-cyan-600" />
+                        </div>
+                        <span className="mt-1 text-xs font-medium text-gray-600">{label}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
