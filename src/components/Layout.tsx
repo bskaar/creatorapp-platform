@@ -153,11 +153,11 @@ export default function Layout({ children }: LayoutProps) {
                     data-tour={item.dataTour}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                       active
-                        ? 'bg-gradient-to-r from-cyan-500/20 to-teal-500/20 text-white border-l-2 border-cyan-400'
+                        ? 'bg-gradient-to-r from-primary/20 to-accent/20 text-white border-l-2 border-primary'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    <Icon className={`h-5 w-5 ${active ? 'text-cyan-400' : ''}`} />
+                    <Icon className={`h-5 w-5 ${active ? 'text-primary-light' : ''}`} />
                     <span className="font-medium">{item.name}</span>
                   </Link>
                 );
@@ -179,11 +179,11 @@ export default function Layout({ children }: LayoutProps) {
                       onClick={() => setSidebarOpen(false)}
                       className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                         active
-                          ? 'bg-gradient-to-r from-cyan-500/20 to-teal-500/20 text-white border-l-2 border-cyan-400'
+                          ? 'bg-gradient-to-r from-primary/20 to-accent/20 text-white border-l-2 border-primary'
                           : 'text-slate-400 hover:bg-white/5 hover:text-white'
                       }`}
                     >
-                      <Icon className={`h-5 w-5 ${active ? 'text-cyan-400' : ''}`} />
+                      <Icon className={`h-5 w-5 ${active ? 'text-primary-light' : ''}`} />
                       <span className="font-medium">{item.name}</span>
                     </Link>
                   );
