@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { callAnthropic } from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -232,11 +233,6 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!anthropicApiKey) {
-      throw new Error("Anthropic API key not configured");
-    }
-
     const { data: siteData } = await supabase
       .from('sites')
       .select('name, industry, onboarding_data')
@@ -259,31 +255,14 @@ Deno.serve(async (req: Request) => {
 
     const userPrompt = `Create a detailed gameplan for this goal:\n\n${goal}${contextInfo}`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": anthropicApiKey,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: 3000,
-        temperature: 0.7,
-        system: GAMEPLAN_SYSTEM_PROMPT,
-        messages: [
-          { role: "user", content: userPrompt },
-        ],
-      }),
-    });
+    const aiResponse = await callAnthropic(
+      GAMEPLAN_SYSTEM_PROMPT,
+      [{ role: "user", content: userPrompt }],
+      'gameplan',
+      { maxTokens: 3000 }
+    );
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Anthropic API error: ${error}`);
-    }
-
-    const data = await response.json();
-    const generatedText = data.content[0]?.text?.trim() || "";
+    const generatedText = aiResponse.content.trim();
 
     let gameplanData;
     try {
@@ -336,9 +315,9 @@ Deno.serve(async (req: Request) => {
         site_id: siteId,
         user_id: user.id,
         request_type: 'gameplan',
-        model_used: 'sonnet',
-        tokens_used: data.usage?.total_tokens || 0,
-        cost_cents: Math.ceil((data.usage?.total_tokens || 0) * 0.003),
+        model_used: aiResponse.model,
+        tokens_used: aiResponse.usage.total_tokens,
+        cost_cents: Math.ceil(aiResponse.usage.total_tokens * 0.003),
       });
 
     return new Response(

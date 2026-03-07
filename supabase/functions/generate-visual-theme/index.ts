@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { callAnthropic } from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -55,11 +56,6 @@ Deno.serve(async (req: Request) => {
   try {
     const { industry, mood, brandName, targetAudience }: ThemeRequest = await req.json();
 
-    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!anthropicApiKey) {
-      throw new Error("Anthropic API key not configured");
-    }
-
     const systemPrompt = `You are an expert brand designer and UI/UX specialist. Generate a complete, production-ready visual theme based on the provided information. The theme must include:
 
 1. Color Palette: 6 hex colors (primary, secondary, accent, neutral, background, text)
@@ -115,42 +111,23 @@ Ensure:
 
 Make it distinctive, memorable, and appropriate for the industry. The theme should communicate the right emotions and values through color, typography, and visual style.`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": anthropicApiKey,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 1500,
-        temperature: 0.9,
-        system: systemPrompt,
-        messages: [
-          { role: "user", content: userPrompt },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Anthropic API error: ${error}`);
-    }
-
-    const data = await response.json();
-    const generatedText = data.content[0]?.text?.trim() || "";
+    const aiResponse = await callAnthropic(
+      systemPrompt,
+      [{ role: "user", content: userPrompt }],
+      'visual_theme',
+      { maxTokens: 1500, temperature: 0.9 }
+    );
 
     let theme: VisualTheme;
     try {
-      const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
+      const jsonMatch = aiResponse.content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         theme = JSON.parse(jsonMatch[0]);
       } else {
-        theme = JSON.parse(generatedText);
+        theme = JSON.parse(aiResponse.content);
       }
     } catch (e) {
-      console.error("Failed to parse AI response:", generatedText);
+      console.error("Failed to parse AI response:", aiResponse.content);
       throw new Error("Failed to parse visual theme from AI response");
     }
 

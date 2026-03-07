@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { callAnthropic } from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,11 +18,6 @@ Deno.serve(async (req: Request) => {
   try {
     const { mood, industry } = await req.json();
 
-    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!anthropicApiKey) {
-      throw new Error("Anthropic API key not configured");
-    }
-
     const systemPrompt = `You are a professional color palette designer. Generate a cohesive color palette with exactly 5 colors in hex format. Return ONLY a JSON object with this structure:
 {
   "primary": "#hexcolor",
@@ -36,39 +32,20 @@ Ensure colors are accessible, work well together, and fit the requested mood/ind
 
     const userPrompt = `Generate a color palette for ${industry || 'general business'} with a ${mood || 'professional'} mood.`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": anthropicApiKey,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 500,
-        temperature: 0.9,
-        system: systemPrompt,
-        messages: [
-          { role: "user", content: userPrompt },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Anthropic API error: ${error}`);
-    }
-
-    const data = await response.json();
-    const generatedText = data.content[0]?.text?.trim() || "";
+    const aiResponse = await callAnthropic(
+      systemPrompt,
+      [{ role: "user", content: userPrompt }],
+      'color_palette',
+      { maxTokens: 500, temperature: 0.9 }
+    );
 
     let palette;
     try {
-      const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
+      const jsonMatch = aiResponse.content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         palette = JSON.parse(jsonMatch[0]);
       } else {
-        palette = JSON.parse(generatedText);
+        palette = JSON.parse(aiResponse.content);
       }
     } catch (e) {
       throw new Error("Failed to parse color palette from AI response");

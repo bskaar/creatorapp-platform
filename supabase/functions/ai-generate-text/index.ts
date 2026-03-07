@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { callAnthropic } from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -44,11 +45,6 @@ Deno.serve(async (req: Request) => {
 
     const { prompt, type, context } = await req.json();
 
-    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!anthropicApiKey) {
-      throw new Error("Anthropic API key not configured");
-    }
-
     const systemPrompts: Record<string, string> = {
       headline: "You are a professional copywriter specializing in compelling headlines. Generate short, punchy headlines that grab attention and communicate value. Return only the headline text, no quotes or extra formatting.",
       subheadline: "You are a professional copywriter. Generate a concise subheadline that supports the main headline and adds context. Return only the subheadline text, no quotes.",
@@ -62,34 +58,15 @@ Deno.serve(async (req: Request) => {
     const systemPrompt = systemPrompts[type] || systemPrompts.improve;
     const userContent = context ? `Context: ${context}\n\n${prompt}` : prompt;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": anthropicApiKey,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 300,
-        temperature: 0.8,
-        system: systemPrompt,
-        messages: [
-          { role: "user", content: userContent },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Anthropic API error: ${error}`);
-    }
-
-    const data = await response.json();
-    const generatedText = data.content[0]?.text?.trim() || "";
+    const aiResponse = await callAnthropic(
+      systemPrompt,
+      [{ role: "user", content: userContent }],
+      'text_generation',
+      { maxTokens: 300, temperature: 0.8 }
+    );
 
     return new Response(
-      JSON.stringify({ text: generatedText }),
+      JSON.stringify({ text: aiResponse.content }),
       {
         headers: {
           ...corsHeaders,

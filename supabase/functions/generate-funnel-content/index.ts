@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { callAnthropic } from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -204,27 +205,16 @@ Return ONLY a valid JSON object with this exact structure:
 
 Replace all placeholder text with specific, relevant content based on the business description. Keep the block structure intact but update the content fields with personalized copy.`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": anthropicKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-3-haiku-20240307",
-        max_tokens: 8000,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      console.error("Anthropic API error:", await response.text());
+    let aiResult;
+    try {
+      aiResult = await callAnthropic(
+        "",
+        [{ role: "user", content: prompt }],
+        'funnel_content',
+        { maxTokens: 8000 }
+      );
+    } catch (err) {
+      console.error("Anthropic API error:", err);
       return new Response(
         JSON.stringify({
           pages: template.pages_config,
@@ -236,8 +226,7 @@ Replace all placeholder text with specific, relevant content based on the busine
       );
     }
 
-    const aiResponse = await response.json();
-    const content = aiResponse.content[0]?.text;
+    const content = aiResult.content;
 
     if (!content) {
       return new Response(
