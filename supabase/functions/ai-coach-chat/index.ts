@@ -350,7 +350,7 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20250929",
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 2000,
         temperature: 0.7,
         system: CREATOR_ECONOMY_KNOWLEDGE + contextInfo,
@@ -373,7 +373,7 @@ Deno.serve(async (req: Request) => {
         role: 'assistant',
         content: assistantMessage,
         metadata: {
-          model: 'claude-sonnet-4-5-20250929',
+          model: 'claude-3-5-sonnet-20241022',
           tokens: data.usage?.output_tokens || 0,
         },
       })

@@ -267,7 +267,7 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20250929",
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 3000,
         temperature: 0.7,
         system: GAMEPLAN_SYSTEM_PROMPT,
