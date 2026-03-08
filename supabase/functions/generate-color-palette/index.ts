@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { callAnthropic } from "../_shared/ai-config.ts";
+import { callAI, type AIResponse } from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,10 +32,11 @@ Ensure colors are accessible, work well together, and fit the requested mood/ind
 
     const userPrompt = `Generate a color palette for ${industry || 'general business'} with a ${mood || 'professional'} mood.`;
 
-    const aiResponse = await callAnthropic(
+    const aiResponse: AIResponse = await callAI(
       systemPrompt,
       [{ role: "user", content: userPrompt }],
       'color_palette',
+      'starter',
       { maxTokens: 500, temperature: 0.9 }
     );
 
@@ -52,7 +53,11 @@ Ensure colors are accessible, work well together, and fit the requested mood/ind
     }
 
     return new Response(
-      JSON.stringify({ palette }),
+      JSON.stringify({
+        palette,
+        model: aiResponse.model,
+        provider: aiResponse.provider,
+      }),
       {
         headers: {
           ...corsHeaders,

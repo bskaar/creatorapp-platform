@@ -1,6 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { callAnthropic } from "../_shared/ai-config.ts";
+import {
+  callAI,
+  mapPlanNameToTier,
+  type SubscriptionTier,
+  type AIResponse
+} from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,6 +18,7 @@ interface GenerateRequest {
   businessDescription: string;
   industry: string;
   siteName: string;
+  siteId?: string;
   tone?: string;
   targetAudience?: string;
   painPoints?: string[];
@@ -56,6 +62,8 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const startTime = Date.now();
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
@@ -67,6 +75,7 @@ Deno.serve(async (req: Request) => {
       businessDescription,
       industry,
       siteName,
+      siteId,
       tone = "professional",
       targetAudience,
       painPoints,
@@ -81,6 +90,25 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    let tier: SubscriptionTier = 'starter';
+    let userId: string | null = null;
+
+    if (siteId) {
+      const { data: siteData } = await supabase
+        .from('sites')
+        .select('user_id, platform_subscription_plan_id, subscription_plans(display_name)')
+        .eq('id', siteId)
+        .maybeSingle();
+
+      if (siteData) {
+        userId = siteData.user_id;
+        if (siteData.subscription_plans) {
+          const planData = siteData.subscription_plans as { display_name: string };
+          tier = mapPlanNameToTier(planData.display_name);
+        }
+      }
     }
 
     const { data: template, error: templateError } = await supabase
@@ -205,16 +233,17 @@ Return ONLY a valid JSON object with this exact structure:
 
 Replace all placeholder text with specific, relevant content based on the business description. Keep the block structure intact but update the content fields with personalized copy.`;
 
-    let aiResult;
+    let aiResult: AIResponse;
     try {
-      aiResult = await callAnthropic(
+      aiResult = await callAI(
         "",
         [{ role: "user", content: prompt }],
         'funnel_content',
+        tier,
         { maxTokens: 8000 }
       );
     } catch (err) {
-      console.error("Anthropic API error:", err);
+      console.error("AI API error:", err);
       return new Response(
         JSON.stringify({
           pages: template.pages_config,
@@ -225,6 +254,8 @@ Replace all placeholder text with specific, relevant content based on the busine
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    const latencyMs = Date.now() - startTime;
 
     const content = aiResult.content;
 
@@ -253,13 +284,35 @@ Replace all placeholder text with specific, relevant content based on the busine
       generatedPages = template.pages_config;
     }
 
+    if (siteId && userId) {
+      await supabase
+        .from('ai_usage_tracking')
+        .insert({
+          site_id: siteId,
+          user_id: userId,
+          request_type: 'funnel_content',
+          model_used: aiResult.model,
+          model_version: aiResult.model,
+          tokens_used: aiResult.usage.total_tokens,
+          input_tokens: aiResult.usage.input_tokens,
+          output_tokens: aiResult.usage.output_tokens,
+          cost_cents: aiResult.estimatedCostCents,
+          provider: aiResult.provider,
+          task_type: 'funnel_content',
+          tier_at_request: tier,
+          latency_ms: latencyMs,
+        });
+    }
+
     return new Response(
       JSON.stringify({
         pages: generatedPages,
         emailSequences: template.email_sequences_config,
         generated: true,
         tone: tone,
-        industry: industry
+        industry: industry,
+        model: aiResult.model,
+        provider: aiResult.provider,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

@@ -1,6 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { callAnthropic } from "../_shared/ai-config.ts";
+import {
+  callAI,
+  mapPlanNameToTier,
+  type SubscriptionTier,
+  type AIResponse
+} from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,6 +22,8 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const startTime = Date.now();
+
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Missing authorization header" }), {
@@ -27,7 +34,8 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
-    if (!supabaseUrl || !supabaseAnonKey) {
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
       throw new Error("Supabase credentials not configured");
     }
 
@@ -43,7 +51,24 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const { prompt, type, context } = await req.json();
+    const { prompt, type, context, siteId } = await req.json();
+
+    let tier: SubscriptionTier = 'starter';
+
+    if (siteId) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      const { data: siteData } = await supabase
+        .from('sites')
+        .select('platform_subscription_plan_id, subscription_plans(display_name)')
+        .eq('id', siteId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (siteData?.subscription_plans) {
+        const planData = siteData.subscription_plans as { display_name: string };
+        tier = mapPlanNameToTier(planData.display_name);
+      }
+    }
 
     const systemPrompts: Record<string, string> = {
       headline: "You are a professional copywriter specializing in compelling headlines. Generate short, punchy headlines that grab attention and communicate value. Return only the headline text, no quotes or extra formatting.",
@@ -58,15 +83,43 @@ Deno.serve(async (req: Request) => {
     const systemPrompt = systemPrompts[type] || systemPrompts.improve;
     const userContent = context ? `Context: ${context}\n\n${prompt}` : prompt;
 
-    const aiResponse = await callAnthropic(
+    const aiResponse: AIResponse = await callAI(
       systemPrompt,
       [{ role: "user", content: userContent }],
       'text_generation',
+      tier,
       { maxTokens: 300, temperature: 0.8 }
     );
 
+    const latencyMs = Date.now() - startTime;
+
+    if (siteId) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      await supabase
+        .from('ai_usage_tracking')
+        .insert({
+          site_id: siteId,
+          user_id: user.id,
+          request_type: 'text_generation',
+          model_used: aiResponse.model,
+          model_version: aiResponse.model,
+          tokens_used: aiResponse.usage.total_tokens,
+          input_tokens: aiResponse.usage.input_tokens,
+          output_tokens: aiResponse.usage.output_tokens,
+          cost_cents: aiResponse.estimatedCostCents,
+          provider: aiResponse.provider,
+          task_type: 'text_generation',
+          tier_at_request: tier,
+          latency_ms: latencyMs,
+        });
+    }
+
     return new Response(
-      JSON.stringify({ text: aiResponse.content }),
+      JSON.stringify({
+        text: aiResponse.content,
+        model: aiResponse.model,
+        provider: aiResponse.provider,
+      }),
       {
         headers: {
           ...corsHeaders,

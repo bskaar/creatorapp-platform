@@ -1,6 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { callAnthropic } from "../_shared/ai-config.ts";
+import {
+  callAI,
+  mapPlanNameToTier,
+  type SubscriptionTier,
+  type AIResponse
+} from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -78,6 +83,7 @@ interface UsageCheckResult {
   softMaxSessions: number | null;
   isUnlimited: boolean;
   message: string;
+  planName: string;
 }
 
 async function checkAIUsageLimits(
@@ -92,8 +98,10 @@ async function checkAIUsageLimits(
     .maybeSingle();
 
   let maxSessions: number | null = 200;
+  let planName = 'Starter';
 
   if (planData) {
+    planName = planData.display_name;
     const limits = planData.limits as Record<string, unknown>;
     if (limits && 'max_ai_sessions_per_month' in limits) {
       maxSessions = limits.max_ai_sessions_per_month as number | null;
@@ -112,6 +120,7 @@ async function checkAIUsageLimits(
       softMaxSessions: null,
       isUnlimited: true,
       message: '',
+      planName,
     };
   }
 
@@ -132,6 +141,7 @@ async function checkAIUsageLimits(
       softMaxSessions,
       isUnlimited: false,
       message: `You've exceeded your monthly AI session limit (${softMaxSessions} sessions). Upgrade your plan to continue using AI features.`,
+      planName,
     };
   }
 
@@ -145,6 +155,7 @@ async function checkAIUsageLimits(
       softMaxSessions,
       isUnlimited: false,
       message: `You've used ${sessionsUsed} of ${maxSessions} AI sessions this month. You have ${softMaxSessions - sessionsUsed} sessions remaining before AI features are paused.`,
+      planName,
     };
   }
 
@@ -157,6 +168,7 @@ async function checkAIUsageLimits(
     softMaxSessions,
     isUnlimited: false,
     message: '',
+    planName,
   };
 }
 
@@ -169,6 +181,8 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const startTime = Date.now();
+
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Missing authorization header" }), {
@@ -233,6 +247,8 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    const tier: SubscriptionTier = mapPlanNameToTier(usageCheck.planName);
+
     const { data: siteData } = await supabase
       .from('sites')
       .select('name, industry, onboarding_data')
@@ -255,12 +271,15 @@ Deno.serve(async (req: Request) => {
 
     const userPrompt = `Create a detailed gameplan for this goal:\n\n${goal}${contextInfo}`;
 
-    const aiResponse = await callAnthropic(
+    const aiResponse: AIResponse = await callAI(
       GAMEPLAN_SYSTEM_PROMPT,
       [{ role: "user", content: userPrompt }],
       'gameplan',
+      tier,
       { maxTokens: 3000 }
     );
+
+    const latencyMs = Date.now() - startTime;
 
     const generatedText = aiResponse.content.trim();
 
@@ -316,8 +335,15 @@ Deno.serve(async (req: Request) => {
         user_id: user.id,
         request_type: 'gameplan',
         model_used: aiResponse.model,
+        model_version: aiResponse.model,
         tokens_used: aiResponse.usage.total_tokens,
-        cost_cents: Math.ceil(aiResponse.usage.total_tokens * 0.003),
+        input_tokens: aiResponse.usage.input_tokens,
+        output_tokens: aiResponse.usage.output_tokens,
+        cost_cents: aiResponse.estimatedCostCents,
+        provider: aiResponse.provider,
+        task_type: 'gameplan',
+        tier_at_request: tier,
+        latency_ms: latencyMs,
       });
 
     return new Response(
@@ -333,6 +359,8 @@ Deno.serve(async (req: Request) => {
         usageMessage: usageCheck.isWarning ? usageCheck.message : null,
         sessionsUsed: usageCheck.sessionsUsed + 1,
         maxSessions: usageCheck.maxSessions,
+        model: aiResponse.model,
+        provider: aiResponse.provider,
       }),
       {
         headers: {

@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { callAnthropic } from "../_shared/ai-config.ts";
+import { callAI, type AIResponse } from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -111,10 +111,11 @@ Ensure:
 
 Make it distinctive, memorable, and appropriate for the industry. The theme should communicate the right emotions and values through color, typography, and visual style.`;
 
-    const aiResponse = await callAnthropic(
+    const aiResponse: AIResponse = await callAI(
       systemPrompt,
       [{ role: "user", content: userPrompt }],
       'visual_theme',
+      'starter',
       { maxTokens: 1500, temperature: 0.9 }
     );
 
@@ -134,7 +135,9 @@ Make it distinctive, memorable, and appropriate for the industry. The theme shou
     return new Response(
       JSON.stringify({
         theme,
-        success: true
+        success: true,
+        model: aiResponse.model,
+        provider: aiResponse.provider,
       }),
       {
         headers: {

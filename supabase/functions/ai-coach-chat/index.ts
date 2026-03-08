@@ -1,6 +1,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { callAnthropic } from "../_shared/ai-config.ts";
+import {
+  callAI,
+  detectChatComplexity,
+  mapPlanNameToTier,
+  type SubscriptionTier,
+  type AIResponse
+} from "../_shared/ai-config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -92,6 +98,7 @@ interface UsageCheckResult {
   softMaxSessions: number | null;
   isUnlimited: boolean;
   message: string;
+  planName: string;
 }
 
 async function checkAIUsageLimits(
@@ -128,6 +135,7 @@ async function checkAIUsageLimits(
       softMaxSessions: null,
       isUnlimited: true,
       message: '',
+      planName,
     };
   }
 
@@ -148,6 +156,7 @@ async function checkAIUsageLimits(
       softMaxSessions,
       isUnlimited: false,
       message: `You've exceeded your monthly AI session limit (${softMaxSessions} sessions). Upgrade your plan to continue using AI features.`,
+      planName,
     };
   }
 
@@ -161,6 +170,7 @@ async function checkAIUsageLimits(
       softMaxSessions,
       isUnlimited: false,
       message: `You've used ${sessionsUsed} of ${maxSessions} AI sessions this month. You have ${softMaxSessions - sessionsUsed} sessions remaining before AI features are paused.`,
+      planName,
     };
   }
 
@@ -173,6 +183,7 @@ async function checkAIUsageLimits(
     softMaxSessions,
     isUnlimited: false,
     message: '',
+    planName,
   };
 }
 
@@ -185,6 +196,8 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const startTime = Date.now();
+
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Missing authorization header" }), {
@@ -248,6 +261,9 @@ Deno.serve(async (req: Request) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const tier: SubscriptionTier = mapPlanNameToTier(usageCheck.planName);
+    const chatComplexity = detectChatComplexity(message);
 
     let currentConversationId = conversationId;
     let conversationHistory: Array<{ role: string; content: string }> = [];
@@ -338,11 +354,14 @@ Deno.serve(async (req: Request) => {
       content: message,
     });
 
-    const aiResponse = await callAnthropic(
+    const aiResponse: AIResponse = await callAI(
       CREATOR_ECONOMY_KNOWLEDGE + contextInfo,
       claudeMessages,
-      'chat'
+      chatComplexity,
+      tier
     );
+
+    const latencyMs = Date.now() - startTime;
 
     const { data: savedMessage } = await supabase
       .from('ai_messages')
@@ -352,7 +371,10 @@ Deno.serve(async (req: Request) => {
         content: aiResponse.content,
         metadata: {
           model: aiResponse.model,
+          provider: aiResponse.provider,
           tokens: aiResponse.usage.output_tokens,
+          tier: tier,
+          complexity: chatComplexity,
         },
       })
       .select()
@@ -370,8 +392,15 @@ Deno.serve(async (req: Request) => {
         user_id: user.id,
         request_type: 'chat',
         model_used: aiResponse.model,
+        model_version: aiResponse.model,
         tokens_used: aiResponse.usage.total_tokens,
-        cost_cents: Math.ceil(aiResponse.usage.total_tokens * 0.003),
+        input_tokens: aiResponse.usage.input_tokens,
+        output_tokens: aiResponse.usage.output_tokens,
+        cost_cents: aiResponse.estimatedCostCents,
+        provider: aiResponse.provider,
+        task_type: chatComplexity,
+        tier_at_request: tier,
+        latency_ms: latencyMs,
       });
 
     return new Response(
@@ -383,6 +412,8 @@ Deno.serve(async (req: Request) => {
         usageMessage: usageCheck.isWarning ? usageCheck.message : null,
         sessionsUsed: usageCheck.sessionsUsed + 1,
         maxSessions: usageCheck.maxSessions,
+        model: aiResponse.model,
+        provider: aiResponse.provider,
       }),
       {
         headers: {
