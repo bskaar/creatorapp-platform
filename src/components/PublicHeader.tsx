@@ -20,10 +20,10 @@ export default function PublicHeader({ transparent = false, variant = 'light' }:
     <nav
       className={`fixed top-0 w-full z-50 border-b ${
         isDark
-          ? 'bg-slate-900/80 backdrop-blur-xl border-white/10'
+          ? 'bg-slate-900/95 backdrop-blur-xl border-white/10'
           : transparent
             ? 'bg-white/95 backdrop-blur-md border-gray-100'
-            : 'bg-white/80 backdrop-blur-sm border-gray-200'
+            : 'bg-white/95 backdrop-blur-sm border-gray-200'
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-8">

@@ -44,7 +44,7 @@ export default function Landing() {
       >
         Skip to main content
       </a>
-      <nav className="fixed top-0 w-full bg-slate-900/80 backdrop-blur-xl z-50 border-b border-white/10" aria-label="Main navigation">
+      <nav className="fixed top-0 w-full bg-slate-900/95 backdrop-blur-xl z-50 border-b border-white/10" aria-label="Main navigation">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
             <Link to="/" className="flex items-center">
@@ -79,7 +79,7 @@ export default function Landing() {
           </div>
         </div>
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-white/10 px-4 py-4 space-y-3">
+          <div className="md:hidden bg-slate-900 backdrop-blur-xl border-t border-white/10 px-4 py-4 space-y-3">
             <a
               href="#features"
               onClick={() => setIsMobileMenuOpen(false)}
