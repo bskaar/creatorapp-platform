@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, HelpCircle, Mail, Shield, CreditCard, Rocket, Users, Zap } from 'lucide-react';
+import { ChevronDown, ChevronUp, HelpCircle, Mail, Shield, CreditCard, Rocket, Users, Zap, Brain } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 import PublicFooter from '../components/PublicFooter';
 
@@ -109,6 +109,36 @@ export default function FAQ() {
         {
           question: 'What happens to my content if I cancel?',
           answer: 'Your content remains accessible for 30 days after cancellation, giving you time to export anything you need. We can also provide data exports upon request. Your students\' course access depends on your product terms.'
+        }
+      ]
+    },
+    {
+      name: 'AI & Data Privacy',
+      icon: Brain,
+      items: [
+        {
+          question: 'How does CreatorApp use AI?',
+          answer: 'CreatorApp uses AI to power several features including the AI Co-Founder (your business strategist), content generation for copy and emails, theme and color palette generation, and intelligent recommendations. Our AI is powered by leading models from Anthropic (Claude) and OpenAI, intelligently selected based on the task at hand.'
+        },
+        {
+          question: 'Is my data used to train AI models?',
+          answer: 'No. We use API access to AI providers, which means your data is NOT used to train their models. Your prompts and content are processed to generate responses but are not retained by AI providers for model training purposes.'
+        },
+        {
+          question: 'How is my data protected when using AI features?',
+          answer: 'We anonymize personally identifiable information (PII) before sending data to AI providers. This means email addresses, phone numbers, names, and other identifying details are removed or masked. Additionally, all data is encrypted in transit and at rest.'
+        },
+        {
+          question: 'Which AI providers do you use?',
+          answer: 'We use trusted AI providers including Anthropic (Claude) and OpenAI. Our system automatically selects the most appropriate model for each task based on complexity and requirements, ensuring you get the best results efficiently.'
+        },
+        {
+          question: 'What data is stored from AI interactions?',
+          answer: 'We store usage metrics to track your AI usage against plan limits, any content you explicitly save (like gameplans), and conversation history within sessions for continuity. We may also collect aggregated, anonymized data to improve our services. You can request deletion of AI-related data through our support team.'
+        },
+        {
+          question: 'Can I opt out of using AI features?',
+          answer: 'Yes. AI features are optional and you can use CreatorApp without them. Your core functionality - website building, course hosting, email marketing, and payments - works independently of AI features.'
         }
       ]
     },

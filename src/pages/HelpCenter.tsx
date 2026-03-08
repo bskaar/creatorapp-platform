@@ -66,6 +66,26 @@ export default function HelpCenter() {
       answer: 'The AI Co-Founder is powered by Claude AI and provides advice based on proven marketing frameworks and best practices. While it\'s an incredibly powerful tool, it\'s designed to augment your decision-making, not replace it. Always review and adapt AI suggestions to fit your specific business context and audience.'
     },
     {
+      category: 'AI & Intelligence',
+      question: 'How is my data protected when using AI features?',
+      answer: 'We take your privacy seriously. When you use AI features, we anonymize personally identifiable information (PII) before processing. This means names, emails, phone numbers and other identifying details are removed or masked before being sent to AI providers. Your data is NOT used to train AI models - we use API access only.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'Which AI providers power CreatorApp features?',
+      answer: 'We use trusted AI providers including Anthropic (Claude) and OpenAI. Our intelligent model orchestration system automatically selects the best AI model for each task based on complexity, ensuring optimal results. This means simple tasks use faster models while complex tasks use more powerful ones.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'What AI-generated content is stored?',
+      answer: 'We store usage metrics to track your AI usage against plan limits, content you explicitly save (like gameplans and generated copy), and conversation history within chat sessions. You own all content you generate using AI features, and you can request deletion of AI-related data through support.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'Can I use CreatorApp without AI features?',
+      answer: 'Yes! AI features are optional enhancements. All core functionality - website building, course hosting, email marketing, payment processing, and analytics - works independently without using AI. You can choose when and if to use AI assistance.'
+    },
+    {
       category: 'Courses & Content',
       question: 'How do I create my first course?',
       answer: 'Navigate to the Content section from your dashboard and click "New Product." Choose "Course" as your product type, give it a name and description, set your pricing, and click Create. Then you can add lessons with video, audio, text, quizzes, and downloadable resources using our easy course builder.'

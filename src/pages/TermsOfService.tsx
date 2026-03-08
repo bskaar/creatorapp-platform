@@ -30,7 +30,7 @@ export default function TermsOfService() {
       <section className="py-12 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl p-8 md:p-12">
-            <p className="text-gray-500 mb-8 text-sm">Last updated: February 5, 2026</p>
+            <p className="text-gray-500 mb-8 text-sm">Last updated: March 8, 2026</p>
 
             <div className="prose prose-lg max-w-none">
               <section className="mb-10">
@@ -74,6 +74,64 @@ export default function TermsOfService() {
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                   <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">4</span>
+                  AI Features and Acceptable Use
+                </h2>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  CreatorApp provides AI-powered features including the AI Co-Founder, content generation, theme generation, and business recommendations.
+                  By using these features, you agree to the following:
+                </p>
+
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Acceptable Use:</h3>
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
+                      <li>Use AI features for legitimate business purposes related to your CreatorApp account</li>
+                      <li>Review and verify AI-generated content before publishing or sending to your audience</li>
+                      <li>Take responsibility for any content you publish that was assisted by AI features</li>
+                      <li>Respect usage limits associated with your subscription plan</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Prohibited Uses:</h3>
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
+                      <li>Attempting to extract, reverse engineer, or manipulate the underlying AI models</li>
+                      <li>Using AI features to generate harmful, illegal, deceptive, or misleading content</li>
+                      <li>Automated or programmatic access to AI features outside of the provided interface</li>
+                      <li>Generating content that infringes on third-party intellectual property rights</li>
+                      <li>Creating content designed to harass, harm, or deceive others</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Content Ownership:</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      You retain ownership of content you create using AI features. However, you acknowledge that similar content may be
+                      generated for other users due to the nature of AI systems. CreatorApp does not claim ownership of your AI-generated content.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Data Processing:</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      When using AI features, your inputs may be processed by third-party AI providers (including Anthropic and OpenAI).
+                      We anonymize personal information before processing. See our Privacy Policy for complete details on how your data is handled.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">No Guarantee of Results:</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      AI-generated content is provided as suggestions and assistance. CreatorApp does not guarantee the accuracy, completeness,
+                      or suitability of AI outputs for any particular purpose. You are responsible for reviewing and editing all AI-generated content.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="mb-10">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">5</span>
                   Free Trial Period
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">
@@ -96,7 +154,7 @@ export default function TermsOfService() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">5</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">6</span>
                   Payment Terms
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">
@@ -114,7 +172,7 @@ export default function TermsOfService() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">6</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">7</span>
                   Refund Policy
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">
@@ -154,7 +212,7 @@ export default function TermsOfService() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">7</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">8</span>
                   Cancellation and Termination
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">
@@ -188,7 +246,7 @@ export default function TermsOfService() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">8</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">9</span>
                   Modifications to Service
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
@@ -199,7 +257,7 @@ export default function TermsOfService() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">9</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">10</span>
                   Contact Information
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">

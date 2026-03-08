@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
       <section className="py-12 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl p-8 md:p-12">
-            <p className="text-gray-500 mb-8 text-sm">Last updated: February 5, 2026</p>
+            <p className="text-gray-500 mb-8 text-sm">Last updated: March 8, 2026</p>
 
             <div className="prose prose-lg max-w-none">
               <section className="mb-10">
@@ -63,12 +63,78 @@ export default function PrivacyPolicy() {
                   <li>Send technical notices, updates, and support messages</li>
                   <li>Respond to your comments and questions</li>
                   <li>Monitor and analyze trends, usage, and activities</li>
+                  <li>Power AI features including the AI Co-Founder, content generation, and business recommendations</li>
                 </ul>
               </section>
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                   <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">3</span>
+                  AI Features and Data Processing
+                </h2>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  CreatorApp uses artificial intelligence to power several features including the AI Co-Founder, content generation,
+                  theme generation, and business recommendations. Here's how we handle your data when using AI features:
+                </p>
+
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Data Anonymization</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      When processing requests through our AI systems, we anonymize personally identifiable information (PII)
+                      before sending data to AI model providers. This includes removing or masking email addresses, phone numbers,
+                      names, and other identifying details from the content being processed.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Third-Party AI Providers</h3>
+                    <p className="text-gray-600 leading-relaxed mb-2">
+                      We use trusted third-party AI providers (including Anthropic and OpenAI) to process AI requests.
+                      These providers:
+                    </p>
+                    <ul className="list-disc pl-6 text-gray-600 space-y-1">
+                      <li>Do not use your data to train their models (we use API access only)</li>
+                      <li>Process data according to their respective privacy policies and data processing agreements</li>
+                      <li>Are contractually bound to protect your information</li>
+                      <li>Do not retain your prompts or outputs beyond processing the request</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Model Selection</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Our system automatically selects the most appropriate AI model for each task based on complexity and requirements.
+                      This intelligent routing helps ensure efficient processing while maintaining quality and cost-effectiveness.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">What We Store</h3>
+                    <p className="text-gray-600 leading-relaxed mb-2">
+                      For AI features, we may store:
+                    </p>
+                    <ul className="list-disc pl-6 text-gray-600 space-y-1">
+                      <li>Usage metrics to track your AI usage against plan limits</li>
+                      <li>Aggregated, anonymized data to improve our services</li>
+                      <li>Your generated content (such as gameplans) that you choose to save</li>
+                      <li>Chat conversation history for continuity within sessions</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Your Control</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      You can choose not to use AI features at any time. Your core CreatorApp functionality does not require
+                      AI feature usage. You may also request deletion of stored AI-related data through our support team.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="mb-10">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">4</span>
                   Information Sharing
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
@@ -85,7 +151,7 @@ export default function PrivacyPolicy() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">4</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">5</span>
                   Data Security
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
@@ -96,7 +162,7 @@ export default function PrivacyPolicy() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">5</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">6</span>
                   Data Retention
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
@@ -107,7 +173,7 @@ export default function PrivacyPolicy() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">6</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">7</span>
                   Your Rights
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">
@@ -124,7 +190,7 @@ export default function PrivacyPolicy() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">7</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">8</span>
                   Cookies and Tracking
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
@@ -135,7 +201,7 @@ export default function PrivacyPolicy() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">8</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">9</span>
                   Contact Us
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">
