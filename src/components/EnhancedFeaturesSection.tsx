@@ -78,7 +78,7 @@ export default function EnhancedFeaturesSection() {
   };
 
   return (
-    <section id="features" className="relative py-24 px-4 sm:px-8 overflow-hidden isolate">
+    <section id="features" className="relative py-24 px-4 sm:px-8 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50 -z-10">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
         <div className="absolute top-20 right-0 w-72 h-72 bg-blue-100/50 rounded-full blur-3xl"></div>
