@@ -124,8 +124,8 @@ function DashboardMockup() {
 
 export default function PremiumHero({ onWatchDemo }: PremiumHeroProps) {
   return (
-    <section className="relative min-h-screen pt-24 sm:pt-32 pb-16 px-4 sm:px-8 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 -z-10">
+    <section className="relative min-h-screen pt-24 sm:pt-32 pb-16 px-4 sm:px-8 overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-600/20 via-transparent to-transparent"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-cyan-600/20 via-transparent to-transparent"></div>
 
@@ -140,7 +140,7 @@ export default function PremiumHero({ onWatchDemo }: PremiumHeroProps) {
         <div className="absolute bottom-1/3 right-1/3 w-1.5 h-1.5 bg-white/50 rounded-full animate-twinkle"></div>
       </div>
 
-      <div className="relative max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-8rem)]">
+      <div className="relative z-10 max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-8rem)]">
         <div className="space-y-8">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-cyan-400 px-5 py-2.5 rounded-full text-sm font-semibold border border-cyan-500/30">
             <Sparkles className="w-4 h-4" />
