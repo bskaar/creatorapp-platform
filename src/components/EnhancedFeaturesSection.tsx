@@ -78,14 +78,14 @@ export default function EnhancedFeaturesSection() {
   };
 
   return (
-    <section id="features" className="relative py-24 px-4 sm:px-8 overflow-hidden isolate">
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50 -z-10">
+    <section id="features" className="relative py-24 px-4 sm:px-8 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
         <div className="absolute top-20 right-0 w-72 h-72 bg-blue-100/50 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 left-0 w-96 h-96 bg-cyan-100/50 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-[1400px] mx-auto">
+      <div className="relative z-10 max-w-[1400px] mx-auto">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-600 px-5 py-2 rounded-full text-sm font-semibold border border-blue-500/20 mb-6">
             <Zap className="w-4 h-4" />

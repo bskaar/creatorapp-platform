@@ -4,12 +4,12 @@ import { Shield, Lock, CreditCard, ArrowRight, CheckCircle2, Zap, Globe, Headpho
 export default function PremiumTrustSection() {
   return (
     <section className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-gray-50 to-white -z-10">
+      <div className="absolute inset-0 bg-gradient-to-b from-white via-gray-50 to-white">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-100/50 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-[1400px] mx-auto px-4 sm:px-8">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-8">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-600 px-5 py-2 rounded-full text-sm font-semibold border border-blue-500/20 mb-6">
             <Shield className="w-4 h-4" />
