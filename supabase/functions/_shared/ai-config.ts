@@ -61,13 +61,37 @@ const ANTHROPIC_MODELS: Record<string, ModelConfig> = {
 };
 
 const OPENAI_MODELS: Record<string, ModelConfig> = {
+  gpt54: {
+    provider: 'openai',
+    model: 'gpt-5.4',
+    maxTokens: 4000,
+    temperature: 0.7,
+    costPer1kInput: 0.0025,
+    costPer1kOutput: 0.015,
+  },
+  gpt5Mini: {
+    provider: 'openai',
+    model: 'gpt-5-mini',
+    maxTokens: 4000,
+    temperature: 0.7,
+    costPer1kInput: 0.00025,
+    costPer1kOutput: 0.002,
+  },
+  gpt5Nano: {
+    provider: 'openai',
+    model: 'gpt-5-nano',
+    maxTokens: 4000,
+    temperature: 0.7,
+    costPer1kInput: 0.00005,
+    costPer1kOutput: 0.0004,
+  },
   gpt4o: {
     provider: 'openai',
     model: 'gpt-4o',
     maxTokens: 4000,
     temperature: 0.7,
-    costPer1kInput: 0.005,
-    costPer1kOutput: 0.015,
+    costPer1kInput: 0.0025,
+    costPer1kOutput: 0.01,
   },
   gpt4oMini: {
     provider: 'openai',
@@ -79,7 +103,7 @@ const OPENAI_MODELS: Record<string, ModelConfig> = {
   },
 };
 
-type ModelKey = 'opus' | 'sonnet' | 'haiku' | 'gpt4o' | 'gpt4oMini';
+type ModelKey = 'opus' | 'sonnet' | 'haiku' | 'gpt54' | 'gpt5Mini' | 'gpt5Nano' | 'gpt4o' | 'gpt4oMini';
 
 const TIER_TASK_MODEL_MAP: Record<SubscriptionTier, Record<AITaskType, ModelKey>> = {
   enterprise: {
@@ -302,7 +326,7 @@ export async function callAI(
     console.warn(`Anthropic failed, attempting OpenAI fallback: ${error.message}`);
     const openaiKey = Deno.env.get("OPENAI_API_KEY");
     if (openaiKey) {
-      const openaiConfig = OPENAI_MODELS.gpt4oMini;
+      const openaiConfig = OPENAI_MODELS.gpt5Nano;
       return await callOpenAIProvider(systemPrompt, messages, openaiConfig, options);
     }
     throw error;
