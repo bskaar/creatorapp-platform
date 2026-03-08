@@ -36,27 +36,27 @@ export interface AIResponse {
 const ANTHROPIC_MODELS: Record<string, ModelConfig> = {
   opus: {
     provider: 'anthropic',
-    model: 'claude-sonnet-4-20250514',
-    maxTokens: 4000,
+    model: 'claude-opus-4-6',
+    maxTokens: 8000,
     temperature: 0.7,
-    costPer1kInput: 0.015,
-    costPer1kOutput: 0.075,
+    costPer1kInput: 0.005,
+    costPer1kOutput: 0.025,
   },
   sonnet: {
     provider: 'anthropic',
-    model: 'claude-sonnet-4-20250514',
-    maxTokens: 4000,
+    model: 'claude-sonnet-4-6',
+    maxTokens: 8000,
     temperature: 0.7,
     costPer1kInput: 0.003,
     costPer1kOutput: 0.015,
   },
   haiku: {
     provider: 'anthropic',
-    model: 'claude-3-5-haiku-20241022',
-    maxTokens: 2000,
+    model: 'claude-haiku-4-5',
+    maxTokens: 4000,
     temperature: 0.7,
-    costPer1kInput: 0.0008,
-    costPer1kOutput: 0.004,
+    costPer1kInput: 0.001,
+    costPer1kOutput: 0.005,
   },
 };
 
