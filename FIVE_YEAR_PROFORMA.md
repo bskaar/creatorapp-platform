@@ -356,6 +356,23 @@ Stripe fees: ~3% of gross revenue (2.9% + $0.30 per transaction)
 
 *Note: Year 1 actual may be lower as usage ramps up*
 
+### AI Model Orchestration (Current Production)
+
+| Model | API ID | Input Cost | Output Cost | Use Case |
+|-------|--------|------------|-------------|----------|
+| Claude Opus 4.6 | claude-opus-4-6 | $5/1M | $25/1M | Enterprise complex tasks |
+| Claude Sonnet 4.6 | claude-sonnet-4-6 | $3/1M | $15/1M | Pro tier, strategic tasks |
+| Claude Haiku 4.5 | claude-haiku-4-5 | $1/1M | $5/1M | Growth/Starter, simple tasks |
+
+**Tier-Based Routing:**
+- Enterprise: Opus for complex, Sonnet for simple
+- Pro: Sonnet for complex, Haiku for simple
+- Growth/Starter: Haiku for all tasks
+
+**Privacy Features:**
+- PII anonymization before processing
+- No model training on user data
+
 ### Growth Drivers
 
 1. **PLG/Organic**: 40% of trials from SEO, content, word-of-mouth
@@ -452,6 +469,7 @@ Key validated assumptions:
 
 ---
 
-*Updated: February 2026*
+*Updated: March 2026*
+*AI Models: Claude Opus 4.6, Sonnet 4.6, Haiku 4.5 with tier-based orchestration*
 *Model based on trial-first acquisition with no free tier*
 *Aligned with platform infrastructure and operational cost models*

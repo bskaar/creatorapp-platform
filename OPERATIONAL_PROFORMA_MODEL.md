@@ -253,14 +253,25 @@ Scaling from the previous infrastructure analysis:
 | $100M | 100,000 | $1,800,000 | 1.8% | $1.50 | Enterprise features, headroom |
 
 **AI Cost Optimization Strategies:**
-1. **Task-based model routing**: Haiku for 60% of requests (text gen, colors) saves ~$500K/year at $100M
-2. **Prompt caching**: 90% reduction on system prompts saves ~$200K/year at $100M
-3. **Batch API**: 50% discount for async operations (bulk content generation)
+1. **Tier-based model orchestration**: Intelligent routing uses Opus 4.6 for Enterprise, Sonnet 4.6 for Pro, Haiku 4.5 for Growth/Starter
+2. **Simple task routing**: Color palettes, themes always use Haiku 4.5 regardless of tier (saves ~$500K/year at $100M)
+3. **Prompt caching**: 90% reduction on system prompts saves ~$200K/year at $100M
+4. **Batch API**: 50% discount for async operations (bulk content generation)
+
+**Current Models in Production (March 2026):**
+- Claude Opus 4.6 (claude-opus-4-6): $5/1M input, $25/1M output - Enterprise complex tasks
+- Claude Sonnet 4.6 (claude-sonnet-4-6): $3/1M input, $15/1M output - Pro tier tasks
+- Claude Haiku 4.5 (claude-haiku-4-5): $1/1M input, $5/1M output - Growth/Starter, simple tasks
+
+**Data Privacy:**
+- PII anonymization before AI processing
+- No model training on user data (API access only)
 
 **Model Evolution Budget:**
 - Engineering time for migrations: $50,000-100,000/year (2-4 weeks per major update)
 - A/B testing new models: Included in AI costs
 - Quality monitoring: $25,000/year for tooling
+- Note: Claude Haiku 3 deprecated, retiring April 2026
 
 **Enterprise Note**: Enterprise customers have unlimited AI requests but usage is still tracked for platform analytics and capacity planning
 
@@ -567,6 +578,7 @@ The model is viable and represents a highly efficient SaaS operation. Key milest
 
 ---
 
-*Model prepared: February 2026*
+*Model prepared: March 2026*
+*AI Models: Claude Opus 4.6, Sonnet 4.6, Haiku 4.5 with tier-based orchestration*
 *Assumptions based on current market compensation data and SaaS benchmarks.*
 *Should be updated quarterly with actual metrics.*

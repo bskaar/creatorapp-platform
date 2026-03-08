@@ -7,7 +7,7 @@ The AI Co-Founder is your 24/7 marketing coach inspired by ClickFunnels' "Ask To
 ## Key Features
 
 ### 1. Intelligent Chat Assistant
-- **Conversational AI**: Powered by Claude 3.5 Sonnet for strategic advice
+- **Conversational AI**: Powered by intelligent model orchestration selecting from Claude Opus 4.6, Sonnet 4.6, and Haiku 4.5 based on task complexity and subscription tier
 - **Context-Aware**: Knows your business name, industry, target audience, and goals
 - **Educational Responses**: Uses named frameworks (Value Ladder, Dream100, Perfect Webinar)
 - **Structured Formatting**: Clear headings, numbered lists, and actionable steps
@@ -98,31 +98,32 @@ The AI Co-Founder is your 24/7 marketing coach inspired by ClickFunnels' "Ask To
 ### Edge Functions
 
 **ai-coach-chat**
-- Model: Claude 3.5 Sonnet
+- Model: Tier-based orchestration (Enterprise: Opus 4.6, Pro: Sonnet 4.6, Growth/Starter: Haiku 4.5)
 - Purpose: Strategic conversation and advice
 - System Prompt: Comprehensive creator economy knowledge base
 - Context: Includes site data, industry, target audience
 - Response: Educational, framework-based advice
+- Data Handling: PII anonymized before processing
 
 **ai-generate-gameplan**
-- Model: Claude 3.5 Sonnet
+- Model: Tier-based orchestration (Enterprise/Pro: Sonnet 4.6, Growth/Starter: Haiku 4.5)
 - Purpose: Convert goals into structured action plans
 - Output: JSON with title, description, tasks array
 - Auto-saves: Creates gameplan and task records
 - Tracking: Logs usage and costs
 
-**ai-generate-text** (migrated)
-- Model: Claude 3.5 Haiku (was OpenAI GPT-4o-mini)
+**ai-generate-text**
+- Model: Tier-based orchestration (Enterprise/Pro: Sonnet 4.6, Growth/Starter: Haiku 4.5)
 - Purpose: Quick text generation (headlines, CTAs, copy)
-- Cost: 10x cheaper, sub-2-second responses
+- Cost: Task-based routing optimizes for cost efficiency
 
-**generate-color-palette** (migrated)
-- Model: Claude 3.5 Haiku
+**generate-color-palette**
+- Model: Claude Haiku 4.5 (all tiers - simple task)
 - Purpose: Generate accessible color palettes
 - Validation: WCAG AA contrast standards
 
-**generate-visual-theme** (migrated)
-- Model: Claude 3.5 Haiku
+**generate-visual-theme**
+- Model: Claude Haiku 4.5 (all tiers - simple task)
 - Purpose: Complete theme generation (colors, typography, spacing)
 
 ### React Components
@@ -240,36 +241,57 @@ The AI Co-Founder is trained on:
 
 ### Current Claude Model Pricing (as of March 2026)
 
-| Model | Input (per 1M tokens) | Output (per 1M tokens) | Best For |
-|-------|----------------------|------------------------|----------|
-| Claude 3.5 Haiku | $0.80 | $4.00 | Quick tasks, text generation |
-| Claude 3.5 Sonnet | $3.00 | $15.00 | Strategic advice, gameplans |
-| Claude 3.7 Sonnet | $3.00 | $15.00 | Latest capabilities, complex reasoning |
-| Claude Opus 4 | $15.00 | $75.00 | Most complex analysis (not currently used) |
+| Model | API ID | Input (per 1M tokens) | Output (per 1M tokens) | Best For |
+|-------|--------|----------------------|------------------------|----------|
+| Claude Haiku 4.5 | claude-haiku-4-5 | $1.00 | $5.00 | Quick tasks, text generation, color palettes |
+| Claude Sonnet 4.6 | claude-sonnet-4-6 | $3.00 | $15.00 | Strategic advice, gameplans, content generation |
+| Claude Opus 4.6 | claude-opus-4-6 | $5.00 | $25.00 | Complex reasoning, enterprise-tier features |
 
-### Cost Per AI Session (Estimated)
+### Model Orchestration by Subscription Tier
 
-| Task Type | Model Used | Avg Tokens | Est. Cost/Session |
-|-----------|------------|------------|-------------------|
-| Chat message | Sonnet | 2,500 in / 800 out | $0.02-0.04 |
-| Gameplan generation | Sonnet | 3,000 in / 1,500 out | $0.03-0.05 |
-| Text generation (headline) | Haiku | 500 in / 100 out | $0.001-0.002 |
-| Color palette | Haiku | 800 in / 200 out | $0.002-0.003 |
-| Visual theme | Haiku | 1,000 in / 400 out | $0.003-0.005 |
+| Task Type | Enterprise | Pro | Growth | Starter |
+|-----------|------------|-----|--------|---------|
+| Complex Chat | Opus 4.6 | Sonnet 4.6 | Haiku 4.5 | Haiku 4.5 |
+| Simple Chat | Sonnet 4.6 | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 |
+| Gameplan Generation | Opus 4.6 | Sonnet 4.6 | Haiku 4.5 | Haiku 4.5 |
+| Email Sequences | Opus 4.6 | Sonnet 4.6 | Haiku 4.5 | Haiku 4.5 |
+| Text Generation | Sonnet 4.6 | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 |
+| Funnel Content | Opus 4.6 | Sonnet 4.6 | Haiku 4.5 | Haiku 4.5 |
+| Color Palette | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 |
+| Visual Theme | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 |
+
+### Cost Per AI Session (Estimated by Tier)
+
+| Task Type | Enterprise (Opus) | Pro (Sonnet) | Growth/Starter (Haiku) |
+|-----------|-------------------|--------------|------------------------|
+| Chat message | $0.02-0.04 | $0.015-0.03 | $0.003-0.006 |
+| Gameplan generation | $0.03-0.06 | $0.025-0.05 | $0.005-0.01 |
+| Text generation | $0.015-0.03 | $0.003-0.006 | $0.001-0.002 |
+| Color palette | $0.002-0.003 | $0.002-0.003 | $0.002-0.003 |
+| Visual theme | $0.003-0.005 | $0.003-0.005 | $0.003-0.005 |
+
+### Data Privacy and Anonymization
+
+All AI requests are processed with privacy protections:
+
+1. **PII Anonymization**: Personal identifiable information (names, emails, phone numbers) is automatically masked before being sent to AI providers
+2. **No Model Training**: API access only - your data is NOT used to train AI models
+3. **Minimal Retention**: AI providers do not retain prompts or outputs beyond request processing
+4. **Usage Tracking**: We track usage metrics for plan limits but store only aggregated, anonymized data
 
 ### Cost Optimization Features
 
-1. **Prompt Caching**: Up to 90% cost reduction on cached system prompts
+1. **Intelligent Model Routing**: Task complexity and subscription tier determine optimal model
+   - Simple tasks always use Haiku regardless of tier (70%+ cost savings)
+   - Complex tasks scale with subscription for quality/cost balance
+
+2. **Prompt Caching**: Up to 90% cost reduction on cached system prompts
    - First request: Full price
    - Subsequent requests: 10% of input cost for cached portions
 
-2. **Batch API**: 50% discount for async processing (not real-time)
+3. **Batch API**: 50% discount for async processing (not real-time)
    - Useful for bulk content generation
    - 24-hour processing window
-
-3. **Model Selection Strategy**: Task-based routing saves 70%+ on simple operations
-   - Route 70% of requests to Haiku (simple tasks)
-   - Route 30% to Sonnet (strategic/complex tasks)
 
 ### Model Evolution Strategy
 
@@ -281,12 +303,12 @@ Claude models are regularly updated, with older versions eventually deprecated. 
    - Document any prompt adjustments needed for new models
 
 2. **Migration Planning**
-   - Models typically have 6-12 month deprecation notice
+   - Models typically have 6-12 month deprecation notice (e.g., Claude Haiku 3 retiring April 2026)
    - Budget 2-4 weeks of engineering time per major migration
    - Maintain model version in edge function configuration for easy updates
 
 3. **Version Flexibility**
-   - Edge functions reference model by configuration, not hardcoded
+   - Edge functions reference model by centralized configuration
    - A/B test new models against production baseline
    - Track quality metrics (user satisfaction, task completion) by model version
 

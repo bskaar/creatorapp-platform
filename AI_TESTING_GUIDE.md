@@ -1,18 +1,38 @@
 # AI Features Testing Guide
 
-## ✅ Deployment Status
+## Deployment Status
 
 All AI Edge Functions have been successfully deployed and are ACTIVE:
 
-1. **ai-generate-text** - OpenAI-powered text generation
-2. **search-images** - Pexels image search integration
-3. **generate-color-palette** - AI color scheme generation
+1. **ai-generate-text** - Claude-powered text generation (tier-based model selection)
+2. **ai-coach-chat** - AI Co-Founder chat (tier-based model selection)
+3. **ai-generate-gameplan** - Business gameplan generation
+4. **search-images** - Pexels image search integration
+5. **generate-color-palette** - AI color scheme generation (Haiku 4.5)
+6. **generate-visual-theme** - Theme generation (Haiku 4.5)
 
-## 🔑 API Keys Configuration
+## AI Model Orchestration
+
+CreatorApp uses intelligent model routing based on subscription tier and task complexity:
+
+| Model | API ID | Pricing | Used For |
+|-------|--------|---------|----------|
+| Claude Opus 4.6 | claude-opus-4-6 | $5/$25 per 1M tokens | Enterprise complex tasks |
+| Claude Sonnet 4.6 | claude-sonnet-4-6 | $3/$15 per 1M tokens | Pro tier tasks |
+| Claude Haiku 4.5 | claude-haiku-4-5 | $1/$5 per 1M tokens | Growth/Starter, simple tasks |
+
+**Tier Routing:**
+- Enterprise: Opus for complex, Sonnet for simple
+- Pro: Sonnet for complex, Haiku for simple
+- Growth/Starter: Haiku for all tasks
+- Color palettes/themes: Always Haiku (regardless of tier)
+
+## API Keys Configuration
 
 API keys have been configured in Supabase Secrets:
-- ✅ `OPENAI_API_KEY` - Added
-- ✅ `PEXELS_API_KEY` - Added
+- `ANTHROPIC_API_KEY` - Primary AI provider
+- `OPENAI_API_KEY` - Fallback provider
+- `PEXELS_API_KEY` - Image search
 
 ## 🧪 Testing Checklist
 
@@ -142,17 +162,22 @@ To verify error handling is working:
 - **Attribution:** Photographer name and link included
 
 ### Color Palette Generator
-- **Response time:** 3-7 seconds (uses GPT-4)
+- **Response time:** 2-5 seconds (uses Claude Haiku 4.5)
 - **Colors:** 5 cohesive colors in hex format
 - **Description:** Brief explanation of palette choice
 - **Quality:** Accessible, professional color combinations
 
 ## 🐛 Common Issues & Solutions
 
-### Issue: "OpenAI API key not configured"
+### Issue: "Anthropic API key not configured"
 - **Cause:** Secret not properly set in Supabase
+- **Solution:** Verify secret name is exactly `ANTHROPIC_API_KEY`
+- **Status:** Primary AI provider - should be configured
+
+### Issue: "OpenAI API key not configured"
+- **Cause:** Fallback provider secret not set
 - **Solution:** Verify secret name is exactly `OPENAI_API_KEY`
-- **Status:** ✅ Should be resolved (keys added)
+- **Note:** OpenAI is used as fallback if Anthropic fails
 
 ### Issue: "Pexels API key not configured"
 - **Cause:** Secret not properly set

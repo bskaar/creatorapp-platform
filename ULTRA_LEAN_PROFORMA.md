@@ -210,13 +210,22 @@ AI is a core operational cost that scales with user activity:
 | $100M | 108,000 | $1,800,000 | 1.8% | $1.39 |
 
 **Cost Optimization Strategies:**
-1. **Task-based model routing**: Use Haiku ($0.80/1M input) for 60% of requests (text generation, colors)
-2. **Prompt caching**: 90% reduction on cached system prompts
-3. **Batch API**: 50% discount for non-real-time operations
+1. **Tier-based model orchestration**: Intelligent routing based on subscription tier and task complexity
+   - Enterprise: Claude Opus 4.6 for complex tasks ($5/1M input, $25/1M output)
+   - Pro: Claude Sonnet 4.6 for most tasks ($3/1M input, $15/1M output)
+   - Growth/Starter: Claude Haiku 4.5 ($1/1M input, $5/1M output)
+2. **Simple task routing**: Color palettes, themes always use Haiku regardless of tier
+3. **Prompt caching**: 90% reduction on cached system prompts
+4. **Batch API**: 50% discount for non-real-time operations
+
+**Data Privacy:**
+- PII anonymization before AI processing
+- No model training on user data (API access only)
+- Minimal retention by AI providers
 
 **Model Evolution Planning:**
 - Budget 2-4 weeks engineering time per major model migration
-- Models deprecated with 6-12 month notice
+- Models deprecated with 6-12 month notice (Claude Haiku 3 retiring April 2026)
 - Newer models typically offer better price/performance
 - Historical trend: 50-70% cost reduction per capability level annually
 
@@ -479,5 +488,6 @@ AI is a core operational cost that scales with user activity:
 
 ---
 
-*Model updated: February 2026*
+*Model updated: March 2026*
+*AI Models: Claude Opus 4.6, Sonnet 4.6, Haiku 4.5 with tier-based orchestration*
 *Based on AI-native operations and modern infrastructure*

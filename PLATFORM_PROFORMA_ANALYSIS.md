@@ -73,13 +73,13 @@ Assuming 40% of users pay yearly (15% discount effective):
 
 **Current Model Pricing (March 2026):**
 
-| Model | Input (per 1M) | Output (per 1M) | Use Case |
-|-------|----------------|-----------------|----------|
-| Claude 3.5 Haiku | $0.80 | $4.00 | Text generation, color palettes |
-| Claude 3.5/3.7 Sonnet | $3.00 | $15.00 | AI Coach, gameplans |
-| Claude Opus 4 | $15.00 | $75.00 | Reserved for complex analysis |
+| Model | API ID | Input (per 1M) | Output (per 1M) | Use Case |
+|-------|--------|----------------|-----------------|----------|
+| Claude Haiku 4.5 | claude-haiku-4-5 | $1.00 | $5.00 | Text generation, color palettes, simple tasks |
+| Claude Sonnet 4.6 | claude-sonnet-4-6 | $3.00 | $15.00 | AI Coach (Pro), gameplans, content generation |
+| Claude Opus 4.6 | claude-opus-4-6 | $5.00 | $25.00 | Enterprise-tier complex reasoning |
 
-*Note: Pricing has decreased ~67% from earlier Claude 3 series. Expect continued price/performance improvements.*
+*Note: Older models (Claude Haiku 3) are deprecated and retiring April 2026. All production workloads use 4.5/4.6 series.*
 
 **Usage per User (estimated monthly averages):**
 
@@ -89,32 +89,39 @@ Assuming 40% of users pay yearly (15% discount effective):
 | Growth | 25 requests | 15 requests | 50 messages | ~400K tokens |
 | Pro | 50 requests | 30 requests | 100 messages | ~800K tokens |
 
-**Task-Based Model Routing (Cost Optimization):**
+**Intelligent Model Orchestration by Tier:**
 
-| Task Type | Model | % of Requests | Avg Cost/Request |
-|-----------|-------|---------------|------------------|
-| Text generation | Haiku | 45% | $0.002 |
-| Color/theme generation | Haiku | 15% | $0.003 |
-| AI Coach chat | Sonnet | 30% | $0.03 |
-| Gameplan generation | Sonnet | 10% | $0.05 |
+| Task Type | Enterprise | Pro | Growth/Starter | Avg Cost/Request |
+|-----------|------------|-----|----------------|------------------|
+| Text generation | Sonnet 4.6 | Haiku 4.5 | Haiku 4.5 | $0.002-0.015 |
+| Color/theme generation | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 | $0.003 |
+| AI Coach (complex) | Opus 4.6 | Sonnet 4.6 | Haiku 4.5 | $0.006-0.04 |
+| AI Coach (simple) | Sonnet 4.6 | Haiku 4.5 | Haiku 4.5 | $0.003-0.015 |
+| Gameplan generation | Opus 4.6 | Sonnet 4.6 | Haiku 4.5 | $0.01-0.05 |
 
-**Monthly Token Usage at Scale (with model routing):**
+**Monthly Token Usage at Scale (with tier-based model routing):**
 
-| Tier | Users | Haiku Tokens | Sonnet Tokens | Blended Cost |
-|------|-------|--------------|---------------|--------------|
-| Starter | 4,500 | 90M | 60M | $2,340 |
-| Growth | 4,000 | 160M | 240M | $5,840 |
-| Pro | 1,500 | 120M | 280M | $5,400 |
-| **Total** | **10,000** | **370M** | **580M** | **$13,580** |
+| Tier | Users | Primary Model | Avg Tokens | Blended Cost |
+|------|-------|---------------|------------|--------------|
+| Starter | 4,500 | Haiku 4.5 | 150K | $2,700 |
+| Growth | 4,000 | Haiku 4.5 | 400K | $6,400 |
+| Pro | 1,500 | Sonnet 4.6 | 800K | $5,400 |
+| **Total** | **10,000** | | | **$14,500** |
 
-**Annual AI Cost (Optimized with Model Routing): $162,960**
+**Annual AI Cost (Optimized with Tier-Based Orchestration): $174,000**
 
 **Cost Reduction Strategies:**
-1. **Prompt Caching**: 90% reduction on cached system prompts - saves ~$40,000/year
-2. **Model Routing**: Using Haiku for 60% of requests - saves ~$130,000/year vs all-Sonnet
-3. **Batch API**: 50% discount for async operations (bulk content generation)
+1. **Intelligent Model Routing**: Tier-based selection optimizes quality vs cost
+2. **Prompt Caching**: 90% reduction on cached system prompts - saves ~$45,000/year
+3. **Simple Task Routing**: Color palettes, themes always use Haiku regardless of tier
+4. **Batch API**: 50% discount for async operations (bulk content generation)
 
-**Final Optimized AI Cost Estimate: $120,000 - $165,000/year**
+**Final Optimized AI Cost Estimate: $130,000 - $175,000/year**
+
+**Data Privacy Features:**
+- PII anonymization before AI processing
+- No model training on user data (API access only)
+- Minimal data retention by AI providers
 
 ### 2.2.1 AI Cost Scaling Projections
 
@@ -131,10 +138,16 @@ Assuming 40% of users pay yearly (15% discount effective):
 
 ### 2.2.2 Model Evolution Planning
 
-**Deprecation Timeline Assumptions:**
-- Claude 3.5 series: Expected support through Q4 2026
-- New model releases: Quarterly cadence
-- Migration window: Typically 6-12 months notice
+**Current Model Status (March 2026):**
+- Claude Haiku 4.5: Current production model for simple tasks
+- Claude Sonnet 4.6: Current production model for moderate complexity
+- Claude Opus 4.6: Current production model for enterprise/complex tasks
+- Claude Haiku 3: DEPRECATED - retiring April 19, 2026
+
+**Migration and Deprecation:**
+- Models typically have 6-12 month deprecation notice
+- All production workloads migrated to 4.5/4.6 series
+- Centralized configuration allows rapid model updates
 
 **Budget for Model Transitions:**
 - Engineering time: 2-4 weeks per major migration
@@ -548,5 +561,6 @@ Industry benchmark for B2B SaaS: 23 months (KeyBanc 2024 survey)
 ---
 
 *Analysis prepared: March 2026*
+*AI Models: Claude Opus 4.6, Sonnet 4.6, Haiku 4.5 (via intelligent tier-based orchestration)*
 *CAC benchmarks from: Phoenix Strategy Group, Genesys Growth, First Page Sage*
 *Assumptions should be validated with actual campaign data as the platform scales.*
