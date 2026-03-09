@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Sparkles, Send, ArrowRight, ChevronRight, Rocket, DollarSign, Mail, Target, FileText, LayoutGrid as Layout, Palette, MousePointer, Check, Wand2, Eye, Settings, Plus } from 'lucide-react';
+import {
+  X, Sparkles, Send, ArrowRight, ChevronRight, Rocket, DollarSign, Mail, Target,
+  FileText, LayoutGrid, Check, Wand2, Eye, Settings, Plus, ArrowLeft, Save,
+  Monitor, Tablet, Smartphone, Layers, GripVertical, Clock, Play, Pause,
+  ChevronUp, ChevronDown, Trash2, GitBranch, List, MousePointer2, Undo, Redo,
+  ZoomIn, ZoomOut, Type, Image as ImageIcon, Quote
+} from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -11,10 +17,6 @@ interface ActionPreview {
   type: 'page' | 'email' | 'funnel' | 'product';
   title: string;
   description: string;
-  mockupSteps: {
-    label: string;
-    preview: 'landing' | 'email-editor' | 'funnel-builder' | 'product-setup';
-  }[];
 }
 
 interface DemoScenario {
@@ -90,12 +92,7 @@ Shall I help you write the headline and bullet points?`
     actionPreview: {
       type: 'page',
       title: 'Lead Magnet Landing Page',
-      description: 'AI will generate your page with headline, benefits, and opt-in form',
-      mockupSteps: [
-        { label: 'Generate Page Content', preview: 'landing' },
-        { label: 'Customize Design', preview: 'landing' },
-        { label: 'Connect Email Automation', preview: 'email-editor' }
-      ]
+      description: 'AI will generate your page with headline, benefits, and opt-in form'
     }
   },
   {
@@ -164,12 +161,7 @@ You've got this! Want me to help write your coaching offer page?`
     actionPreview: {
       type: 'product',
       title: 'Coaching Product Setup',
-      description: 'AI will create your pricing tiers, checkout, and intake forms',
-      mockupSteps: [
-        { label: 'Create Product Tiers', preview: 'product-setup' },
-        { label: 'Build Sales Page', preview: 'landing' },
-        { label: 'Set Up Checkout', preview: 'product-setup' }
-      ]
+      description: 'AI will create your pricing tiers, checkout, and intake forms'
     }
   },
   {
@@ -255,12 +247,7 @@ Want me to draft Email 2 next?`
     actionPreview: {
       type: 'email',
       title: '5-Email Welcome Sequence',
-      description: 'AI will write all 5 emails and set up timing automatically',
-      mockupSteps: [
-        { label: 'Generate All 5 Emails', preview: 'email-editor' },
-        { label: 'Set Timing & Triggers', preview: 'email-editor' },
-        { label: 'Connect to Opt-in Form', preview: 'funnel-builder' }
-      ]
+      description: 'AI will write all 5 emails and set up timing automatically'
     }
   },
   {
@@ -340,12 +327,7 @@ Ready to build this? Let's start with your lead magnet page!`
     actionPreview: {
       type: 'funnel',
       title: 'Complete Sales Funnel',
-      description: 'AI will create all pages, products, and email sequence together',
-      mockupSteps: [
-        { label: 'Generate Funnel Pages', preview: 'funnel-builder' },
-        { label: 'Create Tripwire Product', preview: 'product-setup' },
-        { label: 'Build Email Sequence', preview: 'email-editor' }
-      ]
+      description: 'AI will create all pages, products, and email sequence together'
     }
   }
 ];
@@ -355,201 +337,624 @@ interface AICoFounderDemoProps {
   onClose: () => void;
 }
 
-function LandingPageMockup() {
-  return (
-    <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
-      <div className="bg-slate-100 px-3 py-2 flex items-center gap-2 border-b">
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-400" />
-          <div className="w-3 h-3 rounded-full bg-yellow-400" />
-          <div className="w-3 h-3 rounded-full bg-green-400" />
-        </div>
-        <div className="flex-1 bg-white rounded px-3 py-1 text-xs text-slate-400 text-center">
-          yoursite.com/free-guide
-        </div>
-      </div>
-      <div className="p-4 space-y-3">
-        <div className="flex items-center gap-2 mb-3">
-          <Wand2 className="w-4 h-4 text-cyan-500 animate-pulse" />
-          <span className="text-xs text-cyan-600 font-medium">AI generating content...</span>
-        </div>
-        <div className="h-6 bg-gradient-to-r from-slate-800 to-slate-700 rounded w-4/5 animate-pulse" />
-        <div className="h-4 bg-slate-200 rounded w-full" />
-        <div className="h-4 bg-slate-200 rounded w-3/4" />
-        <div className="mt-4 space-y-2">
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-green-500" />
-            <div className="h-3 bg-slate-200 rounded w-2/3" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-green-500" />
-            <div className="h-3 bg-slate-200 rounded w-3/4" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-green-500" />
-            <div className="h-3 bg-slate-200 rounded w-1/2" />
-          </div>
-        </div>
-        <div className="mt-4 flex gap-2">
-          <div className="flex-1 h-10 bg-slate-100 rounded border border-slate-200" />
-          <div className="h-10 px-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded flex items-center justify-center">
-            <span className="text-white text-xs font-medium">Get Free Guide</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
+  const [generatedContent, setGeneratedContent] = useState({
+    headline: '',
+    subheadline: '',
+    benefits: [] as string[]
+  });
 
-function EmailEditorMockup() {
+  const fullContent = {
+    headline: 'Master Natural Light Photography in 7 Days',
+    subheadline: 'The free guide that helps beginners capture stunning photos without expensive equipment',
+    benefits: [
+      'Learn the golden hour secrets pros use',
+      'Avoid the #1 lighting mistake beginners make',
+      'Get my exact camera settings for any situation'
+    ]
+  };
+
+  useEffect(() => {
+    if (isGenerating) {
+      let headlineIndex = 0;
+      let subheadlineIndex = 0;
+      let benefitIndex = 0;
+
+      const typeHeadline = setInterval(() => {
+        if (headlineIndex <= fullContent.headline.length) {
+          setGeneratedContent(prev => ({
+            ...prev,
+            headline: fullContent.headline.slice(0, headlineIndex)
+          }));
+          headlineIndex++;
+        } else {
+          clearInterval(typeHeadline);
+
+          const typeSubheadline = setInterval(() => {
+            if (subheadlineIndex <= fullContent.subheadline.length) {
+              setGeneratedContent(prev => ({
+                ...prev,
+                subheadline: fullContent.subheadline.slice(0, subheadlineIndex)
+              }));
+              subheadlineIndex++;
+            } else {
+              clearInterval(typeSubheadline);
+
+              const typeBenefits = setInterval(() => {
+                if (benefitIndex < fullContent.benefits.length) {
+                  setGeneratedContent(prev => ({
+                    ...prev,
+                    benefits: [...fullContent.benefits.slice(0, benefitIndex + 1)]
+                  }));
+                  benefitIndex++;
+                } else {
+                  clearInterval(typeBenefits);
+                }
+              }, 800);
+            }
+          }, 25);
+        }
+      }, 30);
+
+      return () => clearInterval(typeHeadline);
+    }
+  }, [isGenerating]);
+
   return (
-    <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
-      <div className="bg-slate-800 px-3 py-2 flex items-center justify-between">
+    <div className="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-2xl">
+      <div className="h-10 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-3">
         <div className="flex items-center gap-2">
-          <Mail className="w-4 h-4 text-cyan-400" />
-          <span className="text-white text-xs font-medium">Email Sequence Builder</span>
+          <button className="p-1.5 hover:bg-slate-700 rounded text-slate-400">
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div className="h-5 w-px bg-slate-700" />
+          <div>
+            <span className="text-xs text-white font-medium">Lead Magnet Page</span>
+            <span className="text-[10px] text-slate-500 ml-2">/free-guide</span>
+          </div>
         </div>
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <div
-              key={n}
-              className={`w-6 h-6 rounded text-xs flex items-center justify-center font-medium ${
-                n === 1 ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-slate-400'
-              }`}
-            >
-              {n}
+        <div className="flex items-center gap-1">
+          <div className="flex items-center bg-slate-900 rounded p-0.5">
+            <button className="p-1 rounded bg-slate-700"><MousePointer2 className="h-3 w-3 text-slate-300" /></button>
+          </div>
+          <div className="h-4 w-px bg-slate-700 mx-1" />
+          <button className="p-1 text-slate-500"><Undo className="h-3 w-3" /></button>
+          <button className="p-1 text-slate-500"><Redo className="h-3 w-3" /></button>
+          <div className="h-4 w-px bg-slate-700 mx-1" />
+          <div className="flex items-center bg-slate-900 rounded p-0.5">
+            <button className="p-1 rounded bg-slate-700"><Monitor className="h-3 w-3 text-slate-300" /></button>
+            <button className="p-1 rounded text-slate-500"><Tablet className="h-3 w-3" /></button>
+            <button className="p-1 rounded text-slate-500"><Smartphone className="h-3 w-3" /></button>
+          </div>
+          <div className="h-4 w-px bg-slate-700 mx-1" />
+          <button className="px-2 py-1 text-[10px] bg-slate-700 text-white rounded">Save</button>
+          <button className="px-2 py-1 text-[10px] bg-green-600 text-white rounded">Publish</button>
+        </div>
+      </div>
+
+      <div className="flex h-64">
+        <div className="w-40 bg-slate-800 border-r border-slate-700 p-2">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+              <Layers className="h-3 w-3" /> Layers
+            </span>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-1.5 p-1.5 rounded bg-blue-600 text-white text-[10px]">
+              <GripVertical className="h-3 w-3 opacity-50" />
+              <LayoutGrid className="h-3 w-3" />
+              <span>Hero Section</span>
             </div>
-          ))}
-        </div>
-      </div>
-      <div className="p-4 space-y-3">
-        <div className="flex items-center gap-2 mb-3">
-          <Wand2 className="w-4 h-4 text-cyan-500 animate-pulse" />
-          <span className="text-xs text-cyan-600 font-medium">AI writing email 1 of 5...</span>
-        </div>
-        <div className="border border-slate-200 rounded p-3 space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 w-16">Subject:</span>
-            <div className="h-4 bg-slate-100 rounded flex-1" />
+            <div className="flex items-center gap-1.5 p-1.5 rounded hover:bg-slate-700 text-slate-400 text-[10px]">
+              <GripVertical className="h-3 w-3 opacity-50" />
+              <Type className="h-3 w-3" />
+              <span>Benefits</span>
+            </div>
+            <div className="flex items-center gap-1.5 p-1.5 rounded hover:bg-slate-700 text-slate-400 text-[10px]">
+              <GripVertical className="h-3 w-3 opacity-50" />
+              <FileText className="h-3 w-3" />
+              <span>Opt-in Form</span>
+            </div>
+            <div className="flex items-center gap-1.5 p-1.5 rounded hover:bg-slate-700 text-slate-400 text-[10px]">
+              <GripVertical className="h-3 w-3 opacity-50" />
+              <Quote className="h-3 w-3" />
+              <span>Testimonials</span>
+            </div>
           </div>
-          <div className="border-t border-slate-100 pt-2 space-y-1.5">
-            <div className="h-3 bg-slate-100 rounded w-full" />
-            <div className="h-3 bg-slate-100 rounded w-5/6" />
-            <div className="h-3 bg-slate-100 rounded w-4/5" />
-            <div className="h-3 bg-slate-100 rounded w-3/4" />
+          <button className="w-full mt-2 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-[10px] text-white flex items-center justify-center gap-1">
+            <Plus className="h-3 w-3" /> Add Block
+          </button>
+        </div>
+
+        <div className="flex-1 bg-slate-900 p-4 overflow-hidden">
+          <div className="bg-white rounded shadow-lg mx-auto max-w-sm h-full overflow-hidden">
+            <div className="h-full relative">
+              {isGenerating && (
+                <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-cyan-500 text-white px-2 py-1 rounded-full text-[10px] font-medium z-10">
+                  <Wand2 className="h-3 w-3 animate-pulse" />
+                  AI generating...
+                </div>
+              )}
+              <div className="p-4 bg-gradient-to-br from-slate-800 to-slate-900 text-white h-28 flex flex-col justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=400')] opacity-30 bg-cover bg-center" />
+                <div className="relative z-10">
+                  <h2 className="text-sm font-bold leading-tight min-h-[1.25rem]">
+                    {generatedContent.headline || <span className="opacity-30">Your headline here...</span>}
+                    {isGenerating && generatedContent.headline && generatedContent.headline.length < fullContent.headline.length && (
+                      <span className="inline-block w-0.5 h-4 bg-cyan-400 ml-0.5 animate-pulse" />
+                    )}
+                  </h2>
+                  <p className="text-[10px] text-slate-300 mt-1 min-h-[1rem]">
+                    {generatedContent.subheadline || <span className="opacity-30">Supporting text...</span>}
+                  </p>
+                </div>
+              </div>
+              <div className="p-3 space-y-2">
+                <p className="text-[9px] font-medium text-slate-700 uppercase tracking-wide">What you'll learn:</p>
+                {(generatedContent.benefits.length > 0 ? generatedContent.benefits : ['', '', '']).map((benefit, i) => (
+                  <div key={i} className="flex items-start gap-1.5">
+                    <Check className={`h-3 w-3 mt-0.5 flex-shrink-0 ${benefit ? 'text-green-500' : 'text-slate-200'}`} />
+                    <span className={`text-[10px] ${benefit ? 'text-slate-700' : 'text-slate-300'}`}>
+                      {benefit || 'Benefit point...'}
+                    </span>
+                  </div>
+                ))}
+                <div className="pt-2 flex gap-1.5">
+                  <input
+                    type="text"
+                    placeholder="Enter your email"
+                    className="flex-1 px-2 py-1.5 text-[10px] border border-slate-200 rounded bg-slate-50"
+                    readOnly
+                  />
+                  <button className="px-3 py-1.5 bg-cyan-500 text-white text-[10px] font-medium rounded whitespace-nowrap">
+                    Get Free Guide
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-slate-500">Send: Immediately after signup</span>
-          <span className="text-green-500 flex items-center gap-1">
-            <Check className="w-3 h-3" /> Auto-connected
-          </span>
+
+        <div className="w-48 bg-slate-800 border-l border-slate-700 p-2">
+          <span className="text-[10px] text-slate-400 font-medium">Properties</span>
+          <div className="mt-2 space-y-2">
+            <div>
+              <label className="text-[9px] text-slate-500 uppercase">Block Name</label>
+              <input
+                type="text"
+                value="Hero Section"
+                className="w-full mt-0.5 px-2 py-1 bg-slate-900 border border-slate-700 rounded text-[10px] text-white"
+                readOnly
+              />
+            </div>
+            <button className="w-full py-1.5 bg-blue-600 rounded text-[10px] text-white flex items-center justify-center gap-1">
+              <Settings className="h-3 w-3" /> Edit Content
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function FunnelBuilderMockup() {
+function EmailSequenceMockup({ isGenerating }: { isGenerating: boolean }) {
+  const [currentEmail, setCurrentEmail] = useState(0);
+  const [typedSubject, setTypedSubject] = useState('');
+  const [typedContent, setTypedContent] = useState('');
+
+  const emails = [
+    {
+      subject: 'Your templates are inside (+ a quick hello)',
+      content: `Hey [First Name]!
+
+Your Social Media Templates are ready and waiting for you:
+
+[DOWNLOAD BUTTON]
+
+Quick story: I started making Canva templates because I watched small business owners spend HOURS on graphics that should take minutes.
+
+Over the next week, I'll share:
+- My best tips for customizing templates
+- The branding mistakes I see small businesses make
+- How to create scroll-stopping content in under 10 minutes
+
+Talk soon,
+[Your Name]`,
+      delay: 'Immediately'
+    },
+    { subject: 'The #1 branding mistake (and how to fix it)', content: '', delay: 'Day 2' },
+    { subject: 'How Sarah 3x her engagement in 2 weeks', content: '', delay: 'Day 4' },
+    { subject: "I almost didn't share this...", content: '', delay: 'Day 6' },
+    { subject: 'Last chance: 20% off ends tonight', content: '', delay: 'Day 8' },
+  ];
+
+  useEffect(() => {
+    if (isGenerating) {
+      const fullSubject = emails[0].subject;
+      const fullContent = emails[0].content;
+      let subjectIndex = 0;
+      let contentIndex = 0;
+
+      const typeSubject = setInterval(() => {
+        if (subjectIndex <= fullSubject.length) {
+          setTypedSubject(fullSubject.slice(0, subjectIndex));
+          subjectIndex++;
+        } else {
+          clearInterval(typeSubject);
+
+          const typeContent = setInterval(() => {
+            if (contentIndex <= fullContent.length) {
+              setTypedContent(fullContent.slice(0, contentIndex));
+              contentIndex++;
+            } else {
+              clearInterval(typeContent);
+              setTimeout(() => setCurrentEmail(1), 1000);
+            }
+          }, 15);
+        }
+      }, 40);
+
+      return () => clearInterval(typeSubject);
+    }
+  }, [isGenerating]);
+
   return (
-    <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
+    <div className="bg-white rounded-lg overflow-hidden border border-slate-200 shadow-xl">
       <div className="bg-slate-800 px-3 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Target className="w-4 h-4 text-cyan-400" />
-          <span className="text-white text-xs font-medium">Funnel Builder</span>
+          <button className="p-1 hover:bg-slate-700 rounded text-slate-400">
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div>
+            <span className="text-xs text-white font-medium">Welcome Sequence</span>
+            <span className="text-[10px] text-slate-400 ml-2">5 emails</span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          <Eye className="w-4 h-4 text-slate-400" />
-          <Settings className="w-4 h-4 text-slate-400" />
+          <button className="flex items-center gap-1 px-2 py-1 bg-green-600/20 text-green-400 rounded text-[10px]">
+            <Play className="h-3 w-3" /> Activate
+          </button>
+          <button className="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">Save</button>
         </div>
       </div>
+
+      <div className="flex h-72">
+        <div className="w-48 bg-slate-50 border-r border-slate-200 p-3">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-medium text-slate-700">Sequence Steps</span>
+            <button className="p-1 bg-blue-600 rounded text-white">
+              <Plus className="h-3 w-3" />
+            </button>
+          </div>
+          <div className="space-y-2">
+            {emails.map((email, index) => (
+              <div
+                key={index}
+                className={`p-2 rounded border transition-all ${
+                  currentEmail === index
+                    ? 'border-blue-500 bg-blue-50'
+                    : index < currentEmail
+                      ? 'border-green-300 bg-green-50'
+                      : 'border-slate-200 bg-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                    currentEmail === index
+                      ? 'bg-blue-600 text-white'
+                      : index < currentEmail
+                        ? 'bg-green-500 text-white'
+                        : 'bg-slate-200 text-slate-500'
+                  }`}>
+                    {index < currentEmail ? <Check className="h-3 w-3" /> : index + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1">
+                      <Mail className="h-3 w-3 text-slate-400" />
+                      <span className="text-[10px] font-medium text-slate-700 truncate">Email {index + 1}</span>
+                    </div>
+                    <span className="text-[9px] text-slate-500">{email.delay}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex-1 p-4">
+          {isGenerating && currentEmail === 0 && (
+            <div className="flex items-center gap-1.5 mb-3 text-cyan-600">
+              <Wand2 className="h-4 w-4 animate-pulse" />
+              <span className="text-xs font-medium">AI writing email {currentEmail + 1} of 5...</span>
+            </div>
+          )}
+
+          <div className="border border-slate-200 rounded-lg overflow-hidden">
+            <div className="bg-slate-50 px-3 py-2 border-b border-slate-200 flex items-center gap-2">
+              <span className="text-[10px] text-slate-500 w-14">Subject:</span>
+              <span className="text-xs text-slate-800 font-medium flex-1">
+                {typedSubject || emails[currentEmail]?.subject || ''}
+                {isGenerating && currentEmail === 0 && typedSubject.length < emails[0].subject.length && (
+                  <span className="inline-block w-0.5 h-3 bg-cyan-500 ml-0.5 animate-pulse" />
+                )}
+              </span>
+            </div>
+            <div className="p-3 h-44 overflow-y-auto">
+              <pre className="text-[11px] text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">
+                {typedContent || ''}
+                {isGenerating && currentEmail === 0 && typedSubject.length >= emails[0].subject.length && typedContent.length < emails[0].content.length && (
+                  <span className="inline-block w-0.5 h-3 bg-cyan-500 ml-0.5 animate-pulse" />
+                )}
+              </pre>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between mt-3 text-[10px] text-slate-500">
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              Send: {emails[currentEmail]?.delay || 'Immediately'}
+            </span>
+            <span className="flex items-center gap-1 text-green-600">
+              <Check className="h-3 w-3" />
+              Auto-connected to opt-in form
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
+  const [pagesCreated, setPagesCreated] = useState(0);
+
+  const pages = [
+    { name: 'Opt-in Page', type: 'landing', status: 'creating' },
+    { name: 'Thank You', type: 'thank_you', status: 'queued' },
+    { name: 'Sales Page', type: 'sales', status: 'queued' },
+    { name: 'Checkout', type: 'checkout', status: 'queued' },
+  ];
+
+  useEffect(() => {
+    if (isGenerating) {
+      const interval = setInterval(() => {
+        setPagesCreated(prev => {
+          if (prev < pages.length) return prev + 1;
+          clearInterval(interval);
+          return prev;
+        });
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [isGenerating]);
+
+  return (
+    <div className="bg-white rounded-lg overflow-hidden border border-slate-200 shadow-xl">
+      <div className="bg-slate-100 px-3 py-2 flex items-center justify-between border-b border-slate-200">
+        <div className="flex items-center gap-2">
+          <button className="p-1 hover:bg-slate-200 rounded text-slate-500">
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div>
+            <span className="text-xs text-slate-800 font-medium">Photography Course Funnel</span>
+            <span className="text-[10px] text-slate-500 ml-2">{pages.length} pages</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 bg-white rounded p-0.5 border border-slate-200">
+          <button className="p-1 rounded bg-blue-50 text-blue-600"><LayoutGrid className="h-3 w-3" /></button>
+          <button className="p-1 rounded text-slate-400"><GitBranch className="h-3 w-3" /></button>
+          <button className="p-1 rounded text-slate-400"><List className="h-3 w-3" /></button>
+        </div>
+      </div>
+
       <div className="p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Wand2 className="w-4 h-4 text-cyan-500 animate-pulse" />
-          <span className="text-xs text-cyan-600 font-medium">AI building your funnel...</span>
-        </div>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex-1 p-2 bg-cyan-50 border-2 border-cyan-300 rounded-lg text-center">
-            <Layout className="w-5 h-5 text-cyan-600 mx-auto mb-1" />
-            <span className="text-xs font-medium text-cyan-700">Opt-in Page</span>
-            <div className="text-[10px] text-cyan-500 mt-0.5">Creating...</div>
+        {isGenerating && (
+          <div className="flex items-center gap-1.5 mb-4 text-cyan-600">
+            <Wand2 className="h-4 w-4 animate-pulse" />
+            <span className="text-xs font-medium">AI building your funnel...</span>
           </div>
-          <ArrowRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
-          <div className="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-center">
-            <FileText className="w-5 h-5 text-slate-400 mx-auto mb-1" />
-            <span className="text-xs font-medium text-slate-600">Thank You</span>
-            <div className="text-[10px] text-slate-400 mt-0.5">Queued</div>
+        )}
+
+        <div className="grid grid-cols-3 gap-6">
+          <div className="col-span-2">
+            <div className="grid grid-cols-2 gap-3">
+              {pages.map((page, index) => (
+                <div
+                  key={index}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    index < pagesCreated
+                      ? 'border-green-400 bg-green-50'
+                      : index === pagesCreated && isGenerating
+                        ? 'border-cyan-400 bg-cyan-50'
+                        : 'border-slate-200 bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-slate-700">{page.name}</span>
+                    {index < pagesCreated ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : index === pagesCreated && isGenerating ? (
+                      <div className="flex gap-0.5">
+                        <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="aspect-video bg-white rounded border border-slate-200 flex items-center justify-center">
+                    {index < pagesCreated ? (
+                      <div className="text-center">
+                        <LayoutGrid className="h-6 w-6 text-green-400 mx-auto mb-1" />
+                        <span className="text-[9px] text-green-600">Created</span>
+                      </div>
+                    ) : index === pagesCreated && isGenerating ? (
+                      <div className="text-center">
+                        <Wand2 className="h-6 w-6 text-cyan-400 mx-auto mb-1 animate-pulse" />
+                        <span className="text-[9px] text-cyan-600">Creating...</span>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <FileText className="h-6 w-6 text-slate-300 mx-auto mb-1" />
+                        <span className="text-[9px] text-slate-400">Queued</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <ArrowRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
-          <div className="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-center">
-            <Mail className="w-5 h-5 text-slate-400 mx-auto mb-1" />
-            <span className="text-xs font-medium text-slate-600">Emails</span>
-            <div className="text-[10px] text-slate-400 mt-0.5">Queued</div>
+
+          <div className="space-y-3">
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-center gap-2 mb-2">
+                <Eye className="h-4 w-4 text-slate-400" />
+                <span className="text-xs font-medium text-slate-700">Total Views</span>
+              </div>
+              <span className="text-xl font-bold text-slate-900">0</span>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-center gap-2 mb-2">
+                <Target className="h-4 w-4 text-slate-400" />
+                <span className="text-xs font-medium text-slate-700">Conversion</span>
+              </div>
+              <span className="text-xl font-bold text-slate-900">0%</span>
+            </div>
+
+            {pagesCreated === pages.length && (
+              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-green-500" />
+                  <span className="text-xs font-medium text-green-700">All pages connected</span>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-        <div className="mt-3 p-2 bg-green-50 rounded border border-green-200 flex items-center gap-2">
-          <Check className="w-4 h-4 text-green-500" />
-          <span className="text-xs text-green-700">All pages will be connected automatically</span>
         </div>
       </div>
     </div>
   );
 }
 
-function ProductSetupMockup() {
+function ProductSetupMockup({ isGenerating }: { isGenerating: boolean }) {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (isGenerating) {
+      const interval = setInterval(() => {
+        setStep(prev => {
+          if (prev < 3) return prev + 1;
+          clearInterval(interval);
+          return prev;
+        });
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [isGenerating]);
+
   return (
-    <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
-      <div className="bg-slate-800 px-3 py-2 flex items-center justify-between">
+    <div className="bg-white rounded-lg overflow-hidden border border-slate-200 shadow-xl">
+      <div className="bg-slate-100 px-3 py-2 flex items-center justify-between border-b border-slate-200">
         <div className="flex items-center gap-2">
-          <DollarSign className="w-4 h-4 text-cyan-400" />
-          <span className="text-white text-xs font-medium">Product Setup</span>
+          <button className="p-1 hover:bg-slate-200 rounded text-slate-500">
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <span className="text-xs text-slate-800 font-medium">Coaching Product Setup</span>
         </div>
-        <span className="text-xs text-slate-400">2 tiers</span>
+        <button className="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">Save</button>
       </div>
-      <div className="p-4 space-y-3">
-        <div className="flex items-center gap-2 mb-3">
-          <Wand2 className="w-4 h-4 text-cyan-500 animate-pulse" />
-          <span className="text-xs text-cyan-600 font-medium">AI configuring pricing...</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-            <div className="text-xs font-medium text-slate-700 mb-1">Starter</div>
-            <div className="text-lg font-bold text-slate-900">$297<span className="text-xs font-normal text-slate-500">/mo</span></div>
-            <div className="mt-2 space-y-1">
-              <div className="h-2 bg-slate-200 rounded w-full" />
-              <div className="h-2 bg-slate-200 rounded w-3/4" />
+
+      <div className="p-4">
+        {isGenerating && (
+          <div className="flex items-center gap-1.5 mb-4 text-cyan-600">
+            <Wand2 className="h-4 w-4 animate-pulse" />
+            <span className="text-xs font-medium">AI configuring your products...</span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className={`p-4 rounded-lg border-2 transition-all ${step >= 1 ? 'border-green-400 bg-green-50' : 'border-slate-200'}`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-700">Starter Package</span>
+              {step >= 1 && <Check className="h-4 w-4 text-green-500" />}
+            </div>
+            <div className="text-2xl font-bold text-slate-900 mb-2">
+              $297<span className="text-sm font-normal text-slate-500">/month</span>
+            </div>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                <Check className="h-3 w-3 text-green-500" /> 4 weekly check-ins
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                <Check className="h-3 w-3 text-green-500" /> Custom workout plan
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                <Check className="h-3 w-3 text-green-500" /> Email support
+              </div>
             </div>
           </div>
-          <div className="p-3 bg-cyan-50 border-2 border-cyan-300 rounded-lg">
-            <div className="text-xs font-medium text-cyan-700 mb-1">Premium</div>
-            <div className="text-lg font-bold text-cyan-900">$497<span className="text-xs font-normal text-cyan-600">/mo</span></div>
-            <div className="mt-2 space-y-1">
-              <div className="h-2 bg-cyan-200 rounded w-full" />
-              <div className="h-2 bg-cyan-200 rounded w-4/5" />
+
+          <div className={`p-4 rounded-lg border-2 transition-all ${step >= 2 ? 'border-cyan-400 bg-cyan-50' : 'border-slate-200'}`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-slate-700">Premium Package</span>
+              {step >= 2 ? <Check className="h-4 w-4 text-green-500" /> : step === 1 && isGenerating ? (
+                <div className="flex gap-0.5">
+                  <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" />
+                  <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              ) : null}
+            </div>
+            <div className="text-2xl font-bold text-slate-900 mb-2">
+              $497<span className="text-sm font-normal text-slate-500">/month</span>
+            </div>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                <Check className="h-3 w-3 text-green-500" /> Everything in Starter
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                <Check className="h-3 w-3 text-green-500" /> 2 longer sessions (60 min)
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                <Check className="h-3 w-3 text-green-500" /> Priority support
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 p-2 bg-green-50 rounded border border-green-200">
-          <Check className="w-4 h-4 text-green-500" />
-          <span className="text-xs text-green-700">Stripe checkout ready</span>
+
+        <div className={`mt-4 p-3 rounded-lg border transition-all ${step >= 3 ? 'border-green-400 bg-green-50' : 'border-slate-200 bg-slate-50'}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <DollarSign className={`h-4 w-4 ${step >= 3 ? 'text-green-500' : 'text-slate-400'}`} />
+              <span className="text-xs font-medium text-slate-700">Stripe Checkout</span>
+            </div>
+            {step >= 3 ? (
+              <span className="text-[10px] text-green-600 flex items-center gap-1">
+                <Check className="h-3 w-3" /> Connected & Ready
+              </span>
+            ) : step === 2 && isGenerating ? (
+              <span className="text-[10px] text-cyan-600">Configuring...</span>
+            ) : (
+              <span className="text-[10px] text-slate-400">Pending</span>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function getMockupComponent(preview: string) {
-  switch (preview) {
-    case 'landing':
-      return <LandingPageMockup />;
-    case 'email-editor':
-      return <EmailEditorMockup />;
-    case 'funnel-builder':
-      return <FunnelBuilderMockup />;
-    case 'product-setup':
-      return <ProductSetupMockup />;
+function getMockupComponent(type: string, isGenerating: boolean) {
+  switch (type) {
+    case 'page':
+      return <PageEditorMockup isGenerating={isGenerating} />;
+    case 'email':
+      return <EmailSequenceMockup isGenerating={isGenerating} />;
+    case 'funnel':
+      return <FunnelBuilderMockup isGenerating={isGenerating} />;
+    case 'product':
+      return <ProductSetupMockup isGenerating={isGenerating} />;
     default:
-      return <LandingPageMockup />;
+      return <PageEditorMockup isGenerating={isGenerating} />;
   }
 }
 
@@ -560,7 +965,7 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
   const [showFollowUp, setShowFollowUp] = useState(false);
   const [hasAskedFollowUp, setHasAskedFollowUp] = useState(false);
   const [showActionPreview, setShowActionPreview] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
+  const [isGenerating, setIsGenerating] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -575,7 +980,7 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
       setShowFollowUp(false);
       setHasAskedFollowUp(false);
       setShowActionPreview(false);
-      setActiveStep(0);
+      setIsGenerating(false);
     }
     return () => {
       document.body.style.overflow = '';
@@ -587,14 +992,11 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
   }, [messages, isTyping]);
 
   useEffect(() => {
-    if (showActionPreview && selectedScenario) {
-      const stepCount = selectedScenario.actionPreview.mockupSteps.length;
-      const interval = setInterval(() => {
-        setActiveStep((prev) => (prev + 1) % stepCount);
-      }, 3000);
-      return () => clearInterval(interval);
+    if (showActionPreview) {
+      const timer = setTimeout(() => setIsGenerating(true), 500);
+      return () => clearTimeout(timer);
     }
-  }, [showActionPreview, selectedScenario]);
+  }, [showActionPreview]);
 
   const simulateTyping = (text: string, callback: () => void) => {
     setIsTyping(true);
@@ -634,7 +1036,7 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
 
   const handleShowBuilder = () => {
     setShowActionPreview(true);
-    setActiveStep(0);
+    setIsGenerating(false);
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -664,7 +1066,7 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-white">AI Co-Founder Demo</h2>
               <p className="text-sm text-slate-400">
-                {showActionPreview ? 'See how AI builds it for you' : 'See how AI helps build your business'}
+                {showActionPreview ? 'Watch AI build it for you' : 'See how AI helps build your business'}
               </p>
             </div>
           </div>
@@ -717,83 +1119,29 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
               </div>
             </div>
           ) : showActionPreview ? (
-            <div className="p-4 sm:p-8">
-              <div className="mb-6">
+            <div className="p-4 sm:p-6">
+              <div className="mb-4">
                 <button
-                  onClick={() => setShowActionPreview(false)}
-                  className="text-sm text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1 mb-4"
+                  onClick={() => {
+                    setShowActionPreview(false);
+                    setIsGenerating(false);
+                  }}
+                  className="text-sm text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1 mb-3"
                 >
                   <ArrowRight className="w-4 h-4 rotate-180" />
                   Back to conversation
                 </button>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Next: AI Builds Your {selectedScenario.actionPreview.title}
+                <h3 className="text-lg font-bold text-white mb-1">
+                  Building Your {selectedScenario.actionPreview.title}
                 </h3>
-                <p className="text-slate-400">{selectedScenario.actionPreview.description}</p>
+                <p className="text-sm text-slate-400">{selectedScenario.actionPreview.description}</p>
               </div>
 
-              <div className="grid lg:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Build Steps</h4>
-                  {selectedScenario.actionPreview.mockupSteps.map((step, index) => (
-                    <div
-                      key={index}
-                      className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 ${
-                        activeStep === index
-                          ? 'bg-cyan-500/10 border-cyan-500/30'
-                          : 'bg-slate-800/50 border-slate-700/50'
-                      }`}
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                          activeStep === index
-                            ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white'
-                            : activeStep > index
-                            ? 'bg-green-500 text-white'
-                            : 'bg-slate-700 text-slate-400'
-                        }`}
-                      >
-                        {activeStep > index ? <Check className="w-4 h-4" /> : index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <span className={activeStep === index ? 'text-white font-medium' : 'text-slate-400'}>
-                          {step.label}
-                        </span>
-                      </div>
-                      {activeStep === index && (
-                        <div className="flex gap-1">
-                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700/50 mt-6">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                        <Check className="w-4 h-4 text-green-400" />
-                      </div>
-                      <div>
-                        <h5 className="text-white font-medium mb-1">Everything Connected</h5>
-                        <p className="text-sm text-slate-400">
-                          Pages, products, emails, and analytics are automatically linked together. No manual setup required.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Live Preview</h4>
-                  <div className="transform scale-95 origin-top">
-                    {getMockupComponent(selectedScenario.actionPreview.mockupSteps[activeStep]?.preview || 'landing')}
-                  </div>
-                </div>
+              <div className="transform origin-top">
+                {getMockupComponent(selectedScenario.actionPreview.type, isGenerating)}
               </div>
 
-              <div className="mt-8 p-6 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl border border-cyan-500/20">
+              <div className="mt-6 p-4 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl border border-cyan-500/20">
                 <div className="text-center">
                   <h4 className="text-white font-semibold mb-2">Ready to build this for YOUR business?</h4>
                   <p className="text-slate-400 text-sm mb-4">
@@ -815,6 +1163,7 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
                         setShowFollowUp(false);
                         setHasAskedFollowUp(false);
                         setShowActionPreview(false);
+                        setIsGenerating(false);
                       }}
                       className="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-medium transition-all"
                     >
