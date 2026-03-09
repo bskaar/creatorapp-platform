@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, Brain, Zap, ArrowRight, MessageSquare, Palette, FileText, Target } from 'lucide-react';
+import { Sparkles, Brain, Zap, ArrowRight, MessageSquare, Palette, FileText, Target, Play } from 'lucide-react';
+import AICoFounderDemo from './AICoFounderDemo';
 
 export default function AINativeDifferentiator() {
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
   const aiFeatures = [
     {
       icon: MessageSquare,
@@ -77,13 +80,22 @@ export default function AINativeDifferentiator() {
               </div>
             </div>
 
-            <Link
-              to="/signup"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300 hover:-translate-y-0.5"
-            >
-              Meet Your AI Co-Founder
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => setIsDemoOpen(true)}
+                className="inline-flex items-center justify-center gap-2 bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-slate-100 transition-all duration-300 hover:-translate-y-0.5 border border-white/20"
+              >
+                <Play className="w-5 h-5" />
+                Try Interactive Demo
+              </button>
+              <Link
+                to="/signup"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300 hover:-translate-y-0.5"
+              >
+                Start Free Trial
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -113,6 +125,8 @@ export default function AINativeDifferentiator() {
           </div>
         </div>
       </div>
+
+      <AICoFounderDemo isOpen={isDemoOpen} onClose={() => setIsDemoOpen(false)} />
     </section>
   );
 }
