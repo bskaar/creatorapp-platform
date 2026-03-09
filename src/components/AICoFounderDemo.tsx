@@ -341,7 +341,9 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
   const [generatedContent, setGeneratedContent] = useState({
     headline: '',
     subheadline: '',
-    benefits: [] as string[]
+    benefits: [] as string[],
+    testimonial: '',
+    cta: ''
   });
 
   const fullContent = {
@@ -351,7 +353,9 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
       'Learn the golden hour secrets pros use',
       'Avoid the #1 lighting mistake beginners make',
       'Get my exact camera settings for any situation'
-    ]
+    ],
+    testimonial: '"This guide transformed my Instagram feed overnight!" - Sarah M.',
+    cta: 'Get Your Free Guide Now'
   };
 
   useEffect(() => {
@@ -389,19 +393,24 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
                   benefitIndex++;
                 } else {
                   clearInterval(typeBenefits);
+                  setGeneratedContent(prev => ({
+                    ...prev,
+                    testimonial: fullContent.testimonial,
+                    cta: fullContent.cta
+                  }));
                 }
-              }, 800);
+              }, 600);
             }
-          }, 25);
+          }, 20);
         }
-      }, 30);
+      }, 25);
 
       return () => clearInterval(typeHeadline);
     }
   }, [isGenerating]);
 
   return (
-    <div className="bg-slate-900 rounded-lg overflow-hidden border border-slate-700 shadow-2xl">
+    <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
       <div className="h-10 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-3">
         <div className="flex items-center gap-2">
           <button className="p-1.5 hover:bg-slate-700 rounded text-slate-400">
@@ -427,13 +436,13 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
             <button className="p-1 rounded text-slate-500"><Smartphone className="h-3 w-3" /></button>
           </div>
           <div className="h-4 w-px bg-slate-700 mx-1" />
-          <button className="px-2 py-1 text-[10px] bg-slate-700 text-white rounded">Save</button>
-          <button className="px-2 py-1 text-[10px] bg-green-600 text-white rounded">Publish</button>
+          <button className="px-2.5 py-1 text-[10px] bg-slate-700 text-white rounded font-medium">Save</button>
+          <button className="px-2.5 py-1 text-[10px] bg-green-600 text-white rounded font-medium">Publish</button>
         </div>
       </div>
 
-      <div className="flex h-64">
-        <div className="w-40 bg-slate-800 border-r border-slate-700 p-2">
+      <div className="flex h-80">
+        <div className="w-44 bg-slate-800 border-r border-slate-700 p-2.5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
               <Layers className="h-3 w-3" /> Layers
@@ -448,7 +457,7 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
             <div className="flex items-center gap-1.5 p-1.5 rounded hover:bg-slate-700 text-slate-400 text-[10px]">
               <GripVertical className="h-3 w-3 opacity-50" />
               <Type className="h-3 w-3" />
-              <span>Benefits</span>
+              <span>Benefits List</span>
             </div>
             <div className="flex items-center gap-1.5 p-1.5 rounded hover:bg-slate-700 text-slate-400 text-[10px]">
               <GripVertical className="h-3 w-3 opacity-50" />
@@ -458,77 +467,148 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
             <div className="flex items-center gap-1.5 p-1.5 rounded hover:bg-slate-700 text-slate-400 text-[10px]">
               <GripVertical className="h-3 w-3 opacity-50" />
               <Quote className="h-3 w-3" />
-              <span>Testimonials</span>
+              <span>Testimonial</span>
+            </div>
+            <div className="flex items-center gap-1.5 p-1.5 rounded hover:bg-slate-700 text-slate-400 text-[10px]">
+              <GripVertical className="h-3 w-3 opacity-50" />
+              <ImageIcon className="h-3 w-3" />
+              <span>Social Proof</span>
             </div>
           </div>
-          <button className="w-full mt-2 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-[10px] text-white flex items-center justify-center gap-1">
+          <button className="w-full mt-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-[10px] text-white flex items-center justify-center gap-1 font-medium">
             <Plus className="h-3 w-3" /> Add Block
           </button>
         </div>
 
-        <div className="flex-1 bg-slate-900 p-4 overflow-hidden">
-          <div className="bg-white rounded shadow-lg mx-auto max-w-sm h-full overflow-hidden">
-            <div className="h-full relative">
+        <div className="flex-1 bg-gradient-to-br from-slate-900 to-slate-800 p-4 overflow-hidden flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-md h-full overflow-y-auto">
+            <div className="relative">
               {isGenerating && (
-                <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-cyan-500 text-white px-2 py-1 rounded-full text-[10px] font-medium z-10">
+                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-3 py-1.5 rounded-full text-[10px] font-semibold z-20 shadow-lg">
                   <Wand2 className="h-3 w-3 animate-pulse" />
-                  AI generating...
+                  AI generating content...
                 </div>
               )}
-              <div className="p-4 bg-gradient-to-br from-slate-800 to-slate-900 text-white h-28 flex flex-col justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=400')] opacity-30 bg-cover bg-center" />
-                <div className="relative z-10">
-                  <h2 className="text-sm font-bold leading-tight min-h-[1.25rem]">
-                    {generatedContent.headline || <span className="opacity-30">Your headline here...</span>}
+
+              <div className="relative h-32 overflow-hidden">
+                <img
+                  src="https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  alt="Photography"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40" />
+                <div className="absolute inset-0 flex flex-col justify-end p-4">
+                  <h2 className="text-base font-bold text-white leading-snug drop-shadow-lg min-h-[1.5rem]">
+                    {generatedContent.headline || <span className="opacity-40">Your headline here...</span>}
                     {isGenerating && generatedContent.headline && generatedContent.headline.length < fullContent.headline.length && (
-                      <span className="inline-block w-0.5 h-4 bg-cyan-400 ml-0.5 animate-pulse" />
+                      <span className="inline-block w-0.5 h-5 bg-cyan-400 ml-0.5 animate-pulse" />
                     )}
                   </h2>
-                  <p className="text-[10px] text-slate-300 mt-1 min-h-[1rem]">
-                    {generatedContent.subheadline || <span className="opacity-30">Supporting text...</span>}
+                  <p className="text-[11px] text-cyan-200 mt-1.5 min-h-[1rem] drop-shadow">
+                    {generatedContent.subheadline || <span className="opacity-40">Supporting text...</span>}
+                    {isGenerating && generatedContent.subheadline && generatedContent.subheadline.length < fullContent.subheadline.length && (
+                      <span className="inline-block w-0.5 h-3 bg-cyan-400 ml-0.5 animate-pulse" />
+                    )}
                   </p>
                 </div>
               </div>
-              <div className="p-3 space-y-2">
-                <p className="text-[9px] font-medium text-slate-700 uppercase tracking-wide">What you'll learn:</p>
-                {(generatedContent.benefits.length > 0 ? generatedContent.benefits : ['', '', '']).map((benefit, i) => (
-                  <div key={i} className="flex items-start gap-1.5">
-                    <Check className={`h-3 w-3 mt-0.5 flex-shrink-0 ${benefit ? 'text-green-500' : 'text-slate-200'}`} />
-                    <span className={`text-[10px] ${benefit ? 'text-slate-700' : 'text-slate-300'}`}>
-                      {benefit || 'Benefit point...'}
-                    </span>
+
+              <div className="p-4 space-y-4">
+                <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                  <p className="text-[10px] font-semibold text-slate-800 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                    <Sparkles className="h-3 w-3 text-amber-500" />
+                    What You'll Learn:
+                  </p>
+                  <div className="space-y-2">
+                    {(generatedContent.benefits.length > 0 ? generatedContent.benefits : ['', '', '']).map((benefit, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${benefit ? 'bg-green-100' : 'bg-slate-200'}`}>
+                          <Check className={`h-2.5 w-2.5 ${benefit ? 'text-green-600' : 'text-slate-400'}`} />
+                        </div>
+                        <span className={`text-[11px] leading-relaxed ${benefit ? 'text-slate-700' : 'text-slate-300'}`}>
+                          {benefit || 'Benefit point loading...'}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-                <div className="pt-2 flex gap-1.5">
+                </div>
+
+                <div className="space-y-2">
                   <input
                     type="text"
-                    placeholder="Enter your email"
-                    className="flex-1 px-2 py-1.5 text-[10px] border border-slate-200 rounded bg-slate-50"
+                    placeholder="Enter your best email..."
+                    className="w-full px-3 py-2.5 text-[11px] border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                     readOnly
                   />
-                  <button className="px-3 py-1.5 bg-cyan-500 text-white text-[10px] font-medium rounded whitespace-nowrap">
-                    Get Free Guide
+                  <button className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-[12px] font-bold rounded-lg shadow-lg transition-all flex items-center justify-center gap-2">
+                    {generatedContent.cta || 'Get Your Free Guide'}
+                    <ArrowRight className="h-4 w-4" />
                   </button>
+                  <p className="text-[9px] text-slate-400 text-center">Join 10,000+ photographers. No spam, ever.</p>
+                </div>
+
+                {generatedContent.testimonial && (
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-3 border border-amber-200">
+                    <div className="flex items-start gap-2">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-[10px] font-bold">SM</span>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-700 italic leading-relaxed">{generatedContent.testimonial}</p>
+                        <div className="flex items-center gap-0.5 mt-1">
+                          {[1,2,3,4,5].map(i => (
+                            <Sparkles key={i} className="h-2.5 w-2.5 text-amber-400" />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-center gap-3 pt-1">
+                  <div className="flex -space-x-2">
+                    {[1,2,3,4].map(i => (
+                      <div key={i} className="w-6 h-6 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 border-2 border-white" />
+                    ))}
+                  </div>
+                  <span className="text-[9px] text-slate-500">1,247 photographers downloaded today</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="w-48 bg-slate-800 border-l border-slate-700 p-2">
+        <div className="w-52 bg-slate-800 border-l border-slate-700 p-3">
           <span className="text-[10px] text-slate-400 font-medium">Properties</span>
-          <div className="mt-2 space-y-2">
+          <div className="mt-3 space-y-3">
             <div>
-              <label className="text-[9px] text-slate-500 uppercase">Block Name</label>
+              <label className="text-[9px] text-slate-500 uppercase font-medium">Block Name</label>
               <input
                 type="text"
                 value="Hero Section"
-                className="w-full mt-0.5 px-2 py-1 bg-slate-900 border border-slate-700 rounded text-[10px] text-white"
+                className="w-full mt-1 px-2 py-1.5 bg-slate-900 border border-slate-700 rounded text-[10px] text-white"
                 readOnly
               />
             </div>
-            <button className="w-full py-1.5 bg-blue-600 rounded text-[10px] text-white flex items-center justify-center gap-1">
+            <div>
+              <label className="text-[9px] text-slate-500 uppercase font-medium">Background</label>
+              <div className="mt-1 flex items-center gap-2">
+                <div className="w-6 h-6 rounded bg-gradient-to-br from-slate-700 to-slate-900 border border-slate-600" />
+                <span className="text-[9px] text-slate-400">Gradient + Image</span>
+              </div>
+            </div>
+            <div>
+              <label className="text-[9px] text-slate-500 uppercase font-medium">CTA Button</label>
+              <div className="mt-1 flex items-center gap-2">
+                <div className="w-6 h-6 rounded bg-gradient-to-r from-cyan-500 to-blue-600 border border-cyan-400" />
+                <span className="text-[9px] text-slate-400">Cyan Gradient</span>
+              </div>
+            </div>
+            <button className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[10px] text-white flex items-center justify-center gap-1.5 font-medium transition">
               <Settings className="h-3 w-3" /> Edit Content
+            </button>
+            <button className="w-full py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-[10px] text-white flex items-center justify-center gap-1.5 font-medium transition">
+              <Wand2 className="h-3 w-3" /> Regenerate with AI
             </button>
           </div>
         </div>
