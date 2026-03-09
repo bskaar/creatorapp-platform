@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  X, Sparkles, Send, ArrowRight, ChevronRight, Rocket, DollarSign, Mail, Target,
-  FileText, Layout, Palette, MousePointer, Check, Wand2, Eye, Settings, Plus
-} from 'lucide-react';
+import { X, Sparkles, Send, ArrowRight, ChevronRight, Rocket, DollarSign, Mail, Target, FileText, LayoutGrid as Layout, Palette, MousePointer, Check, Wand2, Eye, Settings, Plus } from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
