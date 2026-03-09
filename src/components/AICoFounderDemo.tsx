@@ -39,28 +39,28 @@ const demoScenarios: DemoScenario[] = [
     icon: Rocket,
     title: 'Plan My Course Launch',
     subtitle: 'Get a step-by-step launch strategy',
-    userMessage: "I'm launching my first online course about photography. Where do I even start?",
-    assistantResponse: `Great choice launching a photography course! Here's your personalized 4-week launch gameplan:
+    userMessage: "I'm launching my first online course about productivity and time management. Where do I even start?",
+    assistantResponse: `Great choice launching a productivity course! Here's your personalized 4-week launch gameplan:
 
 **Week 1: Foundation**
-- Define your ideal student (hobbyist vs aspiring pro)
-- Outline 5-7 core modules based on transformation
-- Create a free "Quick Start Guide" as your lead magnet
+- Define your ideal student (busy professional vs entrepreneur)
+- Outline 6-8 core modules based on transformation
+- Create a free "Morning Routine Guide" as your lead magnet
 
 **Week 2: Build Anticipation**
 - Set up a simple landing page with waitlist
-- Start sharing behind-the-scenes content
+- Start sharing productivity tips and wins
 - Collect early testimonials from beta students
 
 **Week 3: Pre-Launch**
 - Open early-bird pricing (15-20% off)
-- Launch a 3-email welcome sequence
-- Host a free live workshop to demonstrate expertise
+- Launch a 5-email welcome sequence
+- Host a free live workshop: "Reclaim 10 Hours This Week"
 
 **Week 4: Launch**
 - Open cart with urgency (limited seats or time)
 - Daily emails highlighting different benefits
-- Celebrate wins publicly to build momentum
+- Celebrate student wins publicly to build momentum
 
 Want me to help you create your lead magnet landing page first?`,
     followUp: {
@@ -69,13 +69,13 @@ Want me to help you create your lead magnet landing page first?`,
 
 **Above the Fold:**
 - Headline: "Master [Specific Skill] in [Timeframe]"
-- Example: "Master Natural Light Photography in 7 Days"
+- Example: "The 5-Minute Morning Routine That 10x'd My Output"
 - Subheadline addressing their pain point
 - Email capture form with compelling CTA button
 
 **Social Proof:**
 - 2-3 testimonials or student results
-- Number of photographers you've helped
+- Number of professionals you've helped
 - Any credentials or media features
 
 **What They'll Learn:**
@@ -301,37 +301,37 @@ Want me to draft Email 2 next?`
 
 Want me to map out a specific funnel for your business?`,
     followUp: {
-      userMessage: "That makes so much sense! Can you suggest a funnel for someone who teaches watercolor painting?",
-      assistantResponse: `Love it! Here's your watercolor teaching funnel:
+      userMessage: "That makes so much sense! Can you suggest a funnel for someone who teaches productivity and time management?",
+      assistantResponse: `Perfect niche! Productivity is evergreen. Here's your funnel:
 
-**Lead Magnet: "5 Brushstrokes Every Beginner Gets Wrong (And How to Fix Them)"**
-- Specific, solves immediate problem
-- Shows your expertise without giving everything away
+**Lead Magnet: "The 5-Minute Morning Routine That 10x'd My Output"**
+- Specific, actionable, time-bound promise
+- Everyone wants more productive mornings
 
-**Thank You Page Offer: "Color Mixing Cheat Sheet" - $17**
+**Thank You Page Offer: "Weekly Planning Templates" - $17**
 - Low-risk purchase builds buyer relationship
 - Complements the free guide perfectly
 
 **Email Sequence (7 days):**
-- Day 1: Deliver guide + your story
-- Day 2: Common mistake #1 deep dive
-- Day 3: Share a student transformation
-- Day 4: Your favorite supplies (can be affiliate)
-- Day 5: Quick win tutorial
-- Day 6: Introduce your course/membership
+- Day 1: Deliver guide + your productivity story
+- Day 2: The time-blocking method breakdown
+- Day 3: Client transformation story
+- Day 4: Your favorite productivity tools
+- Day 5: Quick win: the 2-minute rule
+- Day 6: Introduce your course/coaching
 - Day 7: Limited-time enrollment bonus
 
-**Main Offer: "Watercolor Foundations" Course - $197-297**
-- 6-8 module video course
-- Project-based learning
-- Community access
+**Main Offer: "Productivity Accelerator" Course - $197-297**
+- 8-module video course
+- Weekly planning system
+- Accountability community
 
 **Numbers Game:**
 - 1,000 visitors → 350 email signups
-- 350 signups → 10 cheat sheet buyers ($170)
-- 350 signups → 14 course buyers ($2,758)
+- 350 signups → 12 template buyers ($204)
+- 350 signups → 15 course buyers ($2,955)
 
-That's ~$3,000 from 1,000 targeted visitors.
+That's ~$3,100 from 1,000 targeted visitors.
 
 Ready to build this? Let's start with your lead magnet page!`
     },
@@ -358,14 +358,14 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
   });
 
   const fullContent = {
-    headline: 'Master Natural Light Photography in 7 Days',
-    subheadline: 'The free guide that helps beginners capture stunning photos without expensive equipment',
+    headline: 'The 5-Minute Morning Routine That 10x Your Output',
+    subheadline: 'The free guide that helps busy professionals reclaim their time and crush their goals',
     benefits: [
-      'Learn the golden hour secrets pros use',
-      'Avoid the #1 lighting mistake beginners make',
-      'Get my exact camera settings for any situation'
+      'Learn the exact routine CEOs use to start strong',
+      'Avoid the #1 mistake that kills your productivity',
+      'Get my proven time-blocking templates'
     ],
-    testimonial: '"This guide transformed my Instagram feed overnight!" - Sarah M.',
+    testimonial: '"I finally have time for what matters!" - Mark J.',
     cta: 'Get Your Free Guide Now'
   };
 
@@ -503,8 +503,8 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
 
               <div className="relative h-32 overflow-hidden">
                 <img
-                  src="https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=600"
-                  alt="Photography"
+                  src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  alt="Productivity"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40" />
@@ -940,11 +940,11 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
       slug: '/free-guide',
       stats: { views: 2847, conversions: 892, rate: 31.3 },
       preview: {
-        headline: 'Master Natural Light Photography',
-        subheadline: 'Get the free 7-day guide used by 10,000+ photographers',
+        headline: 'The 5-Minute Morning Routine',
+        subheadline: 'The free guide that helped 10,000+ professionals 10x their output',
         cta: 'Download Free Guide',
-        image: 'https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=400',
-        bullets: ['Golden hour secrets', 'Indoor lighting hacks', 'Post-processing tips']
+        image: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400',
+        bullets: ['Time-blocking secrets', 'Beat procrastination', 'Peak focus hours']
       }
     },
     {
@@ -957,7 +957,7 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
         subheadline: 'Your guide is on the way...',
         cta: 'Yes! Add This For $17',
         offer: 'Wait! One-Time Offer',
-        offerTitle: 'Lighting Presets Bundle',
+        offerTitle: 'Weekly Planning Templates',
         offerPrice: '$17',
         originalPrice: '$47'
       }
@@ -965,18 +965,18 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
     {
       name: 'Sales Page',
       type: 'sales',
-      slug: '/masterclass',
+      slug: '/accelerator',
       stats: { views: 1205, conversions: 89, rate: 7.4 },
       preview: {
-        headline: 'Photography Masterclass',
-        subheadline: 'Transform your photos in 30 days or your money back',
+        headline: 'Productivity Accelerator',
+        subheadline: 'Reclaim 10+ hours every week or your money back',
         price: '$197',
         originalPrice: '$497',
         cta: 'Enroll Now - 60% Off',
-        image: 'https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg?auto=compress&cs=tinysrgb&w=400',
-        testimonial: '"This changed everything!" - Sarah M.',
-        modules: 12,
-        hours: 24
+        image: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=400',
+        testimonial: '"I got my evenings back!" - Mark J.',
+        modules: 8,
+        hours: 16
       }
     },
     {
@@ -986,7 +986,7 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
       stats: { views: 89, conversions: 67, rate: 75.3 },
       preview: {
         headline: 'Complete Your Order',
-        product: 'Photography Masterclass',
+        product: 'Productivity Accelerator',
         price: '$197',
         guarantee: '60-Day Money Back Guarantee',
         cta: 'Complete Purchase'
@@ -1219,7 +1219,7 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
-            <h3 className="text-sm text-white font-semibold">Photography Course Funnel</h3>
+            <h3 className="text-sm text-white font-semibold">Productivity Course Funnel</h3>
             <p className="text-[10px] text-slate-400">{pages.length} pages in sequence</p>
           </div>
         </div>
