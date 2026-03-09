@@ -632,6 +632,7 @@ function EmailSequenceMockup({ isGenerating }: { isGenerating: boolean }) {
   const [currentEmail, setCurrentEmail] = useState(0);
   const [typedSubject, setTypedSubject] = useState('');
   const [typedContent, setTypedContent] = useState('');
+  const [generationComplete, setGenerationComplete] = useState(false);
 
   const emails = [
     {
@@ -653,14 +654,108 @@ Talk soon,
 [Your Name]`,
       delay: 'Immediately'
     },
-    { subject: 'The #1 branding mistake (and how to fix it)', content: '', delay: 'Day 2' },
-    { subject: 'How Sarah 3x her engagement in 2 weeks', content: '', delay: 'Day 4' },
-    { subject: "I almost didn't share this...", content: '', delay: 'Day 6' },
-    { subject: 'Last chance: 20% off ends tonight', content: '', delay: 'Day 8' },
+    {
+      subject: 'The #1 branding mistake (and how to fix it)',
+      content: `Hey [First Name],
+
+Can I share something that might sting a little?
+
+The #1 branding mistake I see small businesses make is... inconsistency.
+
+Different fonts on every post. Colors that don't match. Logos that look different everywhere.
+
+It makes your brand look amateur and confuses your audience.
+
+The fix? Create a simple brand kit:
+- 2-3 fonts (one for headlines, one for body)
+- 3-5 colors (your main color + supporting colors)
+- One logo used consistently
+
+The templates you downloaded yesterday? They're already set up to help with this.
+
+Tomorrow, I'll share a case study that blew my mind.
+
+[Your Name]`,
+      delay: 'Day 2'
+    },
+    {
+      subject: 'How Sarah 3x her engagement in 2 weeks',
+      content: `Hey [First Name],
+
+Quick story about Sarah, a small bakery owner...
+
+She was posting beautiful photos of her cakes but getting almost no engagement. Maybe 10-15 likes per post.
+
+Then she started using templates to create consistent, branded content.
+
+The result? Within 2 weeks:
+- Engagement up 3x
+- 47 new followers
+- 8 new orders directly from Instagram
+
+What changed? Not the quality of her cakes. Just how she presented them.
+
+Consistent branding + scroll-stopping design = more attention.
+
+Want to see the exact templates Sarah used? Reply and I'll send you her favorites.
+
+[Your Name]`,
+      delay: 'Day 4'
+    },
+    {
+      subject: "I almost didn't share this...",
+      content: `Hey [First Name],
+
+I debated sending this email...
+
+But I keep getting messages from people who downloaded the templates but haven't used them yet.
+
+I get it. Life gets busy. New projects get pushed to "someday."
+
+So here's a challenge: Pick ONE template. Customize it in the next 15 minutes. Post it today.
+
+That's it. Just one.
+
+Because here's what I've learned: The difference between businesses that grow and those that don't isn't talent or luck.
+
+It's showing up consistently.
+
+Your audience is waiting. Will you show up for them today?
+
+[Your Name]
+
+P.S. Tomorrow I'm sharing something special for those ready to take action...`,
+      delay: 'Day 6'
+    },
+    {
+      subject: 'Last chance: 20% off ends tonight',
+      content: `Hey [First Name],
+
+Quick heads up: The 20% discount on my Premium Template Bundle expires tonight at midnight.
+
+If you've been enjoying the free templates, the Premium Bundle takes it to the next level:
+
+- 50+ additional templates
+- Matching Instagram Story designs
+- Editable Canva files
+- Lifetime access + updates
+
+Use code WELCOME20 at checkout.
+
+[GET THE BUNDLE - 20% OFF]
+
+After tonight, it goes back to full price.
+
+Thanks for being here,
+[Your Name]
+
+P.S. Questions? Just reply to this email. I read every message personally.`,
+      delay: 'Day 8'
+    },
   ];
 
   useEffect(() => {
-    if (isGenerating) {
+    if (isGenerating && !generationComplete) {
       const fullSubject = emails[0].subject;
       const fullContent = emails[0].content;
       let subjectIndex = 0;
@@ -679,7 +774,7 @@ Talk soon,
               contentIndex++;
             } else {
               clearInterval(typeContent);
-              setTimeout(() => setCurrentEmail(1), 1000);
+              setGenerationComplete(true);
             }
           }, 15);
         }
@@ -687,7 +782,13 @@ Talk soon,
 
       return () => clearInterval(typeSubject);
     }
-  }, [isGenerating]);
+  }, [isGenerating, generationComplete]);
+
+  const handleEmailClick = (index: number) => {
+    if (generationComplete || !isGenerating) {
+      setCurrentEmail(index);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg overflow-hidden border border-slate-200 shadow-xl">
@@ -721,23 +822,24 @@ Talk soon,
             {emails.map((email, index) => (
               <div
                 key={index}
-                className={`p-2 rounded border transition-all ${
+                onClick={() => handleEmailClick(index)}
+                className={`p-2 rounded border transition-all cursor-pointer hover:shadow-sm ${
                   currentEmail === index
-                    ? 'border-blue-500 bg-blue-50'
-                    : index < currentEmail
-                      ? 'border-green-300 bg-green-50'
-                      : 'border-slate-200 bg-white'
+                    ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500/50'
+                    : generationComplete
+                      ? 'border-green-300 bg-green-50 hover:border-green-400'
+                      : 'border-slate-200 bg-white hover:border-slate-300'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
                     currentEmail === index
                       ? 'bg-blue-600 text-white'
-                      : index < currentEmail
+                      : generationComplete
                         ? 'bg-green-500 text-white'
                         : 'bg-slate-200 text-slate-500'
                   }`}>
-                    {index < currentEmail ? <Check className="h-3 w-3" /> : index + 1}
+                    {generationComplete && currentEmail !== index ? <Check className="h-3 w-3" /> : index + 1}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1">
@@ -753,10 +855,17 @@ Talk soon,
         </div>
 
         <div className="flex-1 p-4">
-          {isGenerating && currentEmail === 0 && (
+          {isGenerating && !generationComplete && currentEmail === 0 && (
             <div className="flex items-center gap-1.5 mb-3 text-cyan-600">
               <Wand2 className="h-4 w-4 animate-pulse" />
               <span className="text-xs font-medium">AI writing email {currentEmail + 1} of 5...</span>
+            </div>
+          )}
+
+          {generationComplete && (
+            <div className="flex items-center gap-1.5 mb-3 text-green-600">
+              <Check className="h-4 w-4" />
+              <span className="text-xs font-medium">All 5 emails generated - click any email to preview</span>
             </div>
           )}
 
@@ -764,16 +873,16 @@ Talk soon,
             <div className="bg-slate-50 px-3 py-2 border-b border-slate-200 flex items-center gap-2">
               <span className="text-[10px] text-slate-500 w-14">Subject:</span>
               <span className="text-xs text-slate-800 font-medium flex-1">
-                {typedSubject || emails[currentEmail]?.subject || ''}
-                {isGenerating && currentEmail === 0 && typedSubject.length < emails[0].subject.length && (
+                {currentEmail === 0 && !generationComplete ? typedSubject : emails[currentEmail]?.subject || ''}
+                {isGenerating && !generationComplete && currentEmail === 0 && typedSubject.length < emails[0].subject.length && (
                   <span className="inline-block w-0.5 h-3 bg-cyan-500 ml-0.5 animate-pulse" />
                 )}
               </span>
             </div>
             <div className="p-3 h-44 overflow-y-auto">
               <pre className="text-[11px] text-slate-700 whitespace-pre-wrap font-sans leading-relaxed">
-                {typedContent || ''}
-                {isGenerating && currentEmail === 0 && typedSubject.length >= emails[0].subject.length && typedContent.length < emails[0].content.length && (
+                {currentEmail === 0 && !generationComplete ? typedContent : emails[currentEmail]?.content || ''}
+                {isGenerating && !generationComplete && currentEmail === 0 && typedSubject.length >= emails[0].subject.length && typedContent.length < emails[0].content.length && (
                   <span className="inline-block w-0.5 h-3 bg-cyan-500 ml-0.5 animate-pulse" />
                 )}
               </pre>
