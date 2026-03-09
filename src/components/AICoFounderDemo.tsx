@@ -5,7 +5,7 @@ import {
   FileText, LayoutGrid, Check, Wand2, Eye, Settings, Plus, ArrowLeft, Save,
   Monitor, Tablet, Smartphone, Layers, GripVertical, Clock, Play, Pause,
   ChevronUp, ChevronDown, Trash2, GitBranch, List, MousePointer2, Undo, Redo,
-  ZoomIn, ZoomOut, Type, Image as ImageIcon, Quote
+  ZoomIn, ZoomOut, Type, Image as ImageIcon, Quote, Users
 } from 'lucide-react';
 
 interface Message {
