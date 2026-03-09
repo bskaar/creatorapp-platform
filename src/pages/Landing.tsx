@@ -8,6 +8,7 @@ import ProductDemoVideo from '../components/ProductDemoVideo';
 import StructuredData, { organizationSchema, softwareApplicationSchema } from '../components/StructuredData';
 import PremiumHero from '../components/PremiumHero';
 import FeatureShowcase from '../components/FeatureShowcase';
+import AINativeDifferentiator from '../components/AINativeDifferentiator';
 import EnhancedFeaturesSection from '../components/EnhancedFeaturesSection';
 import PremiumTrustSection from '../components/PremiumTrustSection';
 import PublicFooter from '../components/PublicFooter';
@@ -116,6 +117,8 @@ export default function Landing() {
         <PremiumHero onWatchDemo={() => setIsDemoOpen(true)} />
 
         <FeatureShowcase />
+
+        <AINativeDifferentiator />
 
         <EnhancedFeaturesSection />
 
