@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  X, Sparkles, Send, ArrowRight, ChevronRight, Rocket, DollarSign, Mail, Target,
+  X, Sparkles, Send, ArrowRight, ChevronRight, ChevronLeft, Rocket, DollarSign, Mail, Target,
   FileText, LayoutGrid, Check, Wand2, Eye, Settings, Plus, ArrowLeft, Save,
   Monitor, Tablet, Smartphone, Layers, GripVertical, Clock, Play, Pause,
   ChevronUp, ChevronDown, Trash2, GitBranch, List, MousePointer2, Undo, Redo,
@@ -707,26 +707,202 @@ Talk soon,
 
 function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
   const [pagesCreated, setPagesCreated] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [viewMode, setViewMode] = useState<'flow' | 'grid' | 'list'>('flow');
 
   const pages = [
-    { name: 'Opt-in Page', type: 'landing', status: 'creating' },
-    { name: 'Thank You', type: 'thank_you', status: 'queued' },
-    { name: 'Sales Page', type: 'sales', status: 'queued' },
-    { name: 'Checkout', type: 'checkout', status: 'queued' },
+    {
+      name: 'Opt-in Page',
+      type: 'landing',
+      preview: {
+        headline: 'Master Natural Light Photography',
+        subheadline: 'Get the free 7-day guide',
+        cta: 'Download Free Guide',
+        image: 'https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=400'
+      }
+    },
+    {
+      name: 'Thank You',
+      type: 'thank_you',
+      preview: {
+        headline: 'Check Your Inbox!',
+        subheadline: 'Your guide is on the way',
+        cta: 'Get the Pro Version - $17',
+        offer: 'Special One-Time Offer'
+      }
+    },
+    {
+      name: 'Sales Page',
+      type: 'sales',
+      preview: {
+        headline: 'Photography Masterclass',
+        subheadline: 'Transform your photos in 30 days',
+        price: '$197',
+        cta: 'Enroll Now',
+        image: 'https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg?auto=compress&cs=tinysrgb&w=400'
+      }
+    },
+    {
+      name: 'Checkout',
+      type: 'checkout',
+      preview: {
+        headline: 'Complete Your Order',
+        product: 'Photography Masterclass',
+        price: '$197',
+        cta: 'Pay Now'
+      }
+    },
   ];
 
   useEffect(() => {
     if (isGenerating) {
       const interval = setInterval(() => {
         setPagesCreated(prev => {
-          if (prev < pages.length) return prev + 1;
+          if (prev < pages.length) {
+            setCurrentSlide(prev);
+            return prev + 1;
+          }
           clearInterval(interval);
           return prev;
         });
-      }, 1500);
+      }, 2000);
       return () => clearInterval(interval);
     }
   }, [isGenerating]);
+
+  const renderPagePreview = (page: typeof pages[0], index: number, isCreated: boolean, isCreating: boolean) => {
+    if (!isCreated && !isCreating) {
+      return (
+        <div className="h-full flex items-center justify-center bg-slate-100">
+          <div className="text-center">
+            <FileText className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+            <span className="text-[10px] text-slate-400">Queued</span>
+          </div>
+        </div>
+      );
+    }
+
+    if (isCreating) {
+      return (
+        <div className="h-full flex items-center justify-center bg-gradient-to-br from-cyan-50 to-blue-50">
+          <div className="text-center">
+            <Wand2 className="h-8 w-8 text-cyan-500 mx-auto mb-2 animate-pulse" />
+            <span className="text-[10px] text-cyan-600 font-medium">AI Generating...</span>
+          </div>
+        </div>
+      );
+    }
+
+    switch (page.type) {
+      case 'landing':
+        return (
+          <div className="h-full flex flex-col">
+            <div className="h-16 bg-cover bg-center relative" style={{ backgroundImage: `url(${page.preview.image})` }}>
+              <div className="absolute inset-0 bg-slate-900/60" />
+              <div className="absolute inset-0 flex flex-col justify-center px-3">
+                <h3 className="text-[10px] font-bold text-white leading-tight">{page.preview.headline}</h3>
+                <p className="text-[8px] text-slate-200 mt-0.5">{page.preview.subheadline}</p>
+              </div>
+            </div>
+            <div className="flex-1 p-2 bg-white">
+              <div className="space-y-1">
+                <div className="flex items-center gap-1">
+                  <Check className="h-2 w-2 text-green-500" />
+                  <span className="text-[7px] text-slate-600">Golden hour techniques</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Check className="h-2 w-2 text-green-500" />
+                  <span className="text-[7px] text-slate-600">Camera settings guide</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Check className="h-2 w-2 text-green-500" />
+                  <span className="text-[7px] text-slate-600">Pro editing tips</span>
+                </div>
+              </div>
+              <div className="mt-2">
+                <div className="h-4 bg-slate-100 rounded text-[6px] flex items-center px-1.5 text-slate-400">your@email.com</div>
+                <button className="w-full mt-1 h-5 bg-cyan-500 text-white text-[7px] font-medium rounded">{page.preview.cta}</button>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'thank_you':
+        return (
+          <div className="h-full flex flex-col bg-white p-3">
+            <div className="text-center mb-2">
+              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1">
+                <Check className="h-3 w-3 text-green-500" />
+              </div>
+              <h3 className="text-[10px] font-bold text-slate-800">{page.preview.headline}</h3>
+              <p className="text-[8px] text-slate-500">{page.preview.subheadline}</p>
+            </div>
+            <div className="flex-1 border border-dashed border-cyan-300 rounded bg-cyan-50 p-2">
+              <div className="text-[7px] text-cyan-600 font-medium text-center mb-1">{page.preview.offer}</div>
+              <div className="bg-white rounded p-1.5 border border-cyan-200">
+                <p className="text-[7px] text-slate-700 text-center">Color Mixing Cheat Sheet</p>
+                <p className="text-[9px] font-bold text-center text-slate-800">$17</p>
+              </div>
+              <button className="w-full mt-1.5 h-5 bg-cyan-500 text-white text-[7px] font-medium rounded">{page.preview.cta}</button>
+            </div>
+          </div>
+        );
+
+      case 'sales':
+        return (
+          <div className="h-full flex flex-col">
+            <div className="h-14 bg-cover bg-center relative" style={{ backgroundImage: `url(${page.preview.image})` }}>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
+              <div className="absolute bottom-1.5 left-2 right-2">
+                <h3 className="text-[9px] font-bold text-white">{page.preview.headline}</h3>
+              </div>
+            </div>
+            <div className="flex-1 p-2 bg-white">
+              <p className="text-[7px] text-slate-600 mb-1.5">{page.preview.subheadline}</p>
+              <div className="flex items-center gap-1 mb-1">
+                <div className="flex -space-x-1">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="w-3 h-3 rounded-full bg-slate-300 border border-white" />
+                  ))}
+                </div>
+                <span className="text-[6px] text-slate-500">500+ students enrolled</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-800">{page.preview.price}</span>
+                <button className="px-2 h-5 bg-green-500 text-white text-[7px] font-medium rounded">{page.preview.cta}</button>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'checkout':
+        return (
+          <div className="h-full flex flex-col bg-slate-50 p-2">
+            <h3 className="text-[9px] font-bold text-slate-800 mb-2">{page.preview.headline}</h3>
+            <div className="bg-white rounded border border-slate-200 p-1.5 mb-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[8px] text-slate-700">{page.preview.product}</span>
+                <span className="text-[9px] font-bold text-slate-800">{page.preview.price}</span>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <div className="h-4 bg-white border border-slate-200 rounded text-[6px] px-1.5 flex items-center text-slate-400">Card number</div>
+              <div className="flex gap-1">
+                <div className="flex-1 h-4 bg-white border border-slate-200 rounded text-[6px] px-1.5 flex items-center text-slate-400">MM/YY</div>
+                <div className="flex-1 h-4 bg-white border border-slate-200 rounded text-[6px] px-1.5 flex items-center text-slate-400">CVC</div>
+              </div>
+            </div>
+            <button className="w-full mt-2 h-6 bg-green-500 text-white text-[8px] font-medium rounded flex items-center justify-center gap-1">
+              <DollarSign className="h-3 w-3" />
+              {page.preview.cta}
+            </button>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg overflow-hidden border border-slate-200 shadow-xl">
@@ -741,95 +917,165 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
           </div>
         </div>
         <div className="flex items-center gap-1 bg-white rounded p-0.5 border border-slate-200">
-          <button className="p-1 rounded bg-blue-50 text-blue-600"><LayoutGrid className="h-3 w-3" /></button>
-          <button className="p-1 rounded text-slate-400"><GitBranch className="h-3 w-3" /></button>
-          <button className="p-1 rounded text-slate-400"><List className="h-3 w-3" /></button>
+          <button
+            onClick={() => setViewMode('flow')}
+            className={`p-1 rounded ${viewMode === 'flow' ? 'bg-blue-50 text-blue-600' : 'text-slate-400'}`}
+          >
+            <GitBranch className="h-3 w-3" />
+          </button>
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`p-1 rounded ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400'}`}
+          >
+            <LayoutGrid className="h-3 w-3" />
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`p-1 rounded ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400'}`}
+          >
+            <List className="h-3 w-3" />
+          </button>
         </div>
       </div>
 
       <div className="p-4">
-        {isGenerating && (
-          <div className="flex items-center gap-1.5 mb-4 text-cyan-600">
+        {isGenerating && pagesCreated < pages.length && (
+          <div className="flex items-center gap-1.5 mb-3 text-cyan-600">
             <Wand2 className="h-4 w-4 animate-pulse" />
-            <span className="text-xs font-medium">AI building your funnel...</span>
+            <span className="text-xs font-medium">AI building page {pagesCreated + 1} of {pages.length}...</span>
           </div>
         )}
 
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2">
-            <div className="grid grid-cols-2 gap-3">
-              {pages.map((page, index) => (
-                <div
-                  key={index}
-                  className={`p-3 rounded-lg border-2 transition-all ${
-                    index < pagesCreated
-                      ? 'border-green-400 bg-green-50'
-                      : index === pagesCreated && isGenerating
-                        ? 'border-cyan-400 bg-cyan-50'
-                        : 'border-slate-200 bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-slate-700">{page.name}</span>
-                    {index < pagesCreated ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : index === pagesCreated && isGenerating ? (
-                      <div className="flex gap-0.5">
-                        <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        {viewMode === 'flow' && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2">
+              {pages.map((page, index) => {
+                const isCreated = index < pagesCreated;
+                const isCreating = index === pagesCreated && isGenerating && pagesCreated < pages.length;
+                return (
+                  <div key={index} className="flex items-center flex-shrink-0">
+                    <button
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-24 rounded-lg border-2 overflow-hidden transition-all ${
+                        currentSlide === index
+                          ? 'border-blue-500 shadow-lg scale-105'
+                          : isCreated
+                            ? 'border-green-400'
+                            : isCreating
+                              ? 'border-cyan-400'
+                              : 'border-slate-200'
+                      }`}
+                    >
+                      <div className="h-28 overflow-hidden">
+                        {renderPagePreview(page, index, isCreated, isCreating)}
                       </div>
-                    ) : null}
-                  </div>
-                  <div className="aspect-video bg-white rounded border border-slate-200 flex items-center justify-center">
-                    {index < pagesCreated ? (
-                      <div className="text-center">
-                        <LayoutGrid className="h-6 w-6 text-green-400 mx-auto mb-1" />
-                        <span className="text-[9px] text-green-600">Created</span>
+                      <div className={`px-1.5 py-1 text-[9px] font-medium text-center ${
+                        isCreated ? 'bg-green-50 text-green-700' : isCreating ? 'bg-cyan-50 text-cyan-700' : 'bg-slate-50 text-slate-500'
+                      }`}>
+                        {page.name}
                       </div>
-                    ) : index === pagesCreated && isGenerating ? (
-                      <div className="text-center">
-                        <Wand2 className="h-6 w-6 text-cyan-400 mx-auto mb-1 animate-pulse" />
-                        <span className="text-[9px] text-cyan-600">Creating...</span>
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        <FileText className="h-6 w-6 text-slate-300 mx-auto mb-1" />
-                        <span className="text-[9px] text-slate-400">Queued</span>
+                    </button>
+                    {index < pages.length - 1 && (
+                      <div className="flex items-center px-1.5 flex-shrink-0">
+                        <ArrowRight className={`h-4 w-4 ${index < pagesCreated ? 'text-green-400' : 'text-slate-300'}`} />
                       </div>
                     )}
                   </div>
+                );
+              })}
+            </div>
+
+            <div className="border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
+              <div className="flex items-center justify-between px-3 py-2 bg-white border-b border-slate-200">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-slate-700">{pages[currentSlide].name}</span>
+                  {currentSlide < pagesCreated && (
+                    <span className="text-[9px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded">Live</span>
+                  )}
                 </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))}
+                    disabled={currentSlide === 0}
+                    className="p-1 hover:bg-slate-100 rounded disabled:opacity-30"
+                  >
+                    <ChevronLeft className="h-4 w-4 text-slate-500" />
+                  </button>
+                  <span className="text-[10px] text-slate-500 px-1">{currentSlide + 1} / {pages.length}</span>
+                  <button
+                    onClick={() => setCurrentSlide(Math.min(pages.length - 1, currentSlide + 1))}
+                    disabled={currentSlide === pages.length - 1}
+                    className="p-1 hover:bg-slate-100 rounded disabled:opacity-30"
+                  >
+                    <ChevronRight className="h-4 w-4 text-slate-500" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-4 flex justify-center">
+                <div className="w-48 h-64 bg-white rounded-lg shadow-lg overflow-hidden border border-slate-200">
+                  {renderPagePreview(
+                    pages[currentSlide],
+                    currentSlide,
+                    currentSlide < pagesCreated,
+                    currentSlide === pagesCreated && isGenerating && pagesCreated < pages.length
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-1.5">
+              {pages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    currentSlide === index ? 'bg-blue-500 w-4' : index < pagesCreated ? 'bg-green-400' : 'bg-slate-300'
+                  }`}
+                />
               ))}
             </div>
           </div>
+        )}
 
-          <div className="space-y-3">
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-              <div className="flex items-center gap-2 mb-2">
-                <Eye className="h-4 w-4 text-slate-400" />
-                <span className="text-xs font-medium text-slate-700">Total Views</span>
-              </div>
-              <span className="text-xl font-bold text-slate-900">0</span>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-              <div className="flex items-center gap-2 mb-2">
-                <Target className="h-4 w-4 text-slate-400" />
-                <span className="text-xs font-medium text-slate-700">Conversion</span>
-              </div>
-              <span className="text-xl font-bold text-slate-900">0%</span>
-            </div>
-
-            {pagesCreated === pages.length && (
-              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-green-500" />
-                  <span className="text-xs font-medium text-green-700">All pages connected</span>
+        {viewMode === 'grid' && (
+          <div className="grid grid-cols-2 gap-3">
+            {pages.map((page, index) => {
+              const isCreated = index < pagesCreated;
+              const isCreating = index === pagesCreated && isGenerating && pagesCreated < pages.length;
+              return (
+                <div
+                  key={index}
+                  className={`rounded-lg border-2 overflow-hidden transition-all ${
+                    isCreated ? 'border-green-400' : isCreating ? 'border-cyan-400' : 'border-slate-200'
+                  }`}
+                >
+                  <div className="h-32 overflow-hidden">
+                    {renderPagePreview(page, index, isCreated, isCreating)}
+                  </div>
+                  <div className={`px-2 py-1.5 flex items-center justify-between ${
+                    isCreated ? 'bg-green-50' : isCreating ? 'bg-cyan-50' : 'bg-slate-50'
+                  }`}>
+                    <span className="text-[10px] font-medium text-slate-700">{page.name}</span>
+                    {isCreated && <Check className="h-3 w-3 text-green-500" />}
+                    {isCreating && <Wand2 className="h-3 w-3 text-cyan-500 animate-pulse" />}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })}
           </div>
-        </div>
+        )}
+
+        {pagesCreated === pages.length && (
+          <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-green-500" />
+              <span className="text-xs font-medium text-green-700">Funnel complete! All pages connected and ready to publish.</span>
+            </div>
+            <button className="px-3 py-1.5 bg-green-600 text-white text-[10px] font-medium rounded hover:bg-green-700 transition">
+              Publish Funnel
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
