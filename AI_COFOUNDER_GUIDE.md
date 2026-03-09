@@ -20,10 +20,10 @@ The AI Co-Founder is your 24/7 marketing coach inspired by ClickFunnels' "Ask To
 ### Key Differentiator Messages
 
 **For Marketing:**
-> "Unlike platforms that added AI as an afterthought, CreatorApp was designed with AI collaboration at its core."
+> "CreatorApp was designed from the ground up with AI collaboration at its core."
 
 **For Sales:**
-> "Your AI Co-Founder knows your business, your goals, your audience—it's not a chatbot, it's a strategic partner."
+> "Your AI Co-Founder knows your business, your goals, your audience—it's a strategic partner that grows with you."
 
 **For Product:**
 > "From your initial business gameplan to page content, email sequences, and strategic coaching—AI works alongside you as a true co-founder, not just a tool."

@@ -49,7 +49,7 @@ export default function AINativeDifferentiator() {
             </h2>
 
             <p className="text-lg text-gray-300 leading-relaxed">
-              Unlike platforms that bolted AI onto existing features, CreatorApp was designed from the ground up with AI collaboration at its core. From your initial business gameplan to page content, email sequences, and strategic coaching—AI works alongside you as a true co-founder, not just a tool.
+              CreatorApp was designed from the ground up with AI collaboration at its core. From your initial business gameplan to page content, email sequences, and strategic coaching—AI works alongside you as a true co-founder, not just a tool.
             </p>
 
             <div className="p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
@@ -106,11 +106,9 @@ export default function AINativeDifferentiator() {
         </div>
 
         <div className="mt-20 text-center">
-          <div className="inline-flex items-center gap-3 text-gray-500 text-sm">
+          <div className="inline-flex items-center gap-3 text-gray-400 text-sm">
             <span className="w-12 h-px bg-gray-700"></span>
-            <span>AI-Enabled = AI added later</span>
-            <span className="text-gray-700">|</span>
-            <span className="text-cyan-400 font-medium">AI-Native = AI built-in from day one</span>
+            <span className="text-cyan-400 font-medium">AI-Native: Built with AI collaboration from day one</span>
             <span className="w-12 h-px bg-gray-700"></span>
           </div>
         </div>
