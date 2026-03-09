@@ -414,8 +414,8 @@ export default function FeatureShowcase() {
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-8">
         <div className="text-center mb-8">
-          <p className="text-gray-400 text-sm mb-2">Not ready to get started?</p>
-          <a href="#" className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors">Learn More</a>
+          <p className="text-gray-600 text-sm mb-2">Not ready to get started?</p>
+          <a href="#features" className="text-cyan-600 hover:text-cyan-700 text-sm font-medium transition-colors">Learn More</a>
         </div>
 
         <div
@@ -430,7 +430,7 @@ export default function FeatureShowcase() {
               className={`px-5 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === index
                   ? 'bg-cyan-100 text-slate-900 shadow-lg shadow-cyan-500/20'
-                  : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
               {feature.label}
