@@ -1,10 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Sparkles, Send, ArrowRight, ChevronRight, Rocket, DollarSign, Mail, Target } from 'lucide-react';
+import {
+  X, Sparkles, Send, ArrowRight, ChevronRight, Rocket, DollarSign, Mail, Target,
+  FileText, Layout, Palette, MousePointer, Check, Wand2, Eye, Settings, Plus
+} from 'lucide-react';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+}
+
+interface ActionPreview {
+  type: 'page' | 'email' | 'funnel' | 'product';
+  title: string;
+  description: string;
+  mockupSteps: {
+    label: string;
+    preview: 'landing' | 'email-editor' | 'funnel-builder' | 'product-setup';
+  }[];
 }
 
 interface DemoScenario {
@@ -18,6 +31,7 @@ interface DemoScenario {
     userMessage: string;
     assistantResponse: string;
   };
+  actionPreview: ActionPreview;
 }
 
 const demoScenarios: DemoScenario[] = [
@@ -75,6 +89,16 @@ Want me to help you create your lead magnet landing page first?`,
 - Photo of you with camera builds trust
 
 Shall I help you write the headline and bullet points?`
+    },
+    actionPreview: {
+      type: 'page',
+      title: 'Lead Magnet Landing Page',
+      description: 'AI will generate your page with headline, benefits, and opt-in form',
+      mockupSteps: [
+        { label: 'Generate Page Content', preview: 'landing' },
+        { label: 'Customize Design', preview: 'landing' },
+        { label: 'Connect Email Automation', preview: 'email-editor' }
+      ]
     }
   },
   {
@@ -139,6 +163,16 @@ Would you like me to help you outline what's included in each package?`,
 Then be quiet. Let them respond.
 
 You've got this! Want me to help write your coaching offer page?`
+    },
+    actionPreview: {
+      type: 'product',
+      title: 'Coaching Product Setup',
+      description: 'AI will create your pricing tiers, checkout, and intake forms',
+      mockupSteps: [
+        { label: 'Create Product Tiers', preview: 'product-setup' },
+        { label: 'Build Sales Page', preview: 'landing' },
+        { label: 'Set Up Checkout', preview: 'product-setup' }
+      ]
     }
   },
   {
@@ -220,6 +254,16 @@ P.S. Hit reply and tell me—what's your biggest struggle with creating content 
 - P.S. drives engagement and gives you market research
 
 Want me to draft Email 2 next?`
+    },
+    actionPreview: {
+      type: 'email',
+      title: '5-Email Welcome Sequence',
+      description: 'AI will write all 5 emails and set up timing automatically',
+      mockupSteps: [
+        { label: 'Generate All 5 Emails', preview: 'email-editor' },
+        { label: 'Set Timing & Triggers', preview: 'email-editor' },
+        { label: 'Connect to Opt-in Form', preview: 'funnel-builder' }
+      ]
     }
   },
   {
@@ -295,6 +339,16 @@ Want me to map out a specific funnel for your business?`,
 That's ~$3,000 from 1,000 targeted visitors.
 
 Ready to build this? Let's start with your lead magnet page!`
+    },
+    actionPreview: {
+      type: 'funnel',
+      title: 'Complete Sales Funnel',
+      description: 'AI will create all pages, products, and email sequence together',
+      mockupSteps: [
+        { label: 'Generate Funnel Pages', preview: 'funnel-builder' },
+        { label: 'Create Tripwire Product', preview: 'product-setup' },
+        { label: 'Build Email Sequence', preview: 'email-editor' }
+      ]
     }
   }
 ];
@@ -304,12 +358,212 @@ interface AICoFounderDemoProps {
   onClose: () => void;
 }
 
+function LandingPageMockup() {
+  return (
+    <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
+      <div className="bg-slate-100 px-3 py-2 flex items-center gap-2 border-b">
+        <div className="flex gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-red-400" />
+          <div className="w-3 h-3 rounded-full bg-yellow-400" />
+          <div className="w-3 h-3 rounded-full bg-green-400" />
+        </div>
+        <div className="flex-1 bg-white rounded px-3 py-1 text-xs text-slate-400 text-center">
+          yoursite.com/free-guide
+        </div>
+      </div>
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-2 mb-3">
+          <Wand2 className="w-4 h-4 text-cyan-500 animate-pulse" />
+          <span className="text-xs text-cyan-600 font-medium">AI generating content...</span>
+        </div>
+        <div className="h-6 bg-gradient-to-r from-slate-800 to-slate-700 rounded w-4/5 animate-pulse" />
+        <div className="h-4 bg-slate-200 rounded w-full" />
+        <div className="h-4 bg-slate-200 rounded w-3/4" />
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-500" />
+            <div className="h-3 bg-slate-200 rounded w-2/3" />
+          </div>
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-500" />
+            <div className="h-3 bg-slate-200 rounded w-3/4" />
+          </div>
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-500" />
+            <div className="h-3 bg-slate-200 rounded w-1/2" />
+          </div>
+        </div>
+        <div className="mt-4 flex gap-2">
+          <div className="flex-1 h-10 bg-slate-100 rounded border border-slate-200" />
+          <div className="h-10 px-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded flex items-center justify-center">
+            <span className="text-white text-xs font-medium">Get Free Guide</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EmailEditorMockup() {
+  return (
+    <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
+      <div className="bg-slate-800 px-3 py-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Mail className="w-4 h-4 text-cyan-400" />
+          <span className="text-white text-xs font-medium">Email Sequence Builder</span>
+        </div>
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <div
+              key={n}
+              className={`w-6 h-6 rounded text-xs flex items-center justify-center font-medium ${
+                n === 1 ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-slate-400'
+              }`}
+            >
+              {n}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-2 mb-3">
+          <Wand2 className="w-4 h-4 text-cyan-500 animate-pulse" />
+          <span className="text-xs text-cyan-600 font-medium">AI writing email 1 of 5...</span>
+        </div>
+        <div className="border border-slate-200 rounded p-3 space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 w-16">Subject:</span>
+            <div className="h-4 bg-slate-100 rounded flex-1" />
+          </div>
+          <div className="border-t border-slate-100 pt-2 space-y-1.5">
+            <div className="h-3 bg-slate-100 rounded w-full" />
+            <div className="h-3 bg-slate-100 rounded w-5/6" />
+            <div className="h-3 bg-slate-100 rounded w-4/5" />
+            <div className="h-3 bg-slate-100 rounded w-3/4" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-slate-500">Send: Immediately after signup</span>
+          <span className="text-green-500 flex items-center gap-1">
+            <Check className="w-3 h-3" /> Auto-connected
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FunnelBuilderMockup() {
+  return (
+    <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
+      <div className="bg-slate-800 px-3 py-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Target className="w-4 h-4 text-cyan-400" />
+          <span className="text-white text-xs font-medium">Funnel Builder</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Eye className="w-4 h-4 text-slate-400" />
+          <Settings className="w-4 h-4 text-slate-400" />
+        </div>
+      </div>
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Wand2 className="w-4 h-4 text-cyan-500 animate-pulse" />
+          <span className="text-xs text-cyan-600 font-medium">AI building your funnel...</span>
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex-1 p-2 bg-cyan-50 border-2 border-cyan-300 rounded-lg text-center">
+            <Layout className="w-5 h-5 text-cyan-600 mx-auto mb-1" />
+            <span className="text-xs font-medium text-cyan-700">Opt-in Page</span>
+            <div className="text-[10px] text-cyan-500 mt-0.5">Creating...</div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
+          <div className="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-center">
+            <FileText className="w-5 h-5 text-slate-400 mx-auto mb-1" />
+            <span className="text-xs font-medium text-slate-600">Thank You</span>
+            <div className="text-[10px] text-slate-400 mt-0.5">Queued</div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
+          <div className="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-center">
+            <Mail className="w-5 h-5 text-slate-400 mx-auto mb-1" />
+            <span className="text-xs font-medium text-slate-600">Emails</span>
+            <div className="text-[10px] text-slate-400 mt-0.5">Queued</div>
+          </div>
+        </div>
+        <div className="mt-3 p-2 bg-green-50 rounded border border-green-200 flex items-center gap-2">
+          <Check className="w-4 h-4 text-green-500" />
+          <span className="text-xs text-green-700">All pages will be connected automatically</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductSetupMockup() {
+  return (
+    <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-slate-200">
+      <div className="bg-slate-800 px-3 py-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <DollarSign className="w-4 h-4 text-cyan-400" />
+          <span className="text-white text-xs font-medium">Product Setup</span>
+        </div>
+        <span className="text-xs text-slate-400">2 tiers</span>
+      </div>
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-2 mb-3">
+          <Wand2 className="w-4 h-4 text-cyan-500 animate-pulse" />
+          <span className="text-xs text-cyan-600 font-medium">AI configuring pricing...</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+            <div className="text-xs font-medium text-slate-700 mb-1">Starter</div>
+            <div className="text-lg font-bold text-slate-900">$297<span className="text-xs font-normal text-slate-500">/mo</span></div>
+            <div className="mt-2 space-y-1">
+              <div className="h-2 bg-slate-200 rounded w-full" />
+              <div className="h-2 bg-slate-200 rounded w-3/4" />
+            </div>
+          </div>
+          <div className="p-3 bg-cyan-50 border-2 border-cyan-300 rounded-lg">
+            <div className="text-xs font-medium text-cyan-700 mb-1">Premium</div>
+            <div className="text-lg font-bold text-cyan-900">$497<span className="text-xs font-normal text-cyan-600">/mo</span></div>
+            <div className="mt-2 space-y-1">
+              <div className="h-2 bg-cyan-200 rounded w-full" />
+              <div className="h-2 bg-cyan-200 rounded w-4/5" />
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 p-2 bg-green-50 rounded border border-green-200">
+          <Check className="w-4 h-4 text-green-500" />
+          <span className="text-xs text-green-700">Stripe checkout ready</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function getMockupComponent(preview: string) {
+  switch (preview) {
+    case 'landing':
+      return <LandingPageMockup />;
+    case 'email-editor':
+      return <EmailEditorMockup />;
+    case 'funnel-builder':
+      return <FunnelBuilderMockup />;
+    case 'product-setup':
+      return <ProductSetupMockup />;
+    default:
+      return <LandingPageMockup />;
+  }
+}
+
 export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProps) {
   const [selectedScenario, setSelectedScenario] = useState<DemoScenario | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [showFollowUp, setShowFollowUp] = useState(false);
   const [hasAskedFollowUp, setHasAskedFollowUp] = useState(false);
+  const [showActionPreview, setShowActionPreview] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -323,6 +577,8 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
       setIsTyping(false);
       setShowFollowUp(false);
       setHasAskedFollowUp(false);
+      setShowActionPreview(false);
+      setActiveStep(0);
     }
     return () => {
       document.body.style.overflow = '';
@@ -332,6 +588,16 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (showActionPreview && selectedScenario) {
+      const stepCount = selectedScenario.actionPreview.mockupSteps.length;
+      const interval = setInterval(() => {
+        setActiveStep((prev) => (prev + 1) % stepCount);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [showActionPreview, selectedScenario]);
 
   const simulateTyping = (text: string, callback: () => void) => {
     setIsTyping(true);
@@ -347,6 +613,7 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
     setMessages([{ role: 'user', content: scenario.userMessage }]);
     setShowFollowUp(false);
     setHasAskedFollowUp(false);
+    setShowActionPreview(false);
 
     simulateTyping(scenario.assistantResponse, () => {
       setMessages(prev => [...prev, { role: 'assistant', content: scenario.assistantResponse }]);
@@ -368,6 +635,11 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
     });
   };
 
+  const handleShowBuilder = () => {
+    setShowActionPreview(true);
+    setActiveStep(0);
+  };
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
       onClose();
@@ -385,7 +657,7 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
 
       <div
         ref={modalRef}
-        className="relative w-full max-w-4xl max-h-[90vh] bg-slate-900 rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden flex flex-col"
+        className="relative w-full max-w-5xl max-h-[90vh] bg-slate-900 rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden flex flex-col"
       >
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700/50 bg-gradient-to-r from-slate-800 to-slate-900">
           <div className="flex items-center gap-3">
@@ -394,7 +666,9 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
             </div>
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-white">AI Co-Founder Demo</h2>
-              <p className="text-sm text-slate-400">See how AI helps build your business</p>
+              <p className="text-sm text-slate-400">
+                {showActionPreview ? 'See how AI builds it for you' : 'See how AI helps build your business'}
+              </p>
             </div>
           </div>
           <button
@@ -445,6 +719,114 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
                 </p>
               </div>
             </div>
+          ) : showActionPreview ? (
+            <div className="p-4 sm:p-8">
+              <div className="mb-6">
+                <button
+                  onClick={() => setShowActionPreview(false)}
+                  className="text-sm text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1 mb-4"
+                >
+                  <ArrowRight className="w-4 h-4 rotate-180" />
+                  Back to conversation
+                </button>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Next: AI Builds Your {selectedScenario.actionPreview.title}
+                </h3>
+                <p className="text-slate-400">{selectedScenario.actionPreview.description}</p>
+              </div>
+
+              <div className="grid lg:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Build Steps</h4>
+                  {selectedScenario.actionPreview.mockupSteps.map((step, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 ${
+                        activeStep === index
+                          ? 'bg-cyan-500/10 border-cyan-500/30'
+                          : 'bg-slate-800/50 border-slate-700/50'
+                      }`}
+                    >
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                          activeStep === index
+                            ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white'
+                            : activeStep > index
+                            ? 'bg-green-500 text-white'
+                            : 'bg-slate-700 text-slate-400'
+                        }`}
+                      >
+                        {activeStep > index ? <Check className="w-4 h-4" /> : index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <span className={activeStep === index ? 'text-white font-medium' : 'text-slate-400'}>
+                          {step.label}
+                        </span>
+                      </div>
+                      {activeStep === index && (
+                        <div className="flex gap-1">
+                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700/50 mt-6">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-4 h-4 text-green-400" />
+                      </div>
+                      <div>
+                        <h5 className="text-white font-medium mb-1">Everything Connected</h5>
+                        <p className="text-sm text-slate-400">
+                          Pages, products, emails, and analytics are automatically linked together. No manual setup required.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Live Preview</h4>
+                  <div className="transform scale-95 origin-top">
+                    {getMockupComponent(selectedScenario.actionPreview.mockupSteps[activeStep]?.preview || 'landing')}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 p-6 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl border border-cyan-500/20">
+                <div className="text-center">
+                  <h4 className="text-white font-semibold mb-2">Ready to build this for YOUR business?</h4>
+                  <p className="text-slate-400 text-sm mb-4">
+                    Your AI Co-Founder will personalize everything based on your niche, audience, and goals.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Link
+                      to="/signup"
+                      onClick={onClose}
+                      className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+                    >
+                      Start Free Trial
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setSelectedScenario(null);
+                        setMessages([]);
+                        setShowFollowUp(false);
+                        setHasAskedFollowUp(false);
+                        setShowActionPreview(false);
+                      }}
+                      className="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-medium transition-all"
+                    >
+                      Try Another Scenario
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="flex flex-col h-full">
               <div className="p-3 sm:p-4 border-b border-slate-700/50 bg-slate-800/50">
@@ -462,7 +844,7 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
                 </button>
               </div>
 
-              <div className="flex-1 p-4 sm:p-6 space-y-4 overflow-y-auto min-h-[300px] max-h-[50vh]">
+              <div className="flex-1 p-4 sm:p-6 space-y-4 overflow-y-auto min-h-[300px] max-h-[45vh]">
                 {messages.map((message, index) => (
                   <div
                     key={index}
@@ -544,28 +926,24 @@ export default function AICoFounderDemo({ isOpen, onClose }: AICoFounderDemoProp
                 <div className="p-4 sm:p-6 border-t border-slate-700/50 bg-gradient-to-r from-slate-800 to-slate-900">
                   <div className="text-center">
                     <p className="text-slate-400 mb-4">
-                      Ready for personalized guidance for YOUR business?
+                      See what happens next when AI builds it for you
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <button
+                        onClick={handleShowBuilder}
+                        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+                      >
+                        <Wand2 className="w-5 h-5" />
+                        See AI Build It
+                      </button>
                       <Link
                         to="/signup"
                         onClick={onClose}
-                        className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+                        className="inline-flex items-center justify-center gap-2 bg-white text-slate-900 px-6 py-3 rounded-xl font-semibold hover:bg-slate-100 transition-all"
                       >
                         Start Free Trial
                         <ArrowRight className="w-5 h-5" />
                       </Link>
-                      <button
-                        onClick={() => {
-                          setSelectedScenario(null);
-                          setMessages([]);
-                          setShowFollowUp(false);
-                          setHasAskedFollowUp(false);
-                        }}
-                        className="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-medium transition-all"
-                      >
-                        Try Another Scenario
-                      </button>
                     </div>
                   </div>
                 </div>
