@@ -709,47 +709,65 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
   const [pagesCreated, setPagesCreated] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [viewMode, setViewMode] = useState<'flow' | 'grid' | 'list'>('flow');
+  const [animatedStats, setAnimatedStats] = useState({ views: 0, conversions: 0, revenue: 0 });
 
   const pages = [
     {
       name: 'Opt-in Page',
       type: 'landing',
+      slug: '/free-guide',
+      stats: { views: 2847, conversions: 892, rate: 31.3 },
       preview: {
         headline: 'Master Natural Light Photography',
-        subheadline: 'Get the free 7-day guide',
+        subheadline: 'Get the free 7-day guide used by 10,000+ photographers',
         cta: 'Download Free Guide',
-        image: 'https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=400'
+        image: 'https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=400',
+        bullets: ['Golden hour secrets', 'Indoor lighting hacks', 'Post-processing tips']
       }
     },
     {
-      name: 'Thank You',
+      name: 'Thank You + Upsell',
       type: 'thank_you',
+      slug: '/thank-you',
+      stats: { views: 892, conversions: 156, rate: 17.5 },
       preview: {
         headline: 'Check Your Inbox!',
-        subheadline: 'Your guide is on the way',
-        cta: 'Get the Pro Version - $17',
-        offer: 'Special One-Time Offer'
+        subheadline: 'Your guide is on the way...',
+        cta: 'Yes! Add This For $17',
+        offer: 'Wait! One-Time Offer',
+        offerTitle: 'Lighting Presets Bundle',
+        offerPrice: '$17',
+        originalPrice: '$47'
       }
     },
     {
       name: 'Sales Page',
       type: 'sales',
+      slug: '/masterclass',
+      stats: { views: 1205, conversions: 89, rate: 7.4 },
       preview: {
         headline: 'Photography Masterclass',
-        subheadline: 'Transform your photos in 30 days',
+        subheadline: 'Transform your photos in 30 days or your money back',
         price: '$197',
-        cta: 'Enroll Now',
-        image: 'https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg?auto=compress&cs=tinysrgb&w=400'
+        originalPrice: '$497',
+        cta: 'Enroll Now - 60% Off',
+        image: 'https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg?auto=compress&cs=tinysrgb&w=400',
+        testimonial: '"This changed everything!" - Sarah M.',
+        modules: 12,
+        hours: 24
       }
     },
     {
       name: 'Checkout',
       type: 'checkout',
+      slug: '/checkout',
+      stats: { views: 89, conversions: 67, rate: 75.3 },
       preview: {
         headline: 'Complete Your Order',
         product: 'Photography Masterclass',
         price: '$197',
-        cta: 'Pay Now'
+        guarantee: '60-Day Money Back Guarantee',
+        cta: 'Complete Purchase'
       }
     },
   ];
@@ -770,13 +788,39 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
     }
   }, [isGenerating]);
 
-  const renderPagePreview = (page: typeof pages[0], index: number, isCreated: boolean, isCreating: boolean) => {
+  useEffect(() => {
+    if (pagesCreated === pages.length) {
+      const duration = 1500;
+      const steps = 30;
+      const targetViews = 5033;
+      const targetConversions = 67;
+      const targetRevenue = 13199;
+      let step = 0;
+      const interval = setInterval(() => {
+        step++;
+        const progress = step / steps;
+        setAnimatedStats({
+          views: Math.round(targetViews * progress),
+          conversions: Math.round(targetConversions * progress),
+          revenue: Math.round(targetRevenue * progress)
+        });
+        if (step >= steps) clearInterval(interval);
+      }, duration / steps);
+      return () => clearInterval(interval);
+    }
+  }, [pagesCreated]);
+
+  const renderPagePreview = (page: typeof pages[0], isCreated: boolean, isCreating: boolean, size: 'small' | 'large' = 'small') => {
+    const scale = size === 'large' ? 1 : 0.7;
+
     if (!isCreated && !isCreating) {
       return (
-        <div className="h-full flex items-center justify-center bg-slate-100">
+        <div className="h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-50">
           <div className="text-center">
-            <FileText className="h-8 w-8 text-slate-300 mx-auto mb-2" />
-            <span className="text-[10px] text-slate-400">Queued</span>
+            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-2">
+              <FileText className="h-5 w-5 text-slate-400" />
+            </div>
+            <span className="text-[10px] text-slate-400 font-medium">Queued</span>
           </div>
         </div>
       );
@@ -784,10 +828,19 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
 
     if (isCreating) {
       return (
-        <div className="h-full flex items-center justify-center bg-gradient-to-br from-cyan-50 to-blue-50">
-          <div className="text-center">
-            <Wand2 className="h-8 w-8 text-cyan-500 mx-auto mb-2 animate-pulse" />
-            <span className="text-[10px] text-cyan-600 font-medium">AI Generating...</span>
+        <div className="h-full flex items-center justify-center bg-gradient-to-br from-cyan-50 via-blue-50 to-cyan-50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse"
+               style={{ animation: 'shimmer 2s infinite' }} />
+          <div className="text-center relative z-10">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center mx-auto mb-2 shadow-lg">
+              <Wand2 className="h-6 w-6 text-white animate-pulse" />
+            </div>
+            <span className="text-[11px] text-cyan-700 font-semibold">AI Generating...</span>
+            <div className="flex justify-center gap-1 mt-2">
+              <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
           </div>
         </div>
       );
@@ -796,32 +849,34 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
     switch (page.type) {
       case 'landing':
         return (
-          <div className="h-full flex flex-col">
-            <div className="h-16 bg-cover bg-center relative" style={{ backgroundImage: `url(${page.preview.image})` }}>
-              <div className="absolute inset-0 bg-slate-900/60" />
+          <div className="h-full flex flex-col bg-white">
+            <div className="h-20 bg-cover bg-center relative" style={{ backgroundImage: `url(${page.preview.image})` }}>
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 to-slate-900/90" />
               <div className="absolute inset-0 flex flex-col justify-center px-3">
-                <h3 className="text-[10px] font-bold text-white leading-tight">{page.preview.headline}</h3>
-                <p className="text-[8px] text-slate-200 mt-0.5">{page.preview.subheadline}</p>
+                <h3 className="text-[11px] font-bold text-white leading-tight drop-shadow">{page.preview.headline}</h3>
+                <p className="text-[8px] text-cyan-200 mt-1">{page.preview.subheadline}</p>
               </div>
             </div>
-            <div className="flex-1 p-2 bg-white">
-              <div className="space-y-1">
-                <div className="flex items-center gap-1">
-                  <Check className="h-2 w-2 text-green-500" />
-                  <span className="text-[7px] text-slate-600">Golden hour techniques</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Check className="h-2 w-2 text-green-500" />
-                  <span className="text-[7px] text-slate-600">Camera settings guide</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Check className="h-2 w-2 text-green-500" />
-                  <span className="text-[7px] text-slate-600">Pro editing tips</span>
-                </div>
+            <div className="flex-1 p-2.5 bg-gradient-to-b from-white to-slate-50">
+              <div className="space-y-1.5 mb-2.5">
+                {page.preview.bullets?.map((bullet, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <Check className="h-2 w-2 text-green-600" />
+                    </div>
+                    <span className="text-[8px] text-slate-700">{bullet}</span>
+                  </div>
+                ))}
               </div>
-              <div className="mt-2">
-                <div className="h-4 bg-slate-100 rounded text-[6px] flex items-center px-1.5 text-slate-400">your@email.com</div>
-                <button className="w-full mt-1 h-5 bg-cyan-500 text-white text-[7px] font-medium rounded">{page.preview.cta}</button>
+              <div className="space-y-1.5">
+                <div className="h-5 bg-white rounded border border-slate-200 text-[7px] flex items-center px-2 text-slate-400 shadow-sm">
+                  Enter your best email...
+                </div>
+                <button className="w-full h-6 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-[8px] font-bold rounded shadow-md flex items-center justify-center gap-1">
+                  {page.preview.cta}
+                  <ArrowRight className="h-3 w-3" />
+                </button>
+                <p className="text-[6px] text-slate-400 text-center">Join 10,000+ photographers</p>
               </div>
             </div>
           </div>
@@ -829,47 +884,65 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
 
       case 'thank_you':
         return (
-          <div className="h-full flex flex-col bg-white p-3">
+          <div className="h-full flex flex-col bg-gradient-to-b from-green-50 to-white p-3">
             <div className="text-center mb-2">
-              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1">
-                <Check className="h-3 w-3 text-green-500" />
+              <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-1.5 shadow-lg">
+                <Check className="h-4 w-4 text-white" />
               </div>
-              <h3 className="text-[10px] font-bold text-slate-800">{page.preview.headline}</h3>
-              <p className="text-[8px] text-slate-500">{page.preview.subheadline}</p>
+              <h3 className="text-[11px] font-bold text-slate-800">{page.preview.headline}</h3>
+              <p className="text-[8px] text-slate-500 mt-0.5">{page.preview.subheadline}</p>
             </div>
-            <div className="flex-1 border border-dashed border-cyan-300 rounded bg-cyan-50 p-2">
-              <div className="text-[7px] text-cyan-600 font-medium text-center mb-1">{page.preview.offer}</div>
-              <div className="bg-white rounded p-1.5 border border-cyan-200">
-                <p className="text-[7px] text-slate-700 text-center">Color Mixing Cheat Sheet</p>
-                <p className="text-[9px] font-bold text-center text-slate-800">$17</p>
+            <div className="flex-1 border-2 border-dashed border-amber-400 rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 p-2 relative">
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[7px] font-bold px-2 py-0.5 rounded">
+                {page.preview.offer}
               </div>
-              <button className="w-full mt-1.5 h-5 bg-cyan-500 text-white text-[7px] font-medium rounded">{page.preview.cta}</button>
+              <div className="text-center mt-1">
+                <p className="text-[9px] font-bold text-slate-800">{page.preview.offerTitle}</p>
+                <div className="flex items-center justify-center gap-1.5 mt-1">
+                  <span className="text-[8px] text-slate-400 line-through">{page.preview.originalPrice}</span>
+                  <span className="text-[12px] font-bold text-amber-600">{page.preview.offerPrice}</span>
+                </div>
+              </div>
+              <button className="w-full mt-2 h-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] font-bold rounded shadow-md">
+                {page.preview.cta}
+              </button>
+              <p className="text-[6px] text-slate-500 text-center mt-1">This offer expires when you leave</p>
             </div>
           </div>
         );
 
       case 'sales':
         return (
-          <div className="h-full flex flex-col">
-            <div className="h-14 bg-cover bg-center relative" style={{ backgroundImage: `url(${page.preview.image})` }}>
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent" />
+          <div className="h-full flex flex-col bg-white">
+            <div className="h-16 bg-cover bg-center relative" style={{ backgroundImage: `url(${page.preview.image})` }}>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
               <div className="absolute bottom-1.5 left-2 right-2">
-                <h3 className="text-[9px] font-bold text-white">{page.preview.headline}</h3>
+                <h3 className="text-[10px] font-bold text-white drop-shadow">{page.preview.headline}</h3>
               </div>
             </div>
-            <div className="flex-1 p-2 bg-white">
+            <div className="flex-1 p-2 bg-gradient-to-b from-white to-slate-50">
               <p className="text-[7px] text-slate-600 mb-1.5">{page.preview.subheadline}</p>
-              <div className="flex items-center gap-1 mb-1">
-                <div className="flex -space-x-1">
-                  {[1,2,3].map(i => (
-                    <div key={i} className="w-3 h-3 rounded-full bg-slate-300 border border-white" />
-                  ))}
+              <div className="flex items-center gap-2 mb-1.5 bg-slate-100 rounded p-1">
+                <div className="flex items-center gap-0.5">
+                  <Layers className="h-3 w-3 text-blue-500" />
+                  <span className="text-[7px] text-slate-600">{page.preview.modules} modules</span>
                 </div>
-                <span className="text-[6px] text-slate-500">500+ students enrolled</span>
+                <div className="flex items-center gap-0.5">
+                  <Clock className="h-3 w-3 text-blue-500" />
+                  <span className="text-[7px] text-slate-600">{page.preview.hours}h content</span>
+                </div>
+              </div>
+              <div className="bg-blue-50 rounded p-1.5 mb-1.5 border border-blue-100">
+                <p className="text-[7px] text-blue-700 italic">"{page.preview.testimonial}"</p>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-800">{page.preview.price}</span>
-                <button className="px-2 h-5 bg-green-500 text-white text-[7px] font-medium rounded">{page.preview.cta}</button>
+                <div>
+                  <span className="text-[8px] text-slate-400 line-through">{page.preview.originalPrice}</span>
+                  <span className="text-[12px] font-bold text-green-600 ml-1">{page.preview.price}</span>
+                </div>
+                <button className="px-2 h-5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-[7px] font-bold rounded shadow">
+                  {page.preview.cta}
+                </button>
               </div>
             </div>
           </div>
@@ -878,22 +951,34 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
       case 'checkout':
         return (
           <div className="h-full flex flex-col bg-slate-50 p-2">
-            <h3 className="text-[9px] font-bold text-slate-800 mb-2">{page.preview.headline}</h3>
-            <div className="bg-white rounded border border-slate-200 p-1.5 mb-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[8px] text-slate-700">{page.preview.product}</span>
-                <span className="text-[9px] font-bold text-slate-800">{page.preview.price}</span>
+            <div className="flex items-center gap-1.5 mb-2">
+              <div className="w-5 h-5 rounded bg-green-100 flex items-center justify-center">
+                <DollarSign className="h-3 w-3 text-green-600" />
+              </div>
+              <h3 className="text-[10px] font-bold text-slate-800">{page.preview.headline}</h3>
+            </div>
+            <div className="bg-white rounded-lg border border-slate-200 p-2 mb-2 shadow-sm">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[8px] font-medium text-slate-700">{page.preview.product}</span>
+                <span className="text-[10px] font-bold text-slate-800">{page.preview.price}</span>
+              </div>
+              <div className="h-px bg-slate-100 my-1.5" />
+              <div className="flex items-center gap-1">
+                <Check className="h-2.5 w-2.5 text-green-500" />
+                <span className="text-[7px] text-green-600">{page.preview.guarantee}</span>
               </div>
             </div>
             <div className="space-y-1.5">
-              <div className="h-4 bg-white border border-slate-200 rounded text-[6px] px-1.5 flex items-center text-slate-400">Card number</div>
-              <div className="flex gap-1">
-                <div className="flex-1 h-4 bg-white border border-slate-200 rounded text-[6px] px-1.5 flex items-center text-slate-400">MM/YY</div>
-                <div className="flex-1 h-4 bg-white border border-slate-200 rounded text-[6px] px-1.5 flex items-center text-slate-400">CVC</div>
+              <div className="h-5 bg-white border border-slate-200 rounded text-[7px] px-2 flex items-center text-slate-400 shadow-sm">
+                4242 4242 4242 4242
+              </div>
+              <div className="flex gap-1.5">
+                <div className="flex-1 h-5 bg-white border border-slate-200 rounded text-[7px] px-2 flex items-center text-slate-400 shadow-sm">12/28</div>
+                <div className="flex-1 h-5 bg-white border border-slate-200 rounded text-[7px] px-2 flex items-center text-slate-400 shadow-sm">123</div>
               </div>
             </div>
-            <button className="w-full mt-2 h-6 bg-green-500 text-white text-[8px] font-medium rounded flex items-center justify-center gap-1">
-              <DollarSign className="h-3 w-3" />
+            <button className="w-full mt-2 h-7 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-[9px] font-bold rounded-lg shadow-md flex items-center justify-center gap-1.5">
+              <DollarSign className="h-3.5 w-3.5" />
               {page.preview.cta}
             </button>
           </div>
@@ -905,50 +990,68 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden border border-slate-200 shadow-xl">
-      <div className="bg-slate-100 px-3 py-2 flex items-center justify-between border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          <button className="p-1 hover:bg-slate-200 rounded text-slate-500">
+    <div className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-2xl">
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button className="p-1.5 hover:bg-slate-700 rounded-lg text-slate-400 transition">
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div>
-            <span className="text-xs text-slate-800 font-medium">Photography Course Funnel</span>
-            <span className="text-[10px] text-slate-500 ml-2">{pages.length} pages</span>
+            <h3 className="text-sm text-white font-semibold">Photography Course Funnel</h3>
+            <p className="text-[10px] text-slate-400">{pages.length} pages in sequence</p>
           </div>
         </div>
-        <div className="flex items-center gap-1 bg-white rounded p-0.5 border border-slate-200">
-          <button
-            onClick={() => setViewMode('flow')}
-            className={`p-1 rounded ${viewMode === 'flow' ? 'bg-blue-50 text-blue-600' : 'text-slate-400'}`}
-          >
-            <GitBranch className="h-3 w-3" />
-          </button>
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-1 rounded ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-400'}`}
-          >
-            <LayoutGrid className="h-3 w-3" />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-1 rounded ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-slate-400'}`}
-          >
-            <List className="h-3 w-3" />
-          </button>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 bg-slate-700 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('flow')}
+              className={`p-1.5 rounded-md transition ${viewMode === 'flow' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+            >
+              <GitBranch className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-md transition ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded-md transition ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+            >
+              <List className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          {pagesCreated === pages.length && (
+            <button className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-[11px] font-semibold rounded-lg transition flex items-center gap-1.5">
+              <Rocket className="h-3.5 w-3.5" />
+              Publish
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 bg-gradient-to-b from-slate-50 to-white">
         {isGenerating && pagesCreated < pages.length && (
-          <div className="flex items-center gap-1.5 mb-3 text-cyan-600">
-            <Wand2 className="h-4 w-4 animate-pulse" />
-            <span className="text-xs font-medium">AI building page {pagesCreated + 1} of {pages.length}...</span>
+          <div className="flex items-center gap-2 mb-4 p-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border border-cyan-200">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+              <Wand2 className="h-4 w-4 text-white animate-pulse" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-slate-800">AI building page {pagesCreated + 1} of {pages.length}</p>
+              <p className="text-[10px] text-slate-500">Creating {pages[pagesCreated]?.name}...</p>
+            </div>
+            <div className="ml-auto flex gap-0.5">
+              {pages.map((_, i) => (
+                <div key={i} className={`w-6 h-1.5 rounded-full ${i < pagesCreated ? 'bg-green-500' : i === pagesCreated ? 'bg-cyan-500 animate-pulse' : 'bg-slate-200'}`} />
+              ))}
+            </div>
           </div>
         )}
 
         {viewMode === 'flow' && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            <div className="flex items-stretch gap-3 overflow-x-auto pb-3 scrollbar-thin">
               {pages.map((page, index) => {
                 const isCreated = index < pagesCreated;
                 const isCreating = index === pagesCreated && isGenerating && pagesCreated < pages.length;
@@ -956,28 +1059,40 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
                   <div key={index} className="flex items-center flex-shrink-0">
                     <button
                       onClick={() => setCurrentSlide(index)}
-                      className={`w-24 rounded-lg border-2 overflow-hidden transition-all ${
+                      className={`w-28 rounded-xl overflow-hidden transition-all duration-300 ${
                         currentSlide === index
-                          ? 'border-blue-500 shadow-lg scale-105'
+                          ? 'ring-2 ring-blue-500 ring-offset-2 shadow-xl scale-105'
                           : isCreated
-                            ? 'border-green-400'
+                            ? 'ring-2 ring-green-400 shadow-lg hover:shadow-xl hover:scale-102'
                             : isCreating
-                              ? 'border-cyan-400'
-                              : 'border-slate-200'
+                              ? 'ring-2 ring-cyan-400 shadow-lg'
+                              : 'ring-1 ring-slate-200 shadow hover:shadow-lg'
                       }`}
                     >
-                      <div className="h-28 overflow-hidden">
-                        {renderPagePreview(page, index, isCreated, isCreating)}
+                      <div className="h-36 overflow-hidden">
+                        {renderPagePreview(page, isCreated, isCreating, 'small')}
                       </div>
-                      <div className={`px-1.5 py-1 text-[9px] font-medium text-center ${
-                        isCreated ? 'bg-green-50 text-green-700' : isCreating ? 'bg-cyan-50 text-cyan-700' : 'bg-slate-50 text-slate-500'
+                      <div className={`px-2 py-1.5 ${
+                        isCreated ? 'bg-green-50' : isCreating ? 'bg-cyan-50' : 'bg-slate-50'
                       }`}>
-                        {page.name}
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] font-semibold text-slate-700 truncate">{page.name}</span>
+                          {isCreated && <Check className="h-3 w-3 text-green-500 flex-shrink-0" />}
+                          {isCreating && <Wand2 className="h-3 w-3 text-cyan-500 animate-pulse flex-shrink-0" />}
+                        </div>
+                        {isCreated && (
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <span className="text-[8px] text-green-600 font-medium">{page.stats.rate}% conv</span>
+                          </div>
+                        )}
                       </div>
                     </button>
                     {index < pages.length - 1 && (
-                      <div className="flex items-center px-1.5 flex-shrink-0">
-                        <ArrowRight className={`h-4 w-4 ${index < pagesCreated ? 'text-green-400' : 'text-slate-300'}`} />
+                      <div className="flex flex-col items-center px-2 flex-shrink-0">
+                        <ArrowRight className={`h-5 w-5 ${index < pagesCreated ? 'text-green-400' : 'text-slate-300'}`} />
+                        {index < pagesCreated && (
+                          <span className="text-[8px] text-slate-400 mt-0.5">{pages[index + 1]?.stats.views}</span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -985,79 +1100,132 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
               })}
             </div>
 
-            <div className="border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
-              <div className="flex items-center justify-between px-3 py-2 bg-white border-b border-slate-200">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-slate-700">{pages[currentSlide].name}</span>
-                  {currentSlide < pagesCreated && (
-                    <span className="text-[9px] px-1.5 py-0.5 bg-green-100 text-green-700 rounded">Live</span>
-                  )}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-2 border border-slate-200 rounded-xl overflow-hidden bg-white shadow-lg">
+                <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-b border-slate-200">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-slate-800">{pages[currentSlide].name}</span>
+                    {currentSlide < pagesCreated && (
+                      <span className="text-[9px] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">Live</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-slate-400">{pages[currentSlide].slug}</span>
+                    <div className="flex items-center gap-1 bg-white rounded-lg border border-slate-200 p-0.5">
+                      <button
+                        onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))}
+                        disabled={currentSlide === 0}
+                        className="p-1 hover:bg-slate-100 rounded disabled:opacity-30 transition"
+                      >
+                        <ChevronLeft className="h-4 w-4 text-slate-500" />
+                      </button>
+                      <span className="text-[10px] text-slate-600 px-1 font-medium">{currentSlide + 1}/{pages.length}</span>
+                      <button
+                        onClick={() => setCurrentSlide(Math.min(pages.length - 1, currentSlide + 1))}
+                        disabled={currentSlide === pages.length - 1}
+                        className="p-1 hover:bg-slate-100 rounded disabled:opacity-30 transition"
+                      >
+                        <ChevronRight className="h-4 w-4 text-slate-500" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))}
-                    disabled={currentSlide === 0}
-                    className="p-1 hover:bg-slate-100 rounded disabled:opacity-30"
-                  >
-                    <ChevronLeft className="h-4 w-4 text-slate-500" />
-                  </button>
-                  <span className="text-[10px] text-slate-500 px-1">{currentSlide + 1} / {pages.length}</span>
-                  <button
-                    onClick={() => setCurrentSlide(Math.min(pages.length - 1, currentSlide + 1))}
-                    disabled={currentSlide === pages.length - 1}
-                    className="p-1 hover:bg-slate-100 rounded disabled:opacity-30"
-                  >
-                    <ChevronRight className="h-4 w-4 text-slate-500" />
-                  </button>
+                <div className="p-6 flex justify-center bg-gradient-to-b from-slate-100 to-slate-50">
+                  <div className="w-52 h-72 bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200 transition-all duration-500">
+                    {renderPagePreview(
+                      pages[currentSlide],
+                      currentSlide < pagesCreated,
+                      currentSlide === pagesCreated && isGenerating && pagesCreated < pages.length,
+                      'large'
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-2 pb-4">
+                  {pages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        currentSlide === index ? 'bg-blue-500 w-6' : index < pagesCreated ? 'bg-green-400 w-2' : 'bg-slate-300 w-2'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
-              <div className="p-4 flex justify-center">
-                <div className="w-48 h-64 bg-white rounded-lg shadow-lg overflow-hidden border border-slate-200">
-                  {renderPagePreview(
-                    pages[currentSlide],
-                    currentSlide,
-                    currentSlide < pagesCreated,
-                    currentSlide === pagesCreated && isGenerating && pagesCreated < pages.length
-                  )}
-                </div>
-              </div>
-            </div>
 
-            <div className="flex items-center justify-center gap-1.5">
-              {pages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    currentSlide === index ? 'bg-blue-500 w-4' : index < pagesCreated ? 'bg-green-400' : 'bg-slate-300'
-                  }`}
-                />
-              ))}
+              <div className="space-y-3">
+                <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Eye className="h-4 w-4 text-blue-500" />
+                    <span className="text-[11px] font-medium text-slate-600">Total Views</span>
+                  </div>
+                  <span className="text-2xl font-bold text-slate-800">
+                    {pagesCreated === pages.length ? animatedStats.views.toLocaleString() : '--'}
+                  </span>
+                </div>
+                <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="h-4 w-4 text-green-500" />
+                    <span className="text-[11px] font-medium text-slate-600">Conversions</span>
+                  </div>
+                  <span className="text-2xl font-bold text-slate-800">
+                    {pagesCreated === pages.length ? animatedStats.conversions : '--'}
+                  </span>
+                </div>
+                <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <DollarSign className="h-4 w-4 text-emerald-500" />
+                    <span className="text-[11px] font-medium text-slate-600">Revenue</span>
+                  </div>
+                  <span className="text-2xl font-bold text-emerald-600">
+                    {pagesCreated === pages.length ? `$${animatedStats.revenue.toLocaleString()}` : '--'}
+                  </span>
+                </div>
+                {pagesCreated === pages.length && (
+                  <div className="p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                        <Check className="h-3.5 w-3.5 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-semibold text-green-800">Ready to Launch</p>
+                        <p className="text-[9px] text-green-600">All pages connected</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
 
         {viewMode === 'grid' && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             {pages.map((page, index) => {
               const isCreated = index < pagesCreated;
               const isCreating = index === pagesCreated && isGenerating && pagesCreated < pages.length;
               return (
                 <div
                   key={index}
-                  className={`rounded-lg border-2 overflow-hidden transition-all ${
-                    isCreated ? 'border-green-400' : isCreating ? 'border-cyan-400' : 'border-slate-200'
+                  className={`rounded-xl overflow-hidden transition-all shadow-lg ${
+                    isCreated ? 'ring-2 ring-green-400' : isCreating ? 'ring-2 ring-cyan-400' : 'ring-1 ring-slate-200'
                   }`}
                 >
-                  <div className="h-32 overflow-hidden">
-                    {renderPagePreview(page, index, isCreated, isCreating)}
+                  <div className="h-40 overflow-hidden">
+                    {renderPagePreview(page, isCreated, isCreating, 'small')}
                   </div>
-                  <div className={`px-2 py-1.5 flex items-center justify-between ${
-                    isCreated ? 'bg-green-50' : isCreating ? 'bg-cyan-50' : 'bg-slate-50'
-                  }`}>
-                    <span className="text-[10px] font-medium text-slate-700">{page.name}</span>
-                    {isCreated && <Check className="h-3 w-3 text-green-500" />}
-                    {isCreating && <Wand2 className="h-3 w-3 text-cyan-500 animate-pulse" />}
+                  <div className={`px-3 py-2 ${isCreated ? 'bg-green-50' : isCreating ? 'bg-cyan-50' : 'bg-slate-50'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[11px] font-semibold text-slate-700">{page.name}</span>
+                      {isCreated && <Check className="h-4 w-4 text-green-500" />}
+                      {isCreating && <Wand2 className="h-4 w-4 text-cyan-500 animate-pulse" />}
+                    </div>
+                    {isCreated && (
+                      <div className="flex items-center gap-3 text-[9px] text-slate-500">
+                        <span>{page.stats.views} views</span>
+                        <span>{page.stats.rate}% conv</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -1065,13 +1233,91 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
           </div>
         )}
 
-        {pagesCreated === pages.length && (
-          <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-green-500" />
-              <span className="text-xs font-medium text-green-700">Funnel complete! All pages connected and ready to publish.</span>
+        {viewMode === 'list' && (
+          <div className="space-y-2">
+            {pages.map((page, index) => {
+              const isCreated = index < pagesCreated;
+              const isCreating = index === pagesCreated && isGenerating && pagesCreated < pages.length;
+              return (
+                <div
+                  key={index}
+                  className={`flex items-center gap-4 p-3 rounded-xl transition-all ${
+                    isCreated
+                      ? 'bg-green-50 border border-green-200'
+                      : isCreating
+                        ? 'bg-cyan-50 border border-cyan-200'
+                        : 'bg-white border border-slate-200'
+                  }`}
+                >
+                  <div className="w-20 h-28 rounded-lg overflow-hidden shadow-md flex-shrink-0 border border-slate-200">
+                    {renderPagePreview(page, isCreated, isCreating, 'small')}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="text-sm font-semibold text-slate-800">{page.name}</h4>
+                      {isCreated && (
+                        <span className="text-[9px] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">Live</span>
+                      )}
+                      {isCreating && (
+                        <span className="text-[9px] px-2 py-0.5 bg-cyan-100 text-cyan-700 rounded-full font-medium flex items-center gap-1">
+                          <Wand2 className="h-2.5 w-2.5 animate-pulse" />
+                          Generating
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-slate-500 mb-2">{page.slug}</p>
+                    {isCreated && (
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1.5">
+                          <Eye className="h-3.5 w-3.5 text-slate-400" />
+                          <span className="text-xs text-slate-600">{page.stats.views.toLocaleString()} views</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Target className="h-3.5 w-3.5 text-slate-400" />
+                          <span className="text-xs text-slate-600">{page.stats.conversions} conversions</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <div className={`w-16 h-1.5 rounded-full bg-slate-200 overflow-hidden`}>
+                            <div
+                              className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"
+                              style={{ width: `${page.stats.rate}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-medium text-green-600">{page.stats.rate}%</span>
+                        </div>
+                      </div>
+                    )}
+                    {!isCreated && !isCreating && (
+                      <div className="flex items-center gap-1.5 text-slate-400">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span className="text-xs">Waiting in queue</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {index < pages.length - 1 && (
+                      <ArrowRight className={`h-5 w-5 ${isCreated ? 'text-green-400' : 'text-slate-300'}`} />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {pagesCreated === pages.length && viewMode !== 'flow' && (
+          <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
+                <Check className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-green-800">Your funnel is complete!</p>
+                <p className="text-xs text-green-600">All {pages.length} pages are connected and ready to convert visitors.</p>
+              </div>
             </div>
-            <button className="px-3 py-1.5 bg-green-600 text-white text-[10px] font-medium rounded hover:bg-green-700 transition">
+            <button className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white text-sm font-semibold rounded-lg shadow-lg transition flex items-center gap-2">
+              <Rocket className="h-4 w-4" />
               Publish Funnel
             </button>
           </div>
