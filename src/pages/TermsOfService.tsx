@@ -247,6 +247,63 @@ export default function TermsOfService() {
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                   <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">9</span>
+                  Earnings Disclaimer
+                </h2>
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-l-4 border-amber-500 p-6 rounded-r-xl mb-4">
+                  <p className="text-gray-800 font-semibold mb-2">Important Notice Regarding Income and Results</p>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    CreatorApp.us is a software platform that provides tools for building online businesses. We do not guarantee
+                    any specific financial results, earnings, or business outcomes from using our platform.
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">No Earnings Guarantees:</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Any references to income, earnings, revenue, pricing strategies, or financial results displayed within our platform
+                      (including but not limited to the AI Co-Founder feature, demo scenarios, templates, and educational content) are
+                      provided for illustration purposes only. These examples do not represent a guarantee of income or promise of
+                      financial success.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Individual Results Vary:</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Your results will vary based on many factors including but not limited to: your individual capacity, business
+                      experience, expertise, level of effort, market conditions, and circumstances beyond our control. There is no
+                      guarantee that you will achieve any particular results using our platform, tools, or following any strategies
+                      suggested within our software.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Platform vs. Business Results:</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      CreatorApp is a technology platform that provides tools and infrastructure. The success or failure of any business
+                      you build using our platform depends entirely on your own efforts, decisions, market conditions, and numerous other
+                      factors outside of our control. We are not responsible for your business outcomes, revenue, or lack thereof.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Educational Content:</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Any educational content, pricing suggestions, business strategies, or recommendations provided through our AI
+                      features or documentation are general in nature and should not be construed as professional financial, legal,
+                      or business advice. We recommend consulting with qualified professionals before making business decisions.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-2">Testimonials and Examples:</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Any testimonials, case studies, or examples of results shown on our platform represent individual experiences
+                      and are not typical. Past performance of other users does not guarantee similar results for you.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="mb-10">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">10</span>
                   Modifications to Service
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
@@ -257,7 +314,7 @@ export default function TermsOfService() {
 
               <section className="mb-10">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">10</span>
+                  <span className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">11</span>
                   Contact Information
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-4">

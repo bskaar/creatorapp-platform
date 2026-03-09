@@ -100,68 +100,79 @@ Shall I help you write the headline and bullet points?`
     icon: DollarSign,
     title: 'Price My Coaching',
     subtitle: 'Find your profitable price point',
-    userMessage: "I want to start offering 1-on-1 coaching for fitness. How should I price it?",
-    assistantResponse: `Let's find your sweet spot! Here's my pricing framework for fitness coaching:
+    userMessage: "I want to start an online coaching program for fitness. How should I structure and price it?",
+    assistantResponse: `Great question! Here's a scalable structure that works well for online coaching programs:
 
-**Step 1: Calculate Your Floor**
-- Minimum hourly rate you need: $X
-- Time per client (sessions + prep + support)
-- Overhead costs (software, certifications)
+**Program Structure Options:**
 
-**Step 2: Research Your Ceiling**
-- Generic online coaches: $150-300/month
-- Specialized coaches: $300-600/month
-- Premium/transformation coaches: $600-2000/month
+**Group Coaching Model** (Most scalable)
+- Weekly group coaching calls (you + multiple clients)
+- Community access (Discord, Facebook, or Slack)
+- Pre-recorded training content or curriculum
+- Great for beginners to coaching
 
-**Step 3: My Recommendation**
-For a new coach with solid expertise, I'd suggest:
+**Hybrid Model** (Best of both worlds)
+- Group coaching calls + monthly 1:1 check-ins
+- Balances personal attention with scalability
+- Can serve more clients while maintaining connection
 
-**Starter Package:** $297/month
-- 4 weekly check-ins (30 min each)
-- Custom workout plan
-- Basic nutrition guidance
-- WhatsApp/email support
+**Recommended Pricing Tiers:**
 
-**Premium Package:** $497/month
+**Community Access:** $47-67/month
+- Access to group + community
+- Pre-recorded content library
+- Great entry point
+
+**Group Coaching:** $97-147/month
+- Live weekly group calls
+- Community access
+- Workout templates + resources
+
+**VIP/Hybrid:** $197-247/month
 - Everything above +
-- 2 longer sessions (60 min)
-- Detailed meal planning
-- Priority support + accountability
+- Monthly 1:1 check-in call
+- Direct messaging access
+- Priority support
 
-**Pro tip:** Start with 3-5 clients at the lower tier, collect testimonials, then raise prices for new clients.
+**Pro tip:** Start with the group model to build your community, then add 1:1 spots as premium upsells.
 
-Would you like me to help you outline what's included in each package?`,
+Would you like me to help you outline what's included in each tier?`,
     followUp: {
-      userMessage: "That's helpful! But I'm nervous about charging that much...",
-      assistantResponse: `Totally normal feeling! Let me reframe this for you:
+      userMessage: "I like the group model! How do I get started?",
+      assistantResponse: `Perfect choice! The group model is ideal for getting started. Here's your launch plan:
 
-**The Math That Matters:**
-- A gym membership is $50-100/month with zero personalization
-- A personal trainer in-person is $60-150 per session
-- You're offering personalized attention, accountability, AND results
+**Phase 1: Foundation (Week 1-2)**
+- Define your niche and ideal client
+- Create your signature framework or method
+- Set up a simple community space
 
-**What You're Really Selling:**
-- Not your time—your transformation
-- A client who loses 30 lbs, gains confidence, feels healthy
-- That's worth $3,000-5,000 to most people
+**Phase 2: Content (Week 2-3)**
+- Record 4-6 core training videos
+- Create workout templates or resources
+- Write your program curriculum
 
-**Confidence Builder Strategy:**
-1. Start with 2-3 "founding member" clients at $197
-2. Over-deliver and document their results
-3. After 60 days, raise to $297 for new clients
-4. Use those testimonials everywhere
+**Phase 3: Launch (Week 3-4)**
+- Create a simple landing page
+- Set up your checkout flow
+- Start with founding members at a special rate
 
-**Script for the nervous moment:**
-"My investment is $297/month. This includes [list everything]. Most clients see [specific result] within [timeframe]. Does that work for your budget?"
+**Founding Member Strategy:**
+1. Offer 10-20 spots at $67/month (your "beta" price)
+2. Get feedback and testimonials
+3. Improve based on real member input
+4. Raise price to $97-147 for next cohort
 
-Then be quiet. Let them respond.
+**Simple Tech Stack:**
+- Zoom for group calls
+- Discord or Facebook for community
+- Your landing page + Stripe checkout
 
-You've got this! Want me to help write your coaching offer page?`
+Ready to build your program structure and landing page?`
     },
     actionPreview: {
       type: 'product',
-      title: 'Coaching Product Setup',
-      description: 'AI will create your pricing tiers, checkout, and intake forms'
+      title: 'Online Coaching Program Setup',
+      description: 'AI will create your program tiers, checkout, and member intake forms'
     }
   },
   {
@@ -1414,60 +1425,68 @@ function ProductSetupMockup({ isGenerating }: { isGenerating: boolean }) {
     if (isGenerating) {
       const interval = setInterval(() => {
         setStep(prev => {
-          if (prev < 3) return prev + 1;
+          if (prev < 4) return prev + 1;
           clearInterval(interval);
           return prev;
         });
-      }, 2000);
+      }, 1500);
       return () => clearInterval(interval);
     }
   }, [isGenerating]);
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden border border-slate-200 shadow-xl">
-      <div className="bg-slate-100 px-3 py-2 flex items-center justify-between border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          <button className="p-1 hover:bg-slate-200 rounded text-slate-500">
+    <div className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-2xl">
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button className="p-1.5 hover:bg-slate-700 rounded-lg text-slate-400 transition">
             <ArrowLeft className="h-4 w-4" />
           </button>
-          <span className="text-xs text-slate-800 font-medium">Coaching Product Setup</span>
+          <div>
+            <span className="text-sm text-white font-semibold">Online Coaching Program</span>
+            <p className="text-[10px] text-slate-400">3 pricing tiers</p>
+          </div>
         </div>
-        <button className="px-2 py-1 bg-blue-600 text-white rounded text-[10px]">Save</button>
+        <button className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-[11px] font-medium transition">Save & Publish</button>
       </div>
 
       <div className="p-4">
-        {isGenerating && (
-          <div className="flex items-center gap-1.5 mb-4 text-cyan-600">
-            <Wand2 className="h-4 w-4 animate-pulse" />
-            <span className="text-xs font-medium">AI configuring your products...</span>
+        {isGenerating && step < 4 && (
+          <div className="flex items-center gap-2 mb-4 p-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border border-cyan-200">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+              <Wand2 className="h-3 w-3 text-white animate-pulse" />
+            </div>
+            <span className="text-xs font-medium text-slate-700">AI configuring your program tiers...</span>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className={`p-4 rounded-lg border-2 transition-all ${step >= 1 ? 'border-green-400 bg-green-50' : 'border-slate-200'}`}>
+        <div className="grid grid-cols-3 gap-3">
+          <div className={`p-3 rounded-xl border-2 transition-all ${step >= 1 ? 'border-green-400 bg-green-50' : 'border-slate-200'}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-slate-700">Starter Package</span>
+              <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide">Community</span>
               {step >= 1 && <Check className="h-4 w-4 text-green-500" />}
             </div>
-            <div className="text-2xl font-bold text-slate-900 mb-2">
-              $297<span className="text-sm font-normal text-slate-500">/month</span>
+            <div className="text-xl font-bold text-slate-900 mb-1">
+              $67<span className="text-[10px] font-normal text-slate-500">/month</span>
             </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                <Check className="h-3 w-3 text-green-500" /> 4 weekly check-ins
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Community access
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                <Check className="h-3 w-3 text-green-500" /> Custom workout plan
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Training library
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                <Check className="h-3 w-3 text-green-500" /> Email support
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Weekly Q&A access
               </div>
             </div>
           </div>
 
-          <div className={`p-4 rounded-lg border-2 transition-all ${step >= 2 ? 'border-cyan-400 bg-cyan-50' : 'border-slate-200'}`}>
+          <div className={`p-3 rounded-xl border-2 transition-all relative ${step >= 2 ? 'border-cyan-400 bg-cyan-50' : 'border-slate-200'}`}>
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full">
+              POPULAR
+            </div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-slate-700">Premium Package</span>
+              <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide">Group Coaching</span>
               {step >= 2 ? <Check className="h-4 w-4 text-green-500" /> : step === 1 && isGenerating ? (
                 <div className="flex gap-0.5">
                   <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" />
@@ -1476,40 +1495,81 @@ function ProductSetupMockup({ isGenerating }: { isGenerating: boolean }) {
                 </div>
               ) : null}
             </div>
-            <div className="text-2xl font-bold text-slate-900 mb-2">
-              $497<span className="text-sm font-normal text-slate-500">/month</span>
+            <div className="text-xl font-bold text-slate-900 mb-1">
+              $127<span className="text-[10px] font-normal text-slate-500">/month</span>
             </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                <Check className="h-3 w-3 text-green-500" /> Everything in Starter
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Everything in Community
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                <Check className="h-3 w-3 text-green-500" /> 2 longer sessions (60 min)
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Weekly group calls
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                <Check className="h-3 w-3 text-green-500" /> Priority support
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Workout templates
+              </div>
+            </div>
+          </div>
+
+          <div className={`p-3 rounded-xl border-2 transition-all ${step >= 3 ? 'border-amber-400 bg-amber-50' : 'border-slate-200'}`}>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide">VIP Hybrid</span>
+              {step >= 3 ? <Check className="h-4 w-4 text-green-500" /> : step === 2 && isGenerating ? (
+                <div className="flex gap-0.5">
+                  <span className="w-1 h-1 bg-amber-500 rounded-full animate-bounce" />
+                  <span className="w-1 h-1 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1 h-1 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              ) : null}
+            </div>
+            <div className="text-xl font-bold text-slate-900 mb-1">
+              $197<span className="text-[10px] font-normal text-slate-500">/month</span>
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Everything in Group
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Monthly 1:1 check-in
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
+                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Direct messaging
               </div>
             </div>
           </div>
         </div>
 
-        <div className={`mt-4 p-3 rounded-lg border transition-all ${step >= 3 ? 'border-green-400 bg-green-50' : 'border-slate-200 bg-slate-50'}`}>
+        <div className={`mt-4 p-3 rounded-xl border-2 transition-all ${step >= 4 ? 'border-green-400 bg-green-50' : 'border-slate-200 bg-slate-50'}`}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <DollarSign className={`h-4 w-4 ${step >= 3 ? 'text-green-500' : 'text-slate-400'}`} />
-              <span className="text-xs font-medium text-slate-700">Stripe Checkout</span>
+            <div className="flex items-center gap-3">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${step >= 4 ? 'bg-green-100' : 'bg-slate-200'}`}>
+                <DollarSign className={`h-4 w-4 ${step >= 4 ? 'text-green-600' : 'text-slate-400'}`} />
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-slate-700">Stripe Checkout</span>
+                <p className="text-[9px] text-slate-500">Secure payment processing</p>
+              </div>
             </div>
-            {step >= 3 ? (
-              <span className="text-[10px] text-green-600 flex items-center gap-1">
+            {step >= 4 ? (
+              <span className="text-[10px] text-green-600 flex items-center gap-1 bg-green-100 px-2 py-1 rounded-full font-medium">
                 <Check className="h-3 w-3" /> Connected & Ready
               </span>
-            ) : step === 2 && isGenerating ? (
-              <span className="text-[10px] text-cyan-600">Configuring...</span>
+            ) : step === 3 && isGenerating ? (
+              <span className="text-[10px] text-cyan-600 font-medium">Configuring...</span>
             ) : (
               <span className="text-[10px] text-slate-400">Pending</span>
             )}
           </div>
         </div>
+
+        {step >= 4 && (
+          <div className="mt-3 p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="flex items-center gap-2">
+              <Users className="h-3.5 w-3.5 text-slate-400" />
+              <span className="text-[10px] text-slate-500">Founding member pricing - limited spots recommended to start</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
