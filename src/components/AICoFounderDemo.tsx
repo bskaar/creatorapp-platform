@@ -810,15 +810,15 @@ P.S. Questions? Just reply to this email. I read every message personally.`,
         </div>
       </div>
 
-      <div className="flex h-72">
-        <div className="w-48 bg-slate-50 border-r border-slate-200 p-3">
+      <div className="flex h-80">
+        <div className="w-48 bg-slate-50 border-r border-slate-200 p-3 flex flex-col">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-slate-700">Sequence Steps</span>
             <button className="p-1 bg-blue-600 rounded text-white">
               <Plus className="h-3 w-3" />
             </button>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 overflow-y-auto flex-1 pr-1 scrollbar-thin">
             {emails.map((email, index) => (
               <div
                 key={index}
@@ -832,7 +832,7 @@ P.S. Questions? Just reply to this email. I read every message personally.`,
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
                     currentEmail === index
                       ? 'bg-blue-600 text-white'
                       : generationComplete
@@ -843,7 +843,7 @@ P.S. Questions? Just reply to this email. I read every message personally.`,
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1">
-                      <Mail className="h-3 w-3 text-slate-400" />
+                      <Mail className="h-3 w-3 text-slate-400 flex-shrink-0" />
                       <span className="text-[10px] font-medium text-slate-700 truncate">Email {index + 1}</span>
                     </div>
                     <span className="text-[9px] text-slate-500">{email.delay}</span>
@@ -851,6 +851,28 @@ P.S. Questions? Just reply to this email. I read every message personally.`,
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="pt-2 mt-2 border-t border-slate-200">
+            <div className="flex items-center justify-between text-[9px] text-slate-500">
+              <span>Viewing {currentEmail + 1} of 5</span>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => handleEmailClick(Math.max(0, currentEmail - 1))}
+                  disabled={currentEmail === 0}
+                  className="p-1 rounded hover:bg-slate-200 disabled:opacity-30 disabled:hover:bg-transparent"
+                >
+                  <ChevronUp className="h-3 w-3" />
+                </button>
+                <button
+                  onClick={() => handleEmailClick(Math.min(4, currentEmail + 1))}
+                  disabled={currentEmail === 4}
+                  className="p-1 rounded hover:bg-slate-200 disabled:opacity-30 disabled:hover:bg-transparent"
+                >
+                  <ChevronDown className="h-3 w-3" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
