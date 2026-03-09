@@ -1,11 +1,43 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, CreditCard as Edit, Trash2, Eye, GripVertical, Copy, BarChart3, ExternalLink, ChevronRight, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, Eye, GripVertical, Copy, BarChart3, ExternalLink, ChevronRight, ToggleLeft, ToggleRight, FileText, ShoppingCart, Mail, CheckCircle } from 'lucide-react';
 import { BottomSheet, BottomSheetAction } from '../responsive/BottomSheet';
 import { TouchButton } from '../responsive/TouchButton';
+import { MiniPagePreview } from './MiniPagePreview';
 import type { Database } from '../../lib/database.types';
+import type { Block } from '../publicSite/types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
+
+const extractBlocks = (content: unknown): Block[] => {
+  if (!content || typeof content !== 'object') return [];
+  const contentObj = content as { blocks?: unknown[] };
+  const blocks = Array.isArray(content) ? content : contentObj.blocks;
+  if (!Array.isArray(blocks)) return [];
+  return blocks.filter((b): b is Block =>
+    b !== null &&
+    typeof b === 'object' &&
+    'id' in b &&
+    'type' in b
+  );
+};
+
+const getPageTypeIcon = (type: string) => {
+  switch (type) {
+    case 'landing':
+    case 'optin':
+      return Mail;
+    case 'sales_page':
+      return FileText;
+    case 'checkout':
+      return ShoppingCart;
+    case 'thank_you':
+    case 'upsell':
+      return CheckCircle;
+    default:
+      return FileText;
+  }
+};
 
 interface FunnelListViewProps {
   funnelId: string;
@@ -147,6 +179,8 @@ export function FunnelListView({
             const colors = getPageTypeColor(page.page_type);
             const isExpanded = expandedPage === page.id;
             const isDragOver = dragOverIndex === index && draggedIndex !== index;
+            const blocks = useMemo(() => extractBlocks(page.content), [page.content]);
+            const PageIcon = getPageTypeIcon(page.page_type);
 
             return (
               <div
@@ -165,9 +199,9 @@ export function FunnelListView({
                       : 'border-gray-200'
                 }`}
               >
-                <div className="flex items-center">
+                <div className="flex items-stretch">
                   <div
-                    className="flex items-center justify-center w-10 h-full py-4 touch-none cursor-grab active:cursor-grabbing select-none"
+                    className="flex items-center justify-center w-10 touch-none cursor-grab active:cursor-grabbing select-none"
                     onTouchStart={() => handleTouchStart(index)}
                     onTouchMove={(e) => handleTouchMove(e, index)}
                     onTouchEnd={handleTouchEnd}
@@ -175,9 +209,26 @@ export function FunnelListView({
                     <GripVertical className="h-5 w-5 text-gray-400 hover:text-gray-600" />
                   </div>
 
+                  <div className={`w-24 h-20 flex-shrink-0 rounded-lg overflow-hidden m-2 border ${colors.bg} ${colors.border || 'border-gray-200'}`}>
+                    {blocks.length > 0 ? (
+                      <div className="w-full h-full overflow-hidden relative">
+                        <div className="absolute inset-0 transform scale-[0.15] origin-top-left" style={{ width: '667%', height: '667%' }}>
+                          <MiniPagePreview blocks={blocks} primaryColor="#3B82F6" pageType={page.page_type} />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center">
+                        <PageIcon className={`h-6 w-6 ${colors.text}`} />
+                        <span className={`text-[9px] mt-1 ${colors.text} font-medium`}>
+                          {page.page_type.replace('_', ' ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
                   <button
                     onClick={() => handleToggleExpand(page.id)}
-                    className="flex-1 flex items-center py-4 pr-4 text-left min-h-[72px]"
+                    className="flex-1 flex items-center py-3 pr-4 text-left"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">

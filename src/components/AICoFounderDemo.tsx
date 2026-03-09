@@ -1098,7 +1098,7 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
                   {page.preview.cta}
                   <ArrowRight className="h-3 w-3" />
                 </button>
-                <p className="text-[6px] text-slate-400 text-center">Join 10,000+ photographers</p>
+                <p className="text-[6px] text-slate-400 text-center">Join 10,000+ professionals</p>
               </div>
             </div>
           </div>
@@ -1273,53 +1273,69 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
 
         {viewMode === 'flow' && (
           <div className="space-y-4">
-            <div className="flex items-stretch gap-3 overflow-x-auto pb-3 scrollbar-thin">
-              {pages.map((page, index) => {
-                const isCreated = index < pagesCreated;
-                const isCreating = index === pagesCreated && isGenerating && pagesCreated < pages.length;
-                return (
-                  <div key={index} className="flex items-center flex-shrink-0">
-                    <button
-                      onClick={() => setCurrentSlide(index)}
-                      className={`w-28 rounded-xl overflow-hidden transition-all duration-300 ${
-                        currentSlide === index
-                          ? 'ring-2 ring-blue-500 ring-offset-2 shadow-xl scale-105'
-                          : isCreated
-                            ? 'ring-2 ring-green-400 shadow-lg hover:shadow-xl hover:scale-102'
-                            : isCreating
-                              ? 'ring-2 ring-cyan-400 shadow-lg'
-                              : 'ring-1 ring-slate-200 shadow hover:shadow-lg'
-                      }`}
-                    >
-                      <div className="h-36 overflow-hidden">
-                        {renderPagePreview(page, isCreated, isCreating, 'small')}
-                      </div>
-                      <div className={`px-2 py-1.5 ${
-                        isCreated ? 'bg-green-50' : isCreating ? 'bg-cyan-50' : 'bg-slate-50'
-                      }`}>
-                        <div className="flex items-center justify-between">
-                          <span className="text-[9px] font-semibold text-slate-700 truncate">{page.name}</span>
-                          {isCreated && <Check className="h-3 w-3 text-green-500 flex-shrink-0" />}
-                          {isCreating && <Wand2 className="h-3 w-3 text-cyan-500 animate-pulse flex-shrink-0" />}
+            <div className="relative">
+              <button
+                onClick={() => setCurrentSlide(Math.max(0, currentSlide - 1))}
+                disabled={currentSlide === 0}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-full shadow-lg flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white hover:shadow-xl transition-all"
+              >
+                <ChevronLeft className="h-4 w-4 text-slate-600" />
+              </button>
+              <button
+                onClick={() => setCurrentSlide(Math.min(pages.length - 1, currentSlide + 1))}
+                disabled={currentSlide === pages.length - 1}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-full shadow-lg flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white hover:shadow-xl transition-all"
+              >
+                <ChevronRight className="h-4 w-4 text-slate-600" />
+              </button>
+              <div className="flex items-stretch gap-3 overflow-x-auto pb-3 px-10 scrollbar-thin scroll-smooth">
+                {pages.map((page, index) => {
+                  const isCreated = index < pagesCreated;
+                  const isCreating = index === pagesCreated && isGenerating && pagesCreated < pages.length;
+                  return (
+                    <div key={index} className="flex items-center flex-shrink-0">
+                      <button
+                        onClick={() => setCurrentSlide(index)}
+                        className={`w-32 rounded-xl overflow-hidden transition-all duration-300 ${
+                          currentSlide === index
+                            ? 'ring-2 ring-blue-500 ring-offset-2 shadow-xl scale-105'
+                            : isCreated
+                              ? 'ring-2 ring-green-400 shadow-lg hover:shadow-xl hover:scale-102'
+                              : isCreating
+                                ? 'ring-2 ring-cyan-400 shadow-lg'
+                                : 'ring-1 ring-slate-200 shadow hover:shadow-lg'
+                        }`}
+                      >
+                        <div className="h-40 overflow-hidden">
+                          {renderPagePreview(page, isCreated, isCreating, 'small')}
                         </div>
-                        {isCreated && (
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <span className="text-[8px] text-green-600 font-medium">{page.stats.rate}% conv</span>
+                        <div className={`px-2 py-1.5 ${
+                          isCreated ? 'bg-green-50' : isCreating ? 'bg-cyan-50' : 'bg-slate-50'
+                        }`}>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-semibold text-slate-700 truncate">{page.name}</span>
+                            {isCreated && <Check className="h-3 w-3 text-green-500 flex-shrink-0" />}
+                            {isCreating && <Wand2 className="h-3 w-3 text-cyan-500 animate-pulse flex-shrink-0" />}
                           </div>
-                        )}
-                      </div>
-                    </button>
-                    {index < pages.length - 1 && (
-                      <div className="flex flex-col items-center px-2 flex-shrink-0">
-                        <ArrowRight className={`h-5 w-5 ${index < pagesCreated ? 'text-green-400' : 'text-slate-300'}`} />
-                        {index < pagesCreated && (
-                          <span className="text-[8px] text-slate-400 mt-0.5">{pages[index + 1]?.stats.views}</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                          {isCreated && (
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <span className="text-[8px] text-green-600 font-medium">{page.stats.rate}% conv</span>
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                      {index < pages.length - 1 && (
+                        <div className="flex flex-col items-center px-2 flex-shrink-0">
+                          <ArrowRight className={`h-5 w-5 ${index < pagesCreated ? 'text-green-400' : 'text-slate-300'}`} />
+                          {index < pagesCreated && (
+                            <span className="text-[8px] text-slate-400 mt-0.5">{pages[index + 1]?.stats.views}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="grid grid-cols-3 gap-4">
@@ -1456,25 +1472,58 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
         )}
 
         {viewMode === 'list' && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {pages.map((page, index) => {
               const isCreated = index < pagesCreated;
               const isCreating = index === pagesCreated && isGenerating && pagesCreated < pages.length;
+              const hasImage = page.preview.image;
               return (
                 <div
                   key={index}
-                  className={`flex items-center gap-4 p-3 rounded-xl transition-all ${
+                  className={`flex items-stretch gap-4 rounded-xl transition-all overflow-hidden ${
                     isCreated
-                      ? 'bg-green-50 border border-green-200'
+                      ? 'bg-white border-2 border-green-300 shadow-md'
                       : isCreating
-                        ? 'bg-cyan-50 border border-cyan-200'
-                        : 'bg-white border border-slate-200'
+                        ? 'bg-white border-2 border-cyan-300 shadow-md'
+                        : 'bg-white border border-slate-200 shadow-sm'
                   }`}
                 >
-                  <div className="w-20 h-28 rounded-lg overflow-hidden shadow-md flex-shrink-0 border border-slate-200">
-                    {renderPagePreview(page, isCreated, isCreating, 'small')}
+                  <div className="w-32 flex-shrink-0 relative">
+                    {hasImage ? (
+                      <div className="h-full">
+                        <img
+                          src={page.preview.image}
+                          alt={page.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20" />
+                      </div>
+                    ) : (
+                      <div className="h-full bg-gradient-to-br from-slate-100 to-slate-50 flex items-center justify-center">
+                        {page.type === 'thank_you' && (
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center">
+                            <Check className="h-6 w-6 text-white" />
+                          </div>
+                        )}
+                        {page.type === 'checkout' && (
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                            <DollarSign className="h-6 w-6 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[8px] font-semibold ${
+                      page.type === 'landing' ? 'bg-blue-500 text-white' :
+                      page.type === 'thank_you' ? 'bg-green-500 text-white' :
+                      page.type === 'sales' ? 'bg-amber-500 text-white' :
+                      'bg-slate-600 text-white'
+                    }`}>
+                      {page.type === 'landing' ? 'Opt-in' :
+                       page.type === 'thank_you' ? 'Upsell' :
+                       page.type === 'sales' ? 'Sales' : 'Checkout'}
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 py-3 pr-4 flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-sm font-semibold text-slate-800">{page.name}</h4>
                       {isCreated && (
@@ -1516,7 +1565,7 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center pr-3 flex-shrink-0">
                     {index < pages.length - 1 && (
                       <ArrowRight className={`h-5 w-5 ${isCreated ? 'text-green-400' : 'text-slate-300'}`} />
                     )}

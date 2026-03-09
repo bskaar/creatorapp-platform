@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut } from 'lucide-react';
+import { Plus, CreditCard as Edit, Trash2, Eye, MoreVertical, GripVertical, ArrowRight, ArrowDown, Copy, BarChart3, ExternalLink, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useDeviceType } from '../../hooks/useDeviceType';
 import { MiniPagePreview } from './MiniPagePreview';
 import type { Database } from '../../lib/database.types';
@@ -28,11 +28,44 @@ export function FunnelFlowView({
   const [zoom, setZoom] = useState(100);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { isMobile, isTablet, isPortrait } = useDeviceType();
 
   const isVerticalLayout = isMobile || (isTablet && isPortrait);
+
+  const checkScrollPosition = useCallback(() => {
+    if (containerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+      setCanScrollLeft(scrollLeft > 10);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkScrollPosition();
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', checkScrollPosition);
+      return () => container.removeEventListener('scroll', checkScrollPosition);
+    }
+  }, [checkScrollPosition, pages.length, zoom]);
+
+  const scrollToPage = (direction: 'left' | 'right') => {
+    if (containerRef.current) {
+      const cardWidth = 320;
+      const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
+      containerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      if (direction === 'left' && currentPageIndex > 0) {
+        setCurrentPageIndex(prev => prev - 1);
+      } else if (direction === 'right' && currentPageIndex < pages.length - 1) {
+        setCurrentPageIndex(prev => prev + 1);
+      }
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -281,71 +314,145 @@ export function FunnelFlowView({
   return (
     <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
       <div className="flex items-center justify-between p-4 bg-white border-b">
-        <h3 className="font-semibold text-gray-900">Funnel Flow</h3>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleZoomOut}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
-            title="Zoom out"
-          >
-            <ZoomOut className="h-4 w-4" />
-          </button>
-          <span className="text-sm text-gray-500 w-12 text-center">{zoom}%</span>
-          <button
-            onClick={handleZoomIn}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
-            title="Zoom in"
-          >
-            <ZoomIn className="h-4 w-4" />
-          </button>
+        <div className="flex items-center gap-3">
+          <h3 className="font-semibold text-gray-900">Funnel Flow</h3>
+          {pages.length > 0 && (
+            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+              {pages.length} {pages.length === 1 ? 'step' : 'steps'}
+            </span>
+          )}
         </div>
-      </div>
-
-      <div
-        ref={containerRef}
-        className="overflow-x-auto p-6"
-        style={{ minHeight: '300px' }}
-      >
-        <div
-          className="flex items-center gap-0"
-          style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'left center' }}
-        >
-          {pages.map((page, index) => {
-            const isLast = index === pages.length - 1;
-
-            return (
-              <div key={page.id} className="flex items-center">
-                {renderPageCard(page, index)}
-
-                {!isLast && (
-                  <div className="flex items-center px-2 relative group/connector">
-                    <div className="w-12 h-0.5 bg-gray-300" />
-                    <ArrowRight className="h-4 w-4 text-gray-400 -ml-1" />
-
-                    <button
-                      onClick={onAddPage}
-                      className="absolute left-1/2 -translate-x-1/2 opacity-0 group-hover/connector:opacity-100 transition bg-white border border-gray-300 rounded-full p-1 hover:border-blue-500 hover:text-blue-600 shadow-sm"
-                      title="Add step here"
-                    >
-                      <Plus className="h-3 w-3" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          <button
-            onClick={onAddPage}
-            className="ml-4 flex flex-col items-center justify-center w-48 h-40 border-2 border-dashed border-gray-300 rounded-xl text-gray-400 hover:border-blue-500 hover:text-blue-600 transition group"
-          >
-            <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-blue-50 flex items-center justify-center mb-2 transition">
-              <Plus className="h-5 w-5" />
+        <div className="flex items-center gap-4">
+          {pages.length > 2 && (
+            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => scrollToPage('left')}
+                disabled={!canScrollLeft}
+                className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-white rounded transition disabled:opacity-30 disabled:cursor-not-allowed"
+                title="Previous page"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <span className="text-xs text-gray-500 px-2 font-medium min-w-[40px] text-center">
+                {Math.min(currentPageIndex + 1, pages.length)}/{pages.length}
+              </span>
+              <button
+                onClick={() => scrollToPage('right')}
+                disabled={!canScrollRight}
+                className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-white rounded transition disabled:opacity-30 disabled:cursor-not-allowed"
+                title="Next page"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
-            <span className="text-sm font-medium">Add Step</span>
-          </button>
+          )}
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={handleZoomOut}
+              className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-white rounded transition"
+              title="Zoom out"
+            >
+              <ZoomOut className="h-4 w-4" />
+            </button>
+            <span className="text-xs text-gray-500 w-10 text-center font-medium">{zoom}%</span>
+            <button
+              onClick={handleZoomIn}
+              className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-white rounded transition"
+              title="Zoom in"
+            >
+              <ZoomIn className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
+
+      <div className="relative">
+        {canScrollLeft && pages.length > 2 && (
+          <button
+            onClick={() => scrollToPage('left')}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-lg flex items-center justify-center hover:bg-white hover:shadow-xl transition-all"
+          >
+            <ChevronLeft className="h-5 w-5 text-gray-600" />
+          </button>
+        )}
+        {canScrollRight && pages.length > 2 && (
+          <button
+            onClick={() => scrollToPage('right')}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full shadow-lg flex items-center justify-center hover:bg-white hover:shadow-xl transition-all"
+          >
+            <ChevronRight className="h-5 w-5 text-gray-600" />
+          </button>
+        )}
+
+        <div
+          ref={containerRef}
+          className="overflow-x-auto p-6 scroll-smooth"
+          style={{ minHeight: '300px' }}
+          onScroll={checkScrollPosition}
+        >
+          <div
+            className="flex items-center gap-0"
+            style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'left center' }}
+          >
+            {pages.map((page, index) => {
+              const isLast = index === pages.length - 1;
+
+              return (
+                <div key={page.id} className="flex items-center">
+                  {renderPageCard(page, index)}
+
+                  {!isLast && (
+                    <div className="flex items-center px-2 relative group/connector">
+                      <div className="w-12 h-0.5 bg-gray-300" />
+                      <ArrowRight className="h-4 w-4 text-gray-400 -ml-1" />
+
+                      <button
+                        onClick={onAddPage}
+                        className="absolute left-1/2 -translate-x-1/2 opacity-0 group-hover/connector:opacity-100 transition bg-white border border-gray-300 rounded-full p-1 hover:border-blue-500 hover:text-blue-600 shadow-sm"
+                        title="Add step here"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            <button
+              onClick={onAddPage}
+              className="ml-4 flex flex-col items-center justify-center w-48 h-40 border-2 border-dashed border-gray-300 rounded-xl text-gray-400 hover:border-blue-500 hover:text-blue-600 transition group"
+            >
+              <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-blue-50 flex items-center justify-center mb-2 transition">
+                <Plus className="h-5 w-5" />
+              </div>
+              <span className="text-sm font-medium">Add Step</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {pages.length > 3 && (
+        <div className="flex items-center justify-center gap-1.5 py-3 border-t bg-white">
+          {pages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                if (containerRef.current) {
+                  const cardWidth = 320;
+                  containerRef.current.scrollTo({ left: index * cardWidth, behavior: 'smooth' });
+                  setCurrentPageIndex(index);
+                }
+              }}
+              className={`h-2 rounded-full transition-all ${
+                index === currentPageIndex
+                  ? 'w-6 bg-blue-500'
+                  : 'w-2 bg-gray-300 hover:bg-gray-400'
+              }`}
+            />
+          ))}
+        </div>
+      )}
 
       {pages.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12">
