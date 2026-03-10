@@ -1730,70 +1730,63 @@ function ProductSetupMockup({ isGenerating }: { isGenerating: boolean }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2.5 mt-3">
-          <div className={`p-2.5 rounded-xl border-2 transition-all ${step >= 4 ? 'border-emerald-400 bg-emerald-50' : 'border-slate-200 bg-slate-50'}`}>
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${step >= 4 ? 'bg-emerald-100' : 'bg-slate-200'}`}>
-                  <DollarSign className={`h-3.5 w-3.5 ${step >= 4 ? 'text-emerald-600' : 'text-slate-400'}`} />
-                </div>
-                <div>
-                  <span className="text-[10px] font-semibold text-slate-700">Checkout Page</span>
-                  <p className="text-[8px] text-slate-500">Secure Stripe payments</p>
-                </div>
-              </div>
-              {step >= 4 ? (
-                <Check className="h-4 w-4 text-emerald-500" />
-              ) : step === 3 && isGenerating ? (
-                <div className="flex gap-0.5">
-                  <span className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce" />
-                  <span className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                </div>
-              ) : null}
+        {step >= 4 && (
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Customer Journey</span>
+              <div className="flex-1 h-px bg-slate-200" />
             </div>
-            {step >= 4 && (
-              <div className="bg-white rounded-lg p-2 border border-slate-200 space-y-1.5">
-                <div className="h-4 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">Card number</div>
-                <div className="flex gap-1.5">
-                  <div className="h-4 flex-1 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">MM/YY</div>
-                  <div className="h-4 flex-1 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">CVC</div>
-                </div>
-                <button className="w-full h-5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold rounded">
-                  Start Transformation
-                </button>
-              </div>
-            )}
-          </div>
 
-          <div className={`p-2.5 rounded-xl border-2 transition-all ${step >= 5 ? 'border-teal-400 bg-teal-50' : 'border-slate-200 bg-slate-50'}`}>
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${step >= 5 ? 'bg-teal-100' : 'bg-slate-200'}`}>
-                  <FileText className={`h-3.5 w-3.5 ${step >= 5 ? 'text-teal-600' : 'text-slate-400'}`} />
+            <div className="flex items-center gap-2">
+              <div className={`flex-1 p-2 rounded-lg border transition-all ${step >= 4 ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200'}`}>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className="w-4 h-4 rounded bg-emerald-100 flex items-center justify-center">
+                    <span className="text-[8px] font-bold text-emerald-600">1</span>
+                  </div>
+                  <span className="text-[9px] font-semibold text-slate-700">Select Tier</span>
+                  {step >= 4 && <Check className="h-3 w-3 text-emerald-500 ml-auto" />}
                 </div>
-                <div>
-                  <span className="text-[10px] font-semibold text-slate-700">Member Intake</span>
-                  <p className="text-[8px] text-slate-500">Onboarding questionnaire</p>
-                </div>
+                <p className="text-[8px] text-slate-500">Pricing page with 3 options</p>
               </div>
-              {step >= 5 ? (
-                <Check className="h-4 w-4 text-teal-500" />
-              ) : step === 4 && isGenerating ? (
-                <div className="flex gap-0.5">
-                  <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce" />
-                  <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+
+              <ArrowRight className="h-3 w-3 text-slate-300 flex-shrink-0" />
+
+              <div className={`flex-1 p-2 rounded-lg border transition-all ${step >= 5 ? 'border-blue-300 bg-blue-50' : 'border-slate-200'}`}>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className={`w-4 h-4 rounded flex items-center justify-center ${step >= 5 ? 'bg-blue-100' : 'bg-slate-100'}`}>
+                    <span className={`text-[8px] font-bold ${step >= 5 ? 'text-blue-600' : 'text-slate-400'}`}>2</span>
+                  </div>
+                  <span className="text-[9px] font-semibold text-slate-700">Stripe Checkout</span>
+                  {step >= 5 ? <Check className="h-3 w-3 text-blue-500 ml-auto" /> : step === 4 && isGenerating ? (
+                    <div className="flex gap-0.5 ml-auto">
+                      <span className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" />
+                      <span className="w-1 h-1 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    </div>
+                  ) : null}
                 </div>
-              ) : null}
+                <p className="text-[8px] text-slate-500">Redirects to Stripe</p>
+              </div>
+
+              <ArrowRight className="h-3 w-3 text-slate-300 flex-shrink-0" />
+
+              <div className={`flex-1 p-2 rounded-lg border transition-all ${step >= 6 ? 'border-teal-300 bg-teal-50' : 'border-slate-200'}`}>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className={`w-4 h-4 rounded flex items-center justify-center ${step >= 6 ? 'bg-teal-100' : 'bg-slate-100'}`}>
+                    <span className={`text-[8px] font-bold ${step >= 6 ? 'text-teal-600' : 'text-slate-400'}`}>3</span>
+                  </div>
+                  <span className="text-[9px] font-semibold text-slate-700">Intake Form</span>
+                  {step >= 6 ? <Check className="h-3 w-3 text-teal-500 ml-auto" /> : step === 5 && isGenerating ? (
+                    <div className="flex gap-0.5 ml-auto">
+                      <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce" />
+                      <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    </div>
+                  ) : null}
+                </div>
+                <p className="text-[8px] text-slate-500">Post-purchase page</p>
+              </div>
             </div>
-            {step >= 5 && (
-              <div className="bg-white rounded-lg p-2 border border-slate-200 space-y-1.5">
-                <div className="h-4 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">Fitness goals</div>
-                <div className="h-4 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">Current activity level</div>
-                <div className="h-4 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">Dietary restrictions</div>
-              </div>
-            )}
           </div>
-        </div>
+        )}
 
         {step >= 6 && (
           <div className="mt-3 p-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
@@ -1804,7 +1797,7 @@ function ProductSetupMockup({ isGenerating }: { isGenerating: boolean }) {
                 </div>
                 <span className="text-[10px] font-semibold text-emerald-700">Program Ready to Launch!</span>
               </div>
-              <span className="text-[9px] text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">3 tiers + checkout + intake</span>
+              <span className="text-[9px] text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Pricing + Stripe + Intake</span>
             </div>
           </div>
         )}
