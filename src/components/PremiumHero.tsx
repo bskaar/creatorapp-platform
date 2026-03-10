@@ -135,9 +135,6 @@ export default function PremiumHero({ onWatchDemo }: PremiumHeroProps) {
 
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvZz48L3N2Zz4=')] opacity-50"></div>
 
-        <div className="absolute top-1/4 right-1/4 w-2 h-2 bg-blue-400 rounded-full animate-twinkle"></div>
-        <div className="absolute top-1/3 left-1/3 w-1 h-1 bg-cyan-400 rounded-full animate-twinkle-delayed"></div>
-        <div className="absolute bottom-1/3 right-1/3 w-1.5 h-1.5 bg-white/50 rounded-full animate-twinkle"></div>
       </div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-8rem)]">
@@ -210,11 +207,6 @@ export default function PremiumHero({ onWatchDemo }: PremiumHeroProps) {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
-          <div className="w-1 h-3 bg-white/50 rounded-full animate-scroll-indicator"></div>
-        </div>
-      </div>
 
       <style>{`
         @keyframes float-slow {
