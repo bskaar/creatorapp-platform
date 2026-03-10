@@ -413,13 +413,13 @@ export default function FeatureShowcase() {
       </div>
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-8">
-        <div className="text-center mb-8">
-          <p className="text-gray-600 text-sm mb-2">Not ready to get started?</p>
-          <a href="#features" className="text-cyan-600 hover:text-cyan-700 text-sm font-medium transition-colors">Learn More</a>
+        <div className="text-center mb-10">
+          <p className="text-gray-300 text-base mb-3">Not ready to get started?</p>
+          <a href="#features" className="text-cyan-400 hover:text-cyan-300 text-base font-medium transition-colors">Learn More</a>
         </div>
 
         <div
-          className="flex justify-center gap-2 mb-12 overflow-x-auto pb-4 scrollbar-hide"
+          className="flex justify-center gap-3 mb-12 overflow-x-auto pb-4 scrollbar-hide"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
         >
@@ -427,10 +427,10 @@ export default function FeatureShowcase() {
             <button
               key={feature.id}
               onClick={() => setActiveTab(index)}
-              className={`px-5 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-6 py-3.5 rounded-xl text-base font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === index
-                  ? 'bg-cyan-100 text-slate-900 shadow-lg shadow-cyan-500/20'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-white text-slate-900 shadow-lg shadow-cyan-500/20'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10 border border-white/10'
               }`}
             >
               {feature.label}
