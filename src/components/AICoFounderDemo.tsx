@@ -1608,148 +1608,203 @@ function ProductSetupMockup({ isGenerating }: { isGenerating: boolean }) {
     if (isGenerating) {
       const interval = setInterval(() => {
         setStep(prev => {
-          if (prev < 4) return prev + 1;
+          if (prev < 6) return prev + 1;
           clearInterval(interval);
           return prev;
         });
-      }, 1500);
+      }, 1200);
       return () => clearInterval(interval);
     }
   }, [isGenerating]);
 
   return (
     <div className="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-2xl">
-      <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button className="p-1.5 hover:bg-slate-700 rounded-lg text-slate-400 transition">
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-          <div>
-            <span className="text-sm text-white font-semibold">Online Coaching Program</span>
-            <p className="text-[10px] text-slate-400">3 pricing tiers</p>
+      <div className="relative h-24 overflow-hidden">
+        <img
+          src="https://images.pexels.com/photos/4498606/pexels-photo-4498606.jpeg?auto=compress&cs=tinysrgb&w=800"
+          alt="Fitness Coaching"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/90 via-emerald-800/80 to-teal-900/70" />
+        <div className="absolute inset-0 flex items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <button className="p-1.5 hover:bg-white/10 rounded-lg text-white/70 transition">
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+            <div>
+              <span className="text-sm text-white font-bold drop-shadow">Fit For Life Coaching</span>
+              <p className="text-[10px] text-emerald-200">Transform your body in 12 weeks</p>
+            </div>
           </div>
+          <button className="px-3 py-1.5 bg-white hover:bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-semibold transition shadow-lg">Save & Publish</button>
         </div>
-        <button className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-[11px] font-medium transition">Save & Publish</button>
       </div>
 
       <div className="p-4">
-        {isGenerating && step < 4 && (
-          <div className="flex items-center gap-2 mb-4 p-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg border border-cyan-200">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+        {isGenerating && step < 6 && (
+          <div className="flex items-center gap-2 mb-4 p-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
               <Wand2 className="h-3 w-3 text-white animate-pulse" />
             </div>
-            <span className="text-xs font-medium text-slate-700">AI configuring your program tiers...</span>
+            <span className="text-xs font-medium text-slate-700">
+              {step < 3 ? 'AI creating your pricing tiers...' : step < 5 ? 'Setting up checkout flow...' : 'Building member intake form...'}
+            </span>
           </div>
         )}
 
-        <div className="grid grid-cols-3 gap-3">
-          <div className={`p-3 rounded-xl border-2 transition-all ${step >= 1 ? 'border-green-400 bg-green-50' : 'border-slate-200'}`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide">Community</span>
-              {step >= 1 && <Check className="h-4 w-4 text-green-500" />}
+        <div className="grid grid-cols-3 gap-2.5">
+          <div className={`p-2.5 rounded-xl border-2 transition-all ${step >= 1 ? 'border-emerald-400 bg-emerald-50' : 'border-slate-200'}`}>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Starter</span>
+              {step >= 1 && <Check className="h-3.5 w-3.5 text-emerald-500" />}
             </div>
-            <div className="text-xl font-bold text-slate-900 mb-1">
-              $67<span className="text-[10px] font-normal text-slate-500">/month</span>
+            <div className="text-lg font-bold text-slate-900 mb-1">
+              $67<span className="text-[9px] font-normal text-slate-500">/mo</span>
             </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Community access
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Workout library
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Training library
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Community access
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Weekly Q&A access
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Weekly Q&A
               </div>
             </div>
           </div>
 
-          <div className={`p-3 rounded-xl border-2 transition-all relative ${step >= 2 ? 'border-cyan-400 bg-cyan-50' : 'border-slate-200'}`}>
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-cyan-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full">
+          <div className={`p-2.5 rounded-xl border-2 transition-all relative ${step >= 2 ? 'border-teal-400 bg-teal-50' : 'border-slate-200'}`}>
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[7px] font-bold px-2 py-0.5 rounded-full shadow">
               POPULAR
             </div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide">Group Coaching</span>
-              {step >= 2 ? <Check className="h-4 w-4 text-green-500" /> : step === 1 && isGenerating ? (
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">Transform</span>
+              {step >= 2 ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : step === 1 && isGenerating ? (
                 <div className="flex gap-0.5">
-                  <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" />
-                  <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-1 h-1 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce" />
+                  <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                 </div>
               ) : null}
             </div>
-            <div className="text-xl font-bold text-slate-900 mb-1">
-              $127<span className="text-[10px] font-normal text-slate-500">/month</span>
+            <div className="text-lg font-bold text-slate-900 mb-1">
+              $147<span className="text-[9px] font-normal text-slate-500">/mo</span>
             </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Everything in Community
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Everything in Starter
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Weekly group calls
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Weekly group calls
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Workout templates
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Custom meal plans
               </div>
             </div>
           </div>
 
-          <div className={`p-3 rounded-xl border-2 transition-all ${step >= 3 ? 'border-amber-400 bg-amber-50' : 'border-slate-200'}`}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide">VIP Hybrid</span>
-              {step >= 3 ? <Check className="h-4 w-4 text-green-500" /> : step === 2 && isGenerating ? (
+          <div className={`p-2.5 rounded-xl border-2 transition-all ${step >= 3 ? 'border-amber-400 bg-amber-50' : 'border-slate-200'}`}>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">VIP 1:1</span>
+              {step >= 3 ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : step === 2 && isGenerating ? (
                 <div className="flex gap-0.5">
                   <span className="w-1 h-1 bg-amber-500 rounded-full animate-bounce" />
                   <span className="w-1 h-1 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-1 h-1 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               ) : null}
             </div>
-            <div className="text-xl font-bold text-slate-900 mb-1">
-              $197<span className="text-[10px] font-normal text-slate-500">/month</span>
+            <div className="text-lg font-bold text-slate-900 mb-1">
+              $297<span className="text-[9px] font-normal text-slate-500">/mo</span>
             </div>
-            <div className="space-y-1">
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Everything in Group
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Everything in Transform
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Monthly 1:1 check-in
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Weekly 1:1 coaching
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-600">
-                <Check className="h-2.5 w-2.5 text-green-500 flex-shrink-0" /> Direct messaging
+              <div className="flex items-center gap-1 text-[9px] text-slate-600">
+                <Check className="h-2 w-2 text-emerald-500 flex-shrink-0" /> Direct messaging
               </div>
             </div>
           </div>
         </div>
 
-        <div className={`mt-4 p-3 rounded-xl border-2 transition-all ${step >= 4 ? 'border-green-400 bg-green-50' : 'border-slate-200 bg-slate-50'}`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${step >= 4 ? 'bg-green-100' : 'bg-slate-200'}`}>
-                <DollarSign className={`h-4 w-4 ${step >= 4 ? 'text-green-600' : 'text-slate-400'}`} />
+        <div className="grid grid-cols-2 gap-2.5 mt-3">
+          <div className={`p-2.5 rounded-xl border-2 transition-all ${step >= 4 ? 'border-emerald-400 bg-emerald-50' : 'border-slate-200 bg-slate-50'}`}>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${step >= 4 ? 'bg-emerald-100' : 'bg-slate-200'}`}>
+                  <DollarSign className={`h-3.5 w-3.5 ${step >= 4 ? 'text-emerald-600' : 'text-slate-400'}`} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-slate-700">Checkout Page</span>
+                  <p className="text-[8px] text-slate-500">Secure Stripe payments</p>
+                </div>
               </div>
-              <div>
-                <span className="text-xs font-semibold text-slate-700">Stripe Checkout</span>
-                <p className="text-[9px] text-slate-500">Secure payment processing</p>
-              </div>
+              {step >= 4 ? (
+                <Check className="h-4 w-4 text-emerald-500" />
+              ) : step === 3 && isGenerating ? (
+                <div className="flex gap-0.5">
+                  <span className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce" />
+                  <span className="w-1 h-1 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                </div>
+              ) : null}
             </div>
-            {step >= 4 ? (
-              <span className="text-[10px] text-green-600 flex items-center gap-1 bg-green-100 px-2 py-1 rounded-full font-medium">
-                <Check className="h-3 w-3" /> Connected & Ready
-              </span>
-            ) : step === 3 && isGenerating ? (
-              <span className="text-[10px] text-cyan-600 font-medium">Configuring...</span>
-            ) : (
-              <span className="text-[10px] text-slate-400">Pending</span>
+            {step >= 4 && (
+              <div className="bg-white rounded-lg p-2 border border-slate-200 space-y-1.5">
+                <div className="h-4 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">Card number</div>
+                <div className="flex gap-1.5">
+                  <div className="h-4 flex-1 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">MM/YY</div>
+                  <div className="h-4 flex-1 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">CVC</div>
+                </div>
+                <button className="w-full h-5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[8px] font-bold rounded">
+                  Start Transformation
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className={`p-2.5 rounded-xl border-2 transition-all ${step >= 5 ? 'border-teal-400 bg-teal-50' : 'border-slate-200 bg-slate-50'}`}>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${step >= 5 ? 'bg-teal-100' : 'bg-slate-200'}`}>
+                  <FileText className={`h-3.5 w-3.5 ${step >= 5 ? 'text-teal-600' : 'text-slate-400'}`} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-slate-700">Member Intake</span>
+                  <p className="text-[8px] text-slate-500">Onboarding questionnaire</p>
+                </div>
+              </div>
+              {step >= 5 ? (
+                <Check className="h-4 w-4 text-teal-500" />
+              ) : step === 4 && isGenerating ? (
+                <div className="flex gap-0.5">
+                  <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce" />
+                  <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                </div>
+              ) : null}
+            </div>
+            {step >= 5 && (
+              <div className="bg-white rounded-lg p-2 border border-slate-200 space-y-1.5">
+                <div className="h-4 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">Fitness goals</div>
+                <div className="h-4 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">Current activity level</div>
+                <div className="h-4 bg-slate-100 rounded text-[7px] flex items-center px-2 text-slate-400">Dietary restrictions</div>
+              </div>
             )}
           </div>
         </div>
 
-        {step >= 4 && (
-          <div className="mt-3 p-2.5 bg-slate-50 rounded-lg border border-slate-200">
-            <div className="flex items-center gap-2">
-              <Users className="h-3.5 w-3.5 text-slate-400" />
-              <span className="text-[10px] text-slate-500">Founding member pricing - limited spots recommended to start</span>
+        {step >= 6 && (
+          <div className="mt-3 p-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+                  <Check className="h-3 w-3 text-white" />
+                </div>
+                <span className="text-[10px] font-semibold text-emerald-700">Program Ready to Launch!</span>
+              </div>
+              <span className="text-[9px] text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">3 tiers + checkout + intake</span>
             </div>
           </div>
         )}
