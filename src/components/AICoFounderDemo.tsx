@@ -37,61 +37,63 @@ const demoScenarios: DemoScenario[] = [
   {
     id: 'launch',
     icon: Rocket,
-    title: 'Plan My Course Launch',
-    subtitle: 'Get a step-by-step launch strategy',
-    userMessage: "I'm launching my first online course about productivity and time management. Where do I even start?",
-    assistantResponse: `Great choice launching a productivity course! Here's your personalized 4-week launch gameplan:
+    title: 'Launch My Creator Business',
+    subtitle: 'Monetize your social media audience',
+    userMessage: "I have 15k followers on YouTube and Instagram. How do I turn this into a real business?",
+    assistantResponse: `Amazing foundation with 15k followers! Here's your creator monetization roadmap:
 
-**Week 1: Foundation**
-- Define your ideal student (busy professional vs entrepreneur)
-- Outline 6-8 core modules based on transformation
-- Create a free "Morning Routine Guide" as your lead magnet
+**Phase 1: Foundation (Week 1-2)**
+- Identify your highest-engaged content topics
+- Create a "Creator Toolkit" lead magnet (templates, presets, scripts)
+- Set up an email list to own your audience
 
-**Week 2: Build Anticipation**
-- Set up a simple landing page with waitlist
-- Start sharing productivity tips and wins
-- Collect early testimonials from beta students
+**Phase 2: Digital Products (Week 3-4)**
+- Launch a low-ticket offer ($27-47): editing presets, templates, or guides
+- Create a mini-course on your best-performing topic
+- Add links in bio and video descriptions
 
-**Week 3: Pre-Launch**
-- Open early-bird pricing (15-20% off)
-- Launch a 5-email welcome sequence
-- Host a free live workshop: "Reclaim 10 Hours This Week"
+**Phase 3: Community & Coaching**
+- Start a paid community ($19-47/month) for behind-the-scenes access
+- Offer 1:1 strategy calls for aspiring creators
+- Host monthly live Q&As for members
 
-**Week 4: Launch**
-- Open cart with urgency (limited seats or time)
-- Daily emails highlighting different benefits
-- Celebrate student wins publicly to build momentum
+**Revenue Potential at 15k Followers:**
+- Digital products: $2-5k/month
+- Paid community (200 members): $4-8k/month
+- Brand deals: $500-2k per partnership
+- Coaching: $2-4k/month
 
 Want me to help you create your lead magnet landing page first?`,
     followUp: {
       userMessage: "Yes! What should I put on the landing page?",
-      assistantResponse: `Perfect! Here's a high-converting lead magnet page structure:
+      assistantResponse: `Perfect! Here's a high-converting creator lead magnet page:
 
 **Above the Fold:**
-- Headline: "Master [Specific Skill] in [Timeframe]"
-- Example: "The 5-Minute Morning Routine That 10x'd My Output"
-- Subheadline addressing their pain point
-- Email capture form with compelling CTA button
+- Headline: "The Exact [Templates/Process] I Use to [Result]"
+- Example: "My Viral Video Framework: 10 Templates That Got Me 1M Views"
+- Subheadline addressing their pain (struggling to grow, inconsistent results)
+- Email capture with bold CTA: "Get Free Instant Access"
 
 **Social Proof:**
-- 2-3 testimonials or student results
-- Number of professionals you've helped
-- Any credentials or media features
+- Screenshot of your follower count or viral video stats
+- "Join 5,000+ creators" or similar social proof
+- Quick testimonial from someone who used your method
 
-**What They'll Learn:**
-- 3-5 bullet points with specific outcomes
-- Use numbers and timeframes when possible
-- Focus on transformation, not features
+**What's Inside Preview:**
+- 3-5 bullet points with specific, tangible items
+- "10 Viral Hook Templates (copy & paste)"
+- "My exact posting schedule that grew 10k in 90 days"
+- "The thumbnail formula I use for every video"
 
 **About You (Brief):**
-- 2-3 sentences establishing credibility
-- Photo of you with camera builds trust
+- Your story: "From 0 to 15k in [timeframe]"
+- Photo or video thumbnail for recognition
 
-Shall I help you write the headline and bullet points?`
+Shall I help you write the hook templates or landing page copy?`
     },
     actionPreview: {
       type: 'page',
-      title: 'Lead Magnet Landing Page',
+      title: 'Creator Toolkit Landing Page',
       description: 'AI will generate your page with headline, benefits, and opt-in form'
     }
   },
