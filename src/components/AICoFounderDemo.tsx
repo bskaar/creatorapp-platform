@@ -303,39 +303,40 @@ Want me to draft Email 2 next?`
 
 Want me to map out a specific funnel for your business?`,
     followUp: {
-      userMessage: "That makes so much sense! Can you suggest a funnel for someone who teaches productivity and time management?",
-      assistantResponse: `Perfect niche! Productivity is evergreen. Here's your funnel:
+      userMessage: "That makes so much sense! Can you suggest a funnel for someone who does online fitness coaching?",
+      assistantResponse: `Perfect niche! Fitness is evergreen and scales beautifully. Here's your funnel:
 
-**Lead Magnet: "The 5-Minute Morning Routine That 10x'd My Output"**
-- Specific, actionable, time-bound promise
-- Everyone wants more productive mornings
+**Lead Magnet: "7-Day Body Transformation Challenge"**
+- Free challenge creates momentum and quick wins
+- Daily emails keep them engaged for a week
 
-**Thank You Page Offer: "Weekly Planning Templates" - $17**
-- Low-risk purchase builds buyer relationship
-- Complements the free guide perfectly
+**Thank You Page Offer: "Recipe & Meal Prep Bundle" - $27**
+- Low-risk purchase, high perceived value
+- Complements the workout challenge perfectly
 
 **Email Sequence (7 days):**
-- Day 1: Deliver guide + your productivity story
-- Day 2: The time-blocking method breakdown
-- Day 3: Client transformation story
-- Day 4: Your favorite productivity tools
-- Day 5: Quick win: the 2-minute rule
-- Day 6: Introduce your course/coaching
+- Day 1: Welcome + Day 1 workout video
+- Day 2: Nutrition basics + meal prep tips
+- Day 3: Transformation story from a client
+- Day 4: Common mistakes to avoid
+- Day 5: Quick win: 10-minute abs routine
+- Day 6: Introduce your coaching program
 - Day 7: Limited-time enrollment bonus
 
-**Main Offer: "Productivity Accelerator" Course - $197-297**
-- 8-module video course
-- Weekly planning system
-- Accountability community
+**Main Offer: "Fit For Life" Coaching - $247-497**
+- 12-week transformation program
+- Weekly check-in calls
+- Custom workout plans
+- Private community access
 
 **Numbers Game:**
-- 1,000 visitors → 350 email signups
-- 350 signups → 12 template buyers ($204)
-- 350 signups → 15 course buyers ($2,955)
+- 1,000 visitors → 350 challenge signups
+- 350 signups → 70 meal prep buyers ($1,890)
+- 350 signups → 25 coaching clients ($6,175)
 
-That's ~$3,100 from 1,000 targeted visitors.
+That's ~$8,000 from 1,000 targeted visitors.
 
-Ready to build this? Let's start with your lead magnet page!`
+Ready to build this? Let's start with your challenge landing page!`
     },
     actionPreview: {
       type: 'funnel',
@@ -360,15 +361,15 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
   });
 
   const fullContent = {
-    headline: 'The 5-Minute Morning Routine That 10x Your Output',
-    subheadline: 'The free guide that helps busy professionals reclaim their time and crush their goals',
+    headline: 'My Viral Video Framework: 10 Templates That Got 1M+ Views',
+    subheadline: 'The exact hooks, scripts & posting strategy I used to grow from 0 to 50k followers',
     benefits: [
-      'Learn the exact routine CEOs use to start strong',
-      'Avoid the #1 mistake that kills your productivity',
-      'Get my proven time-blocking templates'
+      'Copy-paste viral hook templates that stop the scroll',
+      'The thumbnail formula behind my best-performing videos',
+      'My weekly content calendar that 3x engagement'
     ],
-    testimonial: '"I finally have time for what matters!" - Mark J.',
-    cta: 'Get Your Free Guide Now'
+    testimonial: '"Went from 200 to 5k followers in 60 days!" - Jessica M.',
+    cta: 'Get The Free Creator Toolkit'
   };
 
   useEffect(() => {
@@ -431,8 +432,8 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
           </button>
           <div className="h-5 w-px bg-slate-700" />
           <div>
-            <span className="text-xs text-white font-medium">Lead Magnet Page</span>
-            <span className="text-[10px] text-slate-500 ml-2">/free-guide</span>
+            <span className="text-xs text-white font-medium">Creator Toolkit Page</span>
+            <span className="text-[10px] text-slate-500 ml-2">/creator-toolkit</span>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -497,7 +498,7 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-md h-full overflow-y-auto">
             <div className="relative">
               {isGenerating && (
-                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-3 py-1.5 rounded-full text-[10px] font-semibold z-20 shadow-lg">
+                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-gradient-to-r from-rose-500 to-orange-500 text-white px-3 py-1.5 rounded-full text-[10px] font-semibold z-20 shadow-lg">
                   <Wand2 className="h-3 w-3 animate-pulse" />
                   AI generating content...
                 </div>
@@ -505,41 +506,41 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
 
               <div className="relative h-32 overflow-hidden">
                 <img
-                  src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=600"
-                  alt="Productivity"
+                  src="https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  alt="Content Creator"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40" />
+                <div className="absolute inset-0 bg-gradient-to-t from-rose-950 via-rose-900/80 to-rose-900/40" />
                 <div className="absolute inset-0 flex flex-col justify-end p-4">
                   <h2 className="text-base font-bold text-white leading-snug drop-shadow-lg min-h-[1.5rem]">
                     {generatedContent.headline || <span className="opacity-40">Your headline here...</span>}
                     {isGenerating && generatedContent.headline && generatedContent.headline.length < fullContent.headline.length && (
-                      <span className="inline-block w-0.5 h-5 bg-cyan-400 ml-0.5 animate-pulse" />
+                      <span className="inline-block w-0.5 h-5 bg-rose-400 ml-0.5 animate-pulse" />
                     )}
                   </h2>
-                  <p className="text-[11px] text-cyan-200 mt-1.5 min-h-[1rem] drop-shadow">
+                  <p className="text-[11px] text-rose-200 mt-1.5 min-h-[1rem] drop-shadow">
                     {generatedContent.subheadline || <span className="opacity-40">Supporting text...</span>}
                     {isGenerating && generatedContent.subheadline && generatedContent.subheadline.length < fullContent.subheadline.length && (
-                      <span className="inline-block w-0.5 h-3 bg-cyan-400 ml-0.5 animate-pulse" />
+                      <span className="inline-block w-0.5 h-3 bg-rose-400 ml-0.5 animate-pulse" />
                     )}
                   </p>
                 </div>
               </div>
 
               <div className="p-4 space-y-4">
-                <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                <div className="bg-gradient-to-br from-rose-50 to-orange-50 rounded-lg p-3 border border-rose-200">
                   <p className="text-[10px] font-semibold text-slate-800 uppercase tracking-wide mb-2 flex items-center gap-1.5">
-                    <Sparkles className="h-3 w-3 text-amber-500" />
-                    What You'll Learn:
+                    <Sparkles className="h-3 w-3 text-rose-500" />
+                    Inside The Free Toolkit:
                   </p>
                   <div className="space-y-2">
                     {(generatedContent.benefits.length > 0 ? generatedContent.benefits : ['', '', '']).map((benefit, i) => (
                       <div key={i} className="flex items-start gap-2">
-                        <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${benefit ? 'bg-green-100' : 'bg-slate-200'}`}>
-                          <Check className={`h-2.5 w-2.5 ${benefit ? 'text-green-600' : 'text-slate-400'}`} />
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${benefit ? 'bg-rose-100' : 'bg-slate-200'}`}>
+                          <Check className={`h-2.5 w-2.5 ${benefit ? 'text-rose-600' : 'text-slate-400'}`} />
                         </div>
                         <span className={`text-[11px] leading-relaxed ${benefit ? 'text-slate-700' : 'text-slate-300'}`}>
-                          {benefit || 'Benefit point loading...'}
+                          {benefit || 'Loading...'}
                         </span>
                       </div>
                     ))}
@@ -550,27 +551,27 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
                   <input
                     type="text"
                     placeholder="Enter your best email..."
-                    className="w-full px-3 py-2.5 text-[11px] border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    className="w-full px-3 py-2.5 text-[11px] border border-rose-200 rounded-lg bg-white focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                     readOnly
                   />
-                  <button className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-[12px] font-bold rounded-lg shadow-lg transition-all flex items-center justify-center gap-2">
-                    {generatedContent.cta || 'Get Your Free Guide'}
+                  <button className="w-full py-3 bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white text-[12px] font-bold rounded-lg shadow-lg transition-all flex items-center justify-center gap-2">
+                    {generatedContent.cta || 'Get The Free Toolkit'}
                     <ArrowRight className="h-4 w-4" />
                   </button>
-                  <p className="text-[9px] text-slate-400 text-center">Join 10,000+ photographers. No spam, ever.</p>
+                  <p className="text-[9px] text-slate-400 text-center">Join 8,500+ creators. No spam, ever.</p>
                 </div>
 
                 {generatedContent.testimonial && (
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-3 border border-amber-200">
+                  <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-3 border border-emerald-200">
                     <div className="flex items-start gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-[10px] font-bold">SM</span>
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-[10px] font-bold">JM</span>
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-700 italic leading-relaxed">{generatedContent.testimonial}</p>
                         <div className="flex items-center gap-0.5 mt-1">
                           {[1,2,3,4,5].map(i => (
-                            <Sparkles key={i} className="h-2.5 w-2.5 text-amber-400" />
+                            <Sparkles key={i} className="h-2.5 w-2.5 text-emerald-400" />
                           ))}
                         </div>
                       </div>
@@ -581,10 +582,10 @@ function PageEditorMockup({ isGenerating }: { isGenerating: boolean }) {
                 <div className="flex items-center justify-center gap-3 pt-1">
                   <div className="flex -space-x-2">
                     {[1,2,3,4].map(i => (
-                      <div key={i} className="w-6 h-6 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 border-2 border-white" />
+                      <div key={i} className="w-6 h-6 rounded-full bg-gradient-to-br from-rose-300 to-orange-400 border-2 border-white" />
                     ))}
                   </div>
-                  <span className="text-[9px] text-slate-500">1,247 photographers downloaded today</span>
+                  <span className="text-[9px] text-slate-500">2,847 creators downloaded this week</span>
                 </div>
               </div>
             </div>
@@ -939,58 +940,58 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
     {
       name: 'Opt-in Page',
       type: 'landing',
-      slug: '/free-guide',
-      stats: { views: 2847, conversions: 892, rate: 31.3 },
+      slug: '/free-challenge',
+      stats: { views: 3241, conversions: 1156, rate: 35.7 },
       preview: {
-        headline: 'The 5-Minute Morning Routine',
-        subheadline: 'The free guide that helped 10,000+ professionals 10x their output',
-        cta: 'Download Free Guide',
-        image: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400',
-        bullets: ['Time-blocking secrets', 'Beat procrastination', 'Peak focus hours']
+        headline: '7-Day Body Transformation',
+        subheadline: 'The free challenge that helped 15,000+ people kickstart their fitness journey',
+        cta: 'Join Free Challenge',
+        image: 'https://images.pexels.com/photos/4498362/pexels-photo-4498362.jpeg?auto=compress&cs=tinysrgb&w=400',
+        bullets: ['Daily workout videos', 'Meal plan templates', 'Private community']
       }
     },
     {
       name: 'Thank You + Upsell',
       type: 'thank_you',
       slug: '/thank-you',
-      stats: { views: 892, conversions: 156, rate: 17.5 },
+      stats: { views: 1156, conversions: 231, rate: 20.0 },
       preview: {
-        headline: 'Check Your Inbox!',
-        subheadline: 'Your guide is on the way...',
-        cta: 'Yes! Add This For $17',
+        headline: 'You\'re In!',
+        subheadline: 'Check your email for Day 1...',
+        cta: 'Yes! Add This For $27',
         offer: 'Wait! One-Time Offer',
-        offerTitle: 'Weekly Planning Templates',
-        offerPrice: '$17',
-        originalPrice: '$47'
+        offerTitle: 'Recipe & Meal Prep Bundle',
+        offerPrice: '$27',
+        originalPrice: '$67'
       }
     },
     {
       name: 'Sales Page',
       type: 'sales',
-      slug: '/accelerator',
-      stats: { views: 1205, conversions: 89, rate: 7.4 },
+      slug: '/coaching',
+      stats: { views: 1589, conversions: 127, rate: 8.0 },
       preview: {
-        headline: 'Productivity Accelerator',
-        subheadline: 'Reclaim 10+ hours every week or your money back',
-        price: '$197',
-        originalPrice: '$497',
-        cta: 'Enroll Now - 60% Off',
-        image: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=400',
-        testimonial: '"I got my evenings back!" - Mark J.',
-        modules: 8,
-        hours: 16
+        headline: 'Fit For Life Coaching',
+        subheadline: 'Transform your body in 12 weeks or your money back',
+        price: '$247',
+        originalPrice: '$597',
+        cta: 'Start Your Transformation',
+        image: 'https://images.pexels.com/photos/4498606/pexels-photo-4498606.jpeg?auto=compress&cs=tinysrgb&w=400',
+        testimonial: '"Lost 25 lbs and kept it off!" - Sarah K.',
+        modules: 12,
+        hours: 24
       }
     },
     {
       name: 'Checkout',
       type: 'checkout',
       slug: '/checkout',
-      stats: { views: 89, conversions: 67, rate: 75.3 },
+      stats: { views: 127, conversions: 98, rate: 77.2 },
       preview: {
         headline: 'Complete Your Order',
-        product: 'Productivity Accelerator',
-        price: '$197',
-        guarantee: '60-Day Money Back Guarantee',
+        product: 'Fit For Life Coaching',
+        price: '$247',
+        guarantee: '30-Day Money Back Guarantee',
         cta: 'Complete Purchase'
       }
     },
@@ -1016,9 +1017,9 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
     if (pagesCreated === pages.length) {
       const duration = 1500;
       const steps = 30;
-      const targetViews = 5033;
-      const targetConversions = 67;
-      const targetRevenue = 13199;
+      const targetViews = 6113;
+      const targetConversions = 98;
+      const targetRevenue = 24559;
       let step = 0;
       const interval = setInterval(() => {
         step++;
@@ -1096,11 +1097,11 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
                 <div className="h-5 bg-white rounded border border-slate-200 text-[7px] flex items-center px-2 text-slate-400 shadow-sm">
                   Enter your best email...
                 </div>
-                <button className="w-full h-6 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-[8px] font-bold rounded shadow-md flex items-center justify-center gap-1">
+                <button className="w-full h-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[8px] font-bold rounded shadow-md flex items-center justify-center gap-1">
                   {page.preview.cta}
                   <ArrowRight className="h-3 w-3" />
                 </button>
-                <p className="text-[6px] text-slate-400 text-center">Join 10,000+ professionals</p>
+                <p className="text-[6px] text-slate-400 text-center">Join 15,000+ challengers</p>
               </div>
             </div>
           </div>
@@ -1139,32 +1140,32 @@ function FunnelBuilderMockup({ isGenerating }: { isGenerating: boolean }) {
         return (
           <div className="h-full flex flex-col bg-white">
             <div className="h-16 bg-cover bg-center relative" style={{ backgroundImage: `url(${page.preview.image})` }}>
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-900/50 to-transparent" />
               <div className="absolute bottom-1.5 left-2 right-2">
                 <h3 className="text-[10px] font-bold text-white drop-shadow">{page.preview.headline}</h3>
               </div>
             </div>
-            <div className="flex-1 p-2 bg-gradient-to-b from-white to-slate-50">
+            <div className="flex-1 p-2 bg-gradient-to-b from-white to-emerald-50">
               <p className="text-[7px] text-slate-600 mb-1.5">{page.preview.subheadline}</p>
-              <div className="flex items-center gap-2 mb-1.5 bg-slate-100 rounded p-1">
+              <div className="flex items-center gap-2 mb-1.5 bg-emerald-100 rounded p-1">
                 <div className="flex items-center gap-0.5">
-                  <Layers className="h-3 w-3 text-blue-500" />
-                  <span className="text-[7px] text-slate-600">{page.preview.modules} modules</span>
+                  <Layers className="h-3 w-3 text-emerald-600" />
+                  <span className="text-[7px] text-slate-600">{page.preview.modules} weeks</span>
                 </div>
                 <div className="flex items-center gap-0.5">
-                  <Clock className="h-3 w-3 text-blue-500" />
+                  <Clock className="h-3 w-3 text-emerald-600" />
                   <span className="text-[7px] text-slate-600">{page.preview.hours}h content</span>
                 </div>
               </div>
-              <div className="bg-blue-50 rounded p-1.5 mb-1.5 border border-blue-100">
-                <p className="text-[7px] text-blue-700 italic">"{page.preview.testimonial}"</p>
+              <div className="bg-emerald-50 rounded p-1.5 mb-1.5 border border-emerald-200">
+                <p className="text-[7px] text-emerald-700 italic">{page.preview.testimonial}</p>
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-[8px] text-slate-400 line-through">{page.preview.originalPrice}</span>
-                  <span className="text-[12px] font-bold text-green-600 ml-1">{page.preview.price}</span>
+                  <span className="text-[12px] font-bold text-emerald-600 ml-1">{page.preview.price}</span>
                 </div>
-                <button className="px-2 h-5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-[7px] font-bold rounded shadow">
+                <button className="px-2 h-5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[7px] font-bold rounded shadow">
                   {page.preview.cta}
                 </button>
               </div>
