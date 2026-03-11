@@ -15,6 +15,10 @@ import {
   Copy,
   ExternalLink,
   X,
+  HelpCircle,
+  Youtube,
+  Link as LinkIcon,
+  Mail,
 } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 
@@ -41,6 +45,7 @@ export default function Webinars() {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   useEffect(() => {
     if (!currentSite) return;
@@ -147,14 +152,46 @@ export default function Webinars() {
           <h1 className="text-4xl font-bold text-dark">Webinars</h1>
           <p className="text-text-secondary mt-2 text-lg">Schedule live and automated webinar events</p>
         </div>
-        <button
-          onClick={() => setShowNewModal(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
-        >
-          <Plus className="h-5 w-5" />
-          <span>New Webinar</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowHowItWorks(true)}
+            className="flex items-center space-x-2 px-4 py-2 border-2 border-gray-200 text-gray-700 font-medium rounded-button hover:bg-gray-50 transition"
+          >
+            <HelpCircle className="h-4 w-4" />
+            <span>How It Works</span>
+          </button>
+          <button
+            onClick={() => setShowNewModal(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button hover:shadow-button-hover transition-all duration-300 hover:-translate-y-0.5 transition"
+          >
+            <Plus className="h-5 w-5" />
+            <span>New Webinar</span>
+          </button>
+        </div>
       </div>
+
+      {webinars.length === 0 && (
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-6">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-blue-100 rounded-xl">
+              <Video className="h-6 w-6 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-900 mb-2">Welcome to Webinars</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                CreatorApp handles registration and replay management while you host your live stream on your preferred platform (YouTube Live, Zoom, Vimeo, etc.).
+              </p>
+              <button
+                onClick={() => setShowHowItWorks(true)}
+                className="text-blue-600 hover:text-blue-700 font-medium text-sm inline-flex items-center gap-1"
+              >
+                Learn how webinars work
+                <ExternalLink className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-card shadow-light border border-border">
         <div className="border-b">
@@ -296,6 +333,130 @@ export default function Webinars() {
           </div>
         )}
       </div>
+
+      {showHowItWorks && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-dark">How Webinars Work</h2>
+              <button
+                onClick={() => setShowHowItWorks(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="h-5 w-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-blue-800 text-sm">
+                  CreatorApp is a <strong>registration and replay management system</strong> that integrates with external streaming platforms. You host your live stream on YouTube, Zoom, or Vimeo while CreatorApp handles signups and replays.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900">The Webinar Flow</h3>
+
+                <div className="flex gap-4 items-start">
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold text-sm">1</div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Create Your Webinar</h4>
+                    <p className="text-gray-600 text-sm">Set your title, date/time, and add your streaming URL (YouTube Live, Zoom, etc.)</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Share the Registration Link</h4>
+                    <p className="text-gray-600 text-sm">Copy your registration link and share it in emails, landing pages, or social media</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold text-sm">3</div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Email Your Registrants</h4>
+                    <p className="text-gray-600 text-sm">Before the event, send an email to registrants with the streaming link and joining instructions</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold text-sm">4</div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Host Your Live Stream</h4>
+                    <p className="text-gray-600 text-sm">Go live on your chosen platform. Attendees join using the link you emailed them.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold text-sm">5</div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">Offer Replay Access</h4>
+                    <p className="text-gray-600 text-sm">After the event, registrants can access the replay through CreatorApp</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <h3 className="font-semibold text-gray-900 mb-3">Supported Streaming Platforms</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                    <Youtube className="h-5 w-5 text-red-600" />
+                    <span className="text-sm font-medium">YouTube Live</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                    <Video className="h-5 w-5 text-blue-600" />
+                    <span className="text-sm font-medium">Zoom</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                    <LinkIcon className="h-5 w-5 text-cyan-600" />
+                    <span className="text-sm font-medium">Any URL</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <h3 className="font-semibold text-gray-900 mb-3">Key Features</h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <Users className="h-4 w-4 text-primary mt-0.5" />
+                    <span>Registrants are automatically added to your Contacts list</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Clock className="h-4 w-4 text-primary mt-0.5" />
+                    <span>Set a capacity limit for exclusive or limited-seat events</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Play className="h-4 w-4 text-primary mt-0.5" />
+                    <span>Configure replay availability with optional delay periods</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Mail className="h-4 w-4 text-primary mt-0.5" />
+                    <span>Use Email to send reminders and stream links to registrants</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setShowHowItWorks(false)}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-button hover:bg-gray-50 font-semibold text-gray-700 transition"
+                >
+                  Close
+                </button>
+                <Link
+                  to="/help"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-button text-center hover:shadow-button-hover transition"
+                  onClick={() => setShowHowItWorks(false)}
+                >
+                  View Full Help Center
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showNewModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

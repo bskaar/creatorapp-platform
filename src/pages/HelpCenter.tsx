@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { ChevronDown, ChevronUp, Book, Video, Mail, DollarSign, LayoutGrid as Layout, Settings, Sparkles, Search, ExternalLink } from 'lucide-react';
+import { ChevronDown, ChevronUp, Book, Video, Mail, DollarSign, LayoutGrid as Layout, Settings, Sparkles, Search, ExternalLink, Calendar } from 'lucide-react';
 
 interface FAQItem {
   question: string;
@@ -28,6 +28,7 @@ export default function HelpCenter() {
   const faqCategories = [
     { name: 'AI & Intelligence', icon: Sparkles },
     { name: 'Courses & Content', icon: Video },
+    { name: 'Webinars & Events', icon: Calendar },
     { name: 'Email Marketing', icon: Mail },
     { name: 'Payments & Pricing', icon: DollarSign },
     { name: 'Pages & Design', icon: Layout },
@@ -109,6 +110,66 @@ export default function HelpCenter() {
       category: 'Courses & Content',
       question: 'How do students access purchased courses?',
       answer: 'After purchase, students receive an email with login instructions. They can access their courses through your site\'s student portal. Course progress is automatically tracked, and students can resume where they left off. You can view student progress in the Analytics section.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'How do webinars work in CreatorApp?',
+      answer: 'CreatorApp provides a webinar registration and replay management system that integrates with your preferred streaming platform (YouTube Live, Zoom, Vimeo, etc.). You create a webinar event, share the registration link, collect attendee signups, and then host your live stream on your external platform. After the event, you can offer replay access through CreatorApp.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'How do I create a webinar?',
+      answer: 'Go to Webinars from your dashboard and click "New Webinar." Fill in the title, description, date/time, timezone, and duration. Choose your webinar type (live, automated, or hybrid). Add your stream URL (the link to your YouTube Live, Zoom meeting, or other platform). Optionally set a maximum attendee limit and configure replay settings. Click Create to publish your webinar.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'What is the difference between live, automated, and hybrid webinars?',
+      answer: 'Live webinars happen in real-time at the scheduled date. Automated webinars play a pre-recorded video on a schedule, appearing live to attendees. Hybrid webinars combine both approaches - you might have a recorded presentation but answer questions live. Choose the type that fits your content and availability.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'Where do I host my actual webinar stream?',
+      answer: 'CreatorApp handles registration and replay management, but you host the live stream on an external platform. Popular options include YouTube Live (free, unlimited attendees), Zoom (requires paid plan for longer sessions), Vimeo Livestream, or any platform that provides a viewable link. Add your stream URL when creating the webinar.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'How do I share my webinar registration link?',
+      answer: 'After creating a webinar, copy the registration URL from the webinar details. Share this link in your emails, landing pages, social media, or anywhere you promote your event. When people visit the link, they see your webinar details and can register with their email address.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'Can I limit the number of attendees?',
+      answer: 'Yes! When creating or editing a webinar, you can set a maximum attendee limit. Once that number of people register, the webinar shows as "full" and no more registrations are accepted. This is useful for creating urgency or managing capacity for interactive sessions.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'How do I enable webinar replays?',
+      answer: 'In your webinar settings, toggle "Enable Replay" to on. Set a replay delay (how many hours after the live event before the replay becomes available - use 0 for immediate access). Add your replay URL (usually a YouTube or Vimeo video link). Registered attendees can then access the replay through your site.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'How do attendees access the replay?',
+      answer: 'Registered attendees visit the replay page and verify their email address. If they are registered and the replay delay period has passed, they can view the embedded replay video. Unregistered visitors are prompted to register first. Replay views are tracked in your webinar analytics.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'Are webinar registrants added to my contact list?',
+      answer: 'Yes! When someone registers for your webinar, they are automatically added to your Contacts with a "webinar" source tag. This allows you to follow up with attendees, add them to email sequences, and track their engagement across your platform.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'How do I track webinar attendance and engagement?',
+      answer: 'View your webinar analytics to see registration counts, attendance data, and replay views. The system tracks who registered, when they registered, and replay engagement. Use this data to follow up with attendees and improve future webinars.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'Can I cancel or reschedule a webinar?',
+      answer: 'Yes. Edit your webinar to change the date/time, or change the status to "cancelled" if needed. Registered attendees are not automatically notified of changes, so you should send an email announcement to your registrant list to inform them of any schedule changes or cancellations.'
+    },
+    {
+      category: 'Webinars & Events',
+      question: 'How do I send the streaming link to registrants?',
+      answer: 'Currently, you need to send the stream URL to registrants via email. Create an email campaign targeting your webinar registrants (they are automatically tagged in your Contacts). Include the streaming link, date/time reminder, and any instructions for joining. Schedule this email to send shortly before your webinar starts.'
     },
     {
       category: 'Email Marketing',
