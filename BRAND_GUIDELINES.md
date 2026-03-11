@@ -118,23 +118,88 @@ Place your favicon in the `public` folder as `favicon.png` (16x16 or 32x32 pixel
 
 ---
 
-## Current Branding
+## Brand Guidelines
 
-### Name
-**CreatorApp**
+### Brand Name
+**CreatorApp** (styled as one word, capital C and A)
 
 ### URL
 **www.CreatorApp.us**
 
-### Colors
-- Primary Purple: `#6C5CE7`
-- Accent Pink: `#FF6B9D`
-- Dark Text: `#1A1A2E`
+### Color Palette
+
+#### Primary Colors
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Dark Blue (Background) | `#0F172A` | Landing page background, dashboard sidebar |
+| Slate 900 | `#1E293B` | Navigation bars, dark sections |
+
+#### Accent Colors - Button Gradients
+| Gradient | From | To | Usage |
+|----------|------|-----|-------|
+| Primary CTA | `#6C5CE7` (Purple) | `#FF6B9D` (Pink) | Main action buttons, hero CTAs |
+| Secondary CTA | `#3B82F6` (Blue) | `#06B6D4` (Cyan) | Navigation buttons, secondary actions |
+
+#### Supporting Colors
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Cyan Accent | `#06B6D4` | Hover states, links, highlights |
+| White | `#FFFFFF` | Text on dark backgrounds |
+| Gray 300 | `#D1D5DB` | Secondary text on dark backgrounds |
+
+#### UI Colors
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Dark Text | `#1A1A2E` | Headings on light backgrounds |
+| Body Text | `#2D3748` | Paragraph text |
+| Secondary Text | `#5A5A6E` | Muted/helper text |
+| Light Background | `#FAFAFC` | Page backgrounds |
+| Border | `#F0F0F5` | Dividers, card borders |
+
+### Button Styles
+
+#### Primary Button (Purple to Pink Gradient)
+```css
+background: linear-gradient(to right, #6C5CE7, #FF6B9D);
+color: white;
+border-radius: 12px;
+padding: 12px 28px;
+font-weight: 600;
+```
+
+#### Secondary Button (Blue to Cyan Gradient)
+```css
+background: linear-gradient(to right, #3B82F6, #06B6D4);
+color: white;
+border-radius: 12px;
+padding: 12px 28px;
+font-weight: 600;
+```
 
 ### Typography
-- Font: DM Sans (already integrated)
-- Headings: Bold (700)
-- Body: Regular (400) and Medium (500)
+| Element | Font | Weight | Size |
+|---------|------|--------|------|
+| Display Headings | DM Sans | 700 (Bold) | 48-72px |
+| Section Headings | DM Sans | 700 (Bold) | 32-40px |
+| Subheadings | DM Sans | 600 (Semibold) | 20-24px |
+| Body Text | DM Sans | 400 (Regular) | 16-18px |
+| Button Text | DM Sans | 600 (Semibold) | 14-16px |
+| Small/Caption | DM Sans | 500 (Medium) | 12-14px |
+
+### Shadows
+| Type | CSS | Usage |
+|------|-----|-------|
+| Light | `0 4px 15px rgba(59, 130, 246, 0.15)` | Cards, subtle elevation |
+| Medium | `0 10px 30px rgba(59, 130, 246, 0.25)` | Modals, dropdowns |
+| Button Hover | `0 15px 40px rgba(108, 92, 231, 0.4)` | Button hover states |
+
+### Border Radius
+| Element | Radius |
+|---------|--------|
+| Buttons | 12px (rounded-xl) |
+| Cards | 16-24px |
+| Inputs | 8px |
+| Pill Buttons | 50px (full)
 
 ---
 
