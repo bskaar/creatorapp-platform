@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { Palette, Users, Mail, CreditCard, Zap, Globe, User } from 'lucide-react';
+import { Palette, Users, Mail, CreditCard, Zap, Globe, User, Sparkles } from 'lucide-react';
 import GeneralSettings from '../components/settings/GeneralSettings';
 import DomainSettings from '../components/settings/DomainSettings';
 import TeamSettings from '../components/settings/TeamSettings';
@@ -7,10 +7,11 @@ import EmailSettings from '../components/settings/EmailSettings';
 import PaymentSettings from '../components/settings/PaymentSettings';
 import SubscriptionSettings from '../components/settings/SubscriptionSettings';
 import ProfileSettings from '../components/settings/ProfileSettings';
+import BrandKitSettings from '../components/settings/BrandKitSettings';
 
-type SettingsTab = 'profile' | 'general' | 'domain' | 'subscription' | 'team' | 'email' | 'payment';
+type SettingsTab = 'profile' | 'general' | 'domain' | 'brandkit' | 'subscription' | 'team' | 'email' | 'payment';
 
-const VALID_TABS: SettingsTab[] = ['profile', 'general', 'domain', 'subscription', 'team', 'email', 'payment'];
+const VALID_TABS: SettingsTab[] = ['profile', 'general', 'domain', 'brandkit', 'subscription', 'team', 'email', 'payment'];
 
 export default function Settings() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,6 +26,7 @@ export default function Settings() {
     { id: 'profile' as SettingsTab, label: 'Profile', icon: User },
     { id: 'general' as SettingsTab, label: 'Site', icon: Palette },
     { id: 'domain' as SettingsTab, label: 'Domain', icon: Globe },
+    { id: 'brandkit' as SettingsTab, label: 'Brand Kit', icon: Sparkles },
     { id: 'subscription' as SettingsTab, label: 'Subscription', icon: Zap },
     { id: 'team' as SettingsTab, label: 'Team', icon: Users },
     { id: 'email' as SettingsTab, label: 'Email', icon: Mail },
@@ -65,6 +67,7 @@ export default function Settings() {
           {activeTab === 'profile' && <ProfileSettings />}
           {activeTab === 'general' && <GeneralSettings />}
           {activeTab === 'domain' && <DomainSettings />}
+          {activeTab === 'brandkit' && <BrandKitSettings />}
           {activeTab === 'subscription' && <SubscriptionSettings />}
           {activeTab === 'team' && <TeamSettings />}
           {activeTab === 'email' && <EmailSettings />}

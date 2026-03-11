@@ -87,6 +87,21 @@ export default function HelpCenter() {
       answer: 'Yes! AI features are optional enhancements. All core functionality - website building, course hosting, email marketing, payment processing, and analytics - works independently without using AI. You can choose when and if to use AI assistance.'
     },
     {
+      category: 'AI & Intelligence',
+      question: 'How can I get better results from the AI?',
+      answer: 'The key to great AI results is providing context. Start your prompts by describing your business: "I run a [type of business] targeting [audience]. My brand voice is [description]." Be specific about what you need and include relevant details like your niche, competitors, and goals. For example, instead of "Write an email," try "Write a welcome email for new subscribers to my fitness coaching program. My audience is busy professionals who want quick, effective workouts." The more context you provide, the more tailored and useful the response will be.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'What makes a good AI prompt?',
+      answer: 'Great prompts have three elements: Context (who you are and your audience), Task (what you want), and Format (how you want it). For example: "I teach yoga to beginners online (context). Create 5 email subject lines for my free meditation guide lead magnet (task). Make them under 50 characters and create urgency (format)." Other tips: Ask for specific quantities ("give me 3 options"), request a certain tone ("make it friendly and casual"), and share examples of content you like. The AI can match styles if you show it examples.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'What is Brand Kit and how does it help?',
+      answer: 'Brand Kit is a feature for Growth, Pro, and Enterprise plans that lets you upload your branding guidelines, business plan, and design references. Once uploaded, the AI automatically extracts key information like your brand colors, tone of voice, target audience, and value propositions. This context is then used in all AI interactions, so every response aligns with your brand without you having to repeat this information in every prompt. Starter plan users can achieve similar results by including brand context manually in their prompts.'
+    },
+    {
       category: 'Courses & Content',
       question: 'How do I create my first course?',
       answer: 'Navigate to the Content section from your dashboard and click "New Product." Choose "Course" as your product type, give it a name and description, set your pricing, and click Create. Then you can add lessons with video, audio, text, quizzes, and downloadable resources using our easy course builder.'

@@ -6,6 +6,7 @@ import {
   type SubscriptionTier,
   type AIResponse
 } from "../_shared/ai-config.ts";
+import { assembleContext } from "../_shared/context-builder.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -249,25 +250,8 @@ Deno.serve(async (req: Request) => {
 
     const tier: SubscriptionTier = mapPlanNameToTier(usageCheck.planName);
 
-    const { data: siteData } = await supabase
-      .from('sites')
-      .select('name, industry, onboarding_data')
-      .eq('id', siteId)
-      .single();
-
-    let contextInfo = '';
-    if (siteData) {
-      contextInfo = `\n\nBusiness Context:
-- Business: ${siteData.name || 'Creator business'}
-- Industry: ${siteData.industry || 'General'}`;
-
-      if (siteData.onboarding_data) {
-        const onboarding = siteData.onboarding_data as Record<string, unknown>;
-        if (onboarding.targetAudience) {
-          contextInfo += `\n- Target Audience: ${onboarding.targetAudience}`;
-        }
-      }
-    }
+    const assembledContext = await assembleContext(supabase, siteId, user.id, tier);
+    const contextInfo = assembledContext.systemContext;
 
     const userPrompt = `Create a detailed gameplan for this goal:\n\n${goal}${contextInfo}`;
 

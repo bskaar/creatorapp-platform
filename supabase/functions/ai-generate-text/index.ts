@@ -6,6 +6,7 @@ import {
   type SubscriptionTier,
   type AIResponse
 } from "../_shared/ai-config.ts";
+import { assembleContext } from "../_shared/context-builder.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -54,9 +55,10 @@ Deno.serve(async (req: Request) => {
     const { prompt, type, context, siteId } = await req.json();
 
     let tier: SubscriptionTier = 'starter';
+    let brandContext = '';
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     if (siteId) {
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
       const { data: siteData } = await supabase
         .from('sites')
         .select('platform_subscription_plan_id, subscription_plans(display_name)')
@@ -67,6 +69,11 @@ Deno.serve(async (req: Request) => {
       if (siteData?.subscription_plans) {
         const planData = siteData.subscription_plans as { display_name: string };
         tier = mapPlanNameToTier(planData.display_name);
+      }
+
+      const assembledContext = await assembleContext(supabase, siteId, user.id, tier);
+      if (assembledContext.documentContext.hasDocuments) {
+        brandContext = assembledContext.systemContext;
       }
     }
 
@@ -80,7 +87,10 @@ Deno.serve(async (req: Request) => {
       improve: "You are an expert editor. Improve the given text to be more clear, engaging, and professional while keeping the same general meaning. Return only the improved text.",
     };
 
-    const systemPrompt = systemPrompts[type] || systemPrompts.improve;
+    const baseSystemPrompt = systemPrompts[type] || systemPrompts.improve;
+    const systemPrompt = brandContext
+      ? `${baseSystemPrompt}${brandContext}\n\nUse this brand context to match the user's tone, style, and messaging.`
+      : baseSystemPrompt;
     const userContent = context ? `Context: ${context}\n\n${prompt}` : prompt;
 
     const aiResponse: AIResponse = await callAI(
@@ -94,7 +104,6 @@ Deno.serve(async (req: Request) => {
     const latencyMs = Date.now() - startTime;
 
     if (siteId) {
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
       await supabase
         .from('ai_usage_tracking')
         .insert({

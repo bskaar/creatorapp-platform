@@ -8,7 +8,8 @@ export type AITaskType =
   | 'text_generation'
   | 'funnel_content'
   | 'color_palette'
-  | 'visual_theme';
+  | 'visual_theme'
+  | 'document_extraction';
 
 export type SubscriptionTier = 'enterprise' | 'pro' | 'growth' | 'starter';
 
@@ -115,6 +116,7 @@ const TIER_TASK_MODEL_MAP: Record<SubscriptionTier, Record<AITaskType, ModelKey>
     funnel_content: 'opus',
     color_palette: 'haiku',
     visual_theme: 'haiku',
+    document_extraction: 'opus',
   },
   pro: {
     chat_complex: 'sonnet',
@@ -125,6 +127,7 @@ const TIER_TASK_MODEL_MAP: Record<SubscriptionTier, Record<AITaskType, ModelKey>
     funnel_content: 'sonnet',
     color_palette: 'haiku',
     visual_theme: 'haiku',
+    document_extraction: 'sonnet',
   },
   growth: {
     chat_complex: 'haiku',
@@ -135,6 +138,7 @@ const TIER_TASK_MODEL_MAP: Record<SubscriptionTier, Record<AITaskType, ModelKey>
     funnel_content: 'haiku',
     color_palette: 'haiku',
     visual_theme: 'haiku',
+    document_extraction: 'haiku',
   },
   starter: {
     chat_complex: 'haiku',
@@ -145,6 +149,7 @@ const TIER_TASK_MODEL_MAP: Record<SubscriptionTier, Record<AITaskType, ModelKey>
     funnel_content: 'haiku',
     color_palette: 'haiku',
     visual_theme: 'haiku',
+    document_extraction: 'haiku',
   },
 };
 
