@@ -4,6 +4,108 @@
 
 The AI Co-Founder is your 24/7 marketing coach inspired by ClickFunnels' "Ask Todd" feature. It provides instant expert advice, creates actionable gameplans, and helps you build your creator business step by step.
 
+## AI Architecture Glossary
+
+This section clarifies the technical terminology used throughout our documentation.
+
+### AI-Native
+
+**What it means:** AI capabilities are architected into the platform's foundation, not added as a feature layer on top.
+
+**In practice for CreatorApp:**
+- AI context flows through the entire user journey (onboarding, page creation, marketing, optimization)
+- Business data (site info, audience, goals) automatically informs AI responses
+- AI isn't a separate "tool" - it's embedded in workflows naturally
+- Database schema designed to support AI features from day one
+
+**Contrast with "AI-Enabled":** Competitors add chatbots or AI buttons to existing products. The AI doesn't understand context, can't access user data, and feels bolted-on.
+
+---
+
+### Multi-Tenant Architecture (NOT "Multi-Tenant LLM")
+
+**Important clarification:** We have multi-tenant architecture for the platform. We do NOT operate our own LLM - we use API access to Anthropic (Claude) and OpenAI models.
+
+**What "multi-tenant" means for CreatorApp:**
+- Each creator (site) has isolated data with Row Level Security (RLS)
+- One platform instance serves thousands of creators
+- AI requests include site-specific context but data never leaks between tenants
+- Usage tracking is per-site for billing and limits
+
+**What it does NOT mean:**
+- We don't run our own AI models
+- We don't have a "multi-tenant LLM" - that phrase is incorrect
+- We use commercial AI APIs (Anthropic, OpenAI) with standard API access
+
+---
+
+### AI Model Orchestration
+
+**What it means:** Intelligent routing of AI requests to different models based on multiple factors.
+
+**Our orchestration logic handles:**
+
+1. **Task-Based Routing** - Different tasks use different models:
+   - Complex strategy questions -> More capable models (Opus/Sonnet)
+   - Simple text generation -> Efficient models (Haiku)
+   - Color palettes -> Always Haiku (structured, simple task)
+
+2. **Tier-Based Routing** - Subscription level determines model quality:
+   - Enterprise: Claude Opus for complex, Sonnet for medium
+   - Pro: Claude Sonnet for complex, Haiku for simple
+   - Growth/Starter: Claude Haiku for all tasks
+
+3. **Complexity Detection** - Automatic analysis of user input:
+   - Long messages (30+ words) -> complex task
+   - Keywords like "strategy", "plan", "analyze" -> complex task
+   - Short questions -> simple task
+
+4. **Provider Failover** - Automatic switching between providers:
+   - Primary: Anthropic (Claude models)
+   - Fallback: OpenAI (if Anthropic fails or is unavailable)
+   - Graceful degradation maintains service availability
+
+**Implementation:** See `supabase/functions/_shared/ai-config.ts` for the orchestration logic.
+
+---
+
+### Provider Failover (NOT "Backup Model")
+
+**What it means:** If the primary AI provider (Anthropic) is unavailable, requests automatically route to the fallback provider (OpenAI).
+
+**How it works:**
+```
+User Request
+    ↓
+Try Anthropic (Claude)
+    ↓
+Success? → Return response
+    ↓ (on failure)
+Try OpenAI (equivalent tier)
+    ↓
+Success? → Return response
+    ↓ (on failure)
+Return error to user
+```
+
+**This is NOT:**
+- Running multiple models and picking the best answer
+- A/B testing between providers
+- Manual switching - it's fully automatic
+
+---
+
+### Cost Optimization vs Quality Tiers
+
+**Our approach balances two goals:**
+
+1. **Cost efficiency** - Use the cheapest model that delivers acceptable quality
+2. **Quality expectations** - Higher-paying customers get access to more capable models
+
+**Result:** A Pro customer asking a complex question gets Claude Sonnet. A Starter customer asking the same question gets Claude Haiku. Both get helpful answers, but the Pro customer gets more nuanced strategy advice.
+
+---
+
 ## AI-Native Positioning
 
 **CreatorApp is AI-native—your AI Co-Founder isn't an add-on, it's built into every step of building and launching your creator business.**
