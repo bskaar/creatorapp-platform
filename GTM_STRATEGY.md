@@ -1,8 +1,8 @@
-# CreatorApp U - Go-to-Market Strategy
+# CreatorApp - Go-to-Market Strategy
 
 ## Executive Summary
 
-CreatorApp U is an AI-native platform that enables creators, coaches, and entrepreneurs to build and launch their digital businesses without technical skills. Our GTM strategy focuses on organic social media acquisition, strategic partnerships, and community-driven growth.
+CreatorApp is an AI-native platform that enables creators, coaches, and entrepreneurs to build and launch their digital businesses without technical skills. Our GTM strategy focuses on organic social media acquisition, strategic partnerships, and community-driven growth.
 
 ---
 
@@ -192,7 +192,7 @@ TikTok requires raw, authentic, fast-paced content. Focus on:
 **Strategy**: Build and nurture a community group
 
 **Group Name Ideas**:
-- "CreatorApp U Community"
+- "CreatorApp Community"
 - "AI-Powered Creators"
 - "Digital Product Launchers"
 
@@ -390,7 +390,7 @@ Social Media Content
 
 **One-liner**: "Build your creator business with AI as your co-founder."
 
-**Elevator Pitch**: "CreatorApp U is the all-in-one platform that lets coaches, course creators, and digital entrepreneurs build landing pages, sell products, manage email, and run their entire business - with AI assistance at every step. No tech skills required."
+**Elevator Pitch**: "CreatorApp is the all-in-one platform that lets coaches, course creators, and digital entrepreneurs build landing pages, sell products, manage email, and run their entire business - with AI assistance at every step. No tech skills required."
 
 ### Messaging by Segment
 
