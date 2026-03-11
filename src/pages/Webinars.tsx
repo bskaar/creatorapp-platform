@@ -2,24 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import {
-  Video,
-  Plus,
-  Calendar,
-  Users,
-  Clock,
-  Eye,
-  Edit,
-  Trash2,
-  Play,
-  Copy,
-  ExternalLink,
-  X,
-  HelpCircle,
-  Youtube,
-  Link as LinkIcon,
-  Mail,
-} from 'lucide-react';
+import { Video, Plus, Calendar, Users, Clock, Eye, CreditCard as Edit, Trash2, Play, Copy, ExternalLink, X, HelpCircle, Youtube, Link as LinkIcon, Mail } from 'lucide-react';
 import type { Database } from '../lib/database.types';
 
 type Webinar = Database['public']['Tables']['webinars']['Row'];
