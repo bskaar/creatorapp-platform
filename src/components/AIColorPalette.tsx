@@ -12,7 +12,8 @@ interface ColorPalette {
 }
 
 interface AIColorPaletteProps {
-  onApply: (palette: ColorPalette) => void;
+  onApply?: (palette: ColorPalette) => void;
+  onApplyTheme?: (palette: ColorPalette) => void;
 }
 
 type GenerationMode = 'prompt' | 'image';
@@ -177,7 +178,8 @@ function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: n
   };
 }
 
-export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
+export default function AIColorPalette({ onApply, onApplyTheme }: AIColorPaletteProps) {
+  const applyCallback = onApplyTheme || onApply;
   const [isOpen, setIsOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -386,10 +388,10 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
   };
 
   const handleApply = () => {
-    if (palette) {
-      onApply(palette);
+    if (palette && applyCallback) {
       setPaletteApplied(true);
       setTimeout(() => {
+        applyCallback(palette);
         setIsOpen(false);
         setPaletteApplied(false);
         setPalette(null);
