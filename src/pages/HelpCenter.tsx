@@ -59,7 +59,7 @@ export default function HelpCenter() {
     {
       category: 'AI & Intelligence',
       question: 'How do I use the AI Color Palette Generator?',
-      answer: 'The AI Color Palette Generator helps you create professional color schemes for your pages. To access it: 1) Open any page in the Page Editor, 2) Look in the right sidebar (Properties panel), 3) Click the "Page Theme" button at the bottom. The generator has two modes: "From Prompt" lets you select a mood (Professional, Creative, Modern, etc.) and industry to generate matching colors. "From Image" lets you upload your logo or brand image (PNG, JPG, WebP, or SVG) to extract colors automatically. Once generated, click "Apply Palette" to use the colors on your page.'
+      answer: 'The AI Color Palette Generator helps you create professional color schemes for your pages. To access it: 1) Open any page in the Page Editor, 2) Look in the right sidebar (Properties panel), 3) Click the "Page Theme" button at the bottom. The generator has two modes: "From Prompt" lets you select a mood (Professional, Creative, Modern, etc.) and industry to generate matching colors. "From Image" lets you upload your logo or brand image (PNG, JPG, WebP, or SVG) to extract colors automatically. After generating, you will see a "Palette Ready!" message with a preview of all 5 colors. Click the green "Apply Palette to Page" button to use these colors - you will see a confirmation message and the panel will close automatically.'
     },
     {
       category: 'AI & Intelligence',

@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
-import { Palette, Sparkles, Loader2, Check, Upload, Image, X, HelpCircle } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Palette, Sparkles, Loader2, Check, Upload, Image, X, HelpCircle, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface ColorPalette {
@@ -188,7 +188,9 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<{ preview: string; file: File } | null>(null);
   const [showHelp, setShowHelp] = useState(false);
+  const [paletteApplied, setPaletteApplied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const paletteRef = useRef<HTMLDivElement>(null);
 
   const handleFileSelect = useCallback(async (file: File) => {
     const validTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
@@ -261,10 +263,17 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
     }
     setUploadedImage(null);
     setPalette(null);
+    setPaletteApplied(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   }, [uploadedImage]);
+
+  useEffect(() => {
+    if (palette && paletteRef.current) {
+      paletteRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [palette]);
 
   const generatePaletteFromPrompt = async () => {
     setIsGenerating(true);
@@ -379,7 +388,13 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
   const handleApply = () => {
     if (palette) {
       onApply(palette);
-      setIsOpen(false);
+      setPaletteApplied(true);
+      setTimeout(() => {
+        setIsOpen(false);
+        setPaletteApplied(false);
+        setPalette(null);
+        clearUploadedImage();
+      }, 1500);
     }
   };
 
@@ -423,19 +438,19 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
           <ul className="space-y-1.5 text-gray-600">
             <li className="flex items-start gap-2">
               <span className="text-pink-600 font-bold">1.</span>
-              <span><strong>From Prompt:</strong> Choose a mood and industry, then click Generate. The AI creates a matching 5-color palette.</span>
+              <span><strong>From Prompt:</strong> Choose a mood and industry, then click Generate.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-pink-600 font-bold">2.</span>
-              <span><strong>From Image:</strong> Upload your logo or brand image. Colors are extracted automatically.</span>
+              <span><strong>From Image:</strong> Upload your logo or brand image, then click Extract Colors.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-pink-600 font-bold">3.</span>
-              <span>Click <strong>Apply Palette</strong> to use the colors on your page.</span>
+              <span>When you see "Palette Ready!", click the green <strong>Apply Palette to Page</strong> button.</span>
             </li>
           </ul>
           <p className="mt-2 text-xs text-gray-500">
-            Tip: SVG files extract instantly. For photos, use images with clear, distinct colors.
+            After applying, the panel closes automatically and your page colors update.
           </p>
         </div>
       )}
@@ -596,7 +611,11 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
         )}
 
         {palette && (
-          <div className="space-y-3 pt-3 border-t border-gray-200">
+          <div ref={paletteRef} className="space-y-3 pt-3 border-t border-pink-200 bg-white/60 -mx-4 px-4 pb-1 mt-3 rounded-b-lg">
+            <div className="flex items-center gap-2 text-green-700">
+              <CheckCircle2 className="h-4 w-4" />
+              <span className="text-sm font-medium">Palette Ready!</span>
+            </div>
             {palette.description && (
               <p className="text-sm text-gray-600 italic">{palette.description}</p>
             )}
@@ -606,7 +625,7 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
                 .map(([key, color]) => (
                   <div key={key} className="text-center">
                     <div
-                      className="w-full h-12 rounded-lg border-2 border-gray-200 mb-1"
+                      className="w-full h-12 rounded-lg border-2 border-gray-200 mb-1 shadow-sm"
                       style={{ backgroundColor: color }}
                     />
                     <p className="text-xs font-medium text-gray-700 capitalize">{key}</p>
@@ -614,13 +633,26 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
                   </div>
                 ))}
             </div>
-            <button
-              onClick={handleApply}
-              className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-            >
-              <Check className="h-4 w-4" />
-              <span>Apply Palette</span>
-            </button>
+
+            {paletteApplied ? (
+              <div className="flex items-center justify-center gap-2 px-4 py-3 bg-green-100 text-green-800 rounded-lg border border-green-200">
+                <CheckCircle2 className="h-5 w-5" />
+                <span className="font-medium">Palette applied to your page!</span>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <button
+                  onClick={handleApply}
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium shadow-sm"
+                >
+                  <Check className="h-5 w-5" />
+                  <span>Apply Palette to Page</span>
+                </button>
+                <p className="text-xs text-center text-gray-500">
+                  Click to use these colors on your current page
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
