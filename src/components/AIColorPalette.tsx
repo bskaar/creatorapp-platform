@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Palette, Sparkles, Loader2, Check, Upload, Image, X } from 'lucide-react';
+import { Palette, Sparkles, Loader2, Check, Upload, Image, X, HelpCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface ColorPalette {
@@ -187,6 +187,7 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
   const [mode, setMode] = useState<GenerationMode>('prompt');
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<{ preview: string; file: File } | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = useCallback(async (file: File) => {
@@ -400,6 +401,13 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
         <div className="flex items-center space-x-2">
           <Palette className="h-5 w-5 text-pink-600" />
           <h3 className="font-semibold text-gray-900">AI Color Palette Generator</h3>
+          <button
+            onClick={() => setShowHelp(!showHelp)}
+            className="text-gray-400 hover:text-pink-600 transition"
+            title="How to use"
+          >
+            <HelpCircle className="h-4 w-4" />
+          </button>
         </div>
         <button
           onClick={() => setIsOpen(false)}
@@ -408,6 +416,29 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
           <X className="h-5 w-5" />
         </button>
       </div>
+
+      {showHelp && (
+        <div className="mb-4 p-3 bg-white/80 rounded-lg border border-pink-200 text-sm">
+          <p className="font-medium text-gray-900 mb-2">How to use:</p>
+          <ul className="space-y-1.5 text-gray-600">
+            <li className="flex items-start gap-2">
+              <span className="text-pink-600 font-bold">1.</span>
+              <span><strong>From Prompt:</strong> Choose a mood and industry, then click Generate. The AI creates a matching 5-color palette.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-pink-600 font-bold">2.</span>
+              <span><strong>From Image:</strong> Upload your logo or brand image. Colors are extracted automatically.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-pink-600 font-bold">3.</span>
+              <span>Click <strong>Apply Palette</strong> to use the colors on your page.</span>
+            </li>
+          </ul>
+          <p className="mt-2 text-xs text-gray-500">
+            Tip: SVG files extract instantly. For photos, use images with clear, distinct colors.
+          </p>
+        </div>
+      )}
 
       <div className="flex space-x-2 mb-4">
         <button
@@ -437,6 +468,9 @@ export default function AIColorPalette({ onApply }: AIColorPaletteProps) {
       <div className="space-y-3">
         {mode === 'prompt' ? (
           <>
+            <p className="text-xs text-gray-500 -mt-1 mb-2">
+              Select a mood and industry to generate a professionally designed color palette.
+            </p>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mood</label>
               <select

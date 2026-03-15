@@ -54,7 +54,17 @@ export default function HelpCenter() {
     {
       category: 'AI & Intelligence',
       question: 'What other AI features are available?',
-      answer: 'Beyond the AI Co-Founder chat, CreatorApp includes several AI-powered tools: AI copywriting assistant to generate professional sales copy and content, theme generator that creates custom color palettes and visual themes for your brand, smart image search powered by AI, and content suggestions throughout the platform to help you work faster and more effectively.'
+      answer: 'Beyond the AI Co-Founder chat, CreatorApp includes several AI-powered tools: AI copywriting assistant to generate professional sales copy and content, AI Color Palette Generator that creates custom color schemes from text prompts or your own images, smart image search powered by AI, and content suggestions throughout the platform to help you work faster and more effectively.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'How do I use the AI Color Palette Generator?',
+      answer: 'The AI Color Palette Generator helps you create professional color schemes for your pages. To access it: 1) Open any page in the Page Editor, 2) Look in the right sidebar (Properties panel), 3) Click the "Page Theme" button at the bottom. The generator has two modes: "From Prompt" lets you select a mood (Professional, Creative, Modern, etc.) and industry to generate matching colors. "From Image" lets you upload your logo or brand image (PNG, JPG, WebP, or SVG) to extract colors automatically. Once generated, click "Apply Palette" to use the colors on your page.'
+    },
+    {
+      category: 'AI & Intelligence',
+      question: 'What image formats work with the AI Color Palette?',
+      answer: 'The AI Color Palette Generator accepts PNG, JPG, WebP, and SVG files up to 10MB. SVG files are special - colors are extracted instantly without needing AI processing, which is faster and more accurate. For photos or raster images (PNG, JPG, WebP), the AI analyzes the image to identify dominant colors and creates a harmonious palette. For best results, upload images with clear, distinct colors like logos, brand assets, or inspiration images.'
     },
     {
       category: 'AI & Intelligence',
