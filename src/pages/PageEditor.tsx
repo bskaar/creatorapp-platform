@@ -1074,8 +1074,8 @@ export default function PageEditor() {
       {/* Theme Settings Modal */}
       {showThemeSettings && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-slate-700">
+          <div className="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between p-6 border-b border-slate-700 flex-shrink-0">
               <h3 className="text-lg font-semibold text-white">
                 {isSitePage ? 'Site Brand Theme' : 'Theme Settings'}
               </h3>
@@ -1086,7 +1086,7 @@ export default function PageEditor() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-6 overflow-y-auto flex-1">
               {isSitePage && (
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-4">
                   <p className="text-blue-300 text-sm">
