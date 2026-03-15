@@ -1,8 +1,21 @@
+export interface BrandTheme {
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  neutralColor: string;
+  backgroundColor: string;
+  textColor?: string;
+  headingFont?: string;
+  bodyFont?: string;
+  borderRadius?: string;
+}
+
 export interface SiteData {
   id: string;
   name: string;
   slug: string;
   primary_color: string;
+  brand_theme?: BrandTheme | null;
   settings: any;
   logo_url?: string | null;
   favicon_url?: string | null;
@@ -17,6 +30,7 @@ export interface PageData {
   seo_title: string | null;
   seo_description: string | null;
   page_type: string | null;
+  funnel_id?: string | null;
 }
 
 export interface ProductData {

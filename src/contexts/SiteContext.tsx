@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
-import type { Database } from '../lib/database.types';
+import type { Database, BrandTheme } from '../lib/database.types';
+import { defaultBrandTheme } from '../lib/database.types';
 
 type Site = Database['public']['Tables']['sites']['Row'];
 type SiteMember = Database['public']['Tables']['site_members']['Row'];
@@ -18,6 +19,8 @@ interface SiteContextType {
   needsSetup: boolean;
   switchSite: (siteId: string) => void;
   refreshSites: () => Promise<void>;
+  brandTheme: BrandTheme;
+  updateBrandTheme: (theme: Partial<BrandTheme>) => Promise<void>;
 }
 
 const SiteContext = createContext<SiteContextType | undefined>(undefined);
@@ -175,6 +178,36 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     await loadSites();
   };
 
+  const brandTheme: BrandTheme = currentSite?.brand_theme
+    ? { ...defaultBrandTheme, ...currentSite.brand_theme }
+    : defaultBrandTheme;
+
+  const updateBrandTheme = useCallback(async (theme: Partial<BrandTheme>) => {
+    if (!currentSite) return;
+
+    const newTheme = { ...brandTheme, ...theme };
+
+    const { error } = await supabase
+      .from('sites')
+      .update({
+        brand_theme: newTheme,
+        primary_color: newTheme.primaryColor
+      })
+      .eq('id', currentSite.id);
+
+    if (error) {
+      console.error('Error updating brand theme:', error);
+      throw error;
+    }
+
+    setCurrentSite({ ...currentSite, brand_theme: newTheme, primary_color: newTheme.primaryColor });
+    setSites(sites.map(s =>
+      s.id === currentSite.id
+        ? { ...s, brand_theme: newTheme, primary_color: newTheme.primaryColor }
+        : s
+    ));
+  }, [currentSite, brandTheme, sites]);
+
   const value = {
     currentSite,
     sites,
@@ -183,6 +216,8 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     needsSetup,
     switchSite,
     refreshSites,
+    brandTheme,
+    updateBrandTheme,
   };
 
   return <SiteContext.Provider value={value}>{children}</SiteContext.Provider>;

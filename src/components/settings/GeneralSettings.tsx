@@ -1,27 +1,34 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Upload, Save, Palette, Image, X, ArrowLeft } from 'lucide-react';
+import { Upload, Save, Palette, Image, X, ArrowLeft, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { useSite } from '../../contexts/SiteContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import AIColorPalette from '../AIColorPalette';
 
 interface GeneralSettingsProps {
   onSave?: () => void;
 }
 
 export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
-  const { currentSite, refreshSites } = useSite();
+  const { currentSite, refreshSites, brandTheme, updateBrandTheme } = useSite();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [showAIPalette, setShowAIPalette] = useState(false);
+  const [showAdvancedColors, setShowAdvancedColors] = useState(false);
   const faviconInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     primary_color: '#3B82F6',
+    secondary_color: '#10B981',
+    accent_color: '#F59E0B',
+    neutral_color: '#1F2937',
+    background_color: '#FFFFFF',
     description: '',
     keywords: '',
     timezone: 'America/New_York',
@@ -34,7 +41,11 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
       setFormData({
         name: currentSite.name || '',
         slug: currentSite.slug || '',
-        primary_color: currentSite.primary_color || '#3B82F6',
+        primary_color: brandTheme.primaryColor || '#3B82F6',
+        secondary_color: brandTheme.secondaryColor || '#10B981',
+        accent_color: brandTheme.accentColor || '#F59E0B',
+        neutral_color: brandTheme.neutralColor || '#1F2937',
+        background_color: brandTheme.backgroundColor || '#FFFFFF',
         description: (currentSite.settings as any)?.description || '',
         keywords: (currentSite.settings as any)?.keywords || '',
         timezone: (currentSite.settings as any)?.timezone || 'America/New_York',
@@ -42,7 +53,7 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
         logo_url: (currentSite as any).logo_url || '',
       });
     }
-  }, [currentSite]);
+  }, [currentSite, brandTheme]);
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -151,12 +162,25 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
         timezone: formData.timezone,
       };
 
+      const newBrandTheme = {
+        primaryColor: formData.primary_color,
+        secondaryColor: formData.secondary_color,
+        accentColor: formData.accent_color,
+        neutralColor: formData.neutral_color,
+        backgroundColor: formData.background_color,
+        textColor: brandTheme.textColor,
+        headingFont: brandTheme.headingFont,
+        bodyFont: brandTheme.bodyFont,
+        borderRadius: brandTheme.borderRadius,
+      };
+
       const { error } = await supabase
         .from('sites')
         .update({
           name: formData.name,
           slug: formData.slug,
           primary_color: formData.primary_color,
+          brand_theme: newBrandTheme,
           favicon_url: formData.favicon_url || null,
           logo_url: formData.logo_url || null,
           settings,
@@ -263,28 +287,189 @@ export default function GeneralSettings({ onSave }: GeneralSettingsProps) {
           <p className="text-xs text-text-secondary mt-1">URL-safe identifier for your site</p>
         </div>
 
-        <div>
-          <label className="block text-sm font-semibold text-text-primary mb-1">
-            Primary Brand Color
-          </label>
-          <div className="flex items-center gap-4">
-            <input
-              type="color"
-              value={formData.primary_color}
-              onChange={(e) => handleChange('primary_color', e.target.value)}
-              className="h-10 w-20 border border-gray-300 rounded cursor-pointer"
-            />
-            <input
-              type="text"
-              value={formData.primary_color}
-              onChange={(e) => handleChange('primary_color', e.target.value)}
-              className="flex-1 px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
-              placeholder="#3B82F6"
-            />
-            <Palette className="h-5 w-5 text-gray-400" />
+        <div className="border border-border rounded-xl p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-semibold text-text-primary">Brand Colors</h4>
+              <p className="text-xs text-text-secondary">These colors apply to all site pages</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowAIPalette(true)}
+              className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-medium rounded-lg hover:shadow-md transition"
+            >
+              <Sparkles className="h-4 w-4" />
+              AI Generate
+            </button>
           </div>
-          <p className="text-xs text-text-secondary mt-1">Used for buttons, links, and accents</p>
+
+          <div className="flex items-center gap-3">
+            <div className="flex -space-x-1">
+              <div
+                className="w-8 h-8 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: formData.primary_color }}
+                title="Primary"
+              />
+              <div
+                className="w-8 h-8 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: formData.secondary_color }}
+                title="Secondary"
+              />
+              <div
+                className="w-8 h-8 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: formData.accent_color }}
+                title="Accent"
+              />
+              <div
+                className="w-8 h-8 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: formData.neutral_color }}
+                title="Neutral"
+              />
+              <div
+                className="w-8 h-8 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: formData.background_color }}
+                title="Background"
+              />
+            </div>
+            <span className="text-sm text-text-secondary">Current palette</span>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-text-primary mb-1">
+              Primary Color
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={formData.primary_color}
+                onChange={(e) => handleChange('primary_color', e.target.value)}
+                className="h-10 w-14 border border-gray-300 rounded cursor-pointer"
+              />
+              <input
+                type="text"
+                value={formData.primary_color}
+                onChange={(e) => handleChange('primary_color', e.target.value)}
+                className="flex-1 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-mono text-sm"
+                placeholder="#3B82F6"
+              />
+            </div>
+            <p className="text-xs text-text-secondary mt-1">Used for buttons, links, and CTAs</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowAdvancedColors(!showAdvancedColors)}
+            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+          >
+            {showAdvancedColors ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            {showAdvancedColors ? 'Hide' : 'Show'} additional colors
+          </button>
+
+          {showAdvancedColors && (
+            <div className="grid grid-cols-2 gap-4 pt-2">
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1">Secondary</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={formData.secondary_color}
+                    onChange={(e) => handleChange('secondary_color', e.target.value)}
+                    className="h-8 w-12 border border-gray-300 rounded cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={formData.secondary_color}
+                    onChange={(e) => handleChange('secondary_color', e.target.value)}
+                    className="flex-1 px-2 py-1 border border-border rounded-lg font-mono text-xs"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1">Accent</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={formData.accent_color}
+                    onChange={(e) => handleChange('accent_color', e.target.value)}
+                    className="h-8 w-12 border border-gray-300 rounded cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={formData.accent_color}
+                    onChange={(e) => handleChange('accent_color', e.target.value)}
+                    className="flex-1 px-2 py-1 border border-border rounded-lg font-mono text-xs"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1">Neutral</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={formData.neutral_color}
+                    onChange={(e) => handleChange('neutral_color', e.target.value)}
+                    className="h-8 w-12 border border-gray-300 rounded cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={formData.neutral_color}
+                    onChange={(e) => handleChange('neutral_color', e.target.value)}
+                    className="flex-1 px-2 py-1 border border-border rounded-lg font-mono text-xs"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1">Background</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={formData.background_color}
+                    onChange={(e) => handleChange('background_color', e.target.value)}
+                    className="h-8 w-12 border border-gray-300 rounded cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={formData.background_color}
+                    onChange={(e) => handleChange('background_color', e.target.value)}
+                    className="flex-1 px-2 py-1 border border-border rounded-lg font-mono text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+
+        {showAIPalette && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+              <div className="flex items-center justify-between p-4 border-b">
+                <h3 className="text-lg font-semibold">Generate Brand Colors with AI</h3>
+                <button
+                  onClick={() => setShowAIPalette(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="p-4 overflow-y-auto max-h-[calc(90vh-120px)]">
+                <AIColorPalette
+                  onApplyTheme={(palette) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      primary_color: palette.primary,
+                      secondary_color: palette.secondary,
+                      accent_color: palette.accent,
+                      neutral_color: palette.neutral,
+                      background_color: palette.background,
+                    }));
+                    setShowAIPalette(false);
+                    setSaved(false);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-semibold text-text-primary mb-1">

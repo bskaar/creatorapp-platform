@@ -116,7 +116,7 @@ export default function PublicSitePreview() {
       const [pagesResult, productsResult] = await Promise.all([
         supabase
           .from('pages')
-          .select('id, title, slug, content, status, seo_title, seo_description, page_type')
+          .select('id, title, slug, content, status, seo_title, seo_description, page_type, funnel_id')
           .eq('site_id', siteData.id)
           .eq('status', 'published')
           .order('created_at', { ascending: true }),
@@ -140,7 +140,7 @@ export default function PublicSitePreview() {
   async function findSiteBySlug(slug: string): Promise<SiteData | null> {
     const { data } = await supabase
       .from('sites')
-      .select('id, name, slug, primary_color, settings, logo_url, favicon_url')
+      .select('id, name, slug, primary_color, brand_theme, settings, logo_url, favicon_url')
       .eq('slug', slug)
       .eq('status', 'active')
       .maybeSingle();
@@ -152,7 +152,7 @@ export default function PublicSitePreview() {
 
     const { data: byCustom } = await supabase
       .from('sites')
-      .select('id, name, slug, primary_color, settings, logo_url, favicon_url')
+      .select('id, name, slug, primary_color, brand_theme, settings, logo_url, favicon_url')
       .eq('custom_domain', clean)
       .eq('domain_verification_status', 'verified')
       .eq('status', 'active')
@@ -204,7 +204,8 @@ export default function PublicSitePreview() {
     );
   }
 
-  const primaryColor = site.primary_color || '#0ea5e9';
+  const siteBrandTheme = site.brand_theme;
+  const primaryColor = siteBrandTheme?.primaryColor || site.primary_color || '#0ea5e9';
   const homePage = pages.find(p => p.page_type === 'landing') || pages[0];
 
   if (!isLegacyMode && !pageSlug && homePage && site) {

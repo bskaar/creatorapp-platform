@@ -2,50 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import {
-  ArrowLeft,
-  Save,
-  Eye,
-  Plus,
-  Upload,
-  GripVertical,
-  Search,
-  Type,
-  Image as ImageIcon,
-  Layout,
-  Sparkles,
-  FileText,
-  CreditCard,
-  Quote,
-  Video,
-  Grid3x3,
-  Monitor,
-  Tablet,
-  Smartphone,
-  Settings,
-  X,
-  BarChart3,
-  Clock,
-  Download,
-  ChevronLeft,
-  ChevronRight,
-  Layers,
-  Trash2,
-  Copy,
-  Eye as EyeIcon,
-  EyeOff,
-  Lock,
-  Unlock,
-  Move,
-  ZoomIn,
-  ZoomOut,
-  Maximize2,
-  Undo,
-  Redo,
-  Palette,
-  MousePointer2,
-  Box,
-} from 'lucide-react';
+import { ArrowLeft, Save, Eye, Plus, Upload, GripVertical, Search, Type, Image as ImageIcon, LayoutGrid as Layout, Sparkles, FileText, CreditCard, Quote, Video, Grid3x3, Monitor, Tablet, Smartphone, Settings, X, BarChart3, Clock, Download, ChevronLeft, ChevronRight, Layers, Trash2, Copy, Eye as EyeIcon, EyeOff, Lock, Unlock, Move, ZoomIn, ZoomOut, Maximize2, Undo, Redo, Palette, MousePointer2, Box } from 'lucide-react';
 import BlockEditor from '../components/BlockEditor';
 import { BlockRenderer } from '../components/publicSite/BlockRenderer';
 import TemplatePicker from '../components/TemplatePicker';
@@ -55,9 +12,14 @@ import PageVersionHistory from '../components/PageVersionHistory';
 import SaveBlockModal from '../components/SaveBlockModal';
 import CustomBlocksLibrary from '../components/CustomBlocksLibrary';
 import ImportPageModal from '../components/ImportPageModal';
-import type { Database } from '../lib/database.types';
+import type { Database, BrandTheme } from '../lib/database.types';
 
 type Page = Database['public']['Tables']['pages']['Row'];
+
+interface FunnelThemeSettings {
+  use_site_branding: boolean;
+  custom_theme: BrandTheme | null;
+}
 
 interface Block {
   id: string;
@@ -186,11 +148,10 @@ const BLOCK_TEMPLATES = {
 
 export default function PageEditor() {
   const { funnelId, pageId } = useParams<{ funnelId: string; pageId: string }>();
-  const { currentSite } = useSite();
+  const { currentSite, brandTheme, updateBrandTheme } = useSite();
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  // State
   const [page, setPage] = useState<Page | null>(null);
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [loading, setLoading] = useState(true);
@@ -216,12 +177,31 @@ export default function PageEditor() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [recentBlocks, setRecentBlocks] = useState<string[]>([]);
+  const [funnelThemeSettings, setFunnelThemeSettings] = useState<FunnelThemeSettings | null>(null);
   const [theme, setTheme] = useState({
     primaryColor: '#3B82F6',
     secondaryColor: '#10B981',
     fontFamily: 'Inter, sans-serif',
     borderRadius: 'medium',
   });
+
+  const isSitePage = page && !page.funnel_id;
+  const usesSiteBranding = isSitePage || (funnelThemeSettings?.use_site_branding ?? true);
+  const effectiveTheme = usesSiteBranding
+    ? {
+        primaryColor: brandTheme.primaryColor,
+        secondaryColor: brandTheme.secondaryColor,
+        fontFamily: brandTheme.bodyFont || 'Inter, sans-serif',
+        borderRadius: brandTheme.borderRadius || 'medium',
+      }
+    : funnelThemeSettings?.custom_theme
+      ? {
+          primaryColor: funnelThemeSettings.custom_theme.primaryColor,
+          secondaryColor: funnelThemeSettings.custom_theme.secondaryColor,
+          fontFamily: funnelThemeSettings.custom_theme.bodyFont || 'Inter, sans-serif',
+          borderRadius: funnelThemeSettings.custom_theme.borderRadius || 'medium',
+        }
+      : theme;
 
   // UI State
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
@@ -312,6 +292,21 @@ export default function PageEditor() {
         seo_description: data.seo_description || '',
         seo_image_url: data.seo_image_url || '',
       });
+
+      if (data.funnel_id) {
+        const { data: funnelData } = await supabase
+          .from('funnels')
+          .select('use_site_branding, custom_theme')
+          .eq('id', data.funnel_id)
+          .maybeSingle();
+
+        if (funnelData) {
+          setFunnelThemeSettings({
+            use_site_branding: funnelData.use_site_branding ?? true,
+            custom_theme: funnelData.custom_theme as BrandTheme | null,
+          });
+        }
+      }
     } else {
       navigate('/funnels');
     }
@@ -327,7 +322,7 @@ export default function PageEditor() {
     const { error } = await supabase
       .from('pages')
       .update({
-        content: { blocks, theme },
+        content: { blocks, theme: effectiveTheme },
         seo_title: seoData.seo_title || null,
         seo_description: seoData.seo_description || null,
         seo_image_url: seoData.seo_image_url || null,
@@ -826,7 +821,7 @@ export default function PageEditor() {
                       >
                         <BlockRenderer
                           block={block}
-                          primaryColor={theme.primaryColor}
+                          primaryColor={effectiveTheme.primaryColor}
                         />
                         {selectedBlockId === block.id && (
                           <div className="absolute top-2 right-2 flex items-center space-x-1 bg-slate-900 rounded-lg p-1 shadow-lg">
@@ -1081,7 +1076,9 @@ export default function PageEditor() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-700">
-              <h3 className="text-lg font-semibold text-white">Theme Settings</h3>
+              <h3 className="text-lg font-semibold text-white">
+                {isSitePage ? 'Site Brand Theme' : 'Theme Settings'}
+              </h3>
               <button
                 onClick={() => setShowThemeSettings(false)}
                 className="p-2 hover:bg-slate-700 rounded-lg transition"
@@ -1090,9 +1087,26 @@ export default function PageEditor() {
               </button>
             </div>
             <div className="p-6 space-y-6">
+              {isSitePage && (
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-4">
+                  <p className="text-blue-300 text-sm">
+                    This is a site page. Theme changes here will apply to all site pages to maintain consistent branding across your website.
+                  </p>
+                </div>
+              )}
               <AIColorPalette
-                onApplyTheme={(newTheme) => {
-                  setTheme({ ...theme, ...newTheme });
+                onApplyTheme={async (newTheme) => {
+                  if (isSitePage) {
+                    await updateBrandTheme({
+                      primaryColor: newTheme.primary,
+                      secondaryColor: newTheme.secondary,
+                      accentColor: newTheme.accent,
+                      neutralColor: newTheme.neutral,
+                      backgroundColor: newTheme.background,
+                    });
+                  } else {
+                    setTheme({ ...theme, ...newTheme });
+                  }
                   setShowThemeSettings(false);
                 }}
               />
@@ -1179,7 +1193,7 @@ export default function PageEditor() {
                   <BlockRenderer
                     key={block.id}
                     block={block}
-                    primaryColor={theme.primaryColor}
+                    primaryColor={effectiveTheme.primaryColor}
                   />
                 );
               })}

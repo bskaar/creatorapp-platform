@@ -6,6 +6,30 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+export interface BrandTheme {
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  neutralColor: string;
+  backgroundColor: string;
+  textColor?: string;
+  headingFont?: string;
+  bodyFont?: string;
+  borderRadius?: string;
+}
+
+export const defaultBrandTheme: BrandTheme = {
+  primaryColor: '#3B82F6',
+  secondaryColor: '#10B981',
+  accentColor: '#F59E0B',
+  neutralColor: '#1F2937',
+  backgroundColor: '#FFFFFF',
+  textColor: '#1F2937',
+  headingFont: 'Inter',
+  bodyFont: 'Inter',
+  borderRadius: '8px',
+};
+
 export interface Database {
   public: {
     Tables: {
@@ -47,6 +71,7 @@ export interface Database {
           tier: 'launch' | 'growth' | 'scale'
           logo_url: string | null
           primary_color: string
+          brand_theme: BrandTheme | null
           custom_domain: string | null
           domain_verification_status: 'not_verified' | 'pending' | 'verified' | 'failed'
           domain_verification_token: string | null
@@ -72,6 +97,7 @@ export interface Database {
           tier?: 'launch' | 'growth' | 'scale'
           logo_url?: string | null
           primary_color?: string
+          brand_theme?: BrandTheme | null
           custom_domain?: string | null
           domain_verification_status?: 'not_verified' | 'pending' | 'verified' | 'failed'
           domain_verification_token?: string | null
@@ -97,6 +123,7 @@ export interface Database {
           tier?: 'launch' | 'growth' | 'scale'
           logo_url?: string | null
           primary_color?: string
+          brand_theme?: BrandTheme | null
           custom_domain?: string | null
           domain_verification_status?: 'not_verified' | 'pending' | 'verified' | 'failed'
           domain_verification_token?: string | null

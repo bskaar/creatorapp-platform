@@ -2,21 +2,26 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSite } from '../contexts/SiteContext';
 import { supabase } from '../lib/supabase';
-import { ArrowLeft, Plus, Eye, BarChart3, Settings, LayoutGrid, List, GitBranch } from 'lucide-react';
+import { ArrowLeft, Plus, Eye, BarChart3, Settings, LayoutGrid, List, GitBranch, Palette, X, Check } from 'lucide-react';
 import { FunnelView } from '../components/funnel';
-import type { Database } from '../lib/database.types';
+import AIColorPalette from '../components/AIColorPalette';
+import type { Database, BrandTheme } from '../lib/database.types';
 
-type Funnel = Database['public']['Tables']['funnels']['Row'];
+type Funnel = Database['public']['Tables']['funnels']['Row'] & {
+  use_site_branding?: boolean;
+  custom_theme?: BrandTheme | null;
+};
 type Page = Database['public']['Tables']['pages']['Row'];
 
 export default function FunnelDetail() {
   const { id } = useParams<{ id: string }>();
-  const { currentSite } = useSite();
+  const { currentSite, brandTheme } = useSite();
   const navigate = useNavigate();
   const [funnel, setFunnel] = useState<Funnel | null>(null);
   const [pages, setPages] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewPageModal, setShowNewPageModal] = useState(false);
+  const [showThemeModal, setShowThemeModal] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     page_type: 'landing',
@@ -25,6 +30,7 @@ export default function FunnelDetail() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'flow' | 'list'>('grid');
+  const [useSiteBranding, setUseSiteBranding] = useState(true);
 
   useEffect(() => {
     if (!currentSite || !id) return;
@@ -47,6 +53,7 @@ export default function FunnelDetail() {
 
     if (funnelResult.data) {
       setFunnel(funnelResult.data);
+      setUseSiteBranding(funnelResult.data.use_site_branding ?? true);
     } else {
       navigate('/funnels');
       return;
@@ -150,6 +157,34 @@ export default function FunnelDetail() {
     }
   };
 
+  const toggleSiteBranding = async (useIt: boolean) => {
+    if (!funnel) return;
+    setUseSiteBranding(useIt);
+
+    await supabase
+      .from('funnels')
+      .update({ use_site_branding: useIt })
+      .eq('id', funnel.id);
+
+    setFunnel({ ...funnel, use_site_branding: useIt });
+  };
+
+  const saveFunnelCustomTheme = async (newTheme: BrandTheme) => {
+    if (!funnel) return;
+
+    await supabase
+      .from('funnels')
+      .update({
+        custom_theme: newTheme,
+        use_site_branding: false,
+      })
+      .eq('id', funnel.id);
+
+    setFunnel({ ...funnel, custom_theme: newTheme, use_site_branding: false });
+    setUseSiteBranding(false);
+    setShowThemeModal(false);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -206,6 +241,79 @@ export default function FunnelDetail() {
           </div>
           <p className="text-3xl font-bold text-gray-900">{pages.length}</p>
         </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Palette className="h-5 w-5 text-gray-400" />
+            <div>
+              <h3 className="font-medium text-gray-900">Funnel Theme</h3>
+              <p className="text-sm text-gray-500">
+                {useSiteBranding
+                  ? 'Using site branding for consistent look'
+                  : 'Using custom theme for this funnel'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useSiteBranding}
+                onChange={(e) => toggleSiteBranding(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700">Use site branding</span>
+            </label>
+            {!useSiteBranding && (
+              <button
+                onClick={() => setShowThemeModal(true)}
+                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+              >
+                Edit Custom Theme
+              </button>
+            )}
+          </div>
+        </div>
+        {useSiteBranding && (
+          <div className="mt-4 flex items-center space-x-3">
+            <div className="flex -space-x-1">
+              <div
+                className="w-6 h-6 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: brandTheme.primaryColor }}
+              />
+              <div
+                className="w-6 h-6 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: brandTheme.secondaryColor }}
+              />
+              <div
+                className="w-6 h-6 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: brandTheme.accentColor }}
+              />
+            </div>
+            <span className="text-sm text-gray-500">Current site colors</span>
+          </div>
+        )}
+        {!useSiteBranding && funnel?.custom_theme && (
+          <div className="mt-4 flex items-center space-x-3">
+            <div className="flex -space-x-1">
+              <div
+                className="w-6 h-6 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: funnel.custom_theme.primaryColor }}
+              />
+              <div
+                className="w-6 h-6 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: funnel.custom_theme.secondaryColor }}
+              />
+              <div
+                className="w-6 h-6 rounded-full border-2 border-white shadow"
+                style={{ backgroundColor: funnel.custom_theme.accentColor }}
+              />
+            </div>
+            <span className="text-sm text-gray-500">Custom funnel colors</span>
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm">
@@ -342,6 +450,41 @@ export default function FunnelDetail() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showThemeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-bold text-gray-900">Custom Funnel Theme</h2>
+              <button
+                onClick={() => setShowThemeModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                <p className="text-amber-800 text-sm">
+                  Setting a custom theme will apply only to pages within this funnel.
+                  This is useful for campaign-specific branding or promotions.
+                </p>
+              </div>
+              <AIColorPalette
+                onApplyTheme={(newTheme) => {
+                  saveFunnelCustomTheme({
+                    primaryColor: newTheme.primary,
+                    secondaryColor: newTheme.secondary,
+                    accentColor: newTheme.accent,
+                    neutralColor: newTheme.neutral,
+                    backgroundColor: newTheme.background,
+                  });
+                }}
+              />
+            </div>
           </div>
         </div>
       )}
